@@ -2,10 +2,16 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎁 سؤال وعيدية</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<title>سؤال وعيدية | لعبة المسابقات</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 :root {
   --gold: #f5c842;
   --gold-dark: #d4a017;
@@ -27,7 +33,17 @@
   --topbar: #1a1a2e;
   --topbar-text: #f5c842;
   --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+  --val: 50%;
+  --z-bottom: 1;
+  --z-content: 10;
+  --z-topbar: 100;
+  --z-tabbar: 100;
+  --z-settings: 2000;
+  --z-modal: 3000;
+  --z-toast: 5000;
+  --z-confetti: 9999;
 }
+
 .dark {
   --bg: #0d0d1a;
   --bg2: #12122a;
@@ -39,7 +55,7 @@
   --topbar: #0a0a15;
   --topbar-text: #f5c842;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
+
 body {
   font-family: 'Tajawal', sans-serif;
   background: var(--bg);
@@ -48,20 +64,129 @@ body {
   overflow-x: hidden;
   transition: background var(--transition), color var(--transition);
 }
-/* Decorative background */
+
+/* رسوم SVG مخصصة - بدون أي إيموجيات */
+.icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.icon-lg {
+  width: 48px;
+  height: 48px;
+}
+
+.icon-gift {
+  stroke: var(--gold);
+  fill: var(--gold);
+  fill-opacity: 0.2;
+}
+
+.icon-trophy {
+  stroke: var(--gold);
+}
+
+.icon-question {
+  stroke: var(--blue);
+}
+
+.icon-wheel {
+  stroke: var(--purple);
+}
+
+.icon-settings {
+  stroke: var(--text2);
+}
+
+.icon-volume {
+  stroke: currentColor;
+}
+
+.icon-moon {
+  stroke: var(--blue);
+}
+
+.icon-sun {
+  stroke: var(--gold);
+}
+
+.icon-arrow-down {
+  stroke: var(--red);
+}
+
+.icon-check {
+  stroke: var(--green);
+}
+
+.icon-x {
+  stroke: var(--red);
+}
+
+.icon-spin {
+  stroke: var(--purple);
+  animation: spin 2s linear infinite;
+}
+
+.icon-star {
+  stroke: var(--gold);
+}
+
+.icon-crown {
+  stroke: var(--gold);
+}
+
+.icon-users {
+  stroke: currentColor;
+}
+
+.icon-clock {
+  stroke: currentColor;
+}
+
+.icon-reset {
+  stroke: currentColor;
+}
+
+.icon-save {
+  stroke: var(--green);
+}
+
+.icon-cancel {
+  stroke: var(--red);
+}
+
+.icon-winner {
+  stroke: var(--purple);
+}
+
+.icon-loser {
+  stroke: var(--text2);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* زخارف خلفية */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: 
+  background-image: 
     radial-gradient(circle at 20% 20%, rgba(245,200,66,0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(46,204,113,0.06) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(52,152,219,0.04) 0%, transparent 60%);
+    radial-gradient(circle at 80% 80%, rgba(46,204,113,0.06) 0%, transparent 50%);
   pointer-events: none;
-  z-index: 0;
+  z-index: var(--z-bottom);
 }
 
-/* ===== TOP BAR ===== */
+/* الشريط العلوي */
 .topbar {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -71,60 +196,75 @@ body::before {
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  z-index: 1000;
+  z-index: var(--z-topbar);
   box-shadow: 0 2px 20px rgba(0,0,0,0.3);
 }
-.topbar-logo {
+
+.logo {
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 1.4rem;
   font-weight: 900;
   color: var(--gold);
-  text-shadow: 0 0 20px rgba(245,200,66,0.5);
 }
-.topbar-logo .gift-icon {
-  font-size: 1.8rem;
+
+.logo-icon {
   animation: float 3s ease-in-out infinite;
 }
+
 @keyframes float {
   0%,100% { transform: translateY(0); }
   50% { transform: translateY(-5px); }
 }
+
 .topbar-actions {
   display: flex;
   gap: 8px;
 }
+
 .icon-btn {
-  width: 40px; height: 40px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   border: none;
   background: rgba(255,255,255,0.1);
   color: var(--gold);
-  font-size: 1.2rem;
   cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all var(--transition);
   backdrop-filter: blur(4px);
 }
-.icon-btn:hover { background: rgba(245,200,66,0.2); transform: scale(1.1); }
 
-/* ===== MAIN LAYOUT ===== */
+.icon-btn:hover {
+  background: rgba(245,200,66,0.2);
+  transform: scale(1.1);
+}
+
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* المحتوى الرئيسي */
 .main {
   padding-top: 64px;
   padding-bottom: 80px;
   min-height: 100vh;
   position: relative;
-  z-index: 1;
+  z-index: var(--z-content);
 }
+
 .content-area {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }
 
-/* ===== LEADERBOARD ===== */
-.leaderboard-section {
+/* لوحة الشرف */
+.leaderboard {
   background: var(--card);
   border-radius: 20px;
   padding: 20px;
@@ -132,19 +272,22 @@ body::before {
   border: 1px solid var(--border);
   box-shadow: 0 4px 20px var(--shadow);
 }
+
 .section-title {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--gold-dark);
   display: flex;
   align-items: center;
   gap: 8px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--gold-dark);
   margin-bottom: 16px;
 }
+
 .leaderboard-table {
   width: 100%;
   border-collapse: collapse;
 }
+
 .leaderboard-table th {
   background: linear-gradient(135deg, #1a1a2e, #2a2a4e);
   color: var(--gold);
@@ -153,27 +296,53 @@ body::before {
   font-weight: 700;
   font-size: 0.9rem;
 }
-.leaderboard-table th:first-child { border-radius: 10px 0 0 10px; }
-.leaderboard-table th:last-child { border-radius: 0 10px 10px 0; }
+
+.leaderboard-table th:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+.leaderboard-table th:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
 .leaderboard-table td {
   padding: 12px 14px;
   border-bottom: 1px solid var(--border);
   font-size: 0.95rem;
-  transition: background var(--transition);
 }
-.leaderboard-table tr:last-child td { border-bottom: none; }
-.leaderboard-table tr:hover td { background: rgba(245,200,66,0.05); }
-.medal { font-size: 1.3rem; }
+
+.leaderboard-table tr:last-child td {
+  border-bottom: none;
+}
+
+.leaderboard-table tr:hover td {
+  background: rgba(245,200,66,0.05);
+}
+
+.rank-medal {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rank-1 { color: #ffd700; }
+.rank-2 { color: #c0c0c0; }
+.rank-3 { color: #cd7f32; }
+
 .player-avatar {
-  width: 32px; height: 32px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
   margin-left: 8px;
   font-weight: 700;
+  color: white;
 }
+
 .amount-badge {
   background: linear-gradient(135deg, var(--gold), var(--gold-dark));
   color: #1a1a2e;
@@ -182,6 +351,7 @@ body::before {
   font-weight: 700;
   font-size: 0.85rem;
 }
+
 .points-badge {
   background: linear-gradient(135deg, var(--green), var(--green-dark));
   color: white;
@@ -191,7 +361,18 @@ body::before {
   font-size: 0.85rem;
 }
 
-/* ===== TABS ===== */
+.current-player-row {
+  background: rgba(245,200,66,0.08) !important;
+  border-right: 4px solid var(--gold);
+}
+
+.winner-row {
+  background: linear-gradient(135deg, rgba(245,200,66,0.2), rgba(245,200,66,0.1)) !important;
+  border-right: 4px solid var(--purple);
+  font-weight: 700;
+}
+
+/* شريط التبويبات */
 .tab-bar {
   position: fixed;
   bottom: 0; left: 0; right: 0;
@@ -201,10 +382,11 @@ body::before {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  z-index: 1000;
+  z-index: var(--z-tabbar);
   box-shadow: 0 -2px 20px rgba(0,0,0,0.3);
   padding: 0 20px;
 }
+
 .tab-btn {
   display: flex;
   flex-direction: column;
@@ -221,7 +403,13 @@ body::before {
   font-size: 0.8rem;
   font-weight: 500;
 }
-.tab-btn .tab-icon { font-size: 1.4rem; }
+
+.tab-btn svg {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+}
+
 .tab-btn.active {
   background: linear-gradient(135deg, var(--gold), var(--gold-dark));
   color: #1a1a2e;
@@ -230,11 +418,16 @@ body::before {
   box-shadow: 0 8px 20px rgba(245,200,66,0.4);
 }
 
-/* ===== SECTIONS ===== */
-.section { display: none; }
-.section.active { display: block; }
+/* الأقسام */
+.section {
+  display: none;
+}
 
-/* ===== QUESTIONS SECTION ===== */
+.section.active {
+  display: block;
+}
+
+/* بطاقة السؤال */
 .question-card {
   background: var(--card);
   border-radius: 24px;
@@ -244,14 +437,17 @@ body::before {
   position: relative;
   overflow: hidden;
 }
+
 .question-card::before {
   content: '';
   position: absolute;
   top: 0; right: 0;
-  width: 200px; height: 200px;
+  width: 200px;
+  height: 200px;
   background: radial-gradient(circle, rgba(245,200,66,0.1), transparent 70%);
   border-radius: 50%;
 }
+
 .player-indicator {
   display: flex;
   align-items: center;
@@ -263,72 +459,109 @@ body::before {
   border: 2px solid rgba(245,200,66,0.3);
   width: fit-content;
 }
-.player-indicator .avatar {
-  width: 44px; height: 44px;
+
+.player-avatar-large {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1.3rem;
   font-weight: 900;
+  color: white;
 }
-.player-indicator .name {
+
+.player-name {
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--gold-dark);
 }
-.player-indicator .turn-label {
+
+.turn-label {
   font-size: 0.85rem;
   color: var(--text2);
 }
 
-/* TIMER */
+.winner-indicator {
+  background: linear-gradient(135deg, rgba(155,89,182,0.2), rgba(155,89,182,0.1));
+  border-color: var(--purple);
+}
+
+.winner-indicator .player-name {
+  color: var(--purple);
+}
+
+/* المؤقت */
 .timer-container {
   display: flex;
   justify-content: center;
   margin-bottom: 24px;
 }
+
 .timer-ring {
   position: relative;
-  width: 100px; height: 100px;
+  width: 100px;
+  height: 100px;
 }
+
 .timer-ring svg {
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   transform: rotate(-90deg);
 }
+
 .timer-ring .bg-circle {
   fill: none;
   stroke: var(--border);
   stroke-width: 6;
 }
+
 .timer-ring .progress-circle {
   fill: none;
   stroke: var(--gold);
   stroke-width: 6;
   stroke-linecap: round;
-  transition: stroke-dashoffset 1s linear, stroke 0.3s;
+  transition: stroke-dashoffset 1s linear;
 }
-.timer-ring .timer-text {
+
+.timer-text {
   position: absolute;
   inset: 0;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1.8rem;
   font-weight: 900;
   color: var(--gold-dark);
 }
-.timer-ring.warning .progress-circle { stroke: var(--orange); }
-.timer-ring.danger .progress-circle { stroke: var(--red); }
-.timer-ring.danger .timer-text { 
+
+.timer-ring.warning .progress-circle {
+  stroke: var(--orange);
+}
+
+.timer-ring.danger .progress-circle {
+  stroke: var(--red);
+}
+
+.timer-ring.danger .timer-text {
   color: var(--red);
   animation: pulse 0.5s ease-in-out infinite;
 }
-@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
 
-/* QUESTION TEXT */
+@keyframes pulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+/* نص السؤال */
 .question-number {
   text-align: center;
   font-size: 0.9rem;
   color: var(--text2);
   margin-bottom: 8px;
 }
+
 .question-text {
   text-align: center;
   font-size: 1.6rem;
@@ -338,13 +571,14 @@ body::before {
   padding: 0 10px;
 }
 
-/* ANSWER GRID */
+/* شبكة الإجابات */
 .answers-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
   margin-bottom: 24px;
 }
+
 .answer-btn {
   padding: 18px 20px;
   border-radius: 16px;
@@ -357,45 +591,54 @@ body::before {
   cursor: pointer;
   transition: all var(--transition);
   text-align: right;
-  position: relative;
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
 }
-.answer-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.05));
-}
+
 .answer-btn:hover:not(:disabled) {
   border-color: var(--gold);
   background: rgba(245,200,66,0.08);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(245,200,66,0.2);
 }
+
 .answer-btn.correct {
   background: linear-gradient(135deg, #2ecc71, #27ae60);
   border-color: #27ae60;
   color: white;
   animation: correctPop 0.4s ease;
 }
+
 .answer-btn.wrong {
   background: linear-gradient(135deg, #e74c3c, #c0392b);
   border-color: #c0392b;
   color: white;
   animation: shake 0.4s ease;
 }
+
 @keyframes correctPop {
-  0%{transform:scale(1)} 50%{transform:scale(1.05)} 100%{transform:scale(1)}
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
+
 @keyframes shake {
-  0%,100%{transform:translateX(0)}
-  25%{transform:translateX(-6px)}
-  75%{transform:translateX(6px)}
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
 }
-.answer-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+
+.answer-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 .answer-letter {
   display: inline-block;
-  width: 28px; height: 28px;
+  width: 28px;
+  height: 28px;
   background: linear-gradient(135deg, var(--gold), var(--gold-dark));
   color: #1a1a2e;
   border-radius: 8px;
@@ -403,17 +646,16 @@ body::before {
   line-height: 28px;
   font-weight: 700;
   font-size: 0.9rem;
-  margin-left: 10px;
   flex-shrink: 0;
 }
-.answer-btn { display: flex; align-items: center; }
 
-/* NAV BUTTONS */
+/* أزرار التنقل */
 .nav-buttons {
   display: flex;
   gap: 12px;
   justify-content: center;
 }
+
 .nav-btn {
   padding: 12px 28px;
   border-radius: 14px;
@@ -423,62 +665,145 @@ body::before {
   font-weight: 700;
   cursor: pointer;
   transition: all var(--transition);
+  min-height: 48px;
+  min-width: 120px;
 }
+
 .btn-primary {
   background: linear-gradient(135deg, var(--gold), var(--gold-dark));
   color: #1a1a2e;
   box-shadow: 0 4px 15px rgba(245,200,66,0.3);
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(245,200,66,0.4); }
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(245,200,66,0.4);
+}
+
 .btn-secondary {
   background: var(--bg);
   color: var(--text);
   border: 2px solid var(--border);
 }
-.btn-secondary:hover { border-color: var(--gold); background: rgba(245,200,66,0.05); }
+
+.btn-secondary:hover {
+  border-color: var(--gold);
+  background: rgba(245,200,66,0.05);
+}
+
 .btn-danger {
   background: linear-gradient(135deg, var(--red), #c0392b);
   color: white;
   box-shadow: 0 4px 15px rgba(231,76,60,0.3);
 }
 
-/* ===== WHEEL SECTION ===== */
-.wheel-container {
+.btn-ghost {
+  background: transparent;
+  border: 2px solid var(--border);
+  color: var(--text2);
+  padding: 10px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.9rem;
+  transition: all var(--transition);
+  min-height: 44px;
+}
+
+.btn-ghost:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* قسم العجلة */
+.wheel-section {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
 }
+
+.wheel-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
 .wheel-wrapper {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.wheel-canvas { border-radius: 50%; }
+
+.wheel-canvas {
+  border-radius: 50%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
 .wheel-arrow {
   position: absolute;
-  top: -18px;
+  top: -10px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 2.5rem;
+  width: 40px;
+  height: 40px;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
   z-index: 10;
 }
+
+.wheel-arrow svg {
+  width: 40px;
+  height: 40px;
+  stroke: var(--red);
+  fill: var(--red);
+}
+
 .wheel-center {
   position: absolute;
-  width: 50px; height: 50px;
+  width: 60px;
+  height: 60px;
   background: linear-gradient(135deg, #1a1a2e, #2a2a4e);
   border-radius: 50%;
   border: 4px solid var(--gold);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 0 20px rgba(245,200,66,0.4);
   z-index: 10;
   cursor: pointer;
   transition: transform var(--transition);
 }
-.wheel-center:hover { transform: scale(1.1); }
+
+.wheel-center svg {
+  width: 30px;
+  height: 30px;
+  stroke: var(--gold);
+  animation: spin 8s linear infinite;
+}
+
+.wheel-center:hover {
+  transform: scale(1.1);
+}
+
+.wheel-center.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.wheel-center.disabled:hover {
+  transform: scale(1);
+}
+
 .spin-btn {
   padding: 16px 50px;
   border-radius: 50px;
@@ -491,16 +816,46 @@ body::before {
   cursor: pointer;
   transition: all var(--transition);
   box-shadow: 0 8px 25px rgba(245,200,66,0.4);
-  letter-spacing: 1px;
+  min-height: 56px;
+  min-width: 200px;
 }
+
 .spin-btn:hover:not(:disabled) {
   transform: translateY(-3px);
   box-shadow: 0 12px 35px rgba(245,200,66,0.5);
 }
+
 .spin-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.spin-info {
+  text-align: center;
+  color: var(--text2);
+  font-size: 0.95rem;
+  padding: 10px;
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 400px;
+}
+
+.spin-needed {
+  color: var(--gold-dark);
+  font-weight: 700;
+}
+
+.winner-info {
+  color: var(--purple);
+  font-weight: 700;
+  background: linear-gradient(135deg, rgba(155,89,182,0.1), rgba(155,89,182,0.05));
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--purple);
+}
+
 .wheel-result {
   text-align: center;
   padding: 16px 30px;
@@ -510,15 +865,34 @@ body::before {
   font-size: 1.3rem;
   font-weight: 700;
   display: none;
-}
-.wheel-result.show { display: block; animation: slideUp 0.4s ease; }
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  width: 100%;
+  max-width: 400px;
 }
 
-/* Prize edit panel */
-.prize-edit-panel {
+.wheel-result.show {
+  display: block;
+  animation: slideUp 0.4s ease;
+}
+
+.wheel-result.winner {
+  background: linear-gradient(135deg, rgba(155,89,182,0.2), rgba(155,89,182,0.1));
+  border-color: var(--purple);
+  color: var(--purple);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* لوحة تخصيص الجوائز */
+.prize-panel {
   background: var(--card);
   border-radius: 20px;
   padding: 20px;
@@ -526,55 +900,78 @@ body::before {
   width: 100%;
   max-width: 400px;
 }
+
 .prize-input-row {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 10px;
 }
-.prize-color-dot {
-  width: 20px; height: 20px;
+
+.prize-color {
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   flex-shrink: 0;
 }
+
 .prize-input {
   flex: 1;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border-radius: 10px;
   border: 2px solid var(--border);
   background: var(--bg);
   color: var(--text);
   font-family: 'Tajawal', sans-serif;
-  font-size: 0.95rem;
+  font-size: 1rem;
   transition: border-color var(--transition);
+  min-height: 44px;
 }
-.prize-input:focus { outline: none; border-color: var(--gold); }
 
-/* ===== SETTINGS PANEL ===== */
+.prize-input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.prize-input[type="number"] {
+  max-width: 90px;
+}
+
+/* لوحة الإعدادات */
 .settings-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.5);
-  z-index: 2000;
+  z-index: var(--z-settings);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--transition);
   backdrop-filter: blur(4px);
 }
-.settings-overlay.open { opacity: 1; pointer-events: all; }
+
+.settings-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
 .settings-panel {
   position: fixed;
-  top: 0; right: -420px;
+  top: 0;
+  right: -420px;
   width: 420px;
   max-width: 100vw;
   height: 100%;
   background: var(--card);
-  z-index: 2001;
+  z-index: var(--z-settings);
   overflow-y: auto;
   transition: right 0.4s cubic-bezier(0.4,0,0.2,1);
   box-shadow: -10px 0 40px rgba(0,0,0,0.3);
 }
-.settings-panel.open { right: 0; }
+
+.settings-panel.open {
+  right: 0;
+}
+
 .settings-header {
   padding: 20px;
   background: linear-gradient(135deg, #1a1a2e, #2a2a4e);
@@ -585,11 +982,24 @@ body::before {
   top: 0;
   z-index: 10;
 }
-.settings-header h2 { color: var(--gold); font-size: 1.2rem; font-weight: 700; }
-.settings-body { padding: 20px; }
+
+.settings-header h2 {
+  color: var(--gold);
+  font-size: 1.2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-body {
+  padding: 20px;
+}
+
 .settings-group {
   margin-bottom: 28px;
 }
+
 .settings-group-title {
   font-size: 1rem;
   font-weight: 700;
@@ -601,19 +1011,34 @@ body::before {
   align-items: center;
   gap: 8px;
 }
+
+/* قائمة اللاعبين */
+.players-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
 .player-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 10px;
 }
-.player-row .avatar-preview {
-  width: 36px; height: 36px;
+
+.avatar-preview {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
   flex-shrink: 0;
+  color: white;
+  font-weight: 700;
 }
+
 .input-field {
   flex: 1;
   padding: 10px 14px;
@@ -624,82 +1049,151 @@ body::before {
   font-family: 'Tajawal', sans-serif;
   font-size: 1rem;
   transition: border-color var(--transition);
+  min-height: 44px;
 }
-.input-field:focus { outline: none; border-color: var(--gold); }
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
 .delete-btn {
-  width: 36px; height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   border: none;
   background: rgba(231,76,60,0.1);
   color: var(--red);
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   transition: all var(--transition);
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
-.delete-btn:hover { background: var(--red); color: white; }
+
+.delete-btn:hover {
+  background: var(--red);
+  color: white;
+}
+
+.delete-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+}
+
 .add-player-btn {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   border-radius: 12px;
   border: 2px dashed var(--border);
   background: transparent;
   color: var(--text2);
   font-family: 'Tajawal', sans-serif;
-  font-size: 0.95rem;
+  font-size: 1rem;
   cursor: pointer;
   transition: all var(--transition);
+  min-height: 48px;
 }
-.add-player-btn:hover { border-color: var(--gold); color: var(--gold); }
 
-/* Toggle & Range */
+.add-player-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* مفاتيح التبديل */
 .toggle-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 0;
 }
-.toggle-label { font-size: 0.95rem; font-weight: 500; }
+
+.toggle-label {
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .toggle {
-  width: 50px; height: 26px;
+  width: 52px;
+  height: 28px;
   background: var(--border);
-  border-radius: 13px;
+  border-radius: 14px;
   position: relative;
   cursor: pointer;
   transition: background var(--transition);
 }
-.toggle.on { background: var(--green); }
+
+.toggle.on {
+  background: var(--green);
+}
+
 .toggle::after {
   content: '';
   position: absolute;
-  top: 3px; right: 3px;
-  width: 20px; height: 20px;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
   background: white;
   border-radius: 50%;
   transition: right var(--transition);
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
-.toggle.on::after { right: calc(100% - 23px); }
-.range-row { margin-bottom: 14px; }
-.range-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
+
+.toggle.on::after {
+  right: calc(100% - 24px);
+}
+
+/* شريط التمرير */
+.range-row {
+  margin-bottom: 16px;
+}
+
+.range-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
 input[type="range"] {
   width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--val, 50%), var(--border) var(--val, 50%));
   -webkit-appearance: none;
-  height: 6px;
-  border-radius: 3px;
-  background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--val,50%), var(--border) var(--val,50%));
+  appearance: none;
   outline: none;
 }
+
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 20px; height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--gold), var(--gold-dark));
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(245,200,66,0.4);
+  box-shadow: 0 2px 10px rgba(245,200,66,0.6);
+  border: 2px solid white;
 }
 
-/* START BUTTON */
+input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(245,200,66,0.6);
+  border: 2px solid white;
+}
+
+/* زر بدء اللعبة */
 .start-game-btn {
   width: 100%;
   padding: 18px;
@@ -714,10 +1208,15 @@ input[type="range"]::-webkit-slider-thumb {
   transition: all var(--transition);
   box-shadow: 0 6px 20px rgba(245,200,66,0.4);
   margin-top: 10px;
+  min-height: 60px;
 }
-.start-game-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(245,200,66,0.5); }
 
-/* ===== GAME LOBBY ===== */
+.start-game-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(245,200,66,0.5);
+}
+
+/* شاشة البداية */
 #lobby {
   display: flex;
   flex-direction: column;
@@ -727,11 +1226,17 @@ input[type="range"]::-webkit-slider-thumb {
   text-align: center;
   padding: 40px 20px;
 }
-.lobby-logo {
-  font-size: 5rem;
+
+.lobby-logo svg {
+  width: 120px;
+  height: 120px;
   margin-bottom: 20px;
+  stroke: var(--gold);
+  fill: var(--gold);
+  fill-opacity: 0.2;
   animation: float 3s ease-in-out infinite;
 }
+
 .lobby-title {
   font-size: 2.5rem;
   font-weight: 900;
@@ -741,11 +1246,13 @@ input[type="range"]::-webkit-slider-thumb {
   background-clip: text;
   margin-bottom: 10px;
 }
+
 .lobby-subtitle {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: var(--text2);
   margin-bottom: 40px;
 }
+
 .lobby-btn {
   padding: 18px 60px;
   border-radius: 50px;
@@ -758,68 +1265,111 @@ input[type="range"]::-webkit-slider-thumb {
   cursor: pointer;
   transition: all var(--transition);
   box-shadow: 0 8px 30px rgba(245,200,66,0.4);
-}
-.lobby-btn:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(245,200,66,0.5); }
-
-/* ===== CONFETTI ===== */
-.confetti-container {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  overflow: hidden;
-}
-.confetti-piece {
-  position: absolute;
-  width: 10px; height: 10px;
-  animation: confettiFall linear forwards;
-}
-@keyframes confettiFall {
-  0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  min-height: 64px;
 }
 
-/* ===== TOAST ===== */
+.lobby-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(245,200,66,0.5);
+}
+
+/* الإشعارات */
 .toast-container {
   position: fixed;
   top: 80px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 5000;
+  z-index: var(--z-toast);
   display: flex;
   flex-direction: column;
   gap: 10px;
   align-items: center;
   pointer-events: none;
 }
+
 .toast {
-  padding: 12px 24px;
+  padding: 14px 28px;
   border-radius: 50px;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 700;
   box-shadow: 0 8px 25px rgba(0,0,0,0.2);
   animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
   white-space: nowrap;
+  max-width: 90vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-@keyframes toastIn {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-@keyframes toastOut {
-  to { transform: translateY(-20px); opacity: 0; }
-}
-.toast.success { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; }
-.toast.error { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
-.toast.info { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #1a1a2e; }
-.toast.win { background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; }
 
-/* ===== MODAL ===== */
+@keyframes toastIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toastOut {
+  to {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+}
+
+.toast.success {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white;
+}
+
+.toast.error {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+}
+
+.toast.info {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: #1a1a2e;
+}
+
+.toast.winner {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+  color: white;
+}
+
+/* الكونفيتي */
+.confetti-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-confetti);
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  animation: confettiFall linear forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* النافذة المنبثقة */
 .modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.6);
   backdrop-filter: blur(6px);
-  z-index: 3000;
+  z-index: var(--z-modal);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -827,7 +1377,12 @@ input[type="range"]::-webkit-slider-thumb {
   pointer-events: none;
   transition: opacity var(--transition);
 }
-.modal-overlay.open { opacity: 1; pointer-events: all; }
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
 .modal {
   background: var(--card);
   border-radius: 24px;
@@ -839,123 +1394,254 @@ input[type="range"]::-webkit-slider-thumb {
   transform: scale(0.9);
   transition: transform var(--transition);
 }
-.modal-overlay.open .modal { transform: scale(1); }
-.modal h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; }
-.modal p { font-size: 1rem; color: var(--text2); margin-bottom: 24px; }
-.modal-actions { display: flex; gap: 12px; justify-content: center; }
 
-/* Wheel layout */
-.wheel-section-layout {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
+.modal-overlay.open .modal {
+  transform: scale(1);
 }
 
-/* Responsive */
+.modal h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.modal p {
+  font-size: 1.1rem;
+  color: var(--text2);
+  margin-bottom: 24px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* تحسينات الأجهزة المحمولة */
+@media (max-width: 768px) {
+  .answer-btn,
+  .nav-btn,
+  .spin-btn,
+  .lobby-btn,
+  .start-game-btn,
+  .prize-input,
+  .input-field,
+  .add-player-btn,
+  .btn-ghost {
+    min-height: 52px;
+    font-size: 16px;
+  }
+  
+  .prize-input,
+  .input-field {
+    font-size: 16px;
+  }
+  
+  .question-text {
+    font-size: 1.3rem;
+  }
+  
+  .answers-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .logo span:not(.logo-icon) {
+    display: none;
+  }
+  
+  .settings-panel {
+    width: 100%;
+    right: -100%;
+  }
+  
+  .settings-panel.open {
+    right: 0;
+  }
+  
+  .tab-btn {
+    padding: 8px 16px;
+  }
+  
+  .tab-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .question-text {
+    font-size: 1.2rem;
+  }
+  
+  .nav-buttons {
+    flex-direction: column;
+  }
+  
+  .nav-btn {
+    width: 100%;
+  }
+  
+  .prize-panel {
+    max-width: 100%;
+  }
+  
+  .wheel-canvas {
+    width: 280px;
+    height: 280px;
+  }
+  
+  .wheel-center {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .wheel-center svg {
+    width: 25px;
+    height: 25px;
+  }
+  
+  .spin-btn {
+    min-width: 160px;
+    padding: 14px 30px;
+  }
+}
+
 @media (min-width: 900px) {
   .game-layout {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 20px;
   }
-  .wheel-section-layout {
+  
+  .wheel-section {
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
   }
 }
-@media (max-width: 600px) {
-  .answers-grid { grid-template-columns: 1fr; }
-  .question-text { font-size: 1.3rem; }
-  .topbar-logo span { display: none; }
-  .settings-panel { width: 100%; right: -100%; }
-  .settings-panel.open { right: 0; }
+
+/* فائدة للعناصر المخفية */
+.hidden {
+  display: none !important;
 }
 
-/* Glow effects */
-.glow-gold { box-shadow: 0 0 20px rgba(245,200,66,0.4); }
-.current-player-row { background: rgba(245,200,66,0.08) !important; }
-
-/* Wheel section spin info */
-.spin-info {
-  text-align: center;
-  color: var(--text2);
-  font-size: 0.95rem;
-  padding: 10px;
-}
-.spin-needed {
-  color: var(--gold-dark);
-  font-weight: 700;
-}
-
-/* No game state */
 .no-game {
   text-align: center;
   padding: 40px;
   color: var(--text2);
   font-size: 1.1rem;
 }
-.no-game .big-icon { font-size: 4rem; margin-bottom: 16px; }
 
-/* Reset / zero button */
-.btn-ghost {
-  background: transparent;
-  border: 2px solid var(--border);
-  color: var(--text2);
-  padding: 10px 20px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-family: 'Tajawal', sans-serif;
-  font-size: 0.9rem;
-  transition: all var(--transition);
+.no-game svg {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 16px;
+  stroke: var(--text2);
+  opacity: 0.5;
 }
-.btn-ghost:hover { border-color: var(--red); color: var(--red); }
 
-.volume-icon { font-size: 1rem; }
+.glow-gold {
+  box-shadow: 0 0 20px rgba(245,200,66,0.4);
+}
+
+.winner-badge {
+  background: var(--purple);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  margin-right: 8px;
+}
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
+<!-- الشريط العلوي -->
 <div class="topbar">
-  <div class="topbar-logo">
-    <span class="gift-icon">🎁</span>
+  <div class="logo">
+    <svg class="icon icon-lg logo-icon" viewBox="0 0 24 24">
+      <rect x="3" y="8" width="18" height="12" rx="2" class="icon-gift"/>
+      <path d="M12 8L12 20" stroke="currentColor"/>
+      <path d="M8 5L12 8 16 5" stroke="currentColor" fill="none"/>
+      <circle cx="12" cy="11" r="1" fill="currentColor"/>
+      <circle cx="16" cy="11" r="1" fill="currentColor"/>
+      <circle cx="8" cy="11" r="1" fill="currentColor"/>
+    </svg>
     <span>سؤال وعيدية</span>
   </div>
   <div class="topbar-actions">
-    <button class="icon-btn" id="soundBtn" title="الصوت" onclick="toggleSound()">🔊</button>
-    <button class="icon-btn" id="darkBtn" title="الوضع الليلي" onclick="toggleDark()">🌙</button>
-    <button class="icon-btn" title="الإعدادات" onclick="openSettings()">⚙️</button>
+    <button class="icon-btn" id="soundBtn" title="الصوت">
+      <svg class="icon" viewBox="0 0 24 24">
+        <path d="M3 14L3 10 7 10 12 6 12 18 7 14 3 14Z" class="icon-volume"/>
+        <path d="M17 8C18.5 9.5 18.5 12.5 17 14" stroke="currentColor" fill="none"/>
+        <path d="M20 5C23 8 23 14 20 17" stroke="currentColor" fill="none"/>
+      </svg>
+    </button>
+    <button class="icon-btn" id="darkBtn" title="الوضع الليلي">
+      <svg class="icon" viewBox="0 0 24 24">
+        <path d="M12 3L12 5" stroke="currentColor"/>
+        <path d="M12 19L12 21" stroke="currentColor"/>
+        <path d="M5 12L3 12" stroke="currentColor"/>
+        <path d="M21 12L19 12" stroke="currentColor"/>
+        <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor"/>
+      </svg>
+    </button>
+    <button class="icon-btn" id="settingsBtn" title="الإعدادات">
+      <svg class="icon" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor"/>
+        <path d="M19.4 15C18.9 16 18.1 16.7 17.2 17.2L19 20.1" stroke="currentColor" fill="none"/>
+        <path d="M5 20.1L6.8 17.2C5.9 16.7 5.1 16 4.6 15L2 15" stroke="currentColor" fill="none"/>
+        <path d="M2 9L4.6 9C5.1 8 5.9 7.3 6.8 6.8L5 4" stroke="currentColor" fill="none"/>
+        <path d="M19 4L17.2 6.8C18.1 7.3 18.9 8 19.4 9L22 9" stroke="currentColor" fill="none"/>
+      </svg>
+    </button>
   </div>
 </div>
 
-<!-- TOAST CONTAINER -->
+<!-- حاوية الإشعارات -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- CONFETTI CONTAINER -->
+<!-- حاوية الكونفيتي -->
 <div class="confetti-container" id="confettiContainer"></div>
 
-<!-- MAIN -->
+<!-- المحتوى الرئيسي -->
 <div class="main">
   <div class="content-area">
 
-    <!-- LOBBY -->
+    <!-- شاشة البداية -->
     <div id="lobby">
-      <div class="lobby-logo">🎁</div>
+      <div class="lobby-logo">
+        <svg class="icon icon-gift" viewBox="0 0 24 24">
+          <rect x="3" y="8" width="18" height="12" rx="2"/>
+          <path d="M12 8L12 20"/>
+          <path d="M8 5L12 8 16 5"/>
+          <circle cx="12" cy="11" r="1"/>
+          <circle cx="16" cy="11" r="1"/>
+          <circle cx="8" cy="11" r="1"/>
+        </svg>
+      </div>
       <h1 class="lobby-title">سؤال وعيدية</h1>
-      <p class="lobby-subtitle">أضف اللاعبين وابدأ المتعة! 🎉</p>
-      <button class="lobby-btn" onclick="openSettings()">⚙️ إعداد اللعبة وابدأ</button>
-      <p style="margin-top:20px;color:var(--text2);font-size:0.9rem">أضف 2 إلى 6 لاعبين من الإعدادات</p>
+      <p class="lobby-subtitle">أضف اللاعبين وابدأ المتعة</p>
+      <button class="lobby-btn" id="lobbyStartBtn">إعداد اللعبة وابدأ</button>
+      <p style="margin-top:20px; color:var(--text2); font-size:1rem">أضف 2 إلى 6 لاعبين من الإعدادات</p>
     </div>
 
-    <!-- GAME CONTENT -->
+    <!-- محتوى اللعبة -->
     <div id="gameContent" style="display:none">
 
-      <!-- LEADERBOARD -->
-      <div class="leaderboard-section">
-        <div class="section-title">🏆 لوحة الشرف</div>
-        <table class="leaderboard-table" id="leaderboardTable">
+      <!-- لوحة الشرف -->
+      <div class="leaderboard">
+        <div class="section-title">
+          <svg class="icon icon-trophy" viewBox="0 0 24 24">
+            <path d="M6 9H4C2.9 9 2 8.1 2 7V5C2 3.9 2.9 3 4 3H20C21.1 3 22 3.9 22 5V7C22 8.1 21.1 9 20 9H18" stroke="currentColor" fill="none"/>
+            <path d="M12 15V21" stroke="currentColor"/>
+            <path d="M8 21H16" stroke="currentColor"/>
+            <path d="M12 3V6" stroke="currentColor"/>
+            <path d="M8 9C8 11.2 9.8 13 12 13C14.2 13 16 11.2 16 9" stroke="currentColor" fill="none"/>
+          </svg>
+          <span>لوحة الشرف</span>
+        </div>
+        <table class="leaderboard-table">
           <thead>
             <tr>
               <th>المركز</th>
@@ -968,14 +1654,37 @@ input[type="range"]::-webkit-slider-thumb {
         </table>
       </div>
 
-      <!-- SECTIONS -->
+      <!-- شريط التبويبات -->
+      <div class="tab-bar" id="tabBar" style="display:none">
+        <button class="tab-btn active" id="tab-questions" onclick="switchTab('questions')">
+          <svg class="icon" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor"/>
+            <path d="M12 16L12 12" stroke="currentColor" stroke-width="3"/>
+            <circle cx="12" cy="8" r="1" fill="currentColor"/>
+          </svg>
+          الأسئلة
+        </button>
+        <button class="tab-btn" id="tab-wheel" onclick="switchTab('wheel')">
+          <svg class="icon" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor"/>
+            <circle cx="12" cy="12" r="6" fill="none" stroke="currentColor"/>
+            <path d="M12 2L12 5" stroke="currentColor"/>
+            <path d="M12 19L12 22" stroke="currentColor"/>
+            <path d="M22 12L19 12" stroke="currentColor"/>
+            <path d="M5 12L2 12" stroke="currentColor"/>
+          </svg>
+          العجلة
+        </button>
+      </div>
+
+      <!-- قسم الأسئلة -->
       <div id="questionsSection" class="section active">
         <div class="question-card">
-          <div id="playerIndicator" class="player-indicator">
-            <div class="avatar" id="currentAvatar" style="background:#f5c842;color:#1a1a2e">أ</div>
+          <div class="player-indicator" id="playerIndicator">
+            <div class="player-avatar-large" id="currentAvatar" style="background:#f5c842">1</div>
             <div>
-              <div class="name" id="currentPlayerName">اللاعب</div>
-              <div class="turn-label">دورك الآن! 🎯</div>
+              <div class="player-name" id="currentPlayerName">اللاعب</div>
+              <div class="turn-label">دورك الآن</div>
             </div>
           </div>
 
@@ -995,152 +1704,210 @@ input[type="range"]::-webkit-slider-thumb {
 
           <div class="answers-grid" id="answersGrid">
             <button class="answer-btn" onclick="checkAnswer(0)">
-              <span class="answer-letter">أ</span><span id="ans0">—</span>
+              <span class="answer-letter">أ</span><span id="ans0">-</span>
             </button>
             <button class="answer-btn" onclick="checkAnswer(1)">
-              <span class="answer-letter">ب</span><span id="ans1">—</span>
+              <span class="answer-letter">ب</span><span id="ans1">-</span>
             </button>
             <button class="answer-btn" onclick="checkAnswer(2)">
-              <span class="answer-letter">ج</span><span id="ans2">—</span>
+              <span class="answer-letter">ج</span><span id="ans2">-</span>
             </button>
             <button class="answer-btn" onclick="checkAnswer(3)">
-              <span class="answer-letter">د</span><span id="ans3">—</span>
+              <span class="answer-letter">د</span><span id="ans3">-</span>
             </button>
           </div>
 
           <div class="nav-buttons">
-            <button class="nav-btn btn-secondary" onclick="prevQuestion()">⬅ السابق</button>
-            <button class="nav-btn btn-primary" id="nextBtn" onclick="nextQuestion()">التالي ➡</button>
+            <button class="nav-btn btn-secondary" onclick="prevQuestion()">السابق</button>
+            <button class="nav-btn btn-primary" id="nextBtn" onclick="nextQuestion()">التالي</button>
           </div>
         </div>
       </div>
 
+      <!-- قسم العجلة -->
       <div id="wheelSection" class="section">
-        <div class="wheel-section-layout">
+        <div class="wheel-section">
           <div class="wheel-container">
             <div class="wheel-wrapper">
-              <div class="wheel-arrow">🔽</div>
+              <div class="wheel-arrow">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 2L12 16" stroke="currentColor"/>
+                  <path d="M8 12L12 16 16 12" stroke="currentColor" fill="none"/>
+                </svg>
+              </div>
               <canvas id="wheelCanvas" class="wheel-canvas" width="320" height="320"></canvas>
-              <div class="wheel-center" onclick="spinWheel()">🎰</div>
+              <div class="wheel-center" id="wheelCenter" onclick="spinWheel()">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor"/>
+                  <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                  <path d="M12 2L12 5" stroke="currentColor"/>
+                  <path d="M22 12L19 12" stroke="currentColor"/>
+                </svg>
+              </div>
             </div>
             <div class="spin-info" id="spinInfo">
-              <span class="spin-needed">أجب بشكل صحيح لتدوير العجلة!</span>
+              <span class="spin-needed">انتظر حتى نهاية الأسئلة لمعرفة الفائز</span>
             </div>
             <button class="spin-btn" id="spinBtn" onclick="spinWheel()" disabled>
-              🎡 أدر العجلة!
+              أدر العجلة
             </button>
             <div class="wheel-result" id="wheelResult"></div>
           </div>
-          <div class="prize-edit-panel">
-            <div class="section-title">✏️ تخصيص الجوائز</div>
+          
+          <div class="prize-panel">
+            <div class="section-title">
+              <svg class="icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor"/>
+                <path d="M12 6L12 12 16 14" stroke="currentColor"/>
+              </svg>
+              تخصيص الجوائز
+            </div>
             <div id="prizeInputs"></div>
-            <button class="nav-btn btn-primary" style="width:100%;margin-top:10px" onclick="savePrizes()">💾 حفظ الجوائز</button>
+            <button class="nav-btn btn-primary" style="width:100%; margin-top:10px" onclick="savePrizes()">
+              حفظ الجوائز
+            </button>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- TAB BAR -->
-<div class="tab-bar" id="tabBar" style="display:none">
-  <button class="tab-btn active" id="tab-questions" onclick="switchTab('questions')">
-    <span class="tab-icon">📋</span>
-    الأسئلة
-  </button>
-  <button class="tab-btn" id="tab-wheel" onclick="switchTab('wheel')">
-    <span class="tab-icon">🎡</span>
-    العجلة
-  </button>
-</div>
-
-<!-- SETTINGS OVERLAY -->
+<!-- طبقة الإعدادات -->
 <div class="settings-overlay" id="settingsOverlay" onclick="closeSettings()"></div>
 
-<!-- SETTINGS PANEL -->
+<!-- لوحة الإعدادات -->
 <div class="settings-panel" id="settingsPanel">
   <div class="settings-header">
-    <h2>⚙️ إعدادات اللعبة</h2>
-    <button class="icon-btn" onclick="closeSettings()">✕</button>
+    <h2>
+      <svg class="icon" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor"/>
+        <path d="M19.4 15C18.9 16 18.1 16.7 17.2 17.2L19 20.1" stroke="currentColor" fill="none"/>
+        <path d="M5 20.1L6.8 17.2C5.9 16.7 5.1 16 4.6 15L2 15" stroke="currentColor" fill="none"/>
+        <path d="M2 9L4.6 9C5.1 8 5.9 7.3 6.8 6.8L5 4" stroke="currentColor" fill="none"/>
+        <path d="M19 4L17.2 6.8C18.1 7.3 18.9 8 19.4 9L22 9" stroke="currentColor" fill="none"/>
+      </svg>
+      إعدادات اللعبة
+    </h2>
+    <button class="icon-btn" onclick="closeSettings()">
+      <svg class="icon" viewBox="0 0 24 24">
+        <path d="M18 6L6 18" stroke="currentColor"/>
+        <path d="M6 6L18 18" stroke="currentColor"/>
+      </svg>
+    </button>
   </div>
   <div class="settings-body">
 
-    <!-- Players -->
+    <!-- اللاعبون -->
     <div class="settings-group">
-      <div class="settings-group-title">👥 اللاعبون (2-6)</div>
-      <div id="playersList"></div>
+      <div class="settings-group-title">
+        <svg class="icon" viewBox="0 0 24 24">
+          <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor"/>
+          <path d="M5 20L5 17C5 13.7 7.7 11 11 11L13 11C16.3 11 19 13.7 19 17L19 20" stroke="currentColor" fill="none"/>
+        </svg>
+        اللاعبون (2-6)
+      </div>
+      <div id="playersList" class="players-list"></div>
       <button class="add-player-btn" onclick="addPlayer()">+ إضافة لاعب</button>
     </div>
 
-    <!-- Timer -->
+    <!-- وقت الإجابة -->
     <div class="settings-group">
-      <div class="settings-group-title">⏱️ وقت الإجابة</div>
+      <div class="settings-group-title">
+        <svg class="icon" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor"/>
+          <path d="M12 6L12 12 16 14" stroke="currentColor"/>
+        </svg>
+        وقت الإجابة
+      </div>
       <div class="range-row">
         <div class="range-label">
           <span>الوقت</span>
           <span id="timerValLabel">30 ثانية</span>
         </div>
-        <input type="range" id="timerRange" min="5" max="60" value="30"
-          oninput="updateTimerVal(this.value)" style="--val:45%">
+        <input type="range" id="timerRange" min="5" max="60" value="30" oninput="updateTimerVal(this.value)">
       </div>
     </div>
 
-    <!-- Sound -->
+    <!-- الصوت -->
     <div class="settings-group">
-      <div class="settings-group-title">🔊 الصوت</div>
+      <div class="settings-group-title">
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M3 14L3 10 7 10 12 6 12 18 7 14 3 14Z" stroke="currentColor" fill="none"/>
+          <path d="M17 8C18.5 9.5 18.5 12.5 17 14" stroke="currentColor" fill="none"/>
+          <path d="M20 5C23 8 23 14 20 17" stroke="currentColor" fill="none"/>
+        </svg>
+        الصوت
+      </div>
       <div class="toggle-row">
         <span class="toggle-label">تفعيل الأصوات</span>
-        <div class="toggle on" id="soundToggle" onclick="toggleSoundSetting()"></div>
+        <div class="toggle on" id="soundToggle" onclick="toggleSound()"></div>
       </div>
       <div class="range-row">
-        <div class="range-label"><span>مستوى الصوت</span><span id="volLabel">70%</span></div>
-        <input type="range" id="volRange" min="0" max="100" value="70"
-          oninput="updateVol(this.value)" style="--val:70%">
+        <div class="range-label">
+          <span>مستوى الصوت</span>
+          <span id="volLabel">70%</span>
+        </div>
+        <input type="range" id="volRange" min="0" max="100" value="70" oninput="updateVol(this.value)">
       </div>
     </div>
 
-    <!-- Dark Mode -->
+    <!-- المظهر -->
     <div class="settings-group">
-      <div class="settings-group-title">🌙 المظهر</div>
+      <div class="settings-group-title">
+        <svg class="icon" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor"/>
+          <path d="M12 3L12 1" stroke="currentColor"/>
+          <path d="M12 23L12 21" stroke="currentColor"/>
+          <path d="M21 12L23 12" stroke="currentColor"/>
+          <path d="M1 12L3 12" stroke="currentColor"/>
+        </svg>
+        المظهر
+      </div>
       <div class="toggle-row">
         <span class="toggle-label">الوضع الليلي</span>
         <div class="toggle" id="darkToggle" onclick="toggleDark()"></div>
       </div>
     </div>
 
-    <!-- Reset -->
+    <!-- إعادة التعيين -->
     <div class="settings-group">
-      <div class="settings-group-title">🔄 إعادة التعيين</div>
-      <button class="btn-ghost" style="width:100%;margin-bottom:10px" onclick="confirmReset()">
-        🗑️ تصفير النقاط والمبالغ
+      <div class="settings-group-title">
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M3 12C3 7 7 3 12 3C17 3 21 7 21 12C21 17 17 21 12 21C8.5 21 5.5 19 4 16" stroke="currentColor" fill="none"/>
+          <path d="M3 3L3 7 7 7" stroke="currentColor" fill="none"/>
+        </svg>
+        إعادة التعيين
+      </div>
+      <button class="btn-ghost" style="width:100%; margin-bottom:10px" onclick="confirmReset()">
+        تصفير النقاط والمبالغ
       </button>
       <button class="btn-ghost" style="width:100%" onclick="confirmResetAll()">
-        ♻️ إعادة تعيين كاملة
+        إعادة تعيين كاملة
       </button>
     </div>
 
-    <button class="start-game-btn" onclick="startGame()">🎮 ابدأ اللعبة!</button>
+    <button class="start-game-btn" onclick="startGame()">ابدأ اللعبة</button>
   </div>
 </div>
 
-<!-- CONFIRM MODAL -->
+<!-- نافذة التأكيد -->
 <div class="modal-overlay" id="confirmModal">
   <div class="modal">
     <h3 id="modalTitle">تأكيد</h3>
     <p id="modalMsg">هل أنت متأكد؟</p>
     <div class="modal-actions">
-      <button class="nav-btn btn-danger" onclick="confirmYes()">✔ نعم</button>
-      <button class="nav-btn btn-secondary" onclick="closeModal()">✕ إلغاء</button>
+      <button class="nav-btn btn-danger" onclick="confirmYes()">نعم</button>
+      <button class="nav-btn btn-secondary" onclick="closeModal()">إلغاء</button>
     </div>
   </div>
 </div>
 
 <script>
 // ============================================================
-// STATE
+// الحالة الرئيسية
 // ============================================================
-let state = {
+const state = {
   players: [],
   currentPlayerIdx: 0,
   currentQuestionIdx: 0,
@@ -1153,8 +1920,9 @@ let state = {
   volume: 0.7,
   darkMode: false,
   gameStarted: false,
-  canSpin: false,
+  wheelReady: false,
   spinning: false,
+  wheelUsed: false,
   prizes: [
     { label: '10 ريال', value: 10, color: '#f5c842' },
     { label: '25 ريال', value: 25, color: '#2ecc71' },
@@ -1165,138 +1933,177 @@ let state = {
   ],
   wheelAngle: 0,
   modalAction: null,
+  audioCtx: null,
+  isAudioEnabled: false,
+  animationFrame: null,
+  questionsCompleted: false
 };
 
-const PLAYER_EMOJIS = ['😊','🎉','🌟','🦁','🐯','🦊'];
-const PLAYER_COLORS = ['#f5c842','#2ecc71','#3498db','#e74c3c','#9b59b6','#e67e22'];
+// ألوان اللاعبين
+const PLAYER_COLORS = ['#f5c842', '#2ecc71', '#3498db', '#e74c3c', '#9b59b6', '#e67e22'];
 
 // ============================================================
-// QUESTIONS DATABASE
+// بنك الأسئلة
 // ============================================================
 const questions = [
-  { q: 'ما هو عاصمة المملكة العربية السعودية؟', options: ['جدة','الرياض','مكة المكرمة','الدمام'], correct: 1 },
-  { q: 'كم عدد أيام شهر رمضان؟', options: ['28','29 أو 30','31','27'], correct: 1 },
-  { q: 'ما هي أطول نهر في العالم؟', options: ['نهر النيل','نهر الأمازون','نهر الكونغو','نهر المسيسيبي'], correct: 0 },
-  { q: 'كم عدد كواكب المجموعة الشمسية؟', options: ['7','8','9','10'], correct: 1 },
-  { q: 'ما هو لون السماء الصافية؟', options: ['أخضر','أصفر','أزرق','أحمر'], correct: 2 },
-  { q: 'ما هو أكبر دولة في العالم من حيث المساحة؟', options: ['الصين','كندا','روسيا','أمريكا'], correct: 2 },
-  { q: 'كم عدد حروف اللغة العربية؟', options: ['26','28','30','32'], correct: 1 },
-  { q: 'ما هي عاصمة الإمارات؟', options: ['دبي','الشارقة','أبوظبي','عجمان'], correct: 2 },
-  { q: 'ما هو أسرع حيوان بري؟', options: ['الأسد','الفهد','الحصان','النمر'], correct: 1 },
-  { q: 'كم عدد أضلاع المثلث؟', options: ['2','3','4','5'], correct: 1 },
-  { q: 'ما هو أكبر محيط في العالم؟', options: ['المحيط الهندي','المحيط الأطلسي','المحيط الهادئ','المحيط المتجمد'], correct: 2 },
-  { q: 'ما عاصمة مصر؟', options: ['الإسكندرية','أسوان','القاهرة','الأقصر'], correct: 2 },
-  { q: 'كم يوماً في السنة الميلادية العادية؟', options: ['360','364','365','366'], correct: 2 },
-  { q: 'من اخترع الهاتف؟', options: ['توماس إديسون','ألكسندر غراهام بيل','نيكولا تيسلا','أينشتاين'], correct: 1 },
-  { q: 'ما هو أصغر قارات العالم؟', options: ['أوروبا','أستراليا','أنتاركتيكا','أمريكا الجنوبية'], correct: 1 },
-  { q: 'ما اللغة الأكثر انتشاراً في العالم؟', options: ['الإنجليزية','الإسبانية','الصينية','العربية'], correct: 2 },
-  { q: 'كم عدد أشهر السنة؟', options: ['10','11','12','13'], correct: 2 },
-  { q: 'أي من هذه الفواكه تنمو تحت الأرض؟', options: ['التفاح','الفراولة','الموز','الفول السوداني'], correct: 3 },
-  { q: 'ما هو ناتج 7 × 8؟', options: ['54','56','58','60'], correct: 1 },
-  { q: 'ما عاصمة فرنسا؟', options: ['برلين','روما','باريس','مدريد'], correct: 2 },
+  { q: 'ما هي عاصمة المملكة العربية السعودية؟', options: ['جدة', 'الرياض', 'مكة المكرمة', 'الدمام'], correct: 1 },
+  { q: 'كم عدد أيام شهر رمضان؟', options: ['28', '29 أو 30', '31', '27'], correct: 1 },
+  { q: 'ما هي أطول نهر في العالم؟', options: ['نهر النيل', 'نهر الأمازون', 'نهر الكونغو', 'نهر المسيسيبي'], correct: 0 },
+  { q: 'كم عدد كواكب المجموعة الشمسية؟', options: ['7', '8', '9', '10'], correct: 1 },
+  { q: 'ما هو لون السماء الصافية؟', options: ['أخضر', 'أصفر', 'أزرق', 'أحمر'], correct: 2 },
+  { q: 'ما هي أكبر دولة في العالم من حيث المساحة؟', options: ['الصين', 'كندا', 'روسيا', 'أمريكا'], correct: 2 },
+  { q: 'كم عدد حروف اللغة العربية؟', options: ['26', '28', '30', '32'], correct: 1 },
+  { q: 'ما هي عاصمة الإمارات؟', options: ['دبي', 'الشارقة', 'أبوظبي', 'عجمان'], correct: 2 },
+  { q: 'ما هو أسرع حيوان بري؟', options: ['الأسد', 'الفهد', 'الحصان', 'النمر'], correct: 1 },
+  { q: 'كم عدد أضلاع المثلث؟', options: ['2', '3', '4', '5'], correct: 1 },
+  { q: 'ما هو أكبر محيط في العالم؟', options: ['المحيط الهندي', 'المحيط الأطلسي', 'المحيط الهادئ', 'المحيط المتجمد'], correct: 2 },
+  { q: 'ما عاصمة مصر؟', options: ['الإسكندرية', 'أسوان', 'القاهرة', 'الأقصر'], correct: 2 },
+  { q: 'كم يوماً في السنة الميلادية العادية؟', options: ['360', '364', '365', '366'], correct: 2 },
+  { q: 'من اخترع الهاتف؟', options: ['توماس إديسون', 'ألكسندر غراهام بيل', 'نيكولا تيسلا', 'أينشتاين'], correct: 1 },
+  { q: 'ما هي أصغر قارات العالم؟', options: ['أوروبا', 'أستراليا', 'أنتاركتيكا', 'أمريكا الجنوبية'], correct: 1 },
+  { q: 'ما اللغة الأكثر انتشاراً في العالم؟', options: ['الإنجليزية', 'الإسبانية', 'الصينية', 'العربية'], correct: 2 },
+  { q: 'كم عدد أشهر السنة؟', options: ['10', '11', '12', '13'], correct: 2 },
+  { q: 'أي من هذه الفواكه تنمو تحت الأرض؟', options: ['التفاح', 'الفراولة', 'الموز', 'الفول السوداني'], correct: 3 },
+  { q: 'ما هو ناتج 7 × 8؟', options: ['54', '56', '58', '60'], correct: 1 },
+  { q: 'ما عاصمة فرنسا؟', options: ['برلين', 'روما', 'باريس', 'مدريد'], correct: 2 },
 ];
 
 // ============================================================
-// AUDIO (Web Audio API)
+// نظام الصوت
 // ============================================================
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let audioCtx = null;
-
-function getAudioCtx() {
-  if (!audioCtx) audioCtx = new AudioCtx();
-  return audioCtx;
+function initAudio() {
+  if (!state.audioCtx) {
+    try {
+      state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+      console.warn('Web Audio API غير مدعوم');
+      return null;
+    }
+  }
+  return state.audioCtx;
 }
 
-function playTone(freq, type, duration, vol=0.3) {
+document.addEventListener('click', function enableAudio() {
+  if (state.audioCtx && state.audioCtx.state === 'suspended') {
+    state.audioCtx.resume();
+  }
+  state.isAudioEnabled = true;
+}, { once: true });
+
+function playTone(freq, type, duration, vol = 0.3) {
   if (!state.soundOn) return;
+  
+  const ctx = initAudio();
+  if (!ctx || ctx.state !== 'running') return;
+
   try {
-    const ctx = getAudioCtx();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
+    
     osc.connect(gain);
     gain.connect(ctx.destination);
+    
     osc.type = type;
     osc.frequency.setValueAtTime(freq, ctx.currentTime);
     gain.gain.setValueAtTime(vol * state.volume, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + duration);
-  } catch(e){}
+  } catch (e) {
+    console.warn('خطأ في تشغيل الصوت:', e);
+  }
 }
 
 function playClick() { playTone(800, 'square', 0.06, 0.15); }
 function playCorrect() {
   playTone(523, 'sine', 0.15);
-  setTimeout(()=>playTone(659, 'sine', 0.15), 150);
-  setTimeout(()=>playTone(784, 'sine', 0.3), 300);
+  setTimeout(() => playTone(659, 'sine', 0.15), 150);
+  setTimeout(() => playTone(784, 'sine', 0.3), 300);
 }
 function playWrong() {
   playTone(300, 'sawtooth', 0.12, 0.2);
-  setTimeout(()=>playTone(200, 'sawtooth', 0.2, 0.2), 120);
+  setTimeout(() => playTone(200, 'sawtooth', 0.2, 0.2), 120);
 }
 function playWin() {
-  [523,659,784,1047].forEach((f,i) => setTimeout(()=>playTone(f,'sine',0.4,0.4), i*120));
+  [523, 659, 784, 1047].forEach((f, i) => 
+    setTimeout(() => playTone(f, 'sine', 0.4, 0.4), i * 120)
+  );
 }
 function playSpin() {
   if (!state.soundOn) return;
+  
+  const ctx = initAudio();
+  if (!ctx || ctx.state !== 'running') return;
+
   try {
-    const ctx = getAudioCtx();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
+    
     osc.connect(gain);
     gain.connect(ctx.destination);
+    
     osc.type = 'sine';
     osc.frequency.setValueAtTime(200, ctx.currentTime);
     osc.frequency.linearRampToValueAtTime(800, ctx.currentTime + 2);
     osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 4);
+    
     gain.gain.setValueAtTime(0.2 * state.volume, ctx.currentTime);
     gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 4);
+    
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + 4);
-  } catch(e){}
+  } catch (e) {
+    console.warn('خطأ في تشغيل صوت العجلة:', e);
+  }
 }
-function playSwitch() { playTone(440, 'sine', 0.1, 0.2); }
-function playMenuOpen() { playTone(600, 'sine', 0.12, 0.15); }
 
 // ============================================================
-// DARK MODE
+// الوضع الليلي
 // ============================================================
 function toggleDark() {
   state.darkMode = !state.darkMode;
   document.body.classList.toggle('dark', state.darkMode);
-  document.getElementById('darkBtn').textContent = state.darkMode ? '☀️' : '🌙';
-  const dt = document.getElementById('darkToggle');
-  dt.classList.toggle('on', state.darkMode);
+  
+  const darkBtn = document.getElementById('darkBtn');
+  darkBtn.innerHTML = state.darkMode ? 
+    '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor"/><path d="M12 3L12 1" stroke="currentColor"/><path d="M12 23L12 21" stroke="currentColor"/><path d="M21 12L23 12" stroke="currentColor"/><path d="M1 12L3 12" stroke="currentColor"/></svg>' :
+    '<svg class="icon" viewBox="0 0 24 24"><path d="M12 3L12 5" stroke="currentColor"/><path d="M12 19L12 21" stroke="currentColor"/><path d="M5 12L3 12" stroke="currentColor"/><path d="M21 12L19 12" stroke="currentColor"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor"/></svg>';
+  
+  document.getElementById('darkToggle').classList.toggle('on', state.darkMode);
   saveSettings();
   playClick();
 }
 
 // ============================================================
-// SOUND TOGGLE
+// الصوت
 // ============================================================
 function toggleSound() {
   state.soundOn = !state.soundOn;
-  document.getElementById('soundBtn').textContent = state.soundOn ? '🔊' : '🔇';
-  const st = document.getElementById('soundToggle');
-  st.classList.toggle('on', state.soundOn);
+  
+  const soundBtn = document.getElementById('soundBtn');
+  soundBtn.innerHTML = state.soundOn ?
+    '<svg class="icon" viewBox="0 0 24 24"><path d="M3 14L3 10 7 10 12 6 12 18 7 14 3 14Z" stroke="currentColor"/><path d="M17 8C18.5 9.5 18.5 12.5 17 14" stroke="currentColor" fill="none"/><path d="M20 5C23 8 23 14 20 17" stroke="currentColor" fill="none"/></svg>' :
+    '<svg class="icon" viewBox="0 0 24 24"><path d="M3 14L3 10 7 10 12 6 12 18 7 14 3 14Z" stroke="currentColor"/><path d="M19 9L15 15" stroke="currentColor"/><path d="M15 9L19 15" stroke="currentColor"/></svg>';
+  
+  document.getElementById('soundToggle').classList.toggle('on', state.soundOn);
   saveSettings();
-}
-function toggleSoundSetting() {
-  toggleSound();
+  playClick();
 }
 
 // ============================================================
-// SETTINGS PANEL
+// لوحة الإعدادات
 // ============================================================
 function openSettings() {
-  playMenuOpen();
+  playClick();
   document.getElementById('settingsPanel').classList.add('open');
   document.getElementById('settingsOverlay').classList.add('open');
   renderPlayersList();
   renderPrizeInputs();
 }
+
 function closeSettings() {
-  playMenuOpen();
+  playClick();
   document.getElementById('settingsPanel').classList.remove('open');
   document.getElementById('settingsOverlay').classList.remove('open');
 }
@@ -1304,21 +2111,30 @@ function closeSettings() {
 function renderPlayersList() {
   const list = document.getElementById('playersList');
   list.innerHTML = '';
+  
   state.players.forEach((p, i) => {
     const row = document.createElement('div');
     row.className = 'player-row';
     row.innerHTML = `
-      <div class="avatar-preview" style="background:${PLAYER_COLORS[i%6]};color:#fff">${PLAYER_EMOJIS[i%6]}</div>
-      <input class="input-field" type="text" value="${p.name}" placeholder="اسم اللاعب ${i+1}"
+      <div class="avatar-preview" style="background: ${PLAYER_COLORS[i % 6]}">${i + 1}</div>
+      <input class="input-field" type="text" value="${p.name}" placeholder="اسم اللاعب ${i + 1}"
         oninput="updatePlayerName(${i}, this.value)">
-      <button class="delete-btn" onclick="removePlayer(${i})">🗑️</button>
+      <button class="delete-btn" onclick="removePlayer(${i})">
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M18 6L6 18" stroke="currentColor"/>
+          <path d="M6 6L18 18" stroke="currentColor"/>
+        </svg>
+      </button>
     `;
     list.appendChild(row);
   });
 }
 
 function addPlayer() {
-  if (state.players.length >= 6) { showToast('الحد الأقصى 6 لاعبين!', 'error'); return; }
+  if (state.players.length >= 6) {
+    showToast('الحد الأقصى 6 لاعبين', 'error');
+    return;
+  }
   state.players.push({ name: `لاعب ${state.players.length + 1}`, points: 0, amount: 0 });
   renderPlayersList();
   saveSettings();
@@ -1327,10 +2143,13 @@ function addPlayer() {
 
 function removePlayer(i) {
   if (state.players.length <= 2 && state.gameStarted) {
-    showToast('يجب أن يكون هناك 2 لاعبين على الأقل!', 'error'); return;
+    showToast('يجب أن يكون هناك 2 لاعبين على الأقل', 'error');
+    return;
   }
   state.players.splice(i, 1);
-  if (state.currentPlayerIdx >= state.players.length) state.currentPlayerIdx = 0;
+  if (state.currentPlayerIdx >= state.players.length) {
+    state.currentPlayerIdx = 0;
+  }
   renderPlayersList();
   updateLeaderboard();
   saveSettings();
@@ -1354,24 +2173,33 @@ function updateTimerVal(val) {
 function updateVol(val) {
   state.volume = val / 100;
   document.getElementById('volLabel').textContent = `${val}%`;
-  const pct = val;
-  document.getElementById('volRange').style.setProperty('--val', pct + '%');
+  document.getElementById('volRange').style.setProperty('--val', val + '%');
   saveSettings();
 }
 
 // ============================================================
-// START GAME
+// بدء اللعبة
 // ============================================================
 function startGame() {
   if (state.players.length < 2) {
-    showToast('أضف لاعبَين على الأقل!', 'error'); return;
+    showToast('أضف لاعبَين على الأقل', 'error');
+    return;
   }
+
   state.gameStarted = true;
   state.currentPlayerIdx = Math.floor(Math.random() * state.players.length);
   state.currentQuestionIdx = 0;
   state.usedQuestions = [];
   state.answeredQuestions = {};
-  state.canSpin = false;
+  state.wheelReady = false;
+  state.spinning = false;
+  state.wheelUsed = false;
+  state.questionsCompleted = false;
+  
+  if (state.timerInterval) {
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+  }
 
   document.getElementById('lobby').style.display = 'none';
   document.getElementById('gameContent').style.display = 'block';
@@ -1384,12 +2212,12 @@ function startGame() {
   drawWheel();
   renderPrizeInputs();
 
-  showToast(`🎉 اللعبة بدأت! دور ${state.players[state.currentPlayerIdx].name}`, 'info');
+  showToast(`اللعبة بدأت دور ${state.players[state.currentPlayerIdx].name}`, 'info');
   playWin();
 }
 
 // ============================================================
-// QUESTIONS
+// الأسئلة
 // ============================================================
 function getAvailableQuestions() {
   return questions.filter((_, i) => !state.usedQuestions.includes(i));
@@ -1397,11 +2225,18 @@ function getAvailableQuestions() {
 
 function loadQuestion() {
   stopTimer();
+  
   const available = getAvailableQuestions();
   if (available.length === 0) {
     state.usedQuestions = [];
   }
+  
   const pool = getAvailableQuestions();
+  if (pool.length === 0) {
+    showToast('لا توجد أسئلة متاحة', 'error');
+    return;
+  }
+  
   const randIdx = Math.floor(Math.random() * pool.length);
   const qIdx = questions.indexOf(pool[randIdx]);
   state.currentQuestionIdx = qIdx;
@@ -1411,12 +2246,12 @@ function loadQuestion() {
   document.getElementById('questionNum').textContent =
     `سؤال ${state.usedQuestions.length + 1} / ${questions.length}`;
 
-  const letters = ['أ','ب','ج','د'];
+  const letters = ['أ', 'ب', 'ج', 'د'];
   const btns = document.querySelectorAll('.answer-btn');
   btns.forEach((btn, i) => {
     btn.className = 'answer-btn';
     btn.disabled = false;
-    btn.querySelector(`#ans${i}`).textContent = q.options[i];
+    document.getElementById(`ans${i}`).textContent = q.options[i];
     btn.querySelector('.answer-letter').textContent = letters[i];
   });
 
@@ -1426,6 +2261,7 @@ function loadQuestion() {
 
 function checkAnswer(idx) {
   if (!state.gameStarted) return;
+  
   const q = questions[state.currentQuestionIdx];
   stopTimer();
   playClick();
@@ -1438,82 +2274,104 @@ function checkAnswer(idx) {
     playCorrect();
     state.players[state.currentPlayerIdx].points += 10;
     state.usedQuestions.push(state.currentQuestionIdx);
-    state.canSpin = true;
     updateLeaderboard();
-    showToast(`✅ إجابة صحيحة! +10 نقاط. ادور العجلة!`, 'success');
-    document.getElementById('spinBtn').disabled = false;
-    document.getElementById('spinInfo').innerHTML =
-      `<span class="spin-needed" style="color:var(--green)">🎉 يمكنك الآن دوران العجلة!</span>`;
+    showToast(`إجابة صحيحة +10 نقاط`, 'success');
+    
     setTimeout(() => {
-      switchTab('wheel');
-      nextTurn();
-    }, 1800);
+      if (state.usedQuestions.length === questions.length) {
+        endQuestions();
+      } else {
+        nextTurn();
+        loadQuestion();
+      }
+    }, 1500);
   } else {
     btns[idx].classList.add('wrong');
     playWrong();
-    showToast(`❌ إجابة خاطئة! انتقال للاعب التالي`, 'error');
+    showToast(`إجابة خاطئة`, 'error');
+    
     setTimeout(() => {
-      nextTurn(false);
-      loadQuestion();
+      if (state.usedQuestions.length === questions.length) {
+        endQuestions();
+      } else {
+        nextTurn();
+        loadQuestion();
+      }
     }, 1500);
   }
 
   saveGame();
 }
 
-function nextQuestion() {
-  playClick();
-  stopTimer();
-  state.usedQuestions.push(state.currentQuestionIdx);
-  nextTurn(false);
-  loadQuestion();
-}
-
-function prevQuestion() {
-  playClick();
-  stopTimer();
-  if (state.usedQuestions.length > 0) {
-    state.usedQuestions.pop();
-  }
-  nextTurn(false);
-  loadQuestion();
-}
-
-function nextTurn(keepSpin = false) {
-  if (!keepSpin) {
-    state.canSpin = false;
-    document.getElementById('spinBtn').disabled = true;
-    document.getElementById('spinInfo').innerHTML =
-      `<span class="spin-needed">أجب بشكل صحيح لتدوير العجلة!</span>`;
-  }
+function nextTurn() {
+  if (state.players.length === 0) return;
   state.currentPlayerIdx = (state.currentPlayerIdx + 1) % state.players.length;
   renderPlayerIndicator();
-  playSwitch();
+  playClick();
   updateLeaderboard();
 }
 
+function endQuestions() {
+  state.questionsCompleted = true;
+  
+  const sorted = [...state.players].sort((a, b) => b.points - a.points);
+  const winner = sorted[0];
+  const winnerIdx = state.players.findIndex(p => p.name === winner.name);
+  
+  state.currentPlayerIdx = winnerIdx;
+  renderPlayerIndicator();
+  
+  document.getElementById('playerIndicator').classList.add('winner-indicator');
+  document.getElementById('spinInfo').innerHTML = 
+    `<span class="winner-info">الفائز: ${winner.name} (${winner.points} نقطة)</span>`;
+  
+  state.wheelReady = true;
+  document.getElementById('spinBtn').disabled = false;
+  document.getElementById('wheelCenter').classList.remove('disabled');
+  
+  showToast(`${winner.name} هو الفائز! أدر العجلة`, 'winner');
+  switchTab('wheel');
+  playWin();
+}
+
 // ============================================================
-// TIMER
+// المؤقت
 // ============================================================
 function startTimer() {
+  stopTimer();
+  
   state.timerLeft = state.timerSeconds;
   updateTimerUI();
+  
   state.timerInterval = setInterval(() => {
     state.timerLeft--;
     updateTimerUI();
+    
     if (state.timerLeft <= 0) {
       stopTimer();
       playWrong();
-      showToast('⏰ انتهى الوقت!', 'error');
+      showToast('انتهى الوقت', 'error');
+      
       const btns = document.querySelectorAll('.answer-btn');
       btns.forEach(b => b.disabled = true);
-      setTimeout(() => { nextTurn(); loadQuestion(); }, 1200);
+      
+      setTimeout(() => {
+        if (state.usedQuestions.length === questions.length) {
+          endQuestions();
+        } else {
+          nextTurn();
+          loadQuestion();
+        }
+      }, 1200);
     }
   }, 1000);
 }
 
 function stopTimer() {
-  clearInterval(state.timerInterval);
+  if (state.timerInterval) {
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+  }
 }
 
 function updateTimerUI() {
@@ -1522,34 +2380,53 @@ function updateTimerUI() {
   const offset = circ * (1 - pct);
   document.getElementById('timerProgress').style.strokeDashoffset = offset;
   document.getElementById('timerText').textContent = state.timerLeft;
+  
   const ring = document.getElementById('timerRing');
   ring.className = 'timer-ring';
-  if (pct <= 0.5 && pct > 0.25) ring.classList.add('warning');
-  else if (pct <= 0.25) ring.classList.add('danger');
+  
+  if (pct <= 0.5 && pct > 0.25) {
+    ring.classList.add('warning');
+  } else if (pct <= 0.25) {
+    ring.classList.add('danger');
+  }
 }
 
 // ============================================================
-// LEADERBOARD
+// لوحة الشرف
 // ============================================================
 function updateLeaderboard() {
+  if (!state.players.length) return;
+  
   const sorted = [...state.players]
     .map((p, i) => ({ ...p, origIdx: i }))
     .sort((a, b) => b.points - a.points || b.amount - a.amount);
 
-  const medals = ['🥇', '🥈', '🥉'];
+  const medals = [
+    '<svg class="icon rank-1" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor"/><circle cx="12" cy="8" r="3" fill="none" stroke="currentColor"/><path d="M6 18L8 14 16 14 18 18" stroke="currentColor" fill="none"/></svg>',
+    '<svg class="icon rank-2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor"/><path d="M8 8L12 5 16 8 14 13 10 13 8 8Z" stroke="currentColor" fill="none"/><path d="M7 16L17 16" stroke="currentColor"/></svg>',
+    '<svg class="icon rank-3" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor"/><path d="M12 6L10 9 6 10 9 13 8 17 12 15 16 17 15 13 18 10 14 9 12 6Z" stroke="currentColor" fill="none"/></svg>'
+  ];
+
   const tbody = document.getElementById('leaderboardBody');
   tbody.innerHTML = '';
+  
   sorted.forEach((p, rank) => {
     const isCurrent = p.origIdx === state.currentPlayerIdx;
+    const isWinner = state.questionsCompleted && rank === 0;
     const tr = document.createElement('tr');
-    if (isCurrent) tr.className = 'current-player-row';
+    
+    if (isWinner) {
+      tr.className = 'winner-row';
+    } else if (isCurrent) {
+      tr.className = 'current-player-row';
+    }
+    
     tr.innerHTML = `
-      <td><span class="medal">${medals[rank] || (rank + 1)}</span></td>
+      <td><span class="rank-medal">${medals[rank] || (rank + 1)}</span></td>
       <td>
-        <span class="player-avatar" style="background:${PLAYER_COLORS[p.origIdx%6]};color:#fff">
-          ${PLAYER_EMOJIS[p.origIdx%6]}
-        </span>
-        ${p.name}${isCurrent ? ' ⬅' : ''}
+        <span class="player-avatar" style="background: ${PLAYER_COLORS[p.origIdx % 6]}">${p.origIdx + 1}</span>
+        ${p.name}
+        ${isWinner ? '<span class="winner-badge">الفائز</span>' : ''}
       </td>
       <td><span class="amount-badge">${p.amount} ر</span></td>
       <td><span class="points-badge">${p.points} نقطة</span></td>
@@ -1559,38 +2436,39 @@ function updateLeaderboard() {
 }
 
 // ============================================================
-// PLAYER INDICATOR
+// مؤشر اللاعب الحالي
 // ============================================================
 function renderPlayerIndicator() {
   if (!state.players.length) return;
+  
   const p = state.players[state.currentPlayerIdx];
   const i = state.currentPlayerIdx;
+  
   document.getElementById('currentPlayerName').textContent = p.name;
   const av = document.getElementById('currentAvatar');
-  av.textContent = PLAYER_EMOJIS[i % 6];
+  av.textContent = i + 1;
   av.style.background = PLAYER_COLORS[i % 6];
-  av.style.color = '#fff';
 }
 
 // ============================================================
-// WHEEL
+// العجلة
 // ============================================================
 function drawWheel() {
   const canvas = document.getElementById('wheelCanvas');
   const ctx = canvas.getContext('2d');
-  const cx = canvas.width / 2, cy = canvas.height / 2;
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
   const r = cx - 8;
   const n = state.prizes.length;
   const arc = (2 * Math.PI) / n;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // outer glow ring
-  const grad = ctx.createRadialGradient(cx,cy,r-5,cx,cy,r+5);
+  const grad = ctx.createRadialGradient(cx, cy, r - 5, cx, cy, r + 5);
   grad.addColorStop(0, 'rgba(245,200,66,0.3)');
   grad.addColorStop(1, 'transparent');
   ctx.beginPath();
-  ctx.arc(cx, cy, r+5, 0, Math.PI*2);
+  ctx.arc(cx, cy, r + 5, 0, Math.PI * 2);
   ctx.fillStyle = grad;
   ctx.fill();
 
@@ -1608,22 +2486,20 @@ function drawWheel() {
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Text
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(start + arc / 2);
     ctx.textAlign = 'right';
     ctx.fillStyle = 'white';
-    ctx.font = 'bold 16px Tajawal, sans-serif';
+    ctx.font = 'bold 14px Tajawal, sans-serif';
     ctx.shadowColor = 'rgba(0,0,0,0.5)';
     ctx.shadowBlur = 4;
-    ctx.fillText(prize.label, r - 12, 6);
+    ctx.fillText(prize.label, r - 15, 6);
     ctx.restore();
   });
 
-  // Center circle
   ctx.beginPath();
-  ctx.arc(cx, cy, 28, 0, Math.PI*2);
+  ctx.arc(cx, cy, 28, 0, Math.PI * 2);
   ctx.fillStyle = '#1a1a2e';
   ctx.fill();
   ctx.strokeStyle = '#f5c842';
@@ -1632,16 +2508,24 @@ function drawWheel() {
 }
 
 function spinWheel() {
-  if (!state.canSpin || state.spinning) return;
-  if (!state.gameStarted) { showToast('ابدأ اللعبة أولاً!', 'error'); return; }
+  if (!state.wheelReady || state.spinning || state.wheelUsed) {
+    if (state.wheelUsed) {
+      showToast('تم استخدام العجلة بالفعل', 'error');
+    } else if (!state.questionsCompleted) {
+      showToast('انتظر حتى نهاية الأسئلة', 'error');
+    }
+    return;
+  }
 
   state.spinning = true;
+  state.wheelUsed = true;
   document.getElementById('spinBtn').disabled = true;
+  document.getElementById('wheelCenter').classList.add('disabled');
   document.getElementById('wheelResult').classList.remove('show');
+  document.getElementById('wheelResult').classList.remove('winner');
   playSpin();
 
   const extra = Math.floor(Math.random() * 5 + 5) * 2 * Math.PI;
-  const targetAngle = state.wheelAngle + extra;
   const duration = 4000;
   const start = performance.now();
   const startAngle = state.wheelAngle;
@@ -1651,22 +2535,23 @@ function spinWheel() {
     const ease = 1 - Math.pow(1 - t, 4);
     state.wheelAngle = startAngle + extra * ease;
     drawWheel();
+    
     if (t < 1) {
-      requestAnimationFrame(animate);
+      state.animationFrame = requestAnimationFrame(animate);
     } else {
       state.spinning = false;
-      state.canSpin = false;
       announceWinner();
       saveGame();
+      state.animationFrame = null;
     }
   }
-  requestAnimationFrame(animate);
+  
+  state.animationFrame = requestAnimationFrame(animate);
 }
 
 function announceWinner() {
   const n = state.prizes.length;
   const arc = (2 * Math.PI) / n;
-  // Arrow points up (-PI/2 from 0) → find which segment is at top
   const normalized = ((-state.wheelAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
   const idx = Math.floor(normalized / arc) % n;
   const prize = state.prizes[idx];
@@ -1676,43 +2561,43 @@ function announceWinner() {
 
   if (prize.value > 0) {
     player.amount += prize.value;
-    player.points += 25;
     updateLeaderboard();
     playWin();
     launchConfetti();
-    resultEl.innerHTML = `🎉 ${player.name} فاز بـ <strong>${prize.label}</strong>! +25 نقطة`;
+    resultEl.innerHTML = `${player.name} فاز بـ ${prize.label} + ${prize.value} ريال`;
     resultEl.style.color = prize.color;
-    showToast(`🏆 ${player.name} فاز بـ ${prize.label}!`, 'win');
+    resultEl.classList.add('winner');
+    showToast(`فاز ${player.name} بـ ${prize.label}`, 'winner');
   } else {
     playWrong();
-    resultEl.innerHTML = `😅 ${player.name} حصل على ${prize.label} هذه المرة!`;
+    resultEl.innerHTML = `${player.name} حصل على ${prize.label}`;
     resultEl.style.color = 'var(--text2)';
-    showToast(`😅 لا يأس! المرة القادمة أفضل`, 'info');
+    showToast(`حظ أوفر المرة القادمة`, 'info');
   }
+  
   resultEl.classList.add('show');
-
-  document.getElementById('spinInfo').innerHTML =
-    `<span class="spin-needed">أجب بشكل صحيح لتدوير العجلة مجدداً!</span>`;
+  document.getElementById('spinInfo').innerHTML = 
+    `<span class="spin-needed">انتهت اللعبة</span>`;
 
   saveGame();
-  setTimeout(() => { switchTab('questions'); loadQuestion(); }, 3000);
 }
 
 // ============================================================
-// PRIZES
+// الجوائز
 // ============================================================
 function renderPrizeInputs() {
   const container = document.getElementById('prizeInputs');
   container.innerHTML = '';
+  
   state.prizes.forEach((p, i) => {
     const row = document.createElement('div');
     row.className = 'prize-input-row';
     row.innerHTML = `
-      <div class="prize-color-dot" style="background:${p.color}"></div>
+      <div class="prize-color" style="background: ${p.color}"></div>
       <input class="prize-input" type="text" value="${p.label}" placeholder="اسم الجائزة"
-        oninput="state.prizes[${i}].label=this.value;drawWheel()">
-      <input class="prize-input" type="number" value="${p.value}" placeholder="المبلغ" style="max-width:80px"
-        oninput="state.prizes[${i}].value=+this.value">
+        oninput="state.prizes[${i}].label = this.value; drawWheel()">
+      <input class="prize-input" type="number" value="${p.value}" placeholder="المبلغ"
+        oninput="state.prizes[${i}].value = +this.value">
     `;
     container.appendChild(row);
   });
@@ -1721,37 +2606,43 @@ function renderPrizeInputs() {
 function savePrizes() {
   drawWheel();
   saveSettings();
-  showToast('✅ تم حفظ الجوائز!', 'success');
+  showToast('تم حفظ الجوائز', 'success');
   playClick();
 }
 
 // ============================================================
-// TAB SWITCHING
+// التبديل بين الأقسام
 // ============================================================
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  
   document.getElementById(`tab-${tab}`).classList.add('active');
   document.getElementById(`${tab}Section`).classList.add('active');
+  
   playClick();
   if (tab === 'wheel') drawWheel();
 }
 
 // ============================================================
-// CONFETTI
+// الكونفيتي
 // ============================================================
 function launchConfetti() {
   const container = document.getElementById('confettiContainer');
-  const colors = ['#f5c842','#2ecc71','#3498db','#e74c3c','#9b59b6','#e67e22','#1abc9c'];
-  for (let i = 0; i < 80; i++) {
+  const colors = ['#f5c842', '#2ecc71', '#3498db', '#e74c3c', '#9b59b6', '#e67e22', '#1abc9c'];
+  
+  const isLowPerf = navigator.hardwareConcurrency <= 2;
+  const count = isLowPerf ? 30 : 60;
+  
+  for (let i = 0; i < count; i++) {
     setTimeout(() => {
       const piece = document.createElement('div');
       piece.className = 'confetti-piece';
       piece.style.cssText = `
         left: ${Math.random() * 100}%;
         background: ${colors[Math.floor(Math.random() * colors.length)]};
-        width: ${Math.random() * 12 + 6}px;
-        height: ${Math.random() * 12 + 6}px;
+        width: ${Math.random() * 10 + 6}px;
+        height: ${Math.random() * 10 + 6}px;
         border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
         animation-duration: ${Math.random() * 2 + 2}s;
         animation-delay: ${Math.random() * 0.5}s;
@@ -1763,9 +2654,9 @@ function launchConfetti() {
 }
 
 // ============================================================
-// TOAST
+// الإشعارات
 // ============================================================
-function showToast(msg, type='info') {
+function showToast(msg, type = 'info') {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
@@ -1775,32 +2666,39 @@ function showToast(msg, type='info') {
 }
 
 // ============================================================
-// MODAL
+// النافذة المنبثقة
 // ============================================================
 function confirmReset() {
   state.modalAction = 'resetScores';
-  document.getElementById('modalTitle').textContent = '🔄 تصفير النقاط';
+  document.getElementById('modalTitle').textContent = 'تصفير النقاط';
   document.getElementById('modalMsg').textContent = 'هل تريد تصفير جميع النقاط والمبالغ؟ لا يمكن التراجع.';
   document.getElementById('confirmModal').classList.add('open');
 }
+
 function confirmResetAll() {
   state.modalAction = 'resetAll';
-  document.getElementById('modalTitle').textContent = '♻️ إعادة تعيين كاملة';
+  document.getElementById('modalTitle').textContent = 'إعادة تعيين كاملة';
   document.getElementById('modalMsg').textContent = 'سيتم حذف جميع البيانات والعودة للبداية. هل أنت متأكد؟';
   document.getElementById('confirmModal').classList.add('open');
 }
+
 function closeModal() {
   document.getElementById('confirmModal').classList.remove('open');
   state.modalAction = null;
   playClick();
 }
+
 function confirmYes() {
   closeModal();
+  
   if (state.modalAction === 'resetScores') {
-    state.players.forEach(p => { p.points = 0; p.amount = 0; });
+    state.players.forEach(p => {
+      p.points = 0;
+      p.amount = 0;
+    });
     updateLeaderboard();
     saveGame();
-    showToast('✅ تم تصفير النقاط', 'info');
+    showToast('تم تصفير النقاط', 'info');
   } else if (state.modalAction === 'resetAll') {
     localStorage.clear();
     location.reload();
@@ -1808,10 +2706,10 @@ function confirmYes() {
 }
 
 // ============================================================
-// SAVE / LOAD
+// حفظ وتحميل البيانات
 // ============================================================
 function saveSettings() {
-  const s = {
+  const data = {
     players: state.players,
     timerSeconds: state.timerSeconds,
     soundOn: state.soundOn,
@@ -1819,18 +2717,29 @@ function saveSettings() {
     darkMode: state.darkMode,
     prizes: state.prizes,
   };
-  try { localStorage.setItem('eidGameSettings', JSON.stringify(s)); } catch(e){}
+  
+  try {
+    localStorage.setItem('eidGameSettings', JSON.stringify(data));
+  } catch (e) {
+    console.warn('فشل حفظ الإعدادات:', e);
+  }
 }
 
 function saveGame() {
-  const s = {
+  const data = {
     players: state.players,
     currentPlayerIdx: state.currentPlayerIdx,
     usedQuestions: state.usedQuestions,
-    canSpin: state.canSpin,
     gameStarted: state.gameStarted,
+    wheelUsed: state.wheelUsed,
+    questionsCompleted: state.questionsCompleted,
   };
-  try { localStorage.setItem('eidGameState', JSON.stringify(s)); } catch(e){}
+  
+  try {
+    localStorage.setItem('eidGameState', JSON.stringify(data));
+  } catch (e) {
+    console.warn('فشل حفظ حالة اللعبة:', e);
+  }
 }
 
 function loadSaved() {
@@ -1844,66 +2753,93 @@ function loadSaved() {
       if (typeof settings.darkMode !== 'undefined') state.darkMode = settings.darkMode;
       if (settings.prizes) state.prizes = settings.prizes;
     }
+    
     const gameState = JSON.parse(localStorage.getItem('eidGameState') || 'null');
     if (gameState && gameState.gameStarted) {
       Object.assign(state, gameState);
     }
-  } catch(e){}
+  } catch (e) {
+    console.warn('فشل تحميل البيانات:', e);
+  }
+  
   applySettings();
 }
 
 function applySettings() {
-  // Dark mode
   document.body.classList.toggle('dark', state.darkMode);
-  document.getElementById('darkBtn').textContent = state.darkMode ? '☀️' : '🌙';
+  
+  const darkBtn = document.getElementById('darkBtn');
+  darkBtn.innerHTML = state.darkMode ? 
+    '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor"/><path d="M12 3L12 1" stroke="currentColor"/><path d="M12 23L12 21" stroke="currentColor"/><path d="M21 12L23 12" stroke="currentColor"/><path d="M1 12L3 12" stroke="currentColor"/></svg>' :
+    '<svg class="icon" viewBox="0 0 24 24"><path d="M12 3L12 5" stroke="currentColor"/><path d="M12 19L12 21" stroke="currentColor"/><path d="M5 12L3 12" stroke="currentColor"/><path d="M21 12L19 12" stroke="currentColor"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor"/></svg>';
+  
   document.getElementById('darkToggle').classList.toggle('on', state.darkMode);
 
-  // Sound
-  document.getElementById('soundBtn').textContent = state.soundOn ? '🔊' : '🔇';
+  const soundBtn = document.getElementById('soundBtn');
+  soundBtn.innerHTML = state.soundOn ?
+    '<svg class="icon" viewBox="0 0 24 24"><path d="M3 14L3 10 7 10 12 6 12 18 7 14 3 14Z" stroke="currentColor"/><path d="M17 8C18.5 9.5 18.5 12.5 17 14" stroke="currentColor" fill="none"/><path d="M20 5C23 8 23 14 20 17" stroke="currentColor" fill="none"/></svg>' :
+    '<svg class="icon" viewBox="0 0 24 24"><path d="M3 14L3 10 7 10 12 6 12 18 7 14 3 14Z" stroke="currentColor"/><path d="M19 9L15 15" stroke="currentColor"/><path d="M15 9L19 15" stroke="currentColor"/></svg>';
+  
   document.getElementById('soundToggle').classList.toggle('on', state.soundOn);
 
-  // Timer
   document.getElementById('timerRange').value = state.timerSeconds;
   document.getElementById('timerValLabel').textContent = `${state.timerSeconds} ثانية`;
   const pct = ((state.timerSeconds - 5) / (60 - 5)) * 100;
   document.getElementById('timerRange').style.setProperty('--val', pct + '%');
 
-  // Volume
   const volPct = Math.round(state.volume * 100);
   document.getElementById('volRange').value = volPct;
   document.getElementById('volLabel').textContent = `${volPct}%`;
   document.getElementById('volRange').style.setProperty('--val', volPct + '%');
 
-  // Restore game
   if (state.gameStarted && state.players.length >= 2) {
     document.getElementById('lobby').style.display = 'none';
     document.getElementById('gameContent').style.display = 'block';
     document.getElementById('tabBar').style.display = 'flex';
     updateLeaderboard();
     renderPlayerIndicator();
-    loadQuestion();
-    drawWheel();
-    if (state.canSpin) {
-      document.getElementById('spinBtn').disabled = false;
-      document.getElementById('spinInfo').innerHTML =
-        `<span class="spin-needed" style="color:var(--green)">🎉 يمكنك الآن دوران العجلة!</span>`;
+    
+    if (!state.questionsCompleted) {
+      loadQuestion();
+    } else {
+      endQuestions();
     }
+    
+    drawWheel();
   }
 }
 
 // ============================================================
-// INIT
+// التهيئة
 // ============================================================
 window.onload = function() {
-  // Default players if none
   if (!localStorage.getItem('eidGameSettings')) {
     state.players = [
       { name: 'لاعب 1', points: 0, amount: 0 },
       { name: 'لاعب 2', points: 0, amount: 0 },
     ];
   }
+  
   loadSaved();
   drawWheel();
+  
+  document.getElementById('lobbyStartBtn').addEventListener('click', openSettings);
+  document.getElementById('settingsBtn').addEventListener('click', openSettings);
+  
+  document.addEventListener('touchstart', function() {
+    if (state.audioCtx && state.audioCtx.state === 'suspended') {
+      state.audioCtx.resume();
+    }
+  }, { once: true });
+};
+
+window.onbeforeunload = function() {
+  if (state.timerInterval) {
+    clearInterval(state.timerInterval);
+  }
+  if (state.animationFrame) {
+    cancelAnimationFrame(state.animationFrame);
+  }
 };
 </script>
 </body>
