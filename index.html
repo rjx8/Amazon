@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>مسابقة المستويات | أسئلة سهلة، متوسطة، صعبة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>مسابقة المستويات | اختبار معرفة</title>
     <style>
         * {
             margin: 0;
@@ -18,17 +18,17 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 1.5rem;
+            padding: 1.2rem;
         }
 
         /* الحاوية الرئيسية */
         .app-container {
-            max-width: 800px;
+            max-width: 750px;
             width: 100%;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(2px);
-            border-radius: 3rem;
-            padding: 1.8rem;
+            border-radius: 2.5rem;
+            padding: 1.5rem;
             box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
             transition: all 0.3s ease;
         }
@@ -42,26 +42,13 @@
             display: none;
         }
 
-        /* عنوان رئيسي */
-        .main-title {
-            text-align: center;
-            font-size: 2.2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #F9F3E2, #FFD89C);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.5px;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .sub {
+        /* وصف بسيط */
+        .description {
             text-align: center;
             color: #9aa4bf;
             margin-bottom: 2rem;
             font-size: 0.95rem;
-            border-bottom: 1px dashed #2e3a55;
+            border-bottom: 1px solid #2e3a55;
             display: inline-block;
             width: auto;
             margin-left: auto;
@@ -74,13 +61,13 @@
             display: flex;
             flex-direction: column;
             gap: 1.2rem;
-            margin: 2rem 0;
+            margin: 1.5rem 0;
         }
 
         .level-card {
             background: rgba(20, 28, 40, 0.8);
-            border-radius: 2rem;
-            padding: 1.2rem 1.8rem;
+            border-radius: 1.8rem;
+            padding: 1rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -92,10 +79,9 @@
         }
 
         .level-card:hover:not(.completed-level) {
-            transform: translateY(-4px);
-            background: rgba(35, 45, 70, 0.9);
+            transform: translateY(-3px);
+            background: rgba(35, 45, 70, 0.95);
             border-color: #ffb347;
-            box-shadow: 0 15px 25px -8px black;
         }
 
         .level-info {
@@ -105,13 +91,13 @@
         }
 
         .level-name {
-            font-size: 1.7rem;
+            font-size: 1.6rem;
             font-weight: 800;
             letter-spacing: 1px;
         }
 
         .level-badge {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             background: #2a3348;
             width: fit-content;
             padding: 0.2rem 0.8rem;
@@ -119,9 +105,13 @@
             color: #bfc9e6;
         }
 
-        .level-status {
-            font-size: 1.8rem;
-            font-weight: bold;
+        .level-progress {
+            font-size: 1rem;
+            font-weight: 600;
+            background: #0f1422cc;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            color: #ffd966;
         }
 
         .completed-level .level-name {
@@ -139,26 +129,31 @@
             border-color: #3e3f4e;
         }
 
-        /* سهولة تحديد الألوان */
+        .completed-level .level-progress {
+            text-decoration: line-through;
+            color: #7f8c8d;
+        }
+
+        /* ألوان المستويات بدون ايموجي */
         .easy .level-name { color: #6fcf97; }
         .medium .level-name { color: #f2c94c; }
         .hard .level-name { color: #eb5757; }
 
-        /* شاشة الأسئلة */
+        /* شاشة السؤال */
         .quiz-header {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
             background: #0f1420cc;
-            padding: 0.8rem 1.5rem;
+            padding: 0.7rem 1.2rem;
             border-radius: 60px;
-            margin-bottom: 2rem;
+            margin-bottom: 1.8rem;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.6rem;
         }
 
         .level-title {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: bold;
             background: linear-gradient(120deg, #FFD966, #FFB347);
             background-clip: text;
@@ -170,24 +165,24 @@
             background: #1e2a3a;
             padding: 0.3rem 1rem;
             border-radius: 30px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 500;
         }
 
         .question-box {
             background: #0b0f18b3;
             border-radius: 2rem;
-            padding: 2rem 1.5rem;
-            margin: 1.5rem 0;
+            padding: 1.8rem 1.2rem;
+            margin: 1rem 0;
             border: 1px solid #2c354b;
             backdrop-filter: blur(8px);
         }
 
         .question-text {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 600;
             line-height: 1.4;
-            margin-bottom: 2rem;
+            margin-bottom: 1.8rem;
             color: #f3f6ff;
             text-align: center;
         }
@@ -195,14 +190,14 @@
         .options-list {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.9rem;
         }
 
         .option-btn {
             background: #1e2538;
             border: 1px solid #2f3a55;
             border-radius: 60px;
-            padding: 1rem 1.5rem;
+            padding: 0.9rem 1.2rem;
             font-size: 1rem;
             font-weight: 500;
             text-align: right;
@@ -211,30 +206,23 @@
             transition: 0.2s;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.8rem;
         }
 
-        .option-btn:hover:not(.selected-option) {
+        .option-btn:hover {
             background: #2d374f;
             border-color: #ffb347;
-            transform: translateX(-4px);
-        }
-
-        .selected-option {
-            background: #3c4b6e;
-            border-color: #ffc107;
-            color: white;
-            box-shadow: 0 0 0 2px #ffb34780;
+            transform: translateX(-3px);
         }
 
         .feedback {
-            margin: 1.2rem 0 1rem;
-            padding: 0.8rem;
+            margin: 1rem 0 0.5rem;
+            padding: 0.7rem;
             border-radius: 40px;
             text-align: center;
             font-weight: 500;
             background: #03060e80;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .correct-feedback {
@@ -251,15 +239,14 @@
 
         .quiz-actions {
             display: flex;
-            justify-content: space-between;
-            gap: 1rem;
-            margin-top: 1rem;
+            justify-content: center;
+            margin-top: 0.8rem;
         }
 
         button {
             background: #2a344b;
             border: none;
-            padding: 0.8rem 1.8rem;
+            padding: 0.7rem 1.6rem;
             border-radius: 50px;
             font-size: 1rem;
             font-weight: bold;
@@ -267,20 +254,6 @@
             cursor: pointer;
             transition: 0.2s;
             font-family: inherit;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        button.primary {
-            background: linear-gradient(95deg, #f39c12, #e67e22);
-            color: #1e1a0c;
-            box-shadow: 0 5px 12px #e67e2250;
-        }
-
-        button.primary:hover {
-            transform: scale(0.97);
-            background: linear-gradient(95deg, #e67e22, #f39c12);
         }
 
         button.secondary {
@@ -292,12 +265,6 @@
             background: #2f3857;
         }
 
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
         .reset-btn {
             background: none;
             border: 1px solid #ff9966;
@@ -305,11 +272,12 @@
             margin-top: 1rem;
             width: 100%;
             justify-content: center;
+            font-size: 0.9rem;
         }
 
         hr {
             border-color: #2a324b;
-            margin: 1rem 0;
+            margin: 0.8rem 0;
         }
 
         @media (max-width: 550px) {
@@ -323,8 +291,12 @@
                 font-size: 1.3rem;
             }
             .option-btn {
-                padding: 0.8rem 1rem;
+                padding: 0.7rem 1rem;
                 font-size: 0.85rem;
+            }
+            .quiz-header {
+                flex-direction: column;
+                align-items: center;
             }
         }
 
@@ -334,40 +306,44 @@
             color: #5f6c8f;
             margin-top: 1rem;
         }
+        
+        /* منع تحديد الخيارات أثناء الانتظار */
+        .disable-clicks {
+            pointer-events: none;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
 <div class="app-container" id="appContainer">
     <!-- شاشة القائمة الرئيسية -->
     <div id="menuScreen" class="screen">
-        <div class="main-title">🏆 تحدي المعرفة 🧠</div>
-        <div style="text-align: center;" class="sub">اختر مستواك وأجب عن 10 أسئلة فريدة</div>
+        <div style="text-align: center;" class="description">اختر مستواك وأجب عن الأسئلة</div>
         <div class="levels-grid" id="levelsContainer"></div>
-        <button class="reset-btn" id="resetAllBtn">⟳ إعادة تعيين كل المستويات</button>
-        <footer>✨ كل مستوى يحتوي على 10 أسئلة غير متكررة ✨</footer>
+        <button class="reset-btn" id="resetAllBtn">إعادة تعيين كل المستويات</button>
+        <footer>كل مستوى يحتوي على 10 أسئلة فريدة | بعد الإجابة تعود تلقائياً للقائمة</footer>
     </div>
 
-    <!-- شاشة اللعب (الأسئلة) -->
+    <!-- شاشة السؤال (تظهر عند اختيار مستوى) -->
     <div id="gameScreen" class="screen hidden">
         <div class="quiz-header">
-            <span class="level-title" id="gameLevelName">المستوى السهل</span>
-            <span class="question-counter" id="questionCounter">السؤال 1 / 10</span>
+            <span class="level-title" id="gameLevelName">المستوى</span>
+            <span class="question-counter" id="questionCounter">السؤال 0 / 0</span>
         </div>
         <div class="question-box">
-            <div class="question-text" id="questionText">جارٍ التحميل...</div>
+            <div class="question-text" id="questionText">جار التحميل...</div>
             <div class="options-list" id="optionsContainer"></div>
             <div class="feedback" id="feedbackMsg"></div>
         </div>
         <div class="quiz-actions">
-            <button id="backToMenuBtn" class="secondary">🏠 القائمة الرئيسية</button>
-            <button id="nextQuestionBtn" class="primary">▶ السؤال التالي</button>
+            <button id="backToMenuBtn" class="secondary">العودة للقائمة</button>
         </div>
     </div>
 </div>
 
 <script>
     // --------------------------------------------------------------
-    //  المستويات الثلاثة: كل مستوى 10 أسئلة (سهل، متوسط، صعب)
+    //  قاعدة الأسئلة (كل مستوى 10 أسئلة) بدون ايموجيات
     // --------------------------------------------------------------
     const QUESTIONS_DB = {
         easy: [
@@ -408,20 +384,19 @@
         ]
     };
 
-    // حالة المستويات (مكتمل / غير مكتمل)
-    let levelsCompletion = {
-        easy: false,
-        medium: false,
-        hard: false
+    const TOTAL_QS = 10;
+    // حالة كل مستوى: completed (boolean), shuffledIndices (ترتيب الأسئلة العشوائي), currentIndex (السؤال التالي)
+    let levelsState = {
+        easy: { completed: false, shuffledIndices: [], currentIndex: 0 },
+        medium: { completed: false, shuffledIndices: [], currentIndex: 0 },
+        hard: { completed: false, shuffledIndices: [], currentIndex: 0 }
     };
 
-    // بيانات اللعب الحالية
-    let activeLevel = null;          // 'easy', 'medium', 'hard'
-    let shuffledQuestions = [];       // نسخة مختلطة من الأسئلة
-    let currentQIndex = 0;           // السؤال الحالي (0-based)
-    let selectedAnswerIndex = null;   // الخيار المختار حالياً (رقم الخيار)
-    let waitingForNext = false;       // لمنع التكرار أثناء الانتقال
-    let currentQuestionObj = null;
+    // المتغيرات الخاصة باللعب الحالي
+    let activeLevelId = null;       // 'easy', 'medium', 'hard'
+    let currentQuestionObject = null;
+    let selectedAnswerIndex = null;
+    let isProcessing = false;        // لمنع الضغط المتكرر أثناء العودة
 
     // عناصر DOM
     const menuScreen = document.getElementById('menuScreen');
@@ -429,14 +404,13 @@
     const levelsContainer = document.getElementById('levelsContainer');
     const resetAllBtn = document.getElementById('resetAllBtn');
     const backToMenuBtn = document.getElementById('backToMenuBtn');
-    const nextQuestionBtn = document.getElementById('nextQuestionBtn');
     const gameLevelNameSpan = document.getElementById('gameLevelName');
     const questionCounterSpan = document.getElementById('questionCounter');
     const questionTextDiv = document.getElementById('questionText');
     const optionsContainer = document.getElementById('optionsContainer');
     const feedbackMsgDiv = document.getElementById('feedbackMsg');
 
-    // دالة خلط عشوائي (Fisher-Yates)
+    // --- دوال مساعدة: خلط مصفوفة (Fisher-Yates) ---
     function shuffleArray(arr) {
         for (let i = arr.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -445,50 +419,113 @@
         return arr;
     }
 
-    // بناء القائمة الرئيسية ديناميكياً
+    // إنشاء ترتيب عشوائي للأرقام 0-9 (فريد)
+    function generateShuffledIndices() {
+        let indices = Array.from({ length: TOTAL_QS }, (_, i) => i);
+        return shuffleArray(indices);
+    }
+
+    // حفظ الحالة في localStorage
+    function saveStateToLocal() {
+        const toSave = {
+            easy: { completed: levelsState.easy.completed, shuffledIndices: levelsState.easy.shuffledIndices, currentIndex: levelsState.easy.currentIndex },
+            medium: { completed: levelsState.medium.completed, shuffledIndices: levelsState.medium.shuffledIndices, currentIndex: levelsState.medium.currentIndex },
+            hard: { completed: levelsState.hard.completed, shuffledIndices: levelsState.hard.shuffledIndices, currentIndex: levelsState.hard.currentIndex }
+        };
+        localStorage.setItem('quiz_levels_progress_v3', JSON.stringify(toSave));
+    }
+
+    // تحميل الحالة من localStorage
+    function loadStateFromLocal() {
+        const saved = localStorage.getItem('quiz_levels_progress_v3');
+        if (!saved) return false;
+        try {
+            const parsed = JSON.parse(saved);
+            for (let level of ['easy', 'medium', 'hard']) {
+                if (parsed[level]) {
+                    levelsState[level].completed = parsed[level].completed || false;
+                    levelsState[level].shuffledIndices = parsed[level].shuffledIndices || [];
+                    levelsState[level].currentIndex = parsed[level].currentIndex || 0;
+                    // التأكد من صحة البيانات: إذا كان المستوى مكتملاً ولكن currentIndex ليس 10 نصحح
+                    if (levelsState[level].completed && levelsState[level].currentIndex < TOTAL_QS) {
+                        levelsState[level].currentIndex = TOTAL_QS;
+                    }
+                    if (!levelsState[level].completed && levelsState[level].currentIndex >= TOTAL_QS) {
+                        levelsState[level].completed = true;
+                    }
+                }
+            }
+            return true;
+        } catch(e) { return false; }
+    }
+
+    // تهيئة المستويات (إنشاء ترتيب عشوائي جديد إذا لم يكن موجوداً)
+    function initializeLevels() {
+        const loaded = loadStateFromLocal();
+        for (let level of ['easy', 'medium', 'hard']) {
+            // إذا لم يتم تحميل ترتيب أو كان التحميل فاشلاً أو المصفوفة فارغة ننشئ ترتيباً جديداً
+            if (!loaded || !levelsState[level].shuffledIndices.length || levelsState[level].shuffledIndices.length !== TOTAL_QS) {
+                levelsState[level].shuffledIndices = generateShuffledIndices();
+                levelsState[level].currentIndex = 0;
+                levelsState[level].completed = false;
+            }
+            // تأمين: إذا كان currentIndex >= TOTAL_QS يصبح مكتملاً
+            if (levelsState[level].currentIndex >= TOTAL_QS) {
+                levelsState[level].completed = true;
+                levelsState[level].currentIndex = TOTAL_QS;
+            }
+        }
+        saveStateToLocal();
+    }
+
+    // تحديث عرض القائمة (بطاقات المستويات) بدون ايموجيات
     function renderMenu() {
         const levelsData = [
-            { id: 'easy', name: '📘 سهل', badge: '10 أسئلة بسيطة', class: 'easy' },
-            { id: 'medium', name: '📙 متوسط', badge: '10 أسئلة متنوعة', class: 'medium' },
-            { id: 'hard', name: '📕 صعب', badge: '10 أسئلة متقدمة', class: 'hard' }
+            { id: 'easy', name: 'سهل', badge: '10 أسئلة بسيطة', class: 'easy' },
+            { id: 'medium', name: 'متوسط', badge: '10 أسئلة متنوعة', class: 'medium' },
+            { id: 'hard', name: 'صعب', badge: '10 أسئلة متقدمة', class: 'hard' }
         ];
-
         levelsContainer.innerHTML = '';
-        levelsData.forEach(level => {
-            const isCompleted = levelsCompletion[level.id];
+        for (let lvl of levelsData) {
+            const state = levelsState[lvl.id];
+            const isCompleted = state.completed;
+            const answeredCount = state.currentIndex;   // عدد الأسئلة التي تمت إجابتها
+            const remaining = TOTAL_QS - answeredCount;
+            const progressText = isCompleted ? 'مكتمل' : (remaining + ' متبقية من ' + TOTAL_QS);
+            
             const card = document.createElement('div');
-            card.className = `level-card ${level.class} ${isCompleted ? 'completed-level' : ''}`;
+            card.className = `level-card ${lvl.class} ${isCompleted ? 'completed-level' : ''}`;
             if (!isCompleted) {
                 card.style.cursor = 'pointer';
                 card.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    startLevel(level.id);
+                    startLevel(lvl.id);
                 });
             } else {
                 card.style.cursor = 'default';
-                card.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    showToastMessage(`✅ المستوى ${level.name} مكتمل! لا يمكن تكرار الأسئلة.`, '#ffb347');
+                card.addEventListener('click', () => {
+                    showToastMessage('هذا المستوى مكتمل! تم شطب الأسئلة كلها.', '#ffb347');
                 });
             }
-
+            
             const infoDiv = document.createElement('div');
             infoDiv.className = 'level-info';
             infoDiv.innerHTML = `
-                <div class="level-name">${level.name}</div>
-                <div class="level-badge">${level.badge}</div>
+                <div class="level-name">${lvl.name}</div>
+                <div class="level-badge">${lvl.badge}</div>
             `;
-            const statusSpan = document.createElement('div');
-            statusSpan.className = 'level-status';
-            statusSpan.innerText = isCompleted ? '✔️ مكتمل' : '🎯 جاهز';
-            if (isCompleted) statusSpan.style.textDecoration = 'line-through';
+            const progressSpan = document.createElement('div');
+            progressSpan.className = 'level-progress';
+            progressSpan.innerText = progressText;
+            if (isCompleted) progressSpan.style.textDecoration = 'line-through';
+            
             card.appendChild(infoDiv);
-            card.appendChild(statusSpan);
+            card.appendChild(progressSpan);
             levelsContainer.appendChild(card);
-        });
+        }
     }
 
-    // عرض رسالة مؤقتة (بديل تنبيه)
+    // عرض رسالة قصيرة (بدون ايموجي)
     function showToastMessage(msg, color = '#f39c12') {
         const existingToast = document.querySelector('.custom-toast');
         if(existingToast) existingToast.remove();
@@ -501,233 +538,209 @@
         toast.style.transform = 'translateX(-50%)';
         toast.style.backgroundColor = '#1e1f2c';
         toast.style.color = '#ffde9e';
-        toast.style.padding = '0.8rem 1.5rem';
+        toast.style.padding = '0.6rem 1.3rem';
         toast.style.borderRadius = '40px';
-        toast.style.borderRight = `5px solid ${color}`;
+        toast.style.borderRight = `4px solid ${color}`;
         toast.style.fontWeight = 'bold';
         toast.style.zIndex = '999';
         toast.style.boxShadow = '0 5px 15px black';
         toast.style.backdropFilter = 'blur(12px)';
+        toast.style.fontSize = '0.9rem';
         document.body.appendChild(toast);
-        setTimeout(() => { toast.remove(); }, 2200);
+        setTimeout(() => { toast.remove(); }, 2000);
     }
 
-    // بدء مستوى معين (تحضير الأسئلة وتجهيز الجلسة)
+    // بدء مستوى: عرض السؤال التالي غير المجاب عنه
     function startLevel(levelId) {
-        if (levelsCompletion[levelId]) {
-            showToastMessage(`🚫 هذا المستوى مكتمل بالفعل! تم الشطب عليه.`, '#e67e22');
+        if (isProcessing) return;
+        const level = levelsState[levelId];
+        if (level.completed) {
+            showToastMessage('المستوى مكتمل بالفعل! لا يمكن الإجابة على المزيد.');
             return;
         }
-
-        // استيراد الأسئلة من قاعدة البيانات
-        let questionsSource = [];
-        if (levelId === 'easy') questionsSource = [...QUESTIONS_DB.easy];
-        else if (levelId === 'medium') questionsSource = [...QUESTIONS_DB.medium];
-        else questionsSource = [...QUESTIONS_DB.hard];
-
-        if (questionsSource.length !== 10) console.warn("عدد الأسئلة ليس 10!");
+        if (level.currentIndex >= TOTAL_QS) {
+            // في حالة الخطأ نصحح
+            level.completed = true;
+            saveStateToLocal();
+            renderMenu();
+            showToastMessage('المستوى مكتمل! تم شطب المستوى.');
+            return;
+        }
         
-        // خلط الأسئلة لضمان عدم تكرار بنفس الترتيب (ولكن القائمة كلها فريدة)
-        shuffledQuestions = shuffleArray([...questionsSource]);
-        activeLevel = levelId;
-        currentQIndex = 0;
+        activeLevelId = levelId;
+        // الحصول على ترتيب الأسئلة والمؤشر الحالي
+        const questionIdx = level.shuffledIndices[level.currentIndex];
+        const questionsArray = QUESTIONS_DB[levelId];
+        currentQuestionObject = questionsArray[questionIdx];
         selectedAnswerIndex = null;
-        waitingForNext = false;
+        isProcessing = false;
         
-        // إعادة تعيين واجهة اللعب
-        feedbackMsgDiv.innerHTML = '';
-        feedbackMsgDiv.className = 'feedback';
-        // عرض السؤال الأول
-        renderCurrentQuestion();
+        // عرض واجهة السؤال
+        renderCurrentQuestionUI();
         
         // تبديل الشاشات
         menuScreen.classList.add('hidden');
         gameScreen.classList.remove('hidden');
         
-        // تحديث اسم المستوى في الأعلى
-        let levelDisplayName = '';
-        if (levelId === 'easy') levelDisplayName = '📘 المستوى السهل';
-        else if (levelId === 'medium') levelDisplayName = '📙 المستوى المتوسط';
-        else levelDisplayName = '📕 المستوى الصعب';
-        gameLevelNameSpan.innerText = levelDisplayName;
+        // تعيين اسم المستوى
+        let displayName = '';
+        if (levelId === 'easy') displayName = 'المستوى السهل';
+        else if (levelId === 'medium') displayName = 'المستوى المتوسط';
+        else displayName = 'المستوى الصعب';
+        gameLevelNameSpan.innerText = displayName;
     }
-
-    // عرض السؤال الحالي بناءً على index
-    function renderCurrentQuestion() {
-        if (!shuffledQuestions.length || currentQIndex >= shuffledQuestions.length) {
-            // انتهت الأسئلة بشكل غير متوقع -> إنهاء
-            finishLevel();
-            return;
-        }
-        currentQuestionObj = shuffledQuestions[currentQIndex];
-        questionTextDiv.innerText = currentQuestionObj.text;
-        // عرض الخيارات
+    
+    // عرض السؤال الحالي في شاشة اللعب
+    function renderCurrentQuestionUI() {
+        if (!currentQuestionObject) return;
+        questionTextDiv.innerText = currentQuestionObject.text;
+        const currentNum = levelsState[activeLevelId].currentIndex + 1;
+        const remainingCount = TOTAL_QS - levelsState[activeLevelId].currentIndex;
+        questionCounterSpan.innerText = `السؤال ${currentNum} من ${TOTAL_QS}  |  متبقي: ${remainingCount}`;
+        
         optionsContainer.innerHTML = '';
-        currentQuestionObj.options.forEach((opt, idx) => {
+        currentQuestionObject.options.forEach((opt, idx) => {
             const optBtn = document.createElement('div');
             optBtn.className = 'option-btn';
-            optBtn.innerText = `${String.fromCharCode(65+idx)}- ${opt}`;  // أ، ب، ج، د
+            const prefix = String.fromCharCode(65+idx); // أ ب ج د
+            optBtn.innerText = `${prefix} - ${opt}`;
             optBtn.dataset.optIndex = idx;
-            if (selectedAnswerIndex === idx) optBtn.classList.add('selected-option');
             optBtn.addEventListener('click', (e) => {
-                if (waitingForNext) {
-                    showToastMessage("يرجى الانتقال للسؤال التالي أولاً", "#aaa");
+                if (isProcessing) {
+                    showToastMessage('الرجاء الانتظار، جاري معالجة الإجابة');
                     return;
                 }
-                // إزالة التحديد السابق
-                document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected-option'));
+                if (selectedAnswerIndex !== null) {
+                    showToastMessage('لقد أجبْتَ على هذا السؤال بالفعل');
+                    return;
+                }
+                // اختيار الإجابة
                 selectedAnswerIndex = idx;
+                // إضافة تأثير التحديد
+                document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected-option'));
                 optBtn.classList.add('selected-option');
-                // مسح رسالة الفيدباك القديمة عند اختيار جديد
-                feedbackMsgDiv.innerHTML = '';
-                feedbackMsgDiv.className = 'feedback';
+                // معالجة الإجابة فوراً
+                processAnswerAndReturn();
             });
             optionsContainer.appendChild(optBtn);
         });
-        // تحديث عداد الأسئلة
-        questionCounterSpan.innerText = `السؤال ${currentQIndex+1} / ${shuffledQuestions.length}`;
-        // تنظيف رسالة الفيدباك ان لم يكن هناك
-        if (!feedbackMsgDiv.innerHTML.trim()) {
-            feedbackMsgDiv.innerHTML = '✨ اختر الإجابة ثم اضغط "السؤال التالي" ✨';
-            feedbackMsgDiv.className = 'feedback';
-        }
+        feedbackMsgDiv.innerHTML = '';
+        feedbackMsgDiv.className = 'feedback';
     }
-
-    // معالجة الإجابة والانتقال للسؤال التالي (زر "السؤال التالي")
-    async function handleNextQuestion() {
-        if (waitingForNext) return;
-        // التأكد من اختيار إجابة
+    
+    // معالجة الإجابة ثم العودة التلقائية للقائمة
+    function processAnswerAndReturn() {
+        if (isProcessing) return;
         if (selectedAnswerIndex === null) {
-            showToastMessage("⚠️ الرجاء اختيار إجابة أولاً!", "#e67e22");
+            showToastMessage('يرجى اختيار إجابة أولاً');
             return;
         }
+        isProcessing = true;
         
-        waitingForNext = true;
         // التحقق من صحة الإجابة
-        const isCorrect = (selectedAnswerIndex === currentQuestionObj.correct);
-        const correctAnswerText = currentQuestionObj.options[currentQuestionObj.correct];
+        const isCorrect = (selectedAnswerIndex === currentQuestionObject.correct);
+        const correctAnswerText = currentQuestionObject.options[currentQuestionObject.correct];
         
         // عرض التغذية الراجعة
         if (isCorrect) {
-            feedbackMsgDiv.innerHTML = `✅ إجابة صحيحة! أحسنت.`;
+            feedbackMsgDiv.innerHTML = 'إجابة صحيحة! أحسنت.';
             feedbackMsgDiv.className = 'feedback correct-feedback';
         } else {
-            feedbackMsgDiv.innerHTML = `❌ إجابة خاطئة! الإجابة الصحيحة هي: "${correctAnswerText}".`;
+            feedbackMsgDiv.innerHTML = `إجابة خاطئة. الإجابة الصحيحة: "${correctAnswerText}".`;
             feedbackMsgDiv.className = 'feedback wrong-feedback';
         }
         
-        // تعطيل أزرار الخيارات أثناء التغذية الراجعة (لتجنب تغيير الاختيار)
-        document.querySelectorAll('.option-btn').forEach(btn => {
-            btn.style.pointerEvents = 'none';
-        });
-        nextQuestionBtn.disabled = true;
+        // تعطيل أزرار الخيارات
+        optionsContainer.classList.add('disable-clicks');
         
-        // تأخير بسيط لقراءة النتيجة ثم الانتقال
-        setTimeout(() => {
-            // الانتقال للسؤال التالي
-            currentQIndex++;
-            if (currentQIndex < shuffledQuestions.length) {
-                // إعادة ضبط الحالة للسؤال الجديد
-                selectedAnswerIndex = null;
-                waitingForNext = false;
-                renderCurrentQuestion();
-                // إعادة تفعيل الأزرار
-                document.querySelectorAll('.option-btn').forEach(btn => {
-                    btn.style.pointerEvents = 'auto';
-                });
-                nextQuestionBtn.disabled = false;
-            } else {
-                // تم الانتهاء من جميع الأسئلة (10)
-                finishLevel();
-            }
-        }, 1000);
-    }
-    
-    // إنهاء المستوى: تحديث حالة الإكمال، شطب المستوى، العودة للقائمة
-    function finishLevel() {
-        // التأكد من عدم تكرار الإنهاء
-        if (!activeLevel) return;
-        if (!levelsCompletion[activeLevel]) {
-            levelsCompletion[activeLevel] = true;
-            // حفظ التقدم (اختياري) في localStorage يمكن إضافته لكن ليس إلزامياً
-            saveCompletionState();
-            showToastMessage(`🏅 تهانينا! أكملت المستوى ${activeLevel === 'easy' ? 'السهل' : (activeLevel === 'medium' ? 'المتوسط' : 'الصعب')} بالكامل! تم شطب المستوى ✅`, '#2ecc71');
+        // تحديث حالة المستوى: زيادة currentIndex
+        const level = levelsState[activeLevelId];
+        level.currentIndex++;
+        
+        // إذا اكتمل المستوى (جميع الأسئلة تمت)
+        if (level.currentIndex >= TOTAL_QS) {
+            level.completed = true;
+            level.currentIndex = TOTAL_QS;
+            saveStateToLocal();
+            // رسالة اكتمال
+            setTimeout(() => {
+                showToastMessage('أكملت جميع أسئلة هذا المستوى! تم شطب المستوى.');
+                returnToMenu();
+            }, 1300);
         } else {
-            showToastMessage("المستوى مكتمل سابقاً", "#aaa");
+            saveStateToLocal();
+            // العودة إلى القائمة بعد فترة قصيرة
+            setTimeout(() => {
+                returnToMenu();
+            }, 1200);
         }
-        // العودة للقائمة الرئيسية
-        returnToMenu();
     }
     
-    // العودة للقائمة مع إعادة تعيين جلسة اللعب
+    // العودة للقائمة الرئيسية وإعادة تعيين حالة اللعب
     function returnToMenu() {
-        // إعادة تعيين متغيرات اللعب
-        activeLevel = null;
-        shuffledQuestions = [];
-        currentQIndex = 0;
+        // إعادة تعيين المتغيرات
+        activeLevelId = null;
+        currentQuestionObject = null;
         selectedAnswerIndex = null;
-        waitingForNext = false;
-        currentQuestionObj = null;
-        // إعادة تفعيل واجهة القائمة
-        renderMenu();    // تحديث حالة المستويات (الشطب يظهر)
+        isProcessing = false;
+        optionsContainer.classList.remove('disable-clicks');
+        
+        // تحديث القائمة (لعرض التقدم الجديد)
+        renderMenu();
+        // تبديل الشاشات
         menuScreen.classList.remove('hidden');
         gameScreen.classList.add('hidden');
-        // إعادة ضبط الفيدباك للاستخدام القادم
-        feedbackMsgDiv.innerHTML = '';
+        
+        // تنظيف واجهة السؤال
+        questionTextDiv.innerText = '';
         optionsContainer.innerHTML = '';
+        feedbackMsgDiv.innerHTML = '';
     }
     
-    // حفظ حالة الإكمال في localStorage (حتى لا تفقد بعد تحديث الصفحة)
-    function saveCompletionState() {
-        localStorage.setItem('quizLevelsCompletion', JSON.stringify(levelsCompletion));
-    }
-    
-    function loadCompletionState() {
-        const saved = localStorage.getItem('quizLevelsCompletion');
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                if (parsed && typeof parsed === 'object') {
-                    levelsCompletion = { ...levelsCompletion, ...parsed };
-                }
-            } catch(e) {}
-        }
-        renderMenu();
-    }
-    
-    // إعادة تعيين كل التقدم (شطب جميع المستويات وإلغاء الإكمال)
+    // إعادة تعيين كل التقدم (مسح حفظ المستويات)
     function resetAllProgress() {
-        levelsCompletion = { easy: false, medium: false, hard: false };
-        saveCompletionState();
+        // إعادة إنشاء الحالة من الصفر
+        for (let level of ['easy', 'medium', 'hard']) {
+            levelsState[level] = {
+                completed: false,
+                shuffledIndices: generateShuffledIndices(),
+                currentIndex: 0
+            };
+        }
+        saveStateToLocal();
         renderMenu();
-        showToastMessage("🔄 تم إعادة تعيين جميع المستويات! يمكنك لعب أي مستوى من جديد.", "#f39c12");
-        // إذا كان في شاشة اللعب، نرجع للقائمة
+        showToastMessage('تم إعادة تعيين جميع المستويات بالكامل.');
+        // إذا كان في شاشة اللعب نرجع للقائمة
         if (!menuScreen.classList.contains('hidden') === false) {
             returnToMenu();
         }
     }
     
-    // أحداث الأزرار
+    // --- أحداث الأزرار ---
     backToMenuBtn.addEventListener('click', () => {
-        if (activeLevel && !levelsCompletion[activeLevel] && currentQIndex < shuffledQuestions.length && currentQIndex > 0) {
-            if (confirm("⚠️ العودة الآن ستؤدي إلى فقدان تقدمك في هذا المستوى. هل تريد المتابعة؟")) {
-                returnToMenu();
-            }
+        if (isProcessing) {
+            showToastMessage('يرجى الانتظار حتى تتم معالجة الإجابة');
+            return;
+        }
+        if (activeLevelId && !levelsState[activeLevelId].completed && confirm('هل تريد الخروج من هذا المستوى؟ لن يتم احتساب الإجابة الحالية.')) {
+            returnToMenu();
+        } else if (!activeLevelId) {
+            returnToMenu();
         } else {
             returnToMenu();
         }
     });
     
-    nextQuestionBtn.addEventListener('click', handleNextQuestion);
     resetAllBtn.addEventListener('click', resetAllProgress);
     
-    // تهيئة أولية
-    loadCompletionState();
+    // --- التهيئة الأولية ---
+    initializeLevels();
+    renderMenu();
     
-    // إضافة رسالة ترحيبية
+    // رسالة ترحيبية خالية من الايموجي
     setTimeout(() => {
-        showToastMessage("🎮 اختر مستوى وتحدَّ! كل مستوى 10 أسئلة فريدة.", "#FFD966");
-    }, 200);
+        showToastMessage('اختر مستوى، أجب عن السؤال، ثم عد تلقائياً.');
+    }, 300);
 </script>
 </body>
 </html>
