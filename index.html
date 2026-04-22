@@ -2,745 +2,103 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>مسابقة المستويات | اختبار معرفة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قص ملفات PDF</title>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Tajawal', 'Segoe UI', 'Cairo', system-ui, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(145deg, #10141e 0%, #1a1f2c 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1.2rem;
-        }
-
-        /* الحاوية الرئيسية */
-        .app-container {
-            max-width: 750px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(2px);
-            border-radius: 2.5rem;
-            padding: 1.5rem;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
-            transition: all 0.3s ease;
-        }
-
-        /* الشاشات */
-        .screen {
-            transition: 0.2s;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        /* وصف بسيط */
-        .description {
-            text-align: center;
-            color: #9aa4bf;
-            margin-bottom: 2rem;
-            font-size: 0.95rem;
-            border-bottom: 1px solid #2e3a55;
-            display: inline-block;
-            width: auto;
-            margin-left: auto;
-            margin-right: auto;
-            padding-bottom: 0.5rem;
-        }
-
-        /* بطاقات المستويات */
-        .levels-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-            margin: 1.5rem 0;
-        }
-
-        .level-card {
-            background: rgba(20, 28, 40, 0.8);
-            border-radius: 1.8rem;
-            padding: 1rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            border: 1px solid rgba(255, 215, 140, 0.2);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(4px);
-        }
-
-        .level-card:hover:not(.completed-level) {
-            transform: translateY(-3px);
-            background: rgba(35, 45, 70, 0.95);
-            border-color: #ffb347;
-        }
-
-        .level-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-        }
-
-        .level-name {
-            font-size: 1.6rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-        }
-
-        .level-badge {
-            font-size: 0.7rem;
-            background: #2a3348;
-            width: fit-content;
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
-            color: #bfc9e6;
-        }
-
-        .level-progress {
-            font-size: 1rem;
-            font-weight: 600;
-            background: #0f1422cc;
-            padding: 0.3rem 0.8rem;
-            border-radius: 40px;
-            color: #ffd966;
-        }
-
-        .completed-level .level-name {
-            text-decoration: line-through;
-            text-decoration-thickness: 3px;
-            text-decoration-color: #ffb347;
-            opacity: 0.7;
-        }
-
-        .completed-level {
-            opacity: 0.7;
-            filter: grayscale(0.1);
-            cursor: default;
-            background: #11161f;
-            border-color: #3e3f4e;
-        }
-
-        .completed-level .level-progress {
-            text-decoration: line-through;
-            color: #7f8c8d;
-        }
-
-        /* ألوان المستويات بدون ايموجي */
-        .easy .level-name { color: #6fcf97; }
-        .medium .level-name { color: #f2c94c; }
-        .hard .level-name { color: #eb5757; }
-
-        /* شاشة السؤال */
-        .quiz-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            background: #0f1420cc;
-            padding: 0.7rem 1.2rem;
-            border-radius: 60px;
-            margin-bottom: 1.8rem;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-        }
-
-        .level-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            background: linear-gradient(120deg, #FFD966, #FFB347);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-
-        .question-counter {
-            background: #1e2a3a;
-            padding: 0.3rem 1rem;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .question-box {
-            background: #0b0f18b3;
-            border-radius: 2rem;
-            padding: 1.8rem 1.2rem;
-            margin: 1rem 0;
-            border: 1px solid #2c354b;
-            backdrop-filter: blur(8px);
-        }
-
-        .question-text {
-            font-size: 1.4rem;
-            font-weight: 600;
-            line-height: 1.4;
-            margin-bottom: 1.8rem;
-            color: #f3f6ff;
-            text-align: center;
-        }
-
-        .options-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.9rem;
-        }
-
-        .option-btn {
-            background: #1e2538;
-            border: 1px solid #2f3a55;
-            border-radius: 60px;
-            padding: 0.9rem 1.2rem;
-            font-size: 1rem;
-            font-weight: 500;
-            text-align: right;
-            color: #e2e9ff;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
-        .option-btn:hover {
-            background: #2d374f;
-            border-color: #ffb347;
-            transform: translateX(-3px);
-        }
-
-        .feedback {
-            margin: 1rem 0 0.5rem;
-            padding: 0.7rem;
-            border-radius: 40px;
-            text-align: center;
-            font-weight: 500;
-            background: #03060e80;
-            font-size: 0.95rem;
-        }
-
-        .correct-feedback {
-            color: #a3e4b0;
-            border-right: 4px solid #2ecc71;
-            background: #1a2a1f80;
-        }
-
-        .wrong-feedback {
-            color: #f4acb7;
-            border-right: 4px solid #e74c3c;
-            background: #2c1b1f80;
-        }
-
-        .quiz-actions {
-            display: flex;
-            justify-content: center;
-            margin-top: 0.8rem;
-        }
-
-        button {
-            background: #2a344b;
-            border: none;
-            padding: 0.7rem 1.6rem;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: #f0f3fc;
-            cursor: pointer;
-            transition: 0.2s;
-            font-family: inherit;
-        }
-
-        button.secondary {
-            background: #20273e;
-            border: 1px solid #4a5a7c;
-        }
-
-        button.secondary:hover {
-            background: #2f3857;
-        }
-
-        .reset-btn {
-            background: none;
-            border: 1px solid #ff9966;
-            color: #ffb366;
-            margin-top: 1rem;
-            width: 100%;
-            justify-content: center;
-            font-size: 0.9rem;
-        }
-
-        hr {
-            border-color: #2a324b;
-            margin: 0.8rem 0;
-        }
-
-        @media (max-width: 550px) {
-            .app-container {
-                padding: 1rem;
-            }
-            .question-text {
-                font-size: 1.2rem;
-            }
-            .level-name {
-                font-size: 1.3rem;
-            }
-            .option-btn {
-                padding: 0.7rem 1rem;
-                font-size: 0.85rem;
-            }
-            .quiz-header {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-
-        footer {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #5f6c8f;
-            margin-top: 1rem;
-        }
-        
-        /* منع تحديد الخيارات أثناء الانتظار */
-        .disable-clicks {
-            pointer-events: none;
-            opacity: 0.8;
-        }
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 50px; background-color: #f4f4f9; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        input, button { width: 100%; margin: 10px 0; padding: 10px; border-radius: 5px; border: 1px solid #ddd; box-sizing: border-box; }
+        button { background-color: #007bff; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #0056b3; }
+        .range-group { display: flex; gap: 10px; }
     </style>
 </head>
 <body>
-<div class="app-container" id="appContainer">
-    <!-- شاشة القائمة الرئيسية -->
-    <div id="menuScreen" class="screen">
-        <div style="text-align: center;" class="description">اختر مستواك وأجب عن الأسئلة</div>
-        <div class="levels-grid" id="levelsContainer"></div>
-        <button class="reset-btn" id="resetAllBtn">إعادة تعيين كل المستويات</button>
-        <footer>كل مستوى يحتوي على 10 أسئلة فريدة | بعد الإجابة تعود تلقائياً للقائمة</footer>
+
+<div class="container">
+    <h2>أداة قص الـ PDF ✂️</h2>
+    
+    <label>اختر الملف:</label>
+    <input type="file" id="pdfInput" accept="application/pdf">
+
+    <div class="range-group">
+        <div>
+            <label>من صفحة:</label>
+            <input type="number" id="startPage" min="1" value="1">
+        </div>
+        <div>
+            <label>إلى صفحة:</label>
+            <input type="number" id="endPage" min="1" value="1">
+        </div>
     </div>
 
-    <!-- شاشة السؤال (تظهر عند اختيار مستوى) -->
-    <div id="gameScreen" class="screen hidden">
-        <div class="quiz-header">
-            <span class="level-title" id="gameLevelName">المستوى</span>
-            <span class="question-counter" id="questionCounter">السؤال 0 / 0</span>
-        </div>
-        <div class="question-box">
-            <div class="question-text" id="questionText">جار التحميل...</div>
-            <div class="options-list" id="optionsContainer"></div>
-            <div class="feedback" id="feedbackMsg"></div>
-        </div>
-        <div class="quiz-actions">
-            <button id="backToMenuBtn" class="secondary">العودة للقائمة</button>
-        </div>
-    </div>
+    <button onclick="splitPdf()">قص وتحميل الملف الجديد</button>
+    <p id="status"></p>
 </div>
 
 <script>
-    // --------------------------------------------------------------
-    //  قاعدة الأسئلة (كل مستوى 10 أسئلة) بدون ايموجيات
-    // --------------------------------------------------------------
-    const QUESTIONS_DB = {
-        easy: [
-            { text: "ما هي عاصمة المملكة العربية السعودية؟", options: ["جدة", "الرياض", "مكة المكرمة", "الدمام"], correct: 1 },
-            { text: "كم عدد أركان الإسلام؟", options: ["أربعة", "خمسة", "ستة", "سبعة"], correct: 1 },
-            { text: "ما هو أكبر محيط في العالم؟", options: ["الأطلسي", "الهندي", "المتجمد الشمالي", "الهادئ"], correct: 3 },
-            { text: "من هو مؤسس شركة مايكروسوفت؟", options: ["ستيف جوبز", "مارك زوكربيرغ", "بيل غيتس", "جيف بيزوس"], correct: 2 },
-            { text: "ما لون دم الحبار؟", options: ["أحمر", "أزرق", "أخضر", "أصفر"], correct: 1 },
-            { text: "ما اسم العملة الرسمية في مصر؟", options: ["الريال", "الدينار", "الجنيه", "الدرهم"], correct: 2 },
-            { text: "أطول نهر في العالم هو؟", options: ["الأمازون", "النيل", "اليانغتسي", "المسيسيبي"], correct: 1 },
-            { text: "من هو النبي الذي ابتلعه الحوت؟", options: ["موسى", "يونس", "إبراهيم", "يوسف"], correct: 1 },
-            { text: "ماذا يسمى صوت الأسد؟", options: ["زئير", "نعيق", "صهيل", "خوار"], correct: 0 },
-            { text: "كم عدد الكواكب في المجموعة الشمسية؟", options: ["7", "8", "9", "10"], correct: 1 }
-        ],
-        medium: [
-            { text: "من هو أول ملك للسعودية؟", options: ["الملك سعود", "الملك فيصل", "الملك عبدالعزيز", "الملك خالد"], correct: 2 },
-            { text: "ما هي أقرب كوكب إلى الشمس؟", options: ["الزهرة", "عطارد", "الأرض", "المريخ"], correct: 1 },
-            { text: "كم عدد عظام الجمجمة البشرية؟", options: ["22", "26", "20", "24"], correct: 0 },
-            { text: "من كاتب رواية 'مئة عام من العزلة'؟", options: ["غابرييل غارسيا ماركيز", "إرنست هيمنغواي", "نجيب محفوظ", "جورج أورويل"], correct: 0 },
-            { text: "ما هي أكبر صحراء حارة في العالم؟", options: ["الصحراء الكبرى", "صحراء الربع الخالي", "صحراء جوبي", "صحراء كالاهاري"], correct: 0 },
-            { text: "ما هي السورة التي تسمى 'قلب القرآن'؟", options: ["الفاتحة", "الإخلاص", "يس", "الرحمن"], correct: 2 },
-            { text: "في أي عام انتهت الحرب العالمية الثانية؟", options: ["1943", "1944", "1945", "1946"], correct: 2 },
-            { text: "من هو مكتشف الجاذبية الأرضية؟", options: ["نيوتن", "أينشتاين", "جاليليو", "كوبرنيكوس"], correct: 0 },
-            { text: "ما هي أطول سلسلة جبلية في العالم؟", options: ["الهملايا", "جبال الأنديز", "جبال روكي", "جبال الألب"], correct: 1 },
-            { text: "ما اسم جهاز قياس الزلازل؟", options: ["بارومتر", "سيسموغراف", "مقياس الحرارة", "أنيمومتر"], correct: 1 }
-        ],
-        hard: [
-            { text: "من هو العالم الذي وضع قانون الجذب العام؟", options: ["باسكال", "كبلر", "نيوتن", "أرخميدس"], correct: 2 },
-            { text: "كم عدد السور المكية في القرآن الكريم؟", options: ["82", "86", "88", "90"], correct: 1 },
-            { text: "من أول من استخدم الخيول في المعارك؟", options: ["الفرس", "الرومان", "اليونانيون", "المصريون"], correct: 0 },
-            { text: "ما هي أعمق نقطة في المحيطات؟", options: ["خندق ماريانا", "خندق بورتوريكو", "خندق اليابان", "خندق تونغا"], correct: 0 },
-            { text: "من هو مؤسس علم المنطق الحديث؟", options: ["أرسطو", "سقراط", "فيثاغورس", "أفلاطون"], correct: 0 },
-            { text: "ما هي أكبر غدة في جسم الإنسان؟", options: ["البنكرياس", "الكبد", "الغدة الدرقية", "الغدة النخامية"], correct: 1 },
-            { text: "من هو الخليفة الأموي الذي أسس مدينة قرطبة؟", options: ["عبدالرحمن الداخل", "الوليد بن عبدالملك", "هشام بن عبدالملك", "عمر بن عبدالعزيز"], correct: 0 },
-            { text: "ما هي العملة الرسمية لدولة سويسرا؟", options: ["اليورو", "الفرنك السويسري", "الدولار", "الجنيه الإسترليني"], correct: 1 },
-            { text: "من هو مكتشف الدورة الدموية الصغرى؟", options: ["ابن النفيس", "جالينوس", "ابن سينا", "ويليام هارفي"], correct: 0 },
-            { text: "كم تبلغ سرعة الضوء في الثانية تقريباً (كم/ث)؟", options: ["300 ألف", "150 ألف", "400 ألف", "500 ألف"], correct: 0 }
-        ]
-    };
+    async function splitPdf() {
+        const fileInput = document.getElementById('pdfInput');
+        const startPage = parseInt(document.getElementById('startPage').value);
+        const endPage = parseInt(document.getElementById('endPage').value);
+        const status = document.getElementById('status');
 
-    const TOTAL_QS = 10;
-    // حالة كل مستوى: completed (boolean), shuffledIndices (ترتيب الأسئلة العشوائي), currentIndex (السؤال التالي)
-    let levelsState = {
-        easy: { completed: false, shuffledIndices: [], currentIndex: 0 },
-        medium: { completed: false, shuffledIndices: [], currentIndex: 0 },
-        hard: { completed: false, shuffledIndices: [], currentIndex: 0 }
-    };
-
-    // المتغيرات الخاصة باللعب الحالي
-    let activeLevelId = null;       // 'easy', 'medium', 'hard'
-    let currentQuestionObject = null;
-    let selectedAnswerIndex = null;
-    let isProcessing = false;        // لمنع الضغط المتكرر أثناء العودة
-
-    // عناصر DOM
-    const menuScreen = document.getElementById('menuScreen');
-    const gameScreen = document.getElementById('gameScreen');
-    const levelsContainer = document.getElementById('levelsContainer');
-    const resetAllBtn = document.getElementById('resetAllBtn');
-    const backToMenuBtn = document.getElementById('backToMenuBtn');
-    const gameLevelNameSpan = document.getElementById('gameLevelName');
-    const questionCounterSpan = document.getElementById('questionCounter');
-    const questionTextDiv = document.getElementById('questionText');
-    const optionsContainer = document.getElementById('optionsContainer');
-    const feedbackMsgDiv = document.getElementById('feedbackMsg');
-
-    // --- دوال مساعدة: خلط مصفوفة (Fisher-Yates) ---
-    function shuffleArray(arr) {
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
+        if (fileInput.files.length === 0) {
+            alert("يرجى اختيار ملف أولاً!");
+            return;
         }
-        return arr;
-    }
 
-    // إنشاء ترتيب عشوائي للأرقام 0-9 (فريد)
-    function generateShuffledIndices() {
-        let indices = Array.from({ length: TOTAL_QS }, (_, i) => i);
-        return shuffleArray(indices);
-    }
-
-    // حفظ الحالة في localStorage
-    function saveStateToLocal() {
-        const toSave = {
-            easy: { completed: levelsState.easy.completed, shuffledIndices: levelsState.easy.shuffledIndices, currentIndex: levelsState.easy.currentIndex },
-            medium: { completed: levelsState.medium.completed, shuffledIndices: levelsState.medium.shuffledIndices, currentIndex: levelsState.medium.currentIndex },
-            hard: { completed: levelsState.hard.completed, shuffledIndices: levelsState.hard.shuffledIndices, currentIndex: levelsState.hard.currentIndex }
-        };
-        localStorage.setItem('quiz_levels_progress_v3', JSON.stringify(toSave));
-    }
-
-    // تحميل الحالة من localStorage
-    function loadStateFromLocal() {
-        const saved = localStorage.getItem('quiz_levels_progress_v3');
-        if (!saved) return false;
         try {
-            const parsed = JSON.parse(saved);
-            for (let level of ['easy', 'medium', 'hard']) {
-                if (parsed[level]) {
-                    levelsState[level].completed = parsed[level].completed || false;
-                    levelsState[level].shuffledIndices = parsed[level].shuffledIndices || [];
-                    levelsState[level].currentIndex = parsed[level].currentIndex || 0;
-                    // التأكد من صحة البيانات: إذا كان المستوى مكتملاً ولكن currentIndex ليس 10 نصحح
-                    if (levelsState[level].completed && levelsState[level].currentIndex < TOTAL_QS) {
-                        levelsState[level].currentIndex = TOTAL_QS;
-                    }
-                    if (!levelsState[level].completed && levelsState[level].currentIndex >= TOTAL_QS) {
-                        levelsState[level].completed = true;
-                    }
-                }
-            }
-            return true;
-        } catch(e) { return false; }
-    }
-
-    // تهيئة المستويات (إنشاء ترتيب عشوائي جديد إذا لم يكن موجوداً)
-    function initializeLevels() {
-        const loaded = loadStateFromLocal();
-        for (let level of ['easy', 'medium', 'hard']) {
-            // إذا لم يتم تحميل ترتيب أو كان التحميل فاشلاً أو المصفوفة فارغة ننشئ ترتيباً جديداً
-            if (!loaded || !levelsState[level].shuffledIndices.length || levelsState[level].shuffledIndices.length !== TOTAL_QS) {
-                levelsState[level].shuffledIndices = generateShuffledIndices();
-                levelsState[level].currentIndex = 0;
-                levelsState[level].completed = false;
-            }
-            // تأمين: إذا كان currentIndex >= TOTAL_QS يصبح مكتملاً
-            if (levelsState[level].currentIndex >= TOTAL_QS) {
-                levelsState[level].completed = true;
-                levelsState[level].currentIndex = TOTAL_QS;
-            }
-        }
-        saveStateToLocal();
-    }
-
-    // تحديث عرض القائمة (بطاقات المستويات) بدون ايموجيات
-    function renderMenu() {
-        const levelsData = [
-            { id: 'easy', name: 'سهل', badge: '10 أسئلة بسيطة', class: 'easy' },
-            { id: 'medium', name: 'متوسط', badge: '10 أسئلة متنوعة', class: 'medium' },
-            { id: 'hard', name: 'صعب', badge: '10 أسئلة متقدمة', class: 'hard' }
-        ];
-        levelsContainer.innerHTML = '';
-        for (let lvl of levelsData) {
-            const state = levelsState[lvl.id];
-            const isCompleted = state.completed;
-            const answeredCount = state.currentIndex;   // عدد الأسئلة التي تمت إجابتها
-            const remaining = TOTAL_QS - answeredCount;
-            const progressText = isCompleted ? 'مكتمل' : (remaining + ' متبقية من ' + TOTAL_QS);
+            status.innerText = "جاري المعالجة...";
             
-            const card = document.createElement('div');
-            card.className = `level-card ${lvl.class} ${isCompleted ? 'completed-level' : ''}`;
-            if (!isCompleted) {
-                card.style.cursor = 'pointer';
-                card.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    startLevel(lvl.id);
-                });
-            } else {
-                card.style.cursor = 'default';
-                card.addEventListener('click', () => {
-                    showToastMessage('هذا المستوى مكتمل! تم شطب الأسئلة كلها.', '#ffb347');
-                });
-            }
-            
-            const infoDiv = document.createElement('div');
-            infoDiv.className = 'level-info';
-            infoDiv.innerHTML = `
-                <div class="level-name">${lvl.name}</div>
-                <div class="level-badge">${lvl.badge}</div>
-            `;
-            const progressSpan = document.createElement('div');
-            progressSpan.className = 'level-progress';
-            progressSpan.innerText = progressText;
-            if (isCompleted) progressSpan.style.textDecoration = 'line-through';
-            
-            card.appendChild(infoDiv);
-            card.appendChild(progressSpan);
-            levelsContainer.appendChild(card);
-        }
-    }
+            // قراءة الملف المرفوع
+            const fileReader = new FileReader();
+            fileReader.onload = async function() {
+                const existingPdfBytes = new Uint8Array(this.result);
 
-    // عرض رسالة قصيرة (بدون ايموجي)
-    function showToastMessage(msg, color = '#f39c12') {
-        const existingToast = document.querySelector('.custom-toast');
-        if(existingToast) existingToast.remove();
-        const toast = document.createElement('div');
-        toast.className = 'custom-toast';
-        toast.innerText = msg;
-        toast.style.position = 'fixed';
-        toast.style.bottom = '20px';
-        toast.style.left = '50%';
-        toast.style.transform = 'translateX(-50%)';
-        toast.style.backgroundColor = '#1e1f2c';
-        toast.style.color = '#ffde9e';
-        toast.style.padding = '0.6rem 1.3rem';
-        toast.style.borderRadius = '40px';
-        toast.style.borderRight = `4px solid ${color}`;
-        toast.style.fontWeight = 'bold';
-        toast.style.zIndex = '999';
-        toast.style.boxShadow = '0 5px 15px black';
-        toast.style.backdropFilter = 'blur(12px)';
-        toast.style.fontSize = '0.9rem';
-        document.body.appendChild(toast);
-        setTimeout(() => { toast.remove(); }, 2000);
-    }
+                // تحميل ملف PDF الأصلي
+                const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+                const newPdfDoc = await PDFLib.PDFDocument.create();
 
-    // بدء مستوى: عرض السؤال التالي غير المجاب عنه
-    function startLevel(levelId) {
-        if (isProcessing) return;
-        const level = levelsState[levelId];
-        if (level.completed) {
-            showToastMessage('المستوى مكتمل بالفعل! لا يمكن الإجابة على المزيد.');
-            return;
-        }
-        if (level.currentIndex >= TOTAL_QS) {
-            // في حالة الخطأ نصحح
-            level.completed = true;
-            saveStateToLocal();
-            renderMenu();
-            showToastMessage('المستوى مكتمل! تم شطب المستوى.');
-            return;
-        }
-        
-        activeLevelId = levelId;
-        // الحصول على ترتيب الأسئلة والمؤشر الحالي
-        const questionIdx = level.shuffledIndices[level.currentIndex];
-        const questionsArray = QUESTIONS_DB[levelId];
-        currentQuestionObject = questionsArray[questionIdx];
-        selectedAnswerIndex = null;
-        isProcessing = false;
-        
-        // عرض واجهة السؤال
-        renderCurrentQuestionUI();
-        
-        // تبديل الشاشات
-        menuScreen.classList.add('hidden');
-        gameScreen.classList.remove('hidden');
-        
-        // تعيين اسم المستوى
-        let displayName = '';
-        if (levelId === 'easy') displayName = 'المستوى السهل';
-        else if (levelId === 'medium') displayName = 'المستوى المتوسط';
-        else displayName = 'المستوى الصعب';
-        gameLevelNameSpan.innerText = displayName;
-    }
-    
-    // عرض السؤال الحالي في شاشة اللعب
-    function renderCurrentQuestionUI() {
-        if (!currentQuestionObject) return;
-        questionTextDiv.innerText = currentQuestionObject.text;
-        const currentNum = levelsState[activeLevelId].currentIndex + 1;
-        const remainingCount = TOTAL_QS - levelsState[activeLevelId].currentIndex;
-        questionCounterSpan.innerText = `السؤال ${currentNum} من ${TOTAL_QS}  |  متبقي: ${remainingCount}`;
-        
-        optionsContainer.innerHTML = '';
-        currentQuestionObject.options.forEach((opt, idx) => {
-            const optBtn = document.createElement('div');
-            optBtn.className = 'option-btn';
-            const prefix = String.fromCharCode(65+idx); // أ ب ج د
-            optBtn.innerText = `${prefix} - ${opt}`;
-            optBtn.dataset.optIndex = idx;
-            optBtn.addEventListener('click', (e) => {
-                if (isProcessing) {
-                    showToastMessage('الرجاء الانتظار، جاري معالجة الإجابة');
+                const totalPages = pdfDoc.getPageCount();
+
+                // التأكد من صحة النطاق المطلوب
+                if (startPage < 1 || endPage > totalPages || startPage > endPage) {
+                    alert(`خطأ في النطاق! الملف يحتوي على ${totalPages} صفحة فقط.`);
+                    status.innerText = "";
                     return;
                 }
-                if (selectedAnswerIndex !== null) {
-                    showToastMessage('لقد أجبْتَ على هذا السؤال بالفعل');
-                    return;
-                }
-                // اختيار الإجابة
-                selectedAnswerIndex = idx;
-                // إضافة تأثير التحديد
-                document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected-option'));
-                optBtn.classList.add('selected-option');
-                // معالجة الإجابة فوراً
-                processAnswerAndReturn();
-            });
-            optionsContainer.appendChild(optBtn);
-        });
-        feedbackMsgDiv.innerHTML = '';
-        feedbackMsgDiv.className = 'feedback';
-    }
-    
-    // معالجة الإجابة ثم العودة التلقائية للقائمة
-    function processAnswerAndReturn() {
-        if (isProcessing) return;
-        if (selectedAnswerIndex === null) {
-            showToastMessage('يرجى اختيار إجابة أولاً');
-            return;
-        }
-        isProcessing = true;
-        
-        // التحقق من صحة الإجابة
-        const isCorrect = (selectedAnswerIndex === currentQuestionObject.correct);
-        const correctAnswerText = currentQuestionObject.options[currentQuestionObject.correct];
-        
-        // عرض التغذية الراجعة
-        if (isCorrect) {
-            feedbackMsgDiv.innerHTML = 'إجابة صحيحة! أحسنت.';
-            feedbackMsgDiv.className = 'feedback correct-feedback';
-        } else {
-            feedbackMsgDiv.innerHTML = `إجابة خاطئة. الإجابة الصحيحة: "${correctAnswerText}".`;
-            feedbackMsgDiv.className = 'feedback wrong-feedback';
-        }
-        
-        // تعطيل أزرار الخيارات
-        optionsContainer.classList.add('disable-clicks');
-        
-        // تحديث حالة المستوى: زيادة currentIndex
-        const level = levelsState[activeLevelId];
-        level.currentIndex++;
-        
-        // إذا اكتمل المستوى (جميع الأسئلة تمت)
-        if (level.currentIndex >= TOTAL_QS) {
-            level.completed = true;
-            level.currentIndex = TOTAL_QS;
-            saveStateToLocal();
-            // رسالة اكتمال
-            setTimeout(() => {
-                showToastMessage('أكملت جميع أسئلة هذا المستوى! تم شطب المستوى.');
-                returnToMenu();
-            }, 1300);
-        } else {
-            saveStateToLocal();
-            // العودة إلى القائمة بعد فترة قصيرة
-            setTimeout(() => {
-                returnToMenu();
-            }, 1200);
-        }
-    }
-    
-    // العودة للقائمة الرئيسية وإعادة تعيين حالة اللعب
-    function returnToMenu() {
-        // إعادة تعيين المتغيرات
-        activeLevelId = null;
-        currentQuestionObject = null;
-        selectedAnswerIndex = null;
-        isProcessing = false;
-        optionsContainer.classList.remove('disable-clicks');
-        
-        // تحديث القائمة (لعرض التقدم الجديد)
-        renderMenu();
-        // تبديل الشاشات
-        menuScreen.classList.remove('hidden');
-        gameScreen.classList.add('hidden');
-        
-        // تنظيف واجهة السؤال
-        questionTextDiv.innerText = '';
-        optionsContainer.innerHTML = '';
-        feedbackMsgDiv.innerHTML = '';
-    }
-    
-    // إعادة تعيين كل التقدم (مسح حفظ المستويات)
-    function resetAllProgress() {
-        // إعادة إنشاء الحالة من الصفر
-        for (let level of ['easy', 'medium', 'hard']) {
-            levelsState[level] = {
-                completed: false,
-                shuffledIndices: generateShuffledIndices(),
-                currentIndex: 0
+
+                // نسخ الصفحات المحددة (العد يبدأ من 0 في المكتبة)
+                const pagesToCopy = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage - 1 + i);
+                const copiedPages = await newPdfDoc.copyPages(pdfDoc, pagesToCopy);
+                
+                copiedPages.forEach((page) => newPdfDoc.addPage(page));
+
+                // إنشاء ملف PDF الجديد وتحميله
+                const pdfBytes = await newPdfDoc.save();
+                download(pdfBytes, "cropped_file.pdf", "application/pdf");
+                
+                status.innerText = "تم القص بنجاح! ✅";
             };
-        }
-        saveStateToLocal();
-        renderMenu();
-        showToastMessage('تم إعادة تعيين جميع المستويات بالكامل.');
-        // إذا كان في شاشة اللعب نرجع للقائمة
-        if (!menuScreen.classList.contains('hidden') === false) {
-            returnToMenu();
+            fileReader.readAsArrayBuffer(fileInput.files[0]);
+
+        } catch (error) {
+            console.error(error);
+            status.innerText = "حدث خطأ أثناء المعالجة.";
         }
     }
-    
-    // --- أحداث الأزرار ---
-    backToMenuBtn.addEventListener('click', () => {
-        if (isProcessing) {
-            showToastMessage('يرجى الانتظار حتى تتم معالجة الإجابة');
-            return;
-        }
-        if (activeLevelId && !levelsState[activeLevelId].completed && confirm('هل تريد الخروج من هذا المستوى؟ لن يتم احتساب الإجابة الحالية.')) {
-            returnToMenu();
-        } else if (!activeLevelId) {
-            returnToMenu();
-        } else {
-            returnToMenu();
-        }
-    });
-    
-    resetAllBtn.addEventListener('click', resetAllProgress);
-    
-    // --- التهيئة الأولية ---
-    initializeLevels();
-    renderMenu();
-    
-    // رسالة ترحيبية خالية من الايموجي
-    setTimeout(() => {
-        showToastMessage('اختر مستوى، أجب عن السؤال، ثم عد تلقائياً.');
-    }, 300);
+
+    // وظيفة التحميل التلقائي
+    function download(content, fileName, contentType) {
+        const a = document.createElement("a");
+        const file = new Blob([content], { type: contentType });
+        a.href = URL.createObjectURL(file);
+        a.download = fileName;
+        a.click();
+    }
 </script>
+
 </body>
 </html>
