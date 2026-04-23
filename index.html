@@ -1,104 +1,32 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قص ملفات PDF</title>
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Birthday Surprise - Fixed Click</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 50px; background-color: #f4f4f9; }
-        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        input, button { width: 100%; margin: 10px 0; padding: 10px; border-radius: 5px; border: 1px solid #ddd; box-sizing: border-box; }
-        button { background-color: #007bff; color: white; border: none; cursor: pointer; font-weight: bold; }
-        button:hover { background-color: #0056b3; }
-        .range-group { display: flex; gap: 10px; }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h2>أداة قص الـ PDF ✂️</h2>
-    
-    <label>اختر الملف:</label>
-    <input type="file" id="pdfInput" accept="application/pdf">
-
-    <div class="range-group">
-        <div>
-            <label>من صفحة:</label>
-            <input type="number" id="startPage" min="1" value="1">
-        </div>
-        <div>
-            <label>إلى صفحة:</label>
-            <input type="number" id="endPage" min="1" value="1">
-        </div>
-    </div>
-
-    <button onclick="splitPdf()">قص وتحميل الملف الجديد</button>
-    <p id="status"></p>
-</div>
-
-<script>
-    async function splitPdf() {
-        const fileInput = document.getElementById('pdfInput');
-        const startPage = parseInt(document.getElementById('startPage').value);
-        const endPage = parseInt(document.getElementById('endPage').value);
-        const status = document.getElementById('status');
-
-        if (fileInput.files.length === 0) {
-            alert("يرجى اختيار ملف أولاً!");
-            return;
+        body {
+            background-color: #87CEEB;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            touch-action: manipulation;
+            font-family: 'Quicksand', sans-serif;
         }
 
-        try {
-            status.innerText = "جاري المعالجة...";
-            
-            // قراءة الملف المرفوع
-            const fileReader = new FileReader();
-            fileReader.onload = async function() {
-                const existingPdfBytes = new Uint8Array(this.result);
-
-                // تحميل ملف PDF الأصلي
-                const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
-                const newPdfDoc = await PDFLib.PDFDocument.create();
-
-                const totalPages = pdfDoc.getPageCount();
-
-                // التأكد من صحة النطاق المطلوب
-                if (startPage < 1 || endPage > totalPages || startPage > endPage) {
-                    alert(`خطأ في النطاق! الملف يحتوي على ${totalPages} صفحة فقط.`);
-                    status.innerText = "";
-                    return;
-                }
-
-                // نسخ الصفحات المحددة (العد يبدأ من 0 في المكتبة)
-                const pagesToCopy = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage - 1 + i);
-                const copiedPages = await newPdfDoc.copyPages(pdfDoc, pagesToCopy);
-                
-                copiedPages.forEach((page) => newPdfDoc.addPage(page));
-
-                // إنشاء ملف PDF الجديد وتحميله
-                const pdfBytes = await newPdfDoc.save();
-                download(pdfBytes, "cropped_file.pdf", "application/pdf");
-                
-                status.innerText = "تم القص بنجاح! ✅";
-            };
-            fileReader.readAsArrayBuffer(fileInput.files[0]);
-
-        } catch (error) {
-            console.error(error);
-            status.innerText = "حدث خطأ أثناء المعالجة.";
+        .game-area { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 5; /* طبقة تحت الإطار لكن تسمح باللمس */
         }
-    }
 
-    // وظيفة التحميل التلقائي
-    function download(content, fileName, contentType) {
-        const a = document.createElement("a");
-        const file = new Blob([content], { type: contentType });
-        a.href = URL.createObjectURL(file);
-        a.download = fileName;
-        a.click();
-    }
-</script>
-
-</body>
-</html>
+        /* --- الكيكة --- */
+        .cake-wrapper { position: relative; z-index: 20; text-align: center; }
