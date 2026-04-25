@@ -901,6 +901,52 @@ async function exportToPDF() {
     }
 }
 
+// ===== FFMPEG LOADER =====
+let ffmpegInstance = null;
+
+async function loadFFmpeg() {
+    if (ffmpegInstance) return ffmpegInstance;
+    setProgress(2, 'تحميل محرك FFmpeg (~30MB، مرة واحدة فقط)...', '⬇️');
+
+    // Load FFmpeg core scripts
+    await new Promise((resolve, reject) => {
+        const s1 = document.createElement('script');
+        s1.src = 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/umd/ffmpeg.js';
+        s1.onload = resolve;
+        s1.onerror = reject;
+        document.head.appendChild(s1);
+    });
+    await new Promise((resolve, reject) => {
+        const s2 = document.createElement('script');
+        s2.src = 'https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js';
+        s2.onload = resolve;
+        s2.onerror = reject;
+        document.head.appendChild(s2);
+    });
+
+    const { FFmpeg } = window.FFmpegWASM || FFmpegLib;
+    const { fetchFile, toBlobURL } = window.FFmpegUtil || FFmpegUtil;
+
+    const ff = new FFmpeg();
+
+    ff.on('progress', ({ progress }) => {
+        const pct = 75 + (progress * 20);
+        setProgress(pct, `تحويل إلى MP4: ${Math.floor(progress * 100)}%`, '🔄');
+    });
+    ff.on('log', ({ message }) => console.log('[FFmpeg]', message));
+
+    setProgress(5, 'تحميل ملفات FFmpeg الأساسية...', '⬇️');
+
+    const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
+    await ff.load({
+        coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+    });
+
+    ffmpegInstance = { ff, fetchFile };
+    return ffmpegInstance;
+}
+
 // ===== VIDEO EXPORT =====
 async function exportToVideo() {
     const btn = document.getElementById('video-btn');
@@ -920,15 +966,22 @@ async function exportToVideo() {
     setProgress(0, 'تجهيز الكود...', '🎬');
 
     const container = buildHiddenContainer(code, fmt);
-
-    // Canvas for video frames
     const canvas = document.createElement('canvas');
     canvas.width = fmt.w;
     canvas.height = fmt.h;
     const ctx = canvas.getContext('2d');
 
     try {
-        setProgress(3, 'تحويل الصور...', '🖼️');
+        // ---- Load FFmpeg ----
+        let ffmpegReady = null;
+        try {
+            ffmpegReady = await loadFFmpeg();
+        } catch(e) {
+            console.warn('FFmpeg فشل في التحميل، سيتم الحفظ بصيغة WebM:', e);
+            ffmpegReady = null;
+        }
+
+        setProgress(10, 'تحويل الصور...', '🖼️');
         await convertImages(container);
         await document.fonts.ready;
         await new Promise(r => setTimeout(r, 600));
@@ -936,90 +989,95 @@ async function exportToVideo() {
         let pages = Array.from(container.querySelectorAll('.page, .slide'));
         if (pages.length === 0) pages = [container];
 
-        setProgress(5, `تصوير ${pages.length} شريحة...`, '📸');
-
-        // ---- PRE-RENDER all pages to canvases ----
+        // ---- PRE-RENDER all slides ----
         const renderedCanvases = [];
         for (let i = 0; i < pages.length; i++) {
-            const pct = 5 + ((i / pages.length) * 55);
+            const pct = 10 + ((i / pages.length) * 40);
             setProgress(pct, `تصوير الشريحة ${i+1} من ${pages.length}`, '📸');
-
-            // Ensure page has correct size before capture
             const pg = pages[i];
-            pg.style.width = fmt.w + 'px';
-            pg.style.height = fmt.h + 'px';
-            pg.style.overflow = 'hidden';
-            pg.style.position = 'relative';
-
-            const imgCanvas = await html2canvas(pg, {
-                scale: 1,           // scale=1 for video (faster, less memory)
-                useCORS: true,
-                allowTaint: true,
-                width: fmt.w,
-                height: fmt.h,
-                windowWidth: fmt.w,
-                windowHeight: fmt.h,
-                backgroundColor: '#ffffff',
-                logging: false,
-                imageTimeout: 8000,
+            pg.style.cssText += `width:${fmt.w}px!important;height:${fmt.h}px!important;overflow:hidden!important;position:relative!important;`;
+            const c = await html2canvas(pg, {
+                scale: 1, useCORS: true, allowTaint: true,
+                width: fmt.w, height: fmt.h,
+                windowWidth: fmt.w, windowHeight: fmt.h,
+                backgroundColor: '#ffffff', logging: false, imageTimeout: 8000,
             });
-            renderedCanvases.push(imgCanvas);
+            renderedCanvases.push(c);
         }
 
-        setProgress(60, 'تجهيز التسجيل...', '🎬');
+        setProgress(52, 'تجميع الإطارات...', '🎞️');
 
-        // ---- Setup MediaRecorder ----
+        // ---- Record WebM ----
         const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
-            ? 'video/webm;codecs=vp9'
-            : MediaRecorder.isTypeSupported('video/webm')
-            ? 'video/webm'
-            : 'video/webm';
-
+            ? 'video/webm;codecs=vp9' : 'video/webm';
         const stream = canvas.captureStream(FPS);
-        const recorder = new MediaRecorder(stream, {
-            mimeType,
-            videoBitsPerSecond: 8_000_000
-        });
+        const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 8_000_000 });
         const chunks = [];
         recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-
-        const done = new Promise(res => { recorder.onstop = res; });
+        const recDone = new Promise(res => { recorder.onstop = res; });
         recorder.start();
 
-        const totalFrames = pages.length * framesPerPage;
+        const totalFrames = renderedCanvases.length * framesPerPage;
         let rendered = 0;
-
-        // ---- Draw frames ----
         for (let p = 0; p < renderedCanvases.length; p++) {
             const src = renderedCanvases[p];
             for (let f = 0; f < framesPerPage; f++) {
                 ctx.clearRect(0, 0, fmt.w, fmt.h);
                 ctx.drawImage(src, 0, 0, fmt.w, fmt.h);
                 rendered++;
-                const pct = 60 + ((rendered / totalFrames) * 35);
+                const pct = 52 + ((rendered / totalFrames) * 20);
                 setProgress(pct, `تجميع الإطارات: شريحة ${p+1}/${renderedCanvases.length}`, '🎞️');
-                // Yield to browser to actually capture the frame
                 await new Promise(r => setTimeout(r, Math.ceil(1000 / FPS)));
             }
         }
-
         recorder.stop();
-        await done;
+        await recDone;
 
-        setProgress(98, 'حفظ الملف...', '💾');
-        const blob = new Blob(chunks, { type: 'video/webm' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = `${fileName}.webm`; a.click();
-        URL.revokeObjectURL(url);
+        const webmBlob = new Blob(chunks, { type: 'video/webm' });
 
-        setProgress(100, 'تم!', '✅');
-        await new Promise(r => setTimeout(r, 400));
-        showToast(`✅ تم حفظ الفيديو (${pages.length} شريحة)!`, 'success');
+        // ---- Convert to MP4 with FFmpeg ----
+        if (ffmpegReady) {
+            setProgress(74, 'تحويل WebM → MP4...', '🔄');
+            const { ff, fetchFile } = ffmpegReady;
+
+            await ff.writeFile('input.webm', await fetchFile(webmBlob));
+            await ff.exec([
+                '-i', 'input.webm',
+                '-c:v', 'libx264',
+                '-preset', 'fast',
+                '-crf', '23',
+                '-pix_fmt', 'yuv420p',
+                '-movflags', '+faststart',
+                '-y', 'output.mp4'
+            ]);
+
+            const mp4Data = await ff.readFile('output.mp4');
+            await ff.deleteFile('input.webm');
+            await ff.deleteFile('output.mp4');
+
+            const mp4Blob = new Blob([mp4Data.buffer], { type: 'video/mp4' });
+            const url = URL.createObjectURL(mp4Blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `${fileName}.mp4`; a.click();
+            URL.revokeObjectURL(url);
+
+            setProgress(100, 'تم!', '✅');
+            await new Promise(r => setTimeout(r, 400));
+            showToast(`✅ تم حفظ الفيديو MP4 (${pages.length} شريحة)!`, 'success');
+
+        } else {
+            // Fallback: save as WebM
+            const url = URL.createObjectURL(webmBlob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `${fileName}.webm`; a.click();
+            URL.revokeObjectURL(url);
+            setProgress(100, 'تم!', '✅');
+            showToast(`⚠️ تم الحفظ بصيغة WebM (FFmpeg غير متاح)`, '');
+        }
 
     } catch(err) {
         console.error(err);
-        showToast('❌ خطأ في التصدير: ' + err.message, 'error');
+        showToast('❌ خطأ: ' + err.message, 'error');
     } finally {
         if (container.parentNode) document.body.removeChild(container);
         document.getElementById('progress-overlay').style.display = 'none';
