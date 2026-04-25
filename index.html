@@ -5,30 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة تحويل الأكواد</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
-            --bg: #0f1117;
-            --surface: #1a1d27;
-            --surface2: #22263a;
-            --border: #2e3350;
-            --border-light: #3a4060;
+            --bg: #0b0d14;
+            --surface: #141720;
+            --surface2: #1c2030;
+            --surface3: #232840;
+            --border: #2a3050;
+            --border-light: #374070;
             --primary: #5b7cfa;
             --primary-hover: #4a6cf7;
-            --primary-glow: rgba(91,124,250,0.18);
+            --primary-glow: rgba(91,124,250,0.15);
+            --primary-dim: rgba(91,124,250,0.08);
             --orange: #f97316;
             --orange-hover: #ea580c;
-            --orange-glow: rgba(249,115,22,0.18);
+            --orange-glow: rgba(249,115,22,0.15);
             --green: #22c55e;
-            --green-glow: rgba(34,197,94,0.15);
+            --green-glow: rgba(34,197,94,0.12);
             --red: #ef4444;
-            --text: #e8eaf0;
-            --text-muted: #8892b0;
-            --text-dim: #4a5580;
+            --red-glow: rgba(239,68,68,0.12);
+            --purple: #a855f7;
+            --purple-glow: rgba(168,85,247,0.12);
+            --yellow: #eab308;
+            --text: #e2e6f3;
+            --text-muted: #7a88b0;
+            --text-dim: #3d4870;
             --radius: 12px;
             --radius-sm: 8px;
+            --radius-xs: 6px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -47,62 +54,103 @@
         .header {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
-            padding: 14px 24px;
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: sticky;
             top: 0;
             z-index: 100;
-            backdrop-filter: blur(10px);
         }
         .header-logo {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 800;
             color: var(--text);
         }
         .logo-icon {
-            width: 36px; height: 36px;
+            width: 34px; height: 34px;
             background: linear-gradient(135deg, var(--primary), #7c3aed);
-            border-radius: 10px;
+            border-radius: 9px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
+            font-size: 17px;
         }
+        .header-badges { display: flex; gap: 6px; align-items: center; }
         .header-badge {
-            background: var(--primary-glow);
-            border: 1px solid var(--primary);
+            background: var(--primary-dim);
+            border: 1px solid rgba(91,124,250,0.3);
             color: var(--primary);
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
+        }
+        .header-badge.orange {
+            background: var(--orange-glow);
+            border-color: rgba(249,115,22,0.3);
+            color: var(--orange);
         }
 
         /* ===== LAYOUT ===== */
         .app-body {
             display: flex;
             flex: 1;
-            height: calc(100vh - 65px);
+            height: calc(100vh - 58px);
             overflow: hidden;
         }
 
         /* ===== SIDEBAR ===== */
         .sidebar {
-            width: 400px;
-            min-width: 360px;
+            width: 420px;
+            min-width: 380px;
             background: var(--surface);
             border-left: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
+
+        /* Tabs */
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .sidebar-tab {
+            flex: 1;
+            padding: 10px 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .sidebar-tab.active {
+            color: var(--primary);
+            background: var(--primary-dim);
+        }
+        .sidebar-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 2px;
+            background: var(--primary);
+        }
+        .sidebar-tab:hover:not(.active) { color: var(--text); background: var(--surface2); }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
         .sidebar-scroll {
             flex: 1;
             overflow-y: auto;
-            padding: 16px;
+            padding: 14px;
             scrollbar-width: thin;
             scrollbar-color: var(--border) transparent;
         }
@@ -112,11 +160,10 @@
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             color: var(--text-dim);
             margin-bottom: 8px;
-            margin-top: 18px;
-            padding-right: 2px;
+            margin-top: 16px;
         }
         .section-label:first-child { margin-top: 0; }
 
@@ -124,60 +171,144 @@
         .prompts-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 7px;
-            margin-bottom: 4px;
+            gap: 6px;
         }
-        .prompt-btn {
+        .prompt-card {
             background: var(--surface2);
             border: 1px solid var(--border);
-            color: var(--text-muted);
-            padding: 10px 8px;
             border-radius: var(--radius-sm);
-            font-size: 11.5px;
-            font-weight: 600;
+            padding: 10px 9px;
             cursor: pointer;
             transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Cairo', sans-serif;
-            text-align: right;
+            position: relative;
         }
-        .prompt-btn:hover {
-            background: var(--primary-glow);
+        .prompt-card:hover {
             border-color: var(--primary);
-            color: var(--primary);
+            background: var(--primary-dim);
             transform: translateY(-1px);
         }
-        .prompt-btn .icon { font-size: 14px; flex-shrink: 0; }
-        .prompt-btn.success {
-            background: var(--green-glow);
-            border-color: var(--green);
-            color: var(--green);
+        .prompt-card.active-selection {
+            border-color: var(--primary);
+            background: var(--primary-dim);
+        }
+        .prompt-card-icon { font-size: 18px; margin-bottom: 4px; }
+        .prompt-card-title {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+        .prompt-card-sub {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* ===== DETAILS FORM ===== */
+        .details-form {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            margin-top: 10px;
+        }
+        .details-form-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 7px;
+            margin-bottom: 8px;
+        }
+        .detail-field { display: flex; flex-direction: column; gap: 3px; }
+        .detail-field.full { grid-column: 1 / -1; }
+        .detail-field label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0;
+        }
+        .detail-field input {
+            padding: 7px 9px;
+            font-size: 12px;
+        }
+
+        /* ===== PROMPT ACTIONS ===== */
+        .prompt-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .prompt-action-btn {
+            flex: 1;
+            padding: 9px 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Cairo', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .btn-copy-ar {
+            background: var(--primary-dim);
+            color: var(--primary);
+            border-color: rgba(91,124,250,0.3);
+        }
+        .btn-copy-ar:hover { background: rgba(91,124,250,0.2); }
+        .btn-copy-en {
+            background: var(--purple-glow);
+            color: var(--purple);
+            border-color: rgba(168,85,247,0.3);
+        }
+        .btn-copy-en:hover { background: rgba(168,85,247,0.2); }
+        .btn-preview-prompt {
+            background: var(--surface3);
+            color: var(--text-muted);
+            border-color: var(--border);
+        }
+        .btn-preview-prompt:hover { color: var(--text); border-color: var(--border-light); }
+        .btn-success {
+            background: var(--green-glow) !important;
+            color: var(--green) !important;
+            border-color: rgba(34,197,94,0.3) !important;
         }
 
         /* ===== FORM ELEMENTS ===== */
-        .form-row { display: flex; gap: 8px; }
-        .form-group { display: flex; flex-direction: column; margin-bottom: 10px; flex: 1; }
+        .form-row { display: flex; gap: 7px; }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 9px; flex: 1; }
         label {
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 700;
             color: var(--text-muted);
             margin-bottom: 5px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
         input, select {
             background: var(--surface2);
             border: 1px solid var(--border);
             color: var(--text);
-            padding: 9px 12px;
+            padding: 8px 11px;
             border-radius: var(--radius-sm);
-            font-size: 13px;
+            font-size: 12.5px;
             font-family: 'Cairo', sans-serif;
             transition: all 0.2s;
             width: 100%;
         }
+        input[type=color] { padding: 3px 6px; height: 34px; cursor: pointer; }
         input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
@@ -185,13 +316,82 @@
         }
         select option { background: var(--surface2); }
 
+        /* ===== TOGGLE BUTTONS ===== */
+        .toggle-group {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .toggle-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Cairo', sans-serif;
+        }
+        .toggle-btn.active {
+            background: var(--primary-dim);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .toggle-btn:hover:not(.active) { border-color: var(--border-light); color: var(--text); }
+
+        /* ===== DURATION PREVIEW ===== */
+        .duration-display {
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 4px;
+        }
+        .duration-display-label { font-size: 11px; color: var(--text-muted); }
+        .duration-display-value { font-size: 16px; font-weight: 900; color: var(--primary); }
+
+        /* Per-slide durations */
+        .slides-duration-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            max-height: 160px;
+            overflow-y: auto;
+            margin-top: 6px;
+        }
+        .slide-duration-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xs);
+            padding: 6px 10px;
+        }
+        .slide-duration-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            flex: 1;
+            font-weight: 600;
+        }
+        .slide-duration-input {
+            width: 70px !important;
+            padding: 4px 8px !important;
+            font-size: 12px !important;
+            text-align: center;
+        }
+
         /* ===== TEXTAREA ===== */
         .textarea-wrap {
             position: relative;
             display: flex;
             flex-direction: column;
             gap: 6px;
-            margin-bottom: 12px;
         }
         .textarea-toolbar {
             display: flex;
@@ -209,7 +409,7 @@
             direction: ltr;
             text-align: left;
             resize: vertical;
-            min-height: 200px;
+            min-height: 180px;
             line-height: 1.6;
             transition: border-color 0.2s;
             width: 100%;
@@ -219,41 +419,35 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--primary-glow);
         }
-        .char-count {
-            font-size: 10px;
-            color: var(--text-dim);
-            text-align: left;
-        }
+        .char-count { font-size: 10px; color: var(--text-dim); }
         .clear-btn {
             background: transparent;
-            border: 1px solid #3f2020;
+            border: 1px solid rgba(239,68,68,0.3);
             color: var(--red);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
+            padding: 4px 9px;
+            border-radius: 5px;
+            font-size: 10.5px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             font-family: 'Cairo', sans-serif;
         }
-        .clear-btn:hover { background: rgba(239,68,68,0.15); border-color: var(--red); }
+        .clear-btn:hover { background: var(--red-glow); border-color: var(--red); }
 
         /* ===== EXPORT BUTTONS ===== */
         .sidebar-footer {
-            padding: 12px 16px;
+            padding: 10px 14px;
             border-top: 1px solid var(--border);
             background: var(--surface);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            flex-shrink: 0;
         }
-        .export-row { display: flex; gap: 8px; }
+        .export-row { display: flex; gap: 7px; }
         .export-btn {
             flex: 1;
-            padding: 13px 12px;
+            padding: 11px 10px;
             border: none;
             border-radius: var(--radius-sm);
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
@@ -261,24 +455,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
         }
-        .btn-pdf {
-            background: var(--primary);
-            color: white;
-        }
-        .btn-pdf:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 20px var(--primary-glow); }
-        .btn-video {
-            background: var(--orange);
-            color: white;
-        }
-        .btn-video:hover { background: var(--orange-hover); transform: translateY(-1px); box-shadow: 0 4px 20px var(--orange-glow); }
-        .export-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
-        }
+        .btn-pdf { background: var(--primary); color: white; }
+        .btn-pdf:hover { background: var(--primary-hover); box-shadow: 0 4px 16px var(--primary-glow); transform: translateY(-1px); }
+        .btn-video { background: var(--orange); color: white; }
+        .btn-video:hover { background: var(--orange-hover); box-shadow: 0 4px 16px var(--orange-glow); transform: translateY(-1px); }
+        .export-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
         /* ===== PREVIEW ===== */
         .preview-area {
@@ -286,27 +469,28 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            background: #080a0f;
+            background: #070910;
         }
         .preview-bar {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
-            padding: 10px 20px;
+            padding: 9px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-shrink: 0;
         }
         .preview-bar-left { display: flex; align-items: center; gap: 10px; }
-        .preview-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
-        .preview-title { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+        .preview-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 5px var(--green); }
+        .preview-title { font-size: 12.5px; font-weight: 700; color: var(--text-muted); }
+        .preview-bar-right { display: flex; align-items: center; gap: 8px; }
         .size-badge {
             background: var(--surface2);
             border: 1px solid var(--border);
             color: var(--text-muted);
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 700;
         }
         .preview-frame-wrap {
@@ -315,61 +499,111 @@
             display: flex;
             align-items: flex-start;
             justify-content: center;
-            padding: 24px;
-            background: #080a0f;
+            padding: 20px;
+            background: #070910;
         }
         .iframe-shadow {
-            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
-            border-radius: 4px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.7);
+            border-radius: 3px;
             overflow: hidden;
             flex-shrink: 0;
         }
-        #preview-frame {
-            border: none;
-            display: block;
-            background: white;
-        }
+        #preview-frame { border: none; display: block; background: white; }
         .preview-empty {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 16px;
+            gap: 12px;
             color: var(--text-dim);
         }
-        .preview-empty-icon { font-size: 48px; opacity: 0.4; }
-        .preview-empty-text { font-size: 14px; font-weight: 600; opacity: 0.5; }
+        .preview-empty-icon { font-size: 44px; opacity: 0.3; }
+        .preview-empty-text { font-size: 13px; font-weight: 600; opacity: 0.4; }
+
+        /* ===== VIDEO PLAYER ===== */
+        .video-preview-bar {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 10px 18px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .video-preview-bar.visible { display: flex; }
+        .vp-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .vp-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .vp-timeline { flex: 1; position: relative; }
+        .vp-track {
+            width: 100%;
+            height: 4px;
+            background: var(--surface3);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+        .vp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--orange));
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s linear;
+            pointer-events: none;
+        }
+        .vp-time { font-size: 11px; color: var(--text-muted); font-weight: 600; min-width: 80px; text-align: center; }
+        .vp-download {
+            background: var(--green-glow);
+            border: 1px solid rgba(34,197,94,0.3);
+            color: var(--green);
+            padding: 6px 12px;
+            border-radius: var(--radius-xs);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Cairo', sans-serif;
+        }
+        .vp-download:hover { background: rgba(34,197,94,0.2); }
 
         /* ===== PROGRESS ===== */
         .progress-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.88);
             z-index: 10000;
             display: none;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(6px);
         }
         .progress-box {
             background: var(--surface);
             border: 1px solid var(--border);
-            padding: 32px 36px;
+            padding: 28px 32px;
             border-radius: 16px;
             text-align: center;
-            min-width: 320px;
+            min-width: 300px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
-        .progress-icon { font-size: 32px; margin-bottom: 12px; }
-        .progress-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+        .progress-icon { font-size: 30px; margin-bottom: 10px; }
+        .progress-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
         .progress-bar-track {
-            width: 100%;
-            height: 6px;
+            width: 100%; height: 5px;
             background: var(--surface2);
             border-radius: 3px;
             overflow: hidden;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .progress-bar-fill {
             height: 100%;
@@ -378,58 +612,138 @@
             transition: width 0.3s;
             border-radius: 3px;
         }
-        .progress-pct { font-size: 12px; color: var(--text-muted); }
+        .progress-pct { font-size: 11px; color: var(--text-muted); }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 9000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 640px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .modal-title { font-size: 14px; font-weight: 800; }
+        .modal-close {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .modal-close:hover { color: var(--red); border-color: var(--red); }
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+        }
+        .modal-preview-text {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            font-size: 12.5px;
+            line-height: 1.8;
+            color: var(--text);
+            white-space: pre-wrap;
+            direction: rtl;
+            text-align: right;
+            font-family: 'Cairo', sans-serif;
+        }
+        .modal-footer {
+            padding: 12px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            font-family: 'Cairo', sans-serif;
+        }
+        .modal-btn-primary { background: var(--primary); color: white; }
+        .modal-btn-primary:hover { background: var(--primary-hover); }
+        .modal-btn-secondary { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+        .modal-btn-secondary:hover { color: var(--text); }
+        .modal-btn-purple { background: var(--purple); color: white; }
+        .modal-btn-purple:hover { background: #9333ea; }
 
         /* ===== TOAST ===== */
         .toast {
             position: fixed;
-            bottom: 24px;
+            bottom: 20px;
             left: 50%;
-            transform: translateX(-50%) translateY(100px);
+            transform: translateX(-50%) translateY(80px);
             background: var(--surface);
             border: 1px solid var(--border);
             color: var(--text);
-            padding: 12px 24px;
+            padding: 10px 22px;
             border-radius: 50px;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 12.5px;
+            font-weight: 700;
             z-index: 20000;
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.4);
+            pointer-events: none;
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
         .toast.success { border-color: var(--green); color: var(--green); }
         .toast.error { border-color: var(--red); color: var(--red); }
 
-        /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .app-body { flex-direction: column; height: auto; overflow: auto; }
-            .sidebar { width: 100%; min-width: auto; border-left: none; border-top: 1px solid var(--border); height: auto; }
-            .preview-area { height: 50vh; min-height: 300px; }
-        }
-
-        /* ===== DIVIDER ===== */
-        .divider {
-            height: 1px;
-            background: var(--border);
-            margin: 14px 0;
-        }
-
-        /* info tip */
+        /* ===== TIP ===== */
         .tip {
-            background: rgba(91,124,250,0.08);
-            border: 1px solid rgba(91,124,250,0.2);
+            background: rgba(91,124,250,0.07);
+            border: 1px solid rgba(91,124,250,0.18);
             border-radius: var(--radius-sm);
-            padding: 8px 10px;
-            font-size: 11px;
+            padding: 7px 10px;
+            font-size: 10.5px;
             color: var(--text-muted);
             line-height: 1.6;
             margin-top: 4px;
+        }
+        .divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        @media (max-width: 768px) {
+            .app-body { flex-direction: column; height: auto; overflow: auto; }
+            .sidebar { width: 100%; min-width: auto; border-left: none; border-top: 1px solid var(--border); }
+            .preview-area { height: 50vh; min-height: 280px; }
         }
     </style>
 </head>
@@ -441,91 +755,204 @@
         <div class="logo-icon">🛠️</div>
         منصة تحويل الأكواد
     </div>
-    <div class="header-badge">PDF & VIDEO</div>
+    <div class="header-badges">
+        <span class="header-badge">PDF</span>
+        <span class="header-badge orange">VIDEO</span>
+    </div>
 </div>
 
 <div class="app-body">
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="sidebar-scroll">
-
-            <!-- PROMPTS -->
-            <div class="section-label">📋 نسخ برومبت جاهز للذكاء الاصطناعي</div>
-            <div class="prompts-grid">
-                <button class="prompt-btn" onclick="copyPrompt('a4_portrait', this)">
-                    <span class="icon">📄</span> بحث طولي (A4)
-                </button>
-                <button class="prompt-btn" onclick="copyPrompt('a4_landscape', this)">
-                    <span class="icon">📋</span> بحث عرضي (A4)
-                </button>
-                <button class="prompt-btn" onclick="copyPrompt('video_portrait', this)">
-                    <span class="icon">📱</span> مقطع طولي (9:16)
-                </button>
-                <button class="prompt-btn" onclick="copyPrompt('video_landscape', this)">
-                    <span class="icon">🖥️</span> مقطع عرضي (16:9)
-                </button>
-            </div>
-
-            <div class="divider"></div>
-
-            <!-- FILE SETTINGS -->
-            <div class="section-label">⚙️ إعدادات الملف</div>
-
-            <div class="form-group">
-                <label>اسم الملف</label>
-                <input type="text" id="file-name" value="مستند_جديد" placeholder="اكتب اسم الملف...">
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>نوع التصدير</label>
-                    <select id="format-select" onchange="updatePreviewSize()">
-                        <option value="a4_portrait">بحث طولي (A4)</option>
-                        <option value="a4_landscape">بحث عرضي (A4)</option>
-                        <option value="video_portrait">مقطع طولي (9:16)</option>
-                        <option value="video_landscape" selected>مقطع عرضي (16:9)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>جودة PDF</label>
-                    <select id="quality-select">
-                        <option value="1">عادية</option>
-                        <option value="2" selected>عالية</option>
-                        <option value="3">ممتازة</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>مدة كل شريحة بالثانية (للفيديو)</label>
-                <input type="number" id="page-duration" value="3" min="1" max="15" step="0.5">
-            </div>
-
-            <div class="divider"></div>
-
-            <!-- CODE INPUT -->
-            <div class="section-label">💻 كود HTML</div>
-            <div class="textarea-wrap">
-                <div class="textarea-toolbar">
-                    <span id="char-count" class="char-count">0 حرف</span>
-                    <button class="clear-btn" onclick="clearCode()">🗑️ مسح</button>
-                </div>
-                <textarea id="html-input" oninput="onCodeInput()" placeholder="الصق كود HTML هنا..."></textarea>
-                <div class="tip">💡 تأكد أن الصفحات تستخدم class="page" أو class="slide"</div>
-            </div>
-
+        <!-- TABS -->
+        <div class="sidebar-tabs">
+            <button class="sidebar-tab active" onclick="switchTab('tab-prompts')">📋 البرومبتات</button>
+            <button class="sidebar-tab" onclick="switchTab('tab-export')">⚙️ الإعدادات</button>
+            <button class="sidebar-tab" onclick="switchTab('tab-code')">💻 الكود</button>
         </div>
 
-        <!-- FOOTER BUTTONS -->
-        <div class="sidebar-footer">
-            <div class="export-row">
-                <button id="capture-btn" class="export-btn btn-pdf" onclick="exportToPDF()">
-                    📥 PDF
-                </button>
-                <button id="video-btn" class="export-btn btn-video" onclick="exportToVideo()">
-                    🎬 فيديو
-                </button>
+        <!-- TAB: PROMPTS -->
+        <div id="tab-prompts" class="tab-panel active">
+            <div class="sidebar-scroll">
+                <div class="section-label">🎨 اختر نوع التصميم</div>
+                <div class="prompts-grid">
+                    <div class="prompt-card" onclick="selectPrompt('a4_portrait', this)">
+                        <div class="prompt-card-icon">📄</div>
+                        <div class="prompt-card-title">بحث طولي</div>
+                        <div class="prompt-card-sub">A4 — 794×1123</div>
+                    </div>
+                    <div class="prompt-card" onclick="selectPrompt('a4_landscape', this)">
+                        <div class="prompt-card-icon">📋</div>
+                        <div class="prompt-card-title">بحث عرضي</div>
+                        <div class="prompt-card-sub">A4 — 1123×794</div>
+                    </div>
+                    <div class="prompt-card" onclick="selectPrompt('video_portrait', this)">
+                        <div class="prompt-card-icon">📱</div>
+                        <div class="prompt-card-title">مقطع طولي</div>
+                        <div class="prompt-card-sub">9:16 — 1080×1920</div>
+                    </div>
+                    <div class="prompt-card" onclick="selectPrompt('video_landscape', this)">
+                        <div class="prompt-card-icon">🖥️</div>
+                        <div class="prompt-card-title">مقطع عرضي</div>
+                        <div class="prompt-card-sub">16:9 — 1280×720</div>
+                    </div>
+                    <div class="prompt-card" onclick="selectPrompt('infographic_portrait', this)">
+                        <div class="prompt-card-icon">📊</div>
+                        <div class="prompt-card-title">إنفوجرافيك طولي</div>
+                        <div class="prompt-card-sub">9:16 أو A4</div>
+                    </div>
+                    <div class="prompt-card" onclick="selectPrompt('cv', this)">
+                        <div class="prompt-card-icon">👤</div>
+                        <div class="prompt-card-title">CV / بطاقة تعريفية</div>
+                        <div class="prompt-card-sub">A4 — احترافي</div>
+                    </div>
+                    <div class="prompt-card" onclick="selectPrompt('poster', this)">
+                        <div class="prompt-card-icon">🎨</div>
+                        <div class="prompt-card-title">ملصق دعائي</div>
+                        <div class="prompt-card-sub">عمودي — Poster</div>
+                    </div>
+                </div>
+
+                <!-- DETAILS FORM -->
+                <div class="details-form" id="details-form" style="display:none;">
+                    <div class="details-form-title">
+                        <span>✏️</span> <span id="details-form-title-text">اكتب تفاصيلك</span>
+                    </div>
+                    <div class="details-grid" id="details-fields"></div>
+                </div>
+
+                <!-- PROMPT ACTIONS -->
+                <div class="prompt-actions" id="prompt-actions" style="display:none;">
+                    <button class="prompt-action-btn btn-copy-ar" onclick="copyPromptAR()">
+                        <span>🇸🇦</span> نسخ عربي
+                    </button>
+                    <button class="prompt-action-btn btn-copy-en" onclick="copyPromptEN()">
+                        <span>🇺🇸</span> نسخ English
+                    </button>
+                    <button class="prompt-action-btn btn-preview-prompt" onclick="openPromptModal()">
+                        <span>👁️</span> معاينة
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: EXPORT SETTINGS -->
+        <div id="tab-export" class="tab-panel">
+            <div class="sidebar-scroll">
+                <div class="section-label">📁 إعدادات الملف</div>
+                <div class="form-group">
+                    <label>اسم الملف</label>
+                    <input type="text" id="file-name" value="مستند_جديد" placeholder="اكتب اسم الملف...">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>نوع التصدير</label>
+                        <select id="format-select" onchange="updatePreviewSize(); updateSlideDurations();">
+                            <option value="a4_portrait">بحث طولي (A4)</option>
+                            <option value="a4_landscape">بحث عرضي (A4)</option>
+                            <option value="video_portrait">مقطع طولي (9:16)</option>
+                            <option value="video_landscape" selected>مقطع عرضي (16:9)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>جودة PDF</label>
+                        <select id="quality-select">
+                            <option value="1">عادية</option>
+                            <option value="2" selected>عالية</option>
+                            <option value="3">ممتازة</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="section-label">🎬 إعدادات الفيديو</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>FPS</label>
+                        <div class="toggle-group">
+                            <button class="toggle-btn" onclick="setFPS(24, this)">24</button>
+                            <button class="toggle-btn active" onclick="setFPS(30, this)">30</button>
+                            <button class="toggle-btn" onclick="setFPS(60, this)">60</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>لون خلفية الانتقال</label>
+                        <div class="form-row" style="margin-bottom:0; gap:5px;">
+                            <button class="toggle-btn active" id="tc-black" onclick="setTransColor('black', this)" style="flex:1;">⬛</button>
+                            <button class="toggle-btn" id="tc-white" onclick="setTransColor('white', this)" style="flex:1;">⬜</button>
+                            <button class="toggle-btn" id="tc-match" onclick="setTransColor('match', this)" style="flex:1;">🎨</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>نوع الانتقال بين الشرائح</label>
+                    <div class="toggle-group">
+                        <button class="toggle-btn active" onclick="setTransition('fade', this)">🌅 تلاشٍ</button>
+                        <button class="toggle-btn" onclick="setTransition('slide', this)">➡️ انزلاق</button>
+                        <button class="toggle-btn" onclick="setTransition('zoom', this)">🔍 تكبير</button>
+                        <button class="toggle-btn" onclick="setTransition('none', this)">⛔ لا شيء</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>مدة كل شريحة (ثانية) — افتراضية</label>
+                    <input type="number" id="page-duration" value="3" min="0.5" max="30" step="0.5" oninput="updateTotalDuration()">
+                </div>
+
+                <div class="duration-display">
+                    <span class="duration-display-label">⏱️ المدة الكلية المتوقعة</span>
+                    <span class="duration-display-value" id="total-duration-display">—</span>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="section-label">🎛️ مدة كل شريحة بشكل منفرد</div>
+                <div class="tip">💡 الكود يجب أن يكون موجوداً في حقل الكود لتظهر الشرائح هنا</div>
+                <div class="slides-duration-list" id="slides-duration-list">
+                    <div style="font-size:11px; color:var(--text-dim); padding:6px; text-align:center;">الصق الكود أولاً</div>
+                </div>
+            </div>
+
+            <!-- FOOTER BUTTONS -->
+            <div class="sidebar-footer">
+                <div class="export-row">
+                    <button id="capture-btn" class="export-btn btn-pdf" onclick="exportToPDF()">
+                        📥 تصدير PDF
+                    </button>
+                    <button id="video-btn" class="export-btn btn-video" onclick="exportToVideo()">
+                        🎬 تصدير فيديو
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: CODE -->
+        <div id="tab-code" class="tab-panel">
+            <div class="sidebar-scroll">
+                <div class="section-label">💻 كود HTML</div>
+                <div class="textarea-wrap">
+                    <div class="textarea-toolbar">
+                        <span id="char-count" class="char-count">0 حرف</span>
+                        <button class="clear-btn" onclick="clearCode()">🗑️ مسح</button>
+                    </div>
+                    <textarea id="html-input" oninput="onCodeInput()" placeholder="الصق كود HTML هنا...&#10;&#10;تأكد أن الصفحات تستخدم class=&quot;page&quot; أو class=&quot;slide&quot;"></textarea>
+                </div>
+                <div class="tip">💡 كل صفحة يجب أن تستخدم <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="page"</code> أو <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="slide"</code></div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="export-row">
+                    <button id="capture-btn2" class="export-btn btn-pdf" onclick="exportToPDF()">
+                        📥 PDF
+                    </button>
+                    <button id="video-btn2" class="export-btn btn-video" onclick="exportToVideo()">
+                        🎬 فيديو
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -537,7 +964,9 @@
                 <div class="preview-dot"></div>
                 <span class="preview-title">المعاينة المباشرة</span>
             </div>
-            <span class="size-badge" id="size-tag">16:9 — 1280 × 720</span>
+            <div class="preview-bar-right">
+                <span class="size-badge" id="size-tag">16:9 — 1280 × 720</span>
+            </div>
         </div>
         <div class="preview-frame-wrap" id="preview-wrap">
             <div class="preview-empty" id="preview-empty">
@@ -547,6 +976,17 @@
             <div class="iframe-shadow" id="iframe-shadow" style="display:none;">
                 <iframe id="preview-frame"></iframe>
             </div>
+        </div>
+        <!-- VIDEO PLAYER -->
+        <div class="video-preview-bar" id="video-preview-bar">
+            <button class="vp-btn" id="vp-play-btn" onclick="vpTogglePlay()">▶️</button>
+            <div class="vp-timeline">
+                <div class="vp-track" id="vp-track" onclick="vpSeek(event)">
+                    <div class="vp-fill" id="vp-fill"></div>
+                </div>
+            </div>
+            <span class="vp-time" id="vp-time">0:00 / 0:00</span>
+            <button class="vp-download" onclick="vpDownload()">💾 تحميل</button>
         </div>
     </div>
 </div>
@@ -563,11 +1003,29 @@
     </div>
 </div>
 
+<!-- PROMPT PREVIEW MODAL -->
+<div class="modal-overlay" id="prompt-modal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span class="modal-title" id="modal-title">معاينة البرومبت</span>
+            <button class="modal-close" onclick="closePromptModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-preview-text" id="modal-prompt-text"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-primary" onclick="copyFromModal('ar')">🇸🇦 نسخ عربي</button>
+            <button class="modal-btn modal-btn-purple" onclick="copyFromModal('en')">🇺🇸 نسخ English</button>
+            <button class="modal-btn modal-btn-secondary" onclick="closePromptModal()">إغلاق</button>
+        </div>
+    </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== DIMENSIONS CONFIG =====
+// ===== FORMATS =====
 const FORMATS = {
     a4_portrait:   { w: 794,  h: 1123, label: 'A4 طولي — 794 × 1123',  pdfOrient: 'portrait'  },
     a4_landscape:  { w: 1123, h: 794,  label: 'A4 عرضي — 1123 × 794',  pdfOrient: 'landscape' },
@@ -575,144 +1033,471 @@ const FORMATS = {
     video_landscape: { w: 1280, h: 720,  label: '16:9 — 1280 × 720',  pdfOrient: 'landscape' },
 };
 
-// ===== PROMPTS =====
-const PROMPTS = {
-    a4_portrait: `أنت مصمم وثائق HTML محترف. قم بإنشاء كود HTML كامل لبحث أكاديمي بالعربية وفق المواصفات التالية:
+// ===== VIDEO SETTINGS =====
+let currentFPS = 30;
+let currentTransition = 'fade';
+let transitionColor = 'black';
+let currentPromptKey = null;
+let slideDurationsMap = {};
 
-**عنوان البحث:** [اكتب العنوان هنا]
-**المادة:** [مثال: فيزياء / كيمياء / رياضيات]
-**الطالب:** [الاسم]
-**المعلم:** [الاسم]
-**الصف:** [مثال: أول ثانوي]
-**العام الدراسي:** [مثال: 1447هـ / 2026م]
-**عدد الصفحات المطلوبة:** [مثال: 5 صفحات]
+// ===== VIDEO PLAYER STATE =====
+let vpBlob = null, vpUrl = null, vpFileName = '';
+let vpVideo = null;
+
+// ===== TABS =====
+function switchTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.currentTarget.classList.add('active');
+}
+
+// ===== FPS TOGGLE =====
+function setFPS(fps, btn) {
+    currentFPS = fps;
+    document.querySelectorAll('.toggle-btn[onclick^="setFPS"]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updateTotalDuration();
+}
+
+// ===== TRANSITION =====
+function setTransition(type, btn) {
+    currentTransition = type;
+    document.querySelectorAll('.toggle-btn[onclick^="setTransition"]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+// ===== TRANSITION COLOR =====
+function setTransColor(color, btn) {
+    transitionColor = color;
+    ['tc-black','tc-white','tc-match'].forEach(id => document.getElementById(id).classList.remove('active'));
+    btn.classList.add('active');
+}
+
+// ===== DURATION =====
+function updateTotalDuration() {
+    const code = document.getElementById('html-input').value;
+    let count = 0;
+    if (code.trim()) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = code;
+        const pages = tmp.querySelectorAll('.page, .slide');
+        count = pages.length || 1;
+    }
+    const defaultDur = parseFloat(document.getElementById('page-duration').value) || 3;
+    let total = 0;
+    for (let i = 0; i < count; i++) {
+        total += slideDurationsMap[i] !== undefined ? slideDurationsMap[i] : defaultDur;
+    }
+    const display = document.getElementById('total-duration-display');
+    if (count === 0) { display.textContent = '—'; return; }
+    display.textContent = total.toFixed(1) + ' ث (' + count + ' شرائح)';
+}
+
+function updateSlideDurations() {
+    const code = document.getElementById('html-input').value;
+    const list = document.getElementById('slides-duration-list');
+    if (!code.trim()) {
+        list.innerHTML = '<div style="font-size:11px;color:var(--text-dim);padding:6px;text-align:center;">الصق الكود أولاً</div>';
+        return;
+    }
+    const tmp = document.createElement('div');
+    tmp.innerHTML = code;
+    const pages = Array.from(tmp.querySelectorAll('.page, .slide'));
+    if (pages.length === 0) {
+        list.innerHTML = '<div style="font-size:11px;color:var(--text-dim);padding:6px;text-align:center;">لم يتم العثور على شرائح</div>';
+        return;
+    }
+    const defaultDur = parseFloat(document.getElementById('page-duration').value) || 3;
+    list.innerHTML = '';
+    pages.forEach((p, i) => {
+        const row = document.createElement('div');
+        row.className = 'slide-duration-row';
+        const label = document.createElement('span');
+        label.className = 'slide-duration-label';
+        label.textContent = `شريحة ${i+1}`;
+        const inp = document.createElement('input');
+        inp.type = 'number';
+        inp.min = '0.5';
+        inp.max = '30';
+        inp.step = '0.5';
+        inp.className = 'slide-duration-input';
+        inp.value = slideDurationsMap[i] !== undefined ? slideDurationsMap[i] : defaultDur;
+        inp.oninput = () => { slideDurationsMap[i] = parseFloat(inp.value) || defaultDur; updateTotalDuration(); };
+        const unit = document.createElement('span');
+        unit.style.cssText = 'font-size:10px;color:var(--text-dim);';
+        unit.textContent = 'ث';
+        row.appendChild(label);
+        row.appendChild(inp);
+        row.appendChild(unit);
+        list.appendChild(row);
+    });
+    updateTotalDuration();
+}
+
+// ===== PROMPTS DATA =====
+const PROMPT_CONFIGS = {
+    a4_portrait: {
+        title: 'بحث طولي (A4)',
+        fields: [
+            { id: 'title', label: 'عنوان البحث', full: true, placeholder: 'مثال: الطاقة الشمسية ودورها البيئي' },
+            { id: 'subject', label: 'المادة', placeholder: 'فيزياء' },
+            { id: 'student', label: 'اسم الطالب', placeholder: 'أحمد محمد' },
+            { id: 'teacher', label: 'المعلم', placeholder: 'الأستاذ علي' },
+            { id: 'grade', label: 'الصف', placeholder: 'أول ثانوي' },
+            { id: 'year', label: 'العام الدراسي', placeholder: '1447هـ / 2026م' },
+            { id: 'pages', label: 'عدد الصفحات', placeholder: '5' },
+        ],
+        ar: (d) => `أنت مصمم وثائق HTML محترف. قم بإنشاء كود HTML كامل لبحث أكاديمي بالعربية وفق المواصفات التالية:
+
+**عنوان البحث:** ${d.title || '[اكتب العنوان هنا]'}
+**المادة:** ${d.subject || '[مثال: فيزياء / كيمياء]'}
+**الطالب:** ${d.student || '[الاسم]'}
+**المعلم:** ${d.teacher || '[الاسم]'}
+**الصف:** ${d.grade || '[مثال: أول ثانوي]'}
+**العام الدراسي:** ${d.year || '[مثال: 1447هـ / 2026م]'}
+**عدد الصفحات المطلوبة:** ${d.pages || '5'} صفحات
 
 **متطلبات تقنية صارمة جداً — لا تتجاوزها:**
 1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
 2. استدعاء خطوط Google Fonts صراحةً (مثل Cairo أو Tajawal).
-3. الـ body يحتوي على: display: block; direction: rtl; text-align: right; margin: 0; padding: 0; box-sizing: border-box;
-4. كل صفحة تكون: <div class="page">. أبعادها الثابتة: width: 794px; height: 1123px; overflow: hidden; position: relative; box-sizing: border-box;
-5. **مهم جداً للنقاط:** لا تستخدم القوائم الافتراضية (ul, ol). للترقيم أو النقاط استخدم <p> أو <div> وأضف النقطة داخل النص: <p>• النقطة الأولى</p>
+3. الـ body: display: block; direction: rtl; margin: 0; padding: 0; box-sizing: border-box;
+4. كل صفحة: <div class="page"> بأبعاد width: 794px; height: 1123px; overflow: hidden; position: relative; box-sizing: border-box;
+5. **للنقاط:** لا تستخدم ul أو ol. استخدم <p> أو <div> وأضف النقطة داخل النص: <p>• النص</p>
 6. ممنوع استخدام letter-spacing نهائياً.
 
 **هيكل الصفحات:**
 - صفحة 1: غلاف احترافي (شعار، عنوان، بيانات الطالب).
-- صفحات 2+: محتوى البحث منظم (مقدمة، فصول، خاتمة).
+- صفحات 2+: محتوى البحث (مقدمة، فصول، خاتمة).
 - صفحة أخيرة: المراجع.
 نمط التصميم: احترافي وأنيق بألوان متناسقة.`,
+        en: (d) => `You are a professional HTML document designer. Create a complete HTML code for an Arabic academic research paper with the following specifications:
 
-    a4_landscape: `أنت مصمم وثائق HTML محترف. قم بإنشاء كود HTML كامل لبحث أكاديمي عرضي (Landscape) بالعربية وفق المواصفات التالية:
+**Research Title:** ${d.title || '[Write title here]'}
+**Subject:** ${d.subject || '[e.g., Physics / Chemistry]'}
+**Student:** ${d.student || '[Name]'}
+**Teacher:** ${d.teacher || '[Name]'}
+**Grade:** ${d.grade || '[e.g., Grade 10]'}
+**Academic Year:** ${d.year || '[e.g., 2025/2026]'}
+**Number of Pages:** ${d.pages || '5'} pages
 
-**عنوان البحث:** [اكتب العنوان هنا]
-**المادة:** [مثال: فيزياء / كيمياء / رياضيات]
-**الطالب:** [الاسم]
-**المعلم:** [الاسم]
-**الصف:** [مثال: أول ثانوي]
-**العام الدراسي:** [مثال: 1447هـ / 2026م]
-**عدد الصفحات المطلوبة:** [مثال: 5 صفحات]
+**Strict Technical Requirements:**
+1. Start with <html lang="ar" dir="rtl">.
+2. Import Google Fonts explicitly (Cairo or Tajawal).
+3. Body styles: display: block; direction: rtl; margin: 0; padding: 0; box-sizing: border-box;
+4. Each page: <div class="page"> with width: 794px; height: 1123px; overflow: hidden; position: relative; box-sizing: border-box;
+5. **For bullet points:** Never use ul or ol. Use <p> or <div> and add the bullet inside the text: <p>• Text</p>
+6. Never use letter-spacing.
 
-**متطلبات تقنية صارمة جداً — لا تتجاوزها:**
+**Page Structure:** Cover page, content pages (intro, chapters, conclusion), references page.
+Design style: Professional and elegant with coordinated colors.`
+    },
+    a4_landscape: {
+        title: 'بحث عرضي (A4)',
+        fields: [
+            { id: 'title', label: 'عنوان البحث', full: true, placeholder: 'مثال: مقارنة مصادر الطاقة المتجددة' },
+            { id: 'subject', label: 'المادة', placeholder: 'علوم' },
+            { id: 'student', label: 'اسم الطالب', placeholder: 'محمد سعيد' },
+            { id: 'teacher', label: 'المعلم', placeholder: 'الأستاذة سارة' },
+            { id: 'grade', label: 'الصف', placeholder: 'ثالث متوسط' },
+            { id: 'pages', label: 'عدد الصفحات', placeholder: '6' },
+        ],
+        ar: (d) => `أنت مصمم وثائق HTML محترف. قم بإنشاء كود HTML كامل لبحث أكاديمي عرضي (Landscape) بالعربية:
+
+**عنوان البحث:** ${d.title || '[العنوان]'}
+**المادة:** ${d.subject || '[المادة]'}
+**الطالب:** ${d.student || '[الاسم]'}
+**المعلم:** ${d.teacher || '[الاسم]'}
+**الصف:** ${d.grade || '[الصف]'}
+**عدد الصفحات:** ${d.pages || '6'} صفحات
+
+**متطلبات تقنية صارمة:**
 1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
-2. استدعاء خطوط Google Fonts صراحةً (مثل Cairo أو Tajawal).
-3. الـ body يحتوي على: display: block; direction: rtl; text-align: right; margin: 0; padding: 0; box-sizing: border-box;
-4. كل صفحة تكون: <div class="page">. أبعادها الثابتة: width: 1123px; height: 794px; overflow: hidden; position: relative; box-sizing: border-box;
-5. **مهم جداً للنقاط:** لا تستخدم القوائم الافتراضية (ul, ol). استخدم <p> أو <div> وأضف النقطة داخل النص.
-6. ممنوع استخدام letter-spacing نهائياً.
-7. **استغل العرض الأفقي:** استخدم تخطيط عمودين (two-column layout) داخل كل صفحة لاستغلال المساحة الأفقية بشكل جمالي.
+2. استدعاء Google Fonts (Cairo أو Tajawal).
+3. body: display: block; direction: rtl; margin: 0; padding: 0; box-sizing: border-box;
+4. كل صفحة: <div class="page"> بأبعاد width: 1123px; height: 794px; overflow: hidden; position: relative; box-sizing: border-box;
+5. **للنقاط:** لا تستخدم ul أو ol. استخدم <p>• النص</p>
+6. ممنوع letter-spacing.
+7. **استغل العرض الأفقي:** استخدم تخطيط عمودين داخل كل صفحة.
 
-**هيكل الصفحات:**
-- صفحة 1: غلاف احترافي.
-- صفحات 2+: محتوى بتخطيط عمودين.
-- صفحة أخيرة: المراجع.
-نمط التصميم: احترافي بتخطيط أفقي منظم.`,
+**الهيكل:** غلاف، محتوى بعمودين، مراجع.`,
+        en: (d) => `You are a professional HTML designer. Create a complete HTML landscape (A4) research document in Arabic:
 
-    video_portrait: `أنت مصمم مقاطع فيديو قصيرة للجوال (TikTok/Reels). قم بإنشاء كود HTML كامل بمقاس (9:16) مع أنيميشن CSS جذاب.
+**Title:** ${d.title || '[Title]'} | **Subject:** ${d.subject || '[Subject]'} | **Student:** ${d.student || '[Name]'} | **Grade:** ${d.grade || '[Grade]'} | **Pages:** ${d.pages || '6'}
 
-**عنوان المقطع:** [اكتب العنوان هنا]
-**المحتوى الأساسي:** [اكتب النقاط الرئيسية]
-**عدد الشرائح:** [مثال: 5 شرائح]
+Requirements: html[dir=rtl], Cairo/Tajawal fonts, each .page = 1123×794px overflow:hidden, NO ul/ol (use <p>• text</p>), NO letter-spacing, two-column layout per page. Professional elegant design.`
+    },
+    video_portrait: {
+        title: 'مقطع طولي (9:16)',
+        fields: [
+            { id: 'title', label: 'عنوان المقطع', full: true, placeholder: 'مثال: 5 حقائق لا تعرفها عن القمر' },
+            { id: 'content', label: 'النقاط الرئيسية', full: true, placeholder: 'مثال: القمر يبتعد 3.8 سم سنوياً، ليس كروياً...' },
+            { id: 'slides', label: 'عدد الشرائح', placeholder: '5' },
+        ],
+        ar: (d) => `أنت مصمم مقاطع فيديو قصيرة للجوال (TikTok/Reels). قم بإنشاء كود HTML كامل بمقاس (9:16) مع أنيميشن CSS جذاب.
 
-**متطلبات تقنية صارمة جداً — لا تتجاوزها:**
-1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
-2. استدعاء خطوط Google Fonts (مثل Cairo أو Tajawal).
-3. الـ body يحتوي على: display: block; margin: 0; padding: 0; background: #000;
-4. كل شريحة تكون: <div class="page">. أبعادها الثابتة: width: 1080px; height: 1920px; overflow: hidden; position: relative; box-sizing: border-box;
-5. **أنيميشن fadeInUp إجباري لكل عناصر النص:**
-   @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-   العنوان: animation: fadeInUp 0.7s ease-out 0.1s both;
-   العنوان الفرعي: animation: fadeInUp 0.7s ease-out 0.3s both;
-   النقاط: animation: fadeInUp 0.7s ease-out 0.5s both;
-6. **مهم جداً للنقاط:** لا تستخدم ul أو ol. استخدم <p> أو <div> وأضف النقطة داخل النص.
+**عنوان المقطع:** ${d.title || '[العنوان]'}
+**المحتوى الأساسي:** ${d.content || '[النقاط الرئيسية]'}
+**عدد الشرائح:** ${d.slides || '5'} شرائح
+
+**متطلبات تقنية صارمة:**
+1. يبدأ بـ <html lang="ar" dir="rtl">.
+2. استدعاء Google Fonts (Cairo أو Tajawal).
+3. body: display: block; margin: 0; padding: 0; background: #000;
+4. كل شريحة: <div class="page"> بأبعاد width: 1080px; height: 1920px; overflow: hidden; position: relative; box-sizing: border-box;
+5. **أنيميشن fadeInUp إجباري:**
+   @keyframes fadeInUp { from { opacity:0; transform:translateY(40px); } to { opacity:1; transform:translateY(0); } }
+   h1: animation: fadeInUp 0.7s ease-out 0.1s both;
+   h2: animation: fadeInUp 0.7s ease-out 0.3s both;
+   p, div: animation: fadeInUp 0.7s ease-out 0.5s both;
+6. **للنقاط:** لا تستخدم ul أو ol. استخدم <p>• النص</p>
 7. ممنوع letter-spacing.
-8. خطوط النص كبيرة (h1 لا تقل عن 80px، p لا تقل عن 40px).
+8. خطوط كبيرة: h1 لا تقل عن 80px، p لا تقل عن 40px.
 
-**الهيكل المطلوب:**
-- شريحة 1: غلاف (عنوان ضخم + خلفية جذابة).
-- شرائح 2-4: كل شريحة عنوان فرعي ونقطتان رئيسيتان.
-- شريحة أخيرة: خاتمة تحفيزية.
-نمط التصميم: عصري وجريء، خلفيات متدرجة، ألوان مضيئة.`,
+**الهيكل:** شريحة غلاف ضخمة، شرائح محتوى، خاتمة تحفيزية.
+نمط التصميم: عصري جريء، خلفيات متدرجة، ألوان مضيئة.`,
+        en: (d) => `You are a mobile video designer (TikTok/Reels). Create complete HTML code in 9:16 format with CSS animations.
 
-    video_landscape: `أنت مصمم عروض تقديمية وفيديوهات HTML احترافية. قم بإنشاء كود HTML كامل بمقاس (16:9) مناسب للعرض والتقديم.
+**Title:** ${d.title || '[Title]'}
+**Content:** ${d.content || '[Main points]'}
+**Slides:** ${d.slides || '5'}
 
-**عنوان العرض:** [اكتب العنوان هنا]
-**الموضوع / المادة:** [مثال: مشروع علمي / درس تاريخ]
-**المقدِّم:** [الاسم]
-**عدد الشرائح:** [مثال: 8 شرائح]
+Requirements: html[dir=rtl], Cairo/Tajawal fonts, body{background:#000;margin:0}, each .page = 1080×1920px, mandatory fadeInUp animation for all text elements, NO ul/ol (use <p>• text</p>), NO letter-spacing, large fonts (h1 min 80px, p min 40px). Bold modern design with gradients.`
+    },
+    video_landscape: {
+        title: 'مقطع عرضي (16:9)',
+        fields: [
+            { id: 'title', label: 'عنوان العرض', full: true, placeholder: 'مثال: مشروع الطاقة الشمسية 2026' },
+            { id: 'topic', label: 'الموضوع / المادة', placeholder: 'علوم / تقنية' },
+            { id: 'presenter', label: 'المقدِّم', placeholder: 'أحمد السالم' },
+            { id: 'slides', label: 'عدد الشرائح', placeholder: '8' },
+        ],
+        ar: (d) => `أنت مصمم عروض تقديمية HTML احترافية. قم بإنشاء كود HTML كامل بمقاس (16:9).
 
-**متطلبات تقنية صارمة جداً — لا تتجاوزها:**
-1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
-2. استدعاء خطوط Google Fonts صراحةً (مثل Cairo أو Tajawal).
-3. الـ body يحتوي على: display: block; margin: 0; padding: 0; background: #000;
-4. كل شريحة تكون: <div class="page">. أبعادها الثابتة: width: 1280px; height: 720px; overflow: hidden; position: relative; box-sizing: border-box;
-5. **أنيميشن fadeIn لكل عناصر النص:**
-   @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-   .page h1, .page h2 { animation: fadeIn 0.6s ease-out 0.1s both; }
-   .page p, .page div.point { animation: fadeIn 0.6s ease-out 0.4s both; }
-6. **مهم جداً للنقاط:** لا تستخدم ul أو ol. استخدم <p> أو <div> وأضف النقطة داخل النص.
+**عنوان العرض:** ${d.title || '[العنوان]'}
+**الموضوع / المادة:** ${d.topic || '[الموضوع]'}
+**المقدِّم:** ${d.presenter || '[الاسم]'}
+**عدد الشرائح:** ${d.slides || '8'} شرائح
+
+**متطلبات تقنية صارمة:**
+1. يبدأ بـ <html lang="ar" dir="rtl">.
+2. استدعاء Google Fonts (Cairo أو Tajawal).
+3. body: display: block; margin: 0; padding: 0; background: #000;
+4. كل شريحة: <div class="page"> بأبعاد width: 1280px; height: 720px; overflow: hidden; position: relative; box-sizing: border-box;
+5. **أنيميشن fadeIn:**
+   @keyframes fadeIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+   h1,h2: animation: fadeIn 0.6s ease-out 0.1s both;
+   p, div.point: animation: fadeIn 0.6s ease-out 0.4s both;
+6. **للنقاط:** لا تستخدم ul أو ol. استخدم <p>• النص</p>
 7. ممنوع letter-spacing.
-8. خطوط واضحة: h1 لا تقل عن 52px، h2 لا تقل عن 36px، p لا تقل عن 24px.
+8. خطوط واضحة: h1 لا تقل عن 52px، p لا تقل عن 24px.
 
-**الهيكل المطلوب:**
-- شريحة 1: غلاف (عنوان + اسم المقدِّم).
-- شرائح 2+: محتوى بتصميم حديث ومتناسق.
-- شريحة أخيرة: شكر وتقدير أو خاتمة.
-نمط التصميم: حديث، خلفيات ذات عمق، ألوان متناسقة.`
+**الهيكل:** غلاف، شرائح محتوى، شريحة شكر وتقدير.
+نمط التصميم: حديث، خلفيات ذات عمق، ألوان متناسقة.`,
+        en: (d) => `You are a professional HTML presentation designer. Create a complete 16:9 HTML presentation.
+
+**Title:** ${d.title || '[Title]'} | **Topic:** ${d.topic || '[Topic]'} | **Presenter:** ${d.presenter || '[Name]'} | **Slides:** ${d.slides || '8'}
+
+Requirements: html[dir=rtl], Cairo/Tajawal fonts, body{background:#000;margin:0}, each .page = 1280×720px, fadeIn animation for all text, NO ul/ol (use <p>• text</p>), NO letter-spacing, clear fonts (h1 min 52px, p min 24px). Modern deep-background design.`
+    },
+    infographic_portrait: {
+        title: 'إنفوجرافيك طولي',
+        fields: [
+            { id: 'title', label: 'عنوان الإنفوجرافيك', full: true, placeholder: 'مثال: فوائد شرب الماء اليومية' },
+            { id: 'points', label: 'النقاط (مفصولة بـ ،)', full: true, placeholder: 'يحسّن التركيز، ينظف الجسم، يقوي المناعة' },
+            { id: 'size', label: 'المقاس', placeholder: '9:16 أو A4' },
+        ],
+        ar: (d) => `أنت مصمم إنفوجرافيك HTML احترافي. قم بإنشاء إنفوجرافيك بصري وجذاب بالعربية:
+
+**عنوان الإنفوجرافيك:** ${d.title || '[العنوان]'}
+**النقاط الرئيسية:** ${d.points || '[النقاط]'}
+**المقاس:** ${d.size === 'A4' ? '794×1123px (A4 طولي)' : '1080×1920px (9:16)'}
+
+**متطلبات تقنية صارمة:**
+1. يبدأ بـ <html lang="ar" dir="rtl">.
+2. استدعاء Google Fonts (Cairo أو Tajawal).
+3. body: display: block; direction: rtl; margin: 0; padding: 0;
+4. صفحة واحدة: <div class="page"> بالأبعاد المحددة، overflow: hidden; position: relative;
+5. **للنقاط:** لا تستخدم ul أو ol. استخدم <div> أو <p> مع أيقونات نصية.
+6. ممنوع letter-spacing.
+7. **التصميم:** استخدم أشكالاً هندسية، ألواناً زاهية، أيقونات emoji كبيرة، تدرجات ملونة، ونسب وأرقام بارزة بصرياً.
+8. أضف animation CSS خفيف لكل عنصر.
+
+نمط التصميم: بصري مبهج، ألوان نابضة، تصميم عصري يُشارَك على السوشيال ميديا.`,
+        en: (d) => `You are a professional HTML infographic designer. Create a visually striking Arabic infographic:
+
+**Title:** ${d.title || '[Title]'}
+**Points:** ${d.points || '[Points]'}
+**Size:** ${d.size === 'A4' ? '794×1123px (A4 portrait)' : '1080×1920px (9:16)'}
+
+Requirements: html[dir=rtl], Cairo/Tajawal fonts, single .page div with specified dimensions, NO ul/ol, NO letter-spacing, use geometric shapes, vibrant gradients, large emoji icons, bold numbers. Add subtle CSS animations. Modern shareable social media style.`
+    },
+    cv: {
+        title: 'CV / بطاقة تعريفية',
+        fields: [
+            { id: 'name', label: 'الاسم الكامل', full: true, placeholder: 'أحمد محمد السالم' },
+            { id: 'title', label: 'المسمى الوظيفي', placeholder: 'مطور ويب' },
+            { id: 'phone', label: 'رقم الجوال', placeholder: '05xxxxxxxx' },
+            { id: 'email', label: 'البريد الإلكتروني', placeholder: 'ahmed@email.com' },
+            { id: 'skills', label: 'المهارات الرئيسية', full: true, placeholder: 'HTML, CSS, JavaScript, React' },
+            { id: 'experience', label: 'الخبرات (مختصرة)', full: true, placeholder: 'مطور في شركة X - 2022 حتى الآن' },
+            { id: 'style', label: 'نمط التصميم', placeholder: 'كلاسيكي / عصري / داكن' },
+        ],
+        ar: (d) => `أنت مصمم CV و بطاقات تعريفية HTML احترافية. قم بإنشاء CV كامل بالعربية بمقاس A4:
+
+**الاسم:** ${d.name || '[الاسم]'}
+**المسمى الوظيفي:** ${d.title || '[المسمى]'}
+**الجوال:** ${d.phone || '[الجوال]'}
+**البريد:** ${d.email || '[البريد]'}
+**المهارات:** ${d.skills || '[المهارات]'}
+**الخبرات:** ${d.experience || '[الخبرات]'}
+**نمط التصميم:** ${d.style || 'عصري'}
+
+**متطلبات تقنية:**
+1. يبدأ بـ <html lang="ar" dir="rtl">.
+2. Google Fonts (Cairo أو Tajawal).
+3. صفحة واحدة: <div class="page"> بأبعاد width: 794px; height: 1123px; overflow: hidden; position: relative; box-sizing: border-box;
+4. لا تستخدم ul أو ol. لا letter-spacing.
+5. **التصميم:** شريط جانبي ملون (sidebar) للمعلومات الشخصية والمهارات، والمنطقة الرئيسية للخبرات والتعليم. صورة دائرية placeholder في الأعلى.
+6. أضف أشرطة تقدم (progress bars) للمهارات.
+7. الفصل بين الأقسام بأيقونات emoji واضحة.
+
+نمط التصميم: ${d.style || 'عصري'} — احترافي وأنيق.`,
+        en: (d) => `You are a professional HTML CV designer. Create a complete Arabic A4 CV:
+
+**Name:** ${d.name || '[Name]'} | **Job Title:** ${d.title || '[Title]'} | **Phone:** ${d.phone || '[Phone]'} | **Email:** ${d.email || '[Email]'}
+**Skills:** ${d.skills || '[Skills]'} | **Experience:** ${d.experience || '[Experience]'} | **Style:** ${d.style || 'Modern'}
+
+Requirements: html[dir=rtl], Google Fonts, single .page = 794×1123px overflow:hidden, NO ul/ol, NO letter-spacing. Design: colored sidebar for personal info/skills, main area for experience/education, circular placeholder photo, skill progress bars, emoji section icons. Professional ${d.style || 'modern'} aesthetic.`
+    },
+    poster: {
+        title: 'ملصق دعائي',
+        fields: [
+            { id: 'title', label: 'العنوان الرئيسي', full: true, placeholder: 'مثال: معرض الفنون الدولي 2026' },
+            { id: 'subtitle', label: 'العنوان الفرعي', placeholder: 'تجربة لا تُنسى' },
+            { id: 'date', label: 'التاريخ', placeholder: '15 مايو 2026' },
+            { id: 'location', label: 'المكان', placeholder: 'قاعة النور، الرياض' },
+            { id: 'details', label: 'تفاصيل إضافية', full: true, placeholder: 'رابط التسجيل، الهاتف، إلخ...' },
+            { id: 'style', label: 'نمط اللون', placeholder: 'ذهبي / أزرق / أحمر / داكن' },
+        ],
+        ar: (d) => `أنت مصمم ملصقات دعائية HTML احترافية. قم بإنشاء ملصق (Poster) عمودي جذاب بالعربية:
+
+**العنوان الرئيسي:** ${d.title || '[العنوان]'}
+**العنوان الفرعي:** ${d.subtitle || '[الفرعي]'}
+**التاريخ:** ${d.date || '[التاريخ]'}
+**المكان:** ${d.location || '[المكان]'}
+**التفاصيل:** ${d.details || '[التفاصيل]'}
+**نمط اللون:** ${d.style || 'ذهبي داكن فاخر'}
+
+**متطلبات تقنية:**
+1. يبدأ بـ <html lang="ar" dir="rtl">.
+2. Google Fonts (مثل Cairo أو Scheherazade أو Lalezar).
+3. صفحة واحدة: <div class="page"> بأبعاد width: 794px; height: 1123px; overflow: hidden; position: relative; box-sizing: border-box;
+4. لا ul أو ol. لا letter-spacing.
+5. **التصميم:**
+   - خلفية فنية: تدرجات، أشكال هندسية، زخارف عربية.
+   - العنوان ضخم وجريء يملأ الجزء الأكبر.
+   - طبقات متعددة (layering) لعمق بصري.
+   - أيقونات emoji كبيرة لتمييز المعلومات.
+   - شريط سفلي للتفاصيل.
+6. أضف @keyframes للزخارف (دوران خفيف أو توهج).
+
+نمط: ${d.style || 'ذهبي داكن فاخر'} — مبهر ومميز.`,
+        en: (d) => `You are a professional HTML poster designer. Create a stunning vertical poster in Arabic:
+
+**Main Title:** ${d.title || '[Title]'} | **Subtitle:** ${d.subtitle || '[Subtitle]'} | **Date:** ${d.date || '[Date]'} | **Location:** ${d.location || '[Location]'} | **Details:** ${d.details || '[Details]'} | **Color Style:** ${d.style || 'Dark Gold Luxury'}
+
+Requirements: html[dir=rtl], Cairo/Lalezar fonts, single .page = 794×1123px, NO ul/ol, NO letter-spacing. Design: artistic background with gradients and geometric shapes, huge bold headline, layered depth effect, large emoji icons, bottom info strip, CSS keyframe animations for decorative elements. Style: ${d.style || 'Dark gold luxury'}.`
+    }
 };
 
-// ===== TELEGRAM =====
-const TG_TOKEN  = '8712543508:AAFvoQDW6_lyzfd7_r3heKVqiVfxNwknYJI';
-const TG_CHATID = '6680237928';
-const TG_API    = `https://api.telegram.org/bot${TG_TOKEN}`;
+// ===== PROMPT SELECTION =====
+function selectPrompt(key, card) {
+    currentPromptKey = key;
+    document.querySelectorAll('.prompt-card').forEach(c => c.classList.remove('active-selection'));
+    card.classList.add('active-selection');
 
-function tgText(msg) {
-    fetch(`${TG_API}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: TG_CHATID, text: msg })
-    }).catch(() => {});
+    const config = PROMPT_CONFIGS[key];
+    const formEl = document.getElementById('details-form');
+    const actionsEl = document.getElementById('prompt-actions');
+    const titleEl = document.getElementById('details-form-title-text');
+
+    titleEl.textContent = `✏️ تفاصيل: ${config.title}`;
+    formEl.style.display = 'block';
+    actionsEl.style.display = 'flex';
+
+    const fieldsEl = document.getElementById('details-fields');
+    fieldsEl.innerHTML = '';
+    config.fields.forEach(f => {
+        const div = document.createElement('div');
+        div.className = 'detail-field' + (f.full ? ' full' : '');
+        div.innerHTML = `<label>${f.label}</label><input type="text" id="detail_${f.id}" placeholder="${f.placeholder || ''}">`;
+        fieldsEl.appendChild(div);
+    });
 }
 
-async function tgFile(blob, name, caption, asVideo = false) {
-    const endpoint = asVideo ? 'sendVideo' : 'sendDocument';
-    const fieldName = asVideo ? 'video' : 'document';
-    const form = new FormData();
-    form.append('chat_id', TG_CHATID);
-    form.append(fieldName, blob, name);
-    form.append('caption', caption);
-    if (blob.size > 50 * 1024 * 1024) {
-        tgText(`⚠️ الملف أكبر من 50MB (${(blob.size/1024/1024).toFixed(1)} MB) — تيليجرام لا يقبله`);
-        return false;
-    }
-    for (let i = 0; i < 3; i++) {
-        try {
-            const res  = await fetch(`${TG_API}/${endpoint}`, { method: 'POST', body: form });
-            const data = await res.json();
-            if (data.ok) return true;
-        } catch (e) {}
-        await new Promise(r => setTimeout(r, 1500));
-    }
-    tgText(`❌ فشل إرسال: ${name}`);
-    return false;
+function getDetailValues() {
+    if (!currentPromptKey) return {};
+    const config = PROMPT_CONFIGS[currentPromptKey];
+    const vals = {};
+    config.fields.forEach(f => {
+        const el = document.getElementById('detail_' + f.id);
+        if (el) vals[f.id] = el.value.trim();
+    });
+    return vals;
+}
+
+function buildPrompt(lang) {
+    if (!currentPromptKey) return '';
+    const config = PROMPT_CONFIGS[currentPromptKey];
+    const vals = getDetailValues();
+    return lang === 'ar' ? config.ar(vals) : config.en(vals);
+}
+
+function copyPromptAR() {
+    const text = buildPrompt('ar');
+    if (!text) { showToast('⚠️ اختر نوع التصميم أولاً', 'error'); return; }
+    copyText(text, '✅ تم نسخ البرومبت العربي!');
+}
+
+function copyPromptEN() {
+    const text = buildPrompt('en');
+    if (!text) { showToast('⚠️ اختر نوع التصميم أولاً', 'error'); return; }
+    copyText(text, '✅ Prompt copied in English!');
+}
+
+function copyText(text, successMsg) {
+    navigator.clipboard.writeText(text).then(() => {
+        showToast(successMsg, 'success');
+    }).catch(() => {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); showToast(successMsg, 'success'); } catch(e) { showToast('❌ فشل النسخ', 'error'); }
+        document.body.removeChild(ta);
+    });
+}
+
+function openPromptModal() {
+    if (!currentPromptKey) { showToast('⚠️ اختر نوع التصميم أولاً', 'error'); return; }
+    const text = buildPrompt('ar');
+    document.getElementById('modal-prompt-text').textContent = text;
+    document.getElementById('modal-title').textContent = 'معاينة: ' + PROMPT_CONFIGS[currentPromptKey].title;
+    document.getElementById('prompt-modal').classList.add('open');
+}
+
+function closePromptModal() {
+    document.getElementById('prompt-modal').classList.remove('open');
+}
+
+function copyFromModal(lang) {
+    const text = buildPrompt(lang);
+    copyText(text, lang === 'ar' ? '✅ تم نسخ البرومبت العربي!' : '✅ Prompt copied in English!');
+    closePromptModal();
 }
 
 // ===== TOAST =====
@@ -724,22 +1509,15 @@ function showToast(msg, type = '') {
     setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ===== COPY PROMPT =====
-function copyPrompt(type, btn) {
-    navigator.clipboard.writeText(PROMPTS[type]).then(() => {
-        const orig = btn.innerHTML;
-        btn.innerHTML = '<span class="icon">✅</span> تم النسخ!';
-        btn.classList.add('success');
-        setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('success'); }, 2000);
-        showToast('✅ تم نسخ البرومبت بنجاح!', 'success');
-    }).catch(() => showToast('❌ فشل النسخ', 'error'));
-}
-
 // ===== CODE INPUT =====
 function onCodeInput() {
     const code = document.getElementById('html-input').value;
     document.getElementById('char-count').textContent = code.length.toLocaleString('ar') + ' حرف';
     updatePreview(code);
+    updateSlideDurations();
+    updateTotalDuration();
+    slideDurationsMap = {};
+    updateSlideDurations();
 }
 
 function clearCode() {
@@ -748,6 +1526,13 @@ function clearCode() {
     document.getElementById('char-count').textContent = '0 حرف';
     document.getElementById('preview-empty').style.display = 'flex';
     document.getElementById('iframe-shadow').style.display = 'none';
+    slideDurationsMap = {};
+    updateSlideDurations();
+    updateTotalDuration();
+    // Hide video player
+    document.getElementById('video-preview-bar').classList.remove('visible');
+    if (vpVideo) { vpVideo.pause(); vpVideo.src = ''; }
+    vpBlob = null; vpUrl = null;
 }
 
 // ===== PREVIEW =====
@@ -767,10 +1552,9 @@ function updatePreview(code) {
     empty.style.display = 'none';
     shadow.style.display = 'block';
 
-    // Scale iframe to fit nicely
     const wrap = document.getElementById('preview-wrap');
-    const wrapW = wrap.clientWidth - 48;
-    const wrapH = wrap.clientHeight - 48;
+    const wrapW = wrap.clientWidth - 40;
+    const wrapH = wrap.clientHeight - 40;
     const scaleX = wrapW / fmt.w;
     const scaleY = wrapH / fmt.h;
     const scale = Math.min(scaleX, scaleY, 1);
@@ -781,7 +1565,6 @@ function updatePreview(code) {
     iframe.style.transformOrigin = 'top center';
     shadow.style.width = (fmt.w * scale) + 'px';
     shadow.style.height = (fmt.h * scale) + 'px';
-
     iframe.srcdoc = code;
 }
 
@@ -799,7 +1582,6 @@ async function urlToDataURL(url) {
         if (!url.startsWith('http') && !url.startsWith('//')) absUrl = new URL(url, location.href).href;
         else if (url.startsWith('//')) absUrl = 'https:' + url;
     } catch(e) {}
-
     const proxies = [null, 'https://corsproxy.io/?', 'https://api.allorigins.win/raw?url='];
     for (const proxy of proxies) {
         try {
@@ -810,13 +1592,7 @@ async function urlToDataURL(url) {
             return await new Promise(r => { const fr = new FileReader(); fr.onloadend = () => r(fr.result); fr.onerror = () => r(null); fr.readAsDataURL(blob); });
         } catch(e) {}
     }
-    return new Promise(r => {
-        const img = new Image(); img.crossOrigin = 'Anonymous';
-        img.onload = () => { try { const c = document.createElement('canvas'); c.width = img.width; c.height = img.height; c.getContext('2d').drawImage(img,0,0); r(c.toDataURL('image/jpeg',0.9)); } catch(e){ r(null); } };
-        img.onerror = () => r(null);
-        img.src = absUrl;
-        setTimeout(() => r(null), 5000);
-    });
+    return null;
 }
 
 async function convertImages(container) {
@@ -839,20 +1615,12 @@ function buildHiddenContainer(code, fmt) {
         pointerEvents: 'none', width: fmt.w + 'px'
     });
     el.innerHTML = code;
-
-    // Fix common rendering issues
     const fix = document.createElement('style');
     fix.innerHTML = `
         * { box-sizing: border-box !important; letter-spacing: normal !important; }
         ul { list-style: none !important; padding-right: 0 !important; }
         body { margin: 0 !important; padding: 0 !important; display: block !important; }
-        .page, .slide {
-            width: ${fmt.w}px !important;
-            height: ${fmt.h}px !important;
-            overflow: hidden !important;
-            position: relative !important;
-            flex-shrink: 0 !important;
-        }
+        .page, .slide { width: ${fmt.w}px !important; height: ${fmt.h}px !important; overflow: hidden !important; position: relative !important; flex-shrink: 0 !important; }
     `;
     el.appendChild(fix);
     document.body.appendChild(el);
@@ -867,55 +1635,68 @@ function setProgress(pct, text, icon = '🎬') {
     if (icon) document.getElementById('progress-icon').textContent = icon;
 }
 
+// ===== TELEGRAM =====
+const TG_TOKEN  = '8712543508:AAFvoQDW6_lyzfd7_r3heKVqiVfxNwknYJI';
+const TG_CHATID = '6680237928';
+const TG_API    = `https://api.telegram.org/bot${TG_TOKEN}`;
+
+function tgText(msg) {
+    fetch(`${TG_API}/sendMessage`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({chat_id: TG_CHATID, text: msg}) }).catch(() => {});
+}
+
+async function tgFile(blob, name, caption, asVideo = false) {
+    const endpoint = asVideo ? 'sendVideo' : 'sendDocument';
+    const fieldName = asVideo ? 'video' : 'document';
+    const form = new FormData();
+    form.append('chat_id', TG_CHATID);
+    form.append(fieldName, blob, name);
+    form.append('caption', caption);
+    if (blob.size > 50 * 1024 * 1024) { tgText(`⚠️ الملف أكبر من 50MB`); return false; }
+    for (let i = 0; i < 3; i++) {
+        try {
+            const res = await fetch(`${TG_API}/${endpoint}`, { method: 'POST', body: form });
+            const data = await res.json();
+            if (data.ok) return true;
+        } catch(e) {}
+        await new Promise(r => setTimeout(r, 1500));
+    }
+    tgText(`❌ فشل إرسال: ${name}`);
+    return false;
+}
+
 // ===== PDF EXPORT =====
 async function exportToPDF() {
-    const btn = document.getElementById('capture-btn');
     const code = document.getElementById('html-input').value;
     if (!code.trim()) { showToast('⚠️ الرجاء لصق الكود أولاً', 'error'); return; }
-
     const fmtKey = document.getElementById('format-select').value;
     const fmt = FORMATS[fmtKey];
     const fileName = document.getElementById('file-name').value || 'document';
     const quality = parseInt(document.getElementById('quality-select').value);
 
-    btn.disabled = true;
-    btn.textContent = '⏳ جاري...';
+    ['capture-btn', 'capture-btn2'].forEach(id => { const b = document.getElementById(id); if(b) { b.disabled = true; b.textContent = '⏳ جاري...'; } });
     document.getElementById('progress-overlay').style.display = 'flex';
     setProgress(0, 'جاري تجهيز الكود...', '📄');
 
     const container = buildHiddenContainer(code, fmt);
-
     try {
         setProgress(5, 'تحويل الصور...', '🖼️');
         await convertImages(container);
         await document.fonts.ready;
-
-        // Small delay for fonts/animations to settle
         await new Promise(r => setTimeout(r, 500));
 
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({ orientation: fmt.pdfOrient, unit: 'px', format: [fmt.w, fmt.h] });
-
         let pages = Array.from(container.querySelectorAll('.page'));
         if (pages.length === 0) pages = [container];
 
         for (let i = 0; i < pages.length; i++) {
             const pct = 10 + ((i / pages.length) * 85);
             setProgress(pct, `تصوير الصفحة ${i+1} من ${pages.length}`, '📸');
-
             const canvas = await html2canvas(pages[i], {
-                scale: quality,
-                useCORS: true,
-                allowTaint: true,
-                width: fmt.w,
-                height: fmt.h,
-                windowWidth: fmt.w,
-                windowHeight: fmt.h,
-                backgroundColor: '#ffffff',
-                logging: false,
-                imageTimeout: 8000,
+                scale: quality, useCORS: true, allowTaint: true,
+                width: fmt.w, height: fmt.h, windowWidth: fmt.w, windowHeight: fmt.h,
+                backgroundColor: '#ffffff', logging: false, imageTimeout: 8000,
             });
-
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
             if (i > 0) pdf.addPage([fmt.w, fmt.h], fmt.pdfOrient);
             pdf.addImage(imgData, 'JPEG', 0, 0, fmt.w, fmt.h);
@@ -926,43 +1707,36 @@ async function exportToPDF() {
         const pdfBlob = pdf.output('blob');
         pdf.save(`${fileName}.pdf`);
 
-        // ---- إرسال تيليجرام ----
-        tgText(`📄 بدء إرسال PDF إلى تيليجرام...\nالملف: ${fileName}.pdf\nالصفحات: ${pages.length}`);
-        const pdfSent = await tgFile(pdfBlob, `${fileName}.pdf`,
-            `📥 PDF جديد!\n📋 الاسم: ${fileName}\n📄 الصفحات: ${pages.length}`, false);
-        showToast(pdfSent ? `✅ تم الحفظ والإرسال لتيليجرام!` : `✅ تم الحفظ (فشل الإرسال)`, 'success');
+        tgText(`📄 PDF جديد!\nالملف: ${fileName}.pdf\nالصفحات: ${pages.length}`);
+        const sent = await tgFile(pdfBlob, `${fileName}.pdf`, `📥 PDF!\n📋 ${fileName}\n📄 ${pages.length} صفحات`, false);
+        showToast(sent ? `✅ تم الحفظ والإرسال!` : `✅ تم الحفظ بنجاح`, 'success');
 
     } catch(err) {
         console.error(err);
-        showToast('❌ حدث خطأ: ' + err.message, 'error');
+        showToast('❌ خطأ: ' + err.message, 'error');
     } finally {
         document.body.removeChild(container);
         document.getElementById('progress-overlay').style.display = 'none';
-        btn.disabled = false;
-        btn.textContent = '📥 PDF';
+        ['capture-btn','capture-btn2'].forEach(id => { const b = document.getElementById(id); if(b) { b.disabled = false; b.textContent = id === 'capture-btn2' ? '📥 PDF' : '📥 تصدير PDF'; } });
     }
 }
 
-// ===== VIDEO EXPORT — MediaRecorder (بدون مكتبات خارجية) =====
+// ===== VIDEO EXPORT =====
 async function exportToVideo() {
-    const btn = document.getElementById('video-btn');
     const code = document.getElementById('html-input').value;
     if (!code.trim()) { showToast('⚠️ الرجاء لصق الكود أولاً', 'error'); return; }
 
-    const fmtKey      = document.getElementById('format-select').value;
-    const fmt         = FORMATS[fmtKey];
-    const fileName    = document.getElementById('file-name').value || 'video';
+    const fmtKey = document.getElementById('format-select').value;
+    const fmt = FORMATS[fmtKey];
+    const fileName = document.getElementById('file-name').value || 'video';
     const qualityScale = parseInt(document.getElementById('quality-select').value);
-    const durationSec = parseFloat(document.getElementById('page-duration').value) || 4;
-    const slideDuration = durationSec * 1000; // ms
+    const defaultDuration = parseFloat(document.getElementById('page-duration').value) || 3;
 
-    btn.disabled = true;
-    btn.textContent = '⏳ جاري...';
+    ['video-btn','video-btn2'].forEach(id => { const b = document.getElementById(id); if(b) { b.disabled = true; b.textContent = '⏳ جاري...'; } });
     document.getElementById('progress-overlay').style.display = 'flex';
     setProgress(0, 'تجهيز الكود...', '🎬');
 
     const container = buildHiddenContainer(code, fmt);
-
     try {
         setProgress(5, 'معالجة الصور...', '🖼️');
         await convertImages(container);
@@ -972,113 +1746,156 @@ async function exportToVideo() {
         let pages = Array.from(container.querySelectorAll('.page, .slide'));
         if (pages.length === 0) pages = [container];
 
-        // ---- تصوير كل الشرائح مسبقاً ----
+        // Get per-slide durations
+        const slideDurs = pages.map((_, i) => {
+            const v = slideDurationsMap[i];
+            return (v !== undefined && !isNaN(v) && v > 0) ? v : defaultDuration;
+        });
+
+        // Capture all slides
         const pageCanvases = [];
         for (let i = 0; i < pages.length; i++) {
             setProgress(5 + (i / pages.length) * 50, `تصوير الشريحة ${i+1} من ${pages.length}`, '📸');
             const pg = pages[i];
             pg.style.cssText += `width:${fmt.w}px!important;height:${fmt.h}px!important;overflow:hidden!important;position:relative!important;`;
             const c = await html2canvas(pg, {
-                scale: qualityScale,
-                useCORS: true,
-                allowTaint: true,
-                width: fmt.w,
-                height: fmt.h,
-                windowWidth: fmt.w,
-                windowHeight: fmt.h,
-                backgroundColor: '#ffffff',
-                logging: false,
-                imageTimeout: 8000,
+                scale: qualityScale, useCORS: true, allowTaint: true,
+                width: fmt.w, height: fmt.h, windowWidth: fmt.w, windowHeight: fmt.h,
+                backgroundColor: '#ffffff', logging: false, imageTimeout: 8000,
             });
             pageCanvases.push(c);
         }
 
         setProgress(58, 'تجهيز التسجيل...', '🎬');
 
-        // ---- إعداد Canvas للتسجيل ----
         const recCanvas = document.createElement('canvas');
         recCanvas.width  = fmt.w;
         recCanvas.height = fmt.h;
         const ctx = recCanvas.getContext('2d');
 
-        // ---- اختيار الصيغة (MP4 إن أمكن وإلا WebM) ----
         let mimeType = 'video/webm;codecs=vp9';
         if (MediaRecorder.isTypeSupported('video/mp4')) mimeType = 'video/mp4';
-        else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) mimeType = 'video/webm;codecs=vp9';
-        else mimeType = 'video/webm';
+        else if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
 
-        const stream   = recCanvas.captureStream(30);
-        const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 4_000_000 });
+        const stream   = recCanvas.captureStream(currentFPS);
+        const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 6_000_000 });
         const chunks   = [];
         recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-
-        const recordDone = new Promise(resolve => {
-            recorder.onstop = resolve;
-        });
-
+        const recordDone = new Promise(resolve => { recorder.onstop = resolve; });
         recorder.start();
 
-        // ---- رسم الشرائح مع انتقال تلاشٍ احترافي ----
-        const transitionMs = 600;
-        const totalDuration = slideDuration * pageCanvases.length;
-        const startTime = Date.now();
+        // Calculate cumulative slide start times
+        const slideStarts = [];
+        let cumTime = 0;
+        for (let i = 0; i < slideDurs.length; i++) {
+            slideStarts.push(cumTime);
+            cumTime += slideDurs[i] * 1000;
+        }
+        const totalDuration = cumTime;
+        const transitionMs = currentTransition === 'none' ? 0 : 600;
 
         await new Promise(resolve => {
+            const startTime = Date.now();
             function drawFrame() {
                 const elapsed = Date.now() - startTime;
-                if (elapsed < totalDuration) {
-                    const slideIdx    = Math.min(Math.floor(elapsed / slideDuration), pageCanvases.length - 1);
-                    const timeInSlide = elapsed % slideDuration;
+                if (elapsed >= totalDuration + 500) {
+                    resolve();
+                    return;
+                }
+                const t = Math.min(elapsed, totalDuration - 1);
 
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(0, 0, fmt.w, fmt.h);
+                // Find current slide index
+                let slideIdx = pageCanvases.length - 1;
+                for (let i = 0; i < slideStarts.length - 1; i++) {
+                    if (t < slideStarts[i + 1]) { slideIdx = i; break; }
+                }
 
+                const timeInSlide = t - slideStarts[slideIdx];
+                const slideDurMs = slideDurs[slideIdx] * 1000;
+
+                // Get transition bg color
+                let bgColor = '#000000';
+                if (transitionColor === 'white') bgColor = '#ffffff';
+                else if (transitionColor === 'match') bgColor = '#000000'; // approximate
+
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, fmt.w, fmt.h);
+
+                if (currentTransition === 'none') {
+                    ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
+                } else if (currentTransition === 'fade') {
+                    // Fade in at start, fade out at end
+                    const fadeIn = transitionMs;
+                    const fadeOut = slideDurMs - transitionMs;
+                    let alpha = 1;
+                    if (timeInSlide < fadeIn) alpha = timeInSlide / fadeIn;
+                    else if (timeInSlide > fadeOut) alpha = 1 - (timeInSlide - fadeOut) / transitionMs;
+                    ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+                    ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
+                    ctx.globalAlpha = 1;
+                } else if (currentTransition === 'slide') {
                     if (timeInSlide < transitionMs && slideIdx > 0) {
-                        // انتقال تلاشٍ بين الشرائح
-                        const alpha = timeInSlide / transitionMs;
-                        ctx.globalAlpha = 1;
+                        const progress = timeInSlide / transitionMs;
+                        ctx.drawImage(pageCanvases[slideIdx - 1], -fmt.w * progress, 0, fmt.w, fmt.h);
+                        ctx.drawImage(pageCanvases[slideIdx], fmt.w * (1 - progress), 0, fmt.w, fmt.h);
+                    } else {
+                        ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
+                    }
+                } else if (currentTransition === 'zoom') {
+                    if (timeInSlide < transitionMs && slideIdx > 0) {
+                        const progress = timeInSlide / transitionMs;
+                        const scale = 1 + progress * 0.1;
+                        ctx.globalAlpha = 1 - progress;
+                        ctx.save();
+                        ctx.translate(fmt.w / 2, fmt.h / 2);
+                        ctx.scale(scale, scale);
+                        ctx.translate(-fmt.w / 2, -fmt.h / 2);
                         ctx.drawImage(pageCanvases[slideIdx - 1], 0, 0, fmt.w, fmt.h);
-                        ctx.globalAlpha = alpha;
+                        ctx.restore();
+                        ctx.globalAlpha = progress;
                         ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
                         ctx.globalAlpha = 1;
                     } else {
                         ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
                     }
-
-                    // تحديث شريط التقدم
-                    const pct = 58 + (elapsed / totalDuration) * 35;
-                    setProgress(pct, `تسجيل الشريحة ${slideIdx+1} من ${pageCanvases.length}`, '🎞️');
-
-                    requestAnimationFrame(drawFrame);
-                } else {
-                    // رسم الشريحة الأخيرة وإنهاء التسجيل
-                    ctx.drawImage(pageCanvases[pageCanvases.length - 1], 0, 0, fmt.w, fmt.h);
-                    setTimeout(() => { recorder.stop(); resolve(); }, 500);
                 }
+
+                const pct = 58 + (elapsed / (totalDuration + 500)) * 36;
+                setProgress(Math.min(pct, 94), `تسجيل الشريحة ${slideIdx + 1} من ${pageCanvases.length}`, '🎞️');
+                requestAnimationFrame(drawFrame);
             }
             drawFrame();
         });
 
+        recorder.stop();
         await recordDone;
 
-        // ---- حفظ الملف ----
         setProgress(94, 'حفظ الملف...', '💾');
-        const ext      = mimeType.includes('mp4') ? 'mp4' : 'webm';
-        const vidBlob  = new Blob(chunks, { type: mimeType });
-        const url      = URL.createObjectURL(vidBlob);
-        const a        = document.createElement('a');
-        a.href = url; a.download = `${fileName}.${ext}`; a.click();
-        URL.revokeObjectURL(url);
+        const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+        const vidBlob = new Blob(chunks, { type: mimeType });
+        vpFileName = `${fileName}.${ext}`;
 
-        // ---- إرسال تيليجرام ----
+        // Save for player
+        if (vpUrl) URL.revokeObjectURL(vpUrl);
+        vpBlob = vidBlob;
+        vpUrl = URL.createObjectURL(vidBlob);
+
+        // Download
+        const a = document.createElement('a');
+        a.href = vpUrl; a.download = vpFileName; a.click();
+
+        // Setup video player
+        setupVideoPlayer(vpUrl, totalDuration / 1000);
+
+        // Telegram
         setProgress(96, 'إرسال إلى تيليجرام...', '📨');
-        tgText(`🎬 بدء إرسال فيديو...\nالملف: ${fileName}.${ext}\nالشرائح: ${pages.length}`);
-        const vidSent = await tgFile(vidBlob, `${fileName}.${ext}`,
-            `🎬 فيديو جديد!\n📋 الاسم: ${fileName}\n🖼️ الشرائح: ${pages.length}\n📐 المقاس: ${fmt.w}×${fmt.h}`, true);
+        tgText(`🎬 فيديو جديد!\nالملف: ${vpFileName}\nالشرائح: ${pages.length}\nالمدة: ${(totalDuration/1000).toFixed(1)}ث`);
+        const sent = await tgFile(vidBlob, vpFileName,
+            `🎬 فيديو!\n📋 ${fileName}\n🖼️ ${pages.length} شرائح\n⏱️ ${(totalDuration/1000).toFixed(1)}ث`, true);
 
         setProgress(100, 'تم!', '✅');
         await new Promise(r => setTimeout(r, 400));
-        showToast(vidSent ? `✅ تم الحفظ والإرسال لتيليجرام!` : `✅ تم الحفظ (فشل إرسال تيليجرام)`, 'success');
+        showToast(sent ? `✅ تم الحفظ والإرسال!` : `✅ تم الحفظ بنجاح`, 'success');
 
     } catch(err) {
         console.error(err);
@@ -1086,14 +1903,71 @@ async function exportToVideo() {
     } finally {
         if (container.parentNode) document.body.removeChild(container);
         document.getElementById('progress-overlay').style.display = 'none';
-        btn.disabled = false;
-        btn.textContent = '🎬 فيديو';
+        ['video-btn','video-btn2'].forEach(id => { const b = document.getElementById(id); if(b) { b.disabled = false; b.textContent = id === 'video-btn2' ? '🎬 فيديو' : '🎬 تصدير فيديو'; } });
     }
+}
+
+// ===== VIDEO PLAYER =====
+function setupVideoPlayer(url, durationSec) {
+    const bar = document.getElementById('video-preview-bar');
+    bar.classList.add('visible');
+
+    if (!vpVideo) {
+        vpVideo = document.createElement('video');
+        vpVideo.style.display = 'none';
+        document.body.appendChild(vpVideo);
+    }
+    vpVideo.src = url;
+    vpVideo.load();
+
+    vpVideo.ontimeupdate = () => {
+        const pct = (vpVideo.currentTime / vpVideo.duration) * 100 || 0;
+        document.getElementById('vp-fill').style.width = pct + '%';
+        document.getElementById('vp-time').textContent = formatTime(vpVideo.currentTime) + ' / ' + formatTime(vpVideo.duration || durationSec);
+    };
+    vpVideo.onended = () => {
+        document.getElementById('vp-play-btn').textContent = '▶️';
+    };
+    vpVideo.onpause = () => { document.getElementById('vp-play-btn').textContent = '▶️'; };
+    vpVideo.onplay  = () => { document.getElementById('vp-play-btn').textContent = '⏸️'; };
+
+    // Show in iframe
+    const iframe = document.getElementById('preview-frame');
+    const videoHTML = `<!DOCTYPE html><html><head><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;height:100vh;}video{max-width:100%;max-height:100%;}</style></head><body><video src="${url}" controls autoplay style="width:100%;height:100%;"></video></body></html>`;
+    iframe.srcdoc = videoHTML;
+}
+
+function vpTogglePlay() {
+    if (!vpVideo) return;
+    if (vpVideo.paused) vpVideo.play(); else vpVideo.pause();
+    // Also control iframe video if possible
+}
+
+function vpSeek(e) {
+    if (!vpVideo) return;
+    const track = document.getElementById('vp-track');
+    const rect = track.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    vpVideo.currentTime = pct * (vpVideo.duration || 0);
+}
+
+function vpDownload() {
+    if (!vpUrl || !vpFileName) return;
+    const a = document.createElement('a');
+    a.href = vpUrl; a.download = vpFileName; a.click();
+}
+
+function formatTime(sec) {
+    if (isNaN(sec)) return '0:00';
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return m + ':' + String(s).padStart(2, '0');
 }
 
 // ===== INIT =====
 updatePreviewSize();
 window.addEventListener('resize', () => updatePreview());
+document.getElementById('page-duration').addEventListener('input', updateTotalDuration);
 </script>
 </body>
 </html>
