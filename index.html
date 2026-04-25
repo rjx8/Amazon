@@ -3,164 +3,606 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Hero | المحرر الشامل</title>
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <title>منصة تحويل الأكواد إلى PDF وفيديو</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
-        :root {
-            --bg: #f0f2f5; --card: #ffffff; --text: #1c1e21; --primary: #007bff; --border: #ddd;
-        }
-        [data-theme="dark"] {
-            --bg: #18191a; --card: #242526; --text: #e4e6eb; --primary: #4599ff; --border: #3e4042;
-        }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .container { background: var(--card); width: 100%; max-width: 700px; padding: 30px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border: 1px solid var(--border); }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif; background: #f4f6f8; color: #333; margin: 0; padding: 15px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
+        .header { text-align: center; margin-bottom: 15px; }
+        .header h2 { margin: 0; color: #1e293b; font-size: 22px;}
+        .main-container { display: flex; gap: 15px; flex: 1; overflow: hidden; }
+        @media (max-width: 768px) { .main-container { flex-direction: column; height: auto; overflow: visible; } body {height: auto; padding: 10px;} }
         
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .theme-btn { cursor: pointer; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 0.8rem; }
-
-        .tab-system { display: flex; gap: 10px; margin-bottom: 20px; background: var(--bg); padding: 5px; border-radius: 12px; }
-        .tab { flex: 1; padding: 10px; cursor: pointer; text-align: center; border-radius: 8px; transition: 0.2s; font-weight: bold; }
-        .tab.active { background: var(--primary); color: white; }
-
-        .upload-section { border: 2px dashed var(--primary); padding: 30px; border-radius: 15px; cursor: pointer; margin-bottom: 20px; transition: 0.2s; position: relative; }
-        .upload-section:hover { background: rgba(0, 123, 255, 0.05); }
-        input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-
-        .input-box { width: 100%; padding: 12px; margin-top: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); box-sizing: border-box; }
+        .sidebar { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; display: flex; flex-direction: column; flex: 1; max-width: 380px; overflow-y: auto;}
+        .preview-section { background: #fff; border-radius: 10px; padding: 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; display: flex; flex-direction: column; flex: 2; overflow: hidden; }
         
-        .action-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        .action-btn:active { transform: scale(0.98); }
-
-        #fileList { text-align: right; margin-bottom: 15px; font-size: 0.9rem; list-style: none; padding: 0; }
-        #fileList li { background: var(--bg); padding: 8px 12px; border-radius: 6px; margin-bottom: 5px; display: flex; justify-content: space-between; }
+        .form-group { margin-bottom: 12px; display: flex; flex-direction: column; }
+        label { margin-bottom: 6px; font-weight: bold; font-size: 13px; color: #475569; }
+        input, select, textarea { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-family: inherit; transition: 0.2s;}
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
         
-        .preview-frame { width: 100%; height: 250px; border-radius: 10px; margin-top: 20px; display: none; border: 1px solid var(--border); }
+        .textarea-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .clear-btn { background: #fee2e2; color: #ef4444; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .clear-btn:hover { background: #fca5a5; color: #b91c1c; }
+        
+        textarea { flex: 1; min-height: 180px; resize: vertical; direction: ltr; font-family: monospace; background: #f8fafc; font-size: 12px;}
+        
+        .row { display: flex; gap: 10px; }
+        .row .form-group { flex: 1; }
+
+        .ai-prompts { background: #f0fdf4; border: 1px dashed #22c55e; padding: 12px; border-radius: 8px; margin-bottom: 15px;}
+        .ai-prompts p { margin: 0 0 8px 0; font-size: 12px; color: #166534; font-weight: bold; text-align: center;}
+        .prompt-btns { display: flex; gap: 8px; }
+        .prompt-btn { flex: 1; background: #fff; border: 1px solid #22c55e; color: #15803d; padding: 8px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px;}
+        .prompt-btn:hover { background: #22c55e; color: #fff; }
+
+        .export-buttons { display: flex; gap: 10px; margin-top: 5px; }
+        .export-btn { background: #2563eb; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; flex: 1; }
+        .export-btn:hover { background: #1d4ed8; transform: translateY(-1px);}
+        .export-btn:disabled { background: #94a3b8; cursor: not-allowed; transform: none;}
+        .video-export-btn { background: #f97316; }
+        .video-export-btn:hover { background: #ea580c; }
+        
+        .preview-header { padding: 12px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 14px; font-weight: bold; color: #475569; display: flex; justify-content: space-between; align-items: center;}
+        .tag { background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 6px; font-size: 12px; transition: 0.3s; }
+        .recording-indicator { background: #ef4444; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; display: inline-flex; align-items: center; gap: 6px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        iframe { width: 100%; height: 100%; border: none; background: #fff; }
     </style>
 </head>
 <body>
 
-<div class="container">
+    <div id="password-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f6f8; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; text-align: center; width: 90%; max-width: 350px;">
+            <h3 style="margin-top: 0; color: #1e293b;">🔒 حماية المنصة</h3>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 20px;">الرجاء إدخال كلمة المرور للوصول.</p>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <input type="password" id="pass-input" placeholder="كلمة المرور..." style="text-align: center; letter-spacing: 2px;" onkeypress="if(event.key === 'Enter') checkPassword()">
+            </div>
+            <button onclick="checkPassword()" class="export-btn" style="width: 100%; padding: 10px; margin-top: 0;">تسجيل الدخول</button>
+            <p id="pass-error" style="color: #ef4444; font-size: 12px; display: none; margin-top: 15px; font-weight: bold; margin-bottom: 0;">❌ كلمة المرور غير صحيحة!</p>
+        </div>
+    </div>
+
     <div class="header">
-        <h2 style="margin:0;">PDF Hero ⚡</h2>
-        <button class="theme-btn" onclick="toggleTheme()">تبديل الوضع 🌓</button>
+        <h2>🛠️ منصة تحويل الأكواد إلى PDF وفيديو</h2>
     </div>
 
-    <div class="tab-system">
-        <div class="tab active" onclick="switchTab('cut')">قص صفحات</div>
-        <div class="tab" onclick="switchTab('merge')">دمج ملفات</div>
-    </div>
-
-    <div class="upload-section">
-        <span id="uploadText">اسحب الملفات هنا أو اضغط للاختيار</span>
-        <input type="file" id="pdfFiles" accept="application/pdf" multiple>
-    </div>
-
-    <ul id="fileList"></ul>
-
-    <div id="cutSection">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div>
-                <label>من صفحة:</label>
-                <input type="number" id="startP" class="input-box" placeholder="1">
+    <div class="main-container">
+        <div class="sidebar">
+            
+            <div class="ai-prompts">
+                <p>🤖 نسخ أمر جاهز للذكاء الاصطناعي:</p>
+                <div class="prompt-btns">
+                    <button class="prompt-btn" onclick="copyPrompt('a4', this)">📄 بحث أكاديمي (A4)</button>
+                    <button class="prompt-btn" onclick="copyPrompt('169', this)">🖥️ عرض تقديمي (16:9)</button>
+                    <button class="prompt-btn" onclick="copyPrompt('video', this)">📱 فيديو جوال (9:16)</button>
+                </div>
             </div>
-            <div>
-                <label>إلى صفحة:</label>
-                <input type="number" id="endP" class="input-box" placeholder="الأخيرة">
+
+            <div class="form-group">
+                <label>اسم الملف المستخرج:</label>
+                <input type="text" id="file-name" value="مستند_جديد" placeholder="اكتب اسم الملف هنا...">
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>مقاس الصفحة:</label>
+                    <select id="format-select" onchange="updateTag()">
+                        <option value="169">عرض تقديمي (16:9)</option>
+                        <option value="a4">بحث / تقرير (A4)</option>
+                        <option value="video">فيديو جوال (9:16)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>جودة الـ PDF:</label>
+                    <select id="quality-select">
+                        <option value="1">عادية</option>
+                        <option value="2" selected>عالية</option>
+                        <option value="3">ممتازة</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" style="flex: 1;">
+                <div class="textarea-header">
+                    <label style="margin:0;">كود الـ HTML (الصق هنا):</label>
+                    <button class="clear-btn" onclick="clearCode()">🗑️ مسح الكود</button>
+                </div>
+                <textarea id="html-input" oninput="updatePreview()" placeholder="الصق الكود الذي أعطاك إياه الذكاء الاصطناعي هنا..."></textarea>
+            </div>
+
+            <div class="export-buttons">
+                <button id="capture-btn" class="export-btn" onclick="exportToPDF()">استخراج كملف PDF 📥</button>
+                <button id="video-btn" class="export-btn video-export-btn" onclick="exportToVideo()">استخراج كمقطع فيديو 🎬</button>
             </div>
         </div>
-        <div style="margin-top: 15px;">
-            <label>أو اختر صفحات محددة (مثلاً: 1,3,5):</label>
-            <input type="text" id="customPages" class="input-box" placeholder="اتركها فارغة إذا استخدمت النطاق أعلاه">
+
+        <div class="preview-section">
+            <div class="preview-header">
+                <span>👁️ المعاينة المباشرة</span>
+                <span class="tag" id="size-tag">الأبعاد: 1280 × 720</span>
+            </div>
+            <iframe id="preview-frame"></iframe>
         </div>
     </div>
 
-    <div id="mergeSection" style="display:none;">
-        <p style="font-size: 0.9rem; color: #888;">سيتم دمج الملفات المرفوعة بالترتيب الموضح أعلاه.</p>
-    </div>
-
-    <button class="action-btn" onclick="executeAction()">تنفيذ العملية الآن</button>
-    
-    <iframe id="preview" class="preview-frame"></iframe>
-</div>
-
-<script>
-    let currentMode = 'cut';
-    const pdfFilesInput = document.getElementById('pdfFiles');
-    const fileListDisplay = document.getElementById('fileList');
-
-    function toggleTheme() {
-        const body = document.documentElement;
-        body.getAttribute('data-theme') === 'dark' ? body.removeAttribute('data-theme') : body.setAttribute('data-theme', 'dark');
-    }
-
-    function switchTab(mode) {
-        currentMode = mode;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById('cutSection').style.display = mode === 'cut' ? 'block' : 'none';
-        document.getElementById('mergeSection').style.display = mode === 'merge' ? 'block' : 'none';
-        pdfFilesInput.multiple = (mode === 'merge');
-    }
-
-    pdfFilesInput.onchange = function() {
-        fileListDisplay.innerHTML = "";
-        Array.from(this.files).forEach(file => {
-            const li = document.createElement('li');
-            li.innerHTML = `<span>📄 ${file.name}</span> <span>${(file.size/1024/1024).toFixed(2)} MB</span>`;
-            fileListDisplay.appendChild(li);
-        });
-        
-        if(this.files.length === 1 && currentMode === 'cut') {
-            const url = URL.createObjectURL(this.files[0]);
-            document.getElementById('preview').src = url;
-            document.getElementById('preview').style.display = 'block';
-        }
-    };
-
-    async function executeAction() {
-        const files = pdfFilesInput.files;
-        if (files.length === 0) return alert("الرجاء اختيار ملفات أولاً!");
-
-        const newPdf = await PDFLib.PDFDocument.create();
-
-        if (currentMode === 'cut') {
-            const file = files[0];
-            const existingPdf = await PDFLib.PDFDocument.load(await file.arrayBuffer());
-            const total = existingPdf.getPageCount();
-            let pagesToCopy = [];
-
-            const custom = document.getElementById('customPages').value;
-            if (custom) {
-                pagesToCopy = custom.split(',').map(p => parseInt(p.trim()) - 1).filter(p => p >= 0 && p < total);
+    <script>
+        // --- دالة التحقق من كلمة المرور ---
+        function checkPassword() {
+            const input = document.getElementById('pass-input').value;
+            const errorMsg = document.getElementById('pass-error');
+            
+            if (input === 'Sa12345678@') {
+                document.getElementById('password-overlay').style.display = 'none';
             } else {
-                const start = parseInt(document.getElementById('startP').value) || 1;
-                const end = parseInt(document.getElementById('endP').value) || total;
-                for (let i = start - 1; i < end; i++) pagesToCopy.push(i);
+                errorMsg.style.display = 'block';
+                setTimeout(() => {
+                    errorMsg.style.display = 'none';
+                }, 3000);
             }
+        }
+        // -----------------------------------
 
-            const copiedPages = await newPdf.copyPages(existingPdf, pagesToCopy);
-            copiedPages.forEach(p => newPdf.addPage(p));
+        const prompts = {
+            a4: `أنت مصمم وثائق HTML محترف. قم بإنشاء كود HTML كامل لبحث أكاديمي بالعربية وفق المواصفات التالية:
 
-        } else {
-            for (const file of files) {
-                const pdf = await PDFLib.PDFDocument.load(await file.arrayBuffer());
-                const copiedPages = await newPdf.copyPages(pdf, pdf.getPageIndices());
-                copiedPages.forEach(p => newPdf.addPage(p));
+**عنوان البحث:** [اكتب العنوان هنا]
+**المادة:** [مثال: فيزياء / كيمياء / رياضيات]
+**الطالب:** [الاسم]
+**المعلم:** [الاسم]
+**الصف:** [مثال: أول ثانوي]
+**العام الدراسي:** [مثال: 1447هـ / 2026م]
+**عدد الصفحات المطلوبة:** [مثال: 5 صفحات]
+
+**متطلبات تقنية صارمة جداً — لا تتجاوزها:**
+1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
+2. استدعاء خطوط Google Fonts صراحةً (مثل Cairo أو Tajawal).
+3. الـ body يحتوي على: display: block; direction: rtl; text-align: right; margin: 0; padding: 0; box-sizing: border-box;
+4. كل صفحة تكون: <div class="page">. أبعادها: width: 794px; height: 1123px; overflow: hidden; position: relative; box-sizing: border-box;
+5. **مهم جداً للنقاط:** لا تستخدم القوائم الافتراضية (ul, ol). للترقيم أو النقاط، استخدم عناصر <p> أو <div> عادية وأضف النقطة كجزء من النص هكذا: <p>• النقطة الأولى</p> أو <p>1- النقطة الأولى</p>.
+6. ممنوع استخدام letter-spacing نهائياً.
+
+**هيكل كل صفحة:**
+صفحة 1: غلاف احترافي.
+صفحة 2+: محتوى البحث.
+صفحة أخيرة: المراجع.
+نمط التصميم: احترافي وأنيق بألوان متناسقة.`,
+            
+            169: `أنت مصمم عروض HTML محترف. قم بإنشاء كود HTML كامل لعرض تقديمي بالعربية وفق المواصفات التالية:
+
+**عنوان العرض:** [اكتب العنوان هنا]
+**المادة / الموضوع:** [مثال: مشروع فيزياء / درس تاريخ]
+**المقدِّم:** [الاسم]
+**عدد الشرائح:** [مثال: 8 شرائح]
+
+**متطلبات تقنية صارمة جداً — لا تتجاوزها:**
+1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
+2. استدعاء خطوط Google Fonts صراحةً (مثل Cairo أو Tajawal).
+3. الـ body يحتوي على: display: block; direction: rtl; text-align: right; margin: 0; padding: 0; box-sizing: border-box;
+4. كل شريحة تكون: <div class="page">. أبعادها: width: 1280px; height: 720px; overflow: hidden; position: relative; box-sizing: border-box;
+5. **مهم جداً للنقاط:** لا تستخدم القوائم الافتراضية (ul, ol). للترقيم أو النقاط، استخدم عناصر <p> أو <div> عادية وأضف النقطة كجزء من النص هكذا: <p>• النقطة الأولى</p> أو <p>1- النقطة الأولى</p>.
+6. ممنوع استخدام letter-spacing نهائياً.
+
+**هيكل الشرائح:**
+شريحة 1: غلاف (عنوان كبير + اسم المقدِّم).
+شرائح 2+: محتوى منظم.
+نمط التصميم: حديث، خلفيات ملونة، نصوص واسعة. خطوط كبيرة وواضحة.`,
+
+            video: `أنت مصمم محتوى فيديوهات قصيرة لمشاهدة الجوال. قم بإنشاء كود HTML كامل بمقاس (9:16) مع أنيميشن CSS جذاب.
+
+**عنوان الفيديو:** [اكتب العنوان هنا]
+**المحتوى الأساسي:** [اكتب النقاط الرئيسية التي تريد عرضها]
+
+**متطلبات تقنية صارمة جداً — لا تتجاوزها:**
+1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
+2. استدعاء خطوط Google Fonts (مثل Cairo أو Tajawal).
+3. الـ body يحتوي على: display: flex; align-items: center; justify-content: center; direction: rtl; text-align: right; margin: 0; padding: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+4. كل عنصر محتوى يكون داخل <div class="slide">. أبعاده: width: 1080px; height: 1920px; overflow: hidden; position: relative; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; padding: 40px;
+5. **استخدام أنيميشن CSS:** أضف أنيميشن fadeInUp لعناصر النص داخل كل شريحة:
+   @keyframes fadeInUp {
+       from { opacity: 0; transform: translateY(30px); }
+       to { opacity: 1; transform: translateY(0); }
+   }
+   .slide h1, .slide h2, .slide p { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; }
+   .slide h1 { animation-delay: 0.1s; }
+   .slide h2 { animation-delay: 0.3s; }
+   .slide p { animation-delay: 0.5s; }
+6. **مهم جداً للنقاط:** لا تستخدم القوائم الافتراضية (ul, ol). استخدم عناصر <p> أو <div> عادية وأضف النقطة كجزء من النص.
+
+**الهيكل المطلوب:**
+- شريحة 1: عنوان كبير ومثير + خلفية جذابة.
+- شريحة 2-4: كل شريحة تحتوي على عنوان فرعي ونقطتين أو ثلاث نقاط رئيسية.
+- شريحة أخيرة: خاتمة أو عبارة تحفيزية + أيقونة أو رمز.
+
+نمط التصميم: عصري بألوان جذابة، نصوص كبيرة وواضحة، خلفيات متدرجة، ومسافات مريحة.`
+        };
+
+        function copyPrompt(type, btnElement) {
+            navigator.clipboard.writeText(prompts[type]).then(() => {
+                const originalText = btnElement.innerText;
+                const originalBg = btnElement.style.background;
+                const originalColor = btnElement.style.color;
+
+                btnElement.innerText = "✅ تم النسخ!";
+                btnElement.style.background = "#22c55e";
+                btnElement.style.color = "#fff";
+
+                setTimeout(() => {
+                    btnElement.innerText = originalText;
+                    btnElement.style.background = originalBg;
+                    btnElement.style.color = originalColor;
+                }, 2000);
+            });
+        }
+
+        function clearCode() {
+            if(confirm("هل أنت متأكد من مسح الكود الحالي؟")) {
+                document.getElementById('html-input').value = '';
+                updatePreview();
             }
         }
 
-        const pdfBytes = await newPdf.save();
-        download(pdfBytes, currentMode === 'cut' ? "trimmed.pdf" : "merged.pdf");
-    }
+        function updateTag() {
+            const format = document.getElementById('format-select').value;
+            const tag = document.getElementById('size-tag');
+            if(format === 'a4') {
+                tag.innerText = "الأبعاد: 794 × 1123 (A4)";
+            } else if(format === 'video') {
+                tag.innerText = "الأبعاد: 1080 × 1920 (9:16)";
+            } else {
+                tag.innerText = "الأبعاد: 1280 × 720 (16:9)";
+            }
+        }
 
-    function download(bytes, name) {
-        const blob = new Blob([bytes], { type: "application/pdf" });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = name;
-        a.click();
-    }
-</script>
+        function updatePreview() {
+            const code = document.getElementById('html-input').value;
+            const iframe = document.getElementById('preview-frame');
+            iframe.srcdoc = code;
+        }
 
+        // ---------- تحسين معالجة الصور بشكل قوي (غير معدل - محفوظ كما هو) ----------
+        async function urlToDataURL(url) {
+            if (url && (url.startsWith('data:') || url.startsWith('blob:'))) return url;
+            
+            let absoluteUrl = url;
+            try {
+                if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('//')) {
+                    absoluteUrl = new URL(url, window.location.href).href;
+                } else if (url.startsWith('//')) {
+                    absoluteUrl = 'https:' + url;
+                }
+            } catch(e) {
+                absoluteUrl = url;
+            }
+            
+            const proxies = [
+                null,
+                'https://corsproxy.io/?',
+                'https://api.allorigins.win/raw?url=',
+                'https://cors-anywhere.herokuapp.com/'
+            ];
+            
+            for (const proxy of proxies) {
+                try {
+                    let fetchUrl = absoluteUrl;
+                    if (proxy) fetchUrl = proxy + encodeURIComponent(absoluteUrl);
+                    const response = await fetch(fetchUrl, { mode: 'cors', credentials: 'omit' });
+                    if (!response.ok) continue;
+                    const blob = await response.blob();
+                    return await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.onerror = () => resolve(null);
+                        reader.readAsDataURL(blob);
+                    });
+                } catch (err) {
+                    console.warn(`فشل الجلب باستخدام ${proxy || 'مباشر'} للصورة: ${absoluteUrl}`, err);
+                }
+            }
+            
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = "Anonymous";
+                img.onload = () => {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        resolve(canvas.toDataURL('image/jpeg', 0.9));
+                    } catch(e) {
+                        console.warn("فشل تحويل الصورة عبر Canvas", e);
+                        resolve(null);
+                    }
+                };
+                img.onerror = () => resolve(null);
+                img.src = absoluteUrl;
+                setTimeout(() => resolve(null), 5000);
+            });
+        }
+        
+        async function convertAllImagesToDataURLs(container) {
+            const images = Array.from(container.querySelectorAll('img'));
+            console.log(`عدد الصور المراد معالجتها: ${images.length}`);
+            const promises = images.map(async (img) => {
+                const src = img.getAttribute('src');
+                if (!src) return;
+                if (src.startsWith('data:')) return;
+                
+                const dataUrl = await urlToDataURL(src);
+                if (dataUrl) {
+                    img.setAttribute('src', dataUrl);
+                    img.setAttribute('data-original-src', src);
+                    console.log(`تم تحويل الصورة: ${src}`);
+                } else {
+                    console.warn(`تعذر تحويل الصورة: ${src}`);
+                }
+            });
+            await Promise.all(promises);
+        }
+        
+        // -------------------------------------------------
+        async function exportToPDF() {
+            const btn = document.getElementById('capture-btn');
+            const code = document.getElementById('html-input').value;
+            const fileName = document.getElementById('file-name').value || 'document';
+            const qualityScale = parseInt(document.getElementById('quality-select').value);
+            const formatType = document.getElementById('format-select').value;
+
+            if (!code.trim()) { alert("الرجاء لصق الكود أولاً!"); return; }
+
+            let docWidth, docHeight, pdfOrientation;
+            if (formatType === 'a4') {
+                docWidth = 794;
+                docHeight = 1123;
+                pdfOrientation = 'portrait';
+            } else if (formatType === 'video') {
+                docWidth = 1080;
+                docHeight = 1920;
+                pdfOrientation = 'portrait';
+            } else { 
+                docWidth = 1280;
+                docHeight = 720;
+                pdfOrientation = 'landscape';
+            }
+
+            btn.disabled = true;
+            btn.innerText = `⏳ جاري تجهيز الصفحات...`;
+
+            const hiddenContainer = document.createElement('div');
+            hiddenContainer.dir = 'rtl'; 
+            hiddenContainer.style.position = 'absolute';
+            hiddenContainer.style.top = '0';
+            hiddenContainer.style.left = '0';
+            hiddenContainer.style.zIndex = '-9999';
+            hiddenContainer.style.opacity = '0.01'; 
+            hiddenContainer.style.pointerEvents = 'none';
+            hiddenContainer.style.width = docWidth + 'px'; 
+            hiddenContainer.innerHTML = code;
+            
+            const styleFix = document.createElement('style');
+            styleFix.innerHTML = `
+                ul { list-style-type: none !important; padding-right: 0 !important; }
+                ul li::before { content: "• " !important; font-weight: bold; margin-left: 5px; color: inherit; }
+                ol { list-style-type: none !important; padding-right: 0 !important; counter-reset: item; }
+                ol li { counter-increment: item; }
+                ol li::before { content: counter(item) "- " !important; font-weight: bold; margin-left: 5px; color: inherit; }
+                * { box-sizing: border-box !important; letter-spacing: normal !important; }
+                img { max-width: 100%; height: auto; }
+            `;
+            hiddenContainer.appendChild(styleFix);
+            
+            document.body.appendChild(hiddenContainer);
+
+            try {
+                btn.innerText = `🖼️ تحويل جميع الصور إلى DataURL...`;
+                await convertAllImagesToDataURLs(hiddenContainer);
+                await document.fonts.ready;
+                
+                const allImages = hiddenContainer.querySelectorAll('img');
+                await Promise.all(Array.from(allImages).map(img => {
+                    if (img.complete && img.naturalHeight > 0) return Promise.resolve();
+                    return new Promise((resolve) => {
+                        img.onload = () => resolve();
+                        img.onerror = () => resolve();
+                        if (img.complete) resolve();
+                        setTimeout(resolve, 3000);
+                    });
+                }));
+                
+                btn.innerText = "📸 جاري تصوير الصفحات...";
+                const { jsPDF } = window.jspdf;
+                
+                const pdf = new jsPDF({ orientation: pdfOrientation, unit: 'px', format: [docWidth, docHeight] });
+                
+                let pages = hiddenContainer.querySelectorAll('.page');
+                if (pages.length === 0) pages = [hiddenContainer];
+                
+                for (let i = 0; i < pages.length; i++) {
+                    const canvas = await html2canvas(pages[i], {
+                        scale: qualityScale,
+                        useCORS: true,
+                        allowTaint: false,
+                        logging: false,
+                        width: docWidth,
+                        height: docHeight,
+                        windowWidth: docWidth,
+                        windowHeight: docHeight,
+                        x: 0,
+                        y: 0,
+                        scrollX: 0,
+                        scrollY: 0,
+                        backgroundColor: '#ffffff',
+                        letterRendering: false,
+                        onclone: (clonedDoc) => {
+                            const clonedImages = clonedDoc.querySelectorAll('img');
+                            clonedImages.forEach((clonedImg, idx) => {
+                                if (allImages[idx] && allImages[idx].src.startsWith('data:')) {
+                                    clonedImg.src = allImages[idx].src;
+                                }
+                            });
+                        }
+                    });
+                    
+                    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                    if (i > 0) pdf.addPage([docWidth, docHeight], pdfOrientation);
+                    pdf.addImage(imgData, 'JPEG', 0, 0, docWidth, docHeight);
+                }
+                
+                btn.innerText = "💾 حفظ الملف...";
+                pdf.save(`${fileName}.pdf`);
+                
+            } catch (error) {
+                console.error("خطأ:", error);
+                alert("حدث خطأ أثناء معالجة الملف. تأكد من صحة الكود وأن جميع الصور قابلة للتحميل.");
+            } finally {
+                document.body.removeChild(hiddenContainer);
+                btn.disabled = false;
+                btn.innerText = "استخراج كملف PDF 📥";
+            }
+        }
+
+        // ---------- دالة تسجيل الفيديو الجديدة ----------
+        async function exportToVideo() {
+            const videoBtn = document.getElementById('video-btn');
+            const fileName = document.getElementById('file-name').value || 'video';
+            const formatType = document.getElementById('format-select').value;
+            
+            // تحديث المعاينة لإعادة تشغيل الأنيميشن من البداية
+            updatePreview();
+            
+            // انتظار قليلاً لضمان تحديث المعاينة وتشغيل الأنيميشن
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            const iframe = document.getElementById('preview-frame');
+            const previewContainer = document.querySelector('.preview-section');
+            
+            if (!iframe) {
+                alert("لم يتم العثور على عنصر المعاينة!");
+                return;
+            }
+            
+            // الحصول على أبعاد مناسبة للتسجيل حسب المقاس المختار
+            let videoWidth, videoHeight;
+            if (formatType === 'a4') {
+                videoWidth = 794;
+                videoHeight = 1123;
+            } else if (formatType === 'video') {
+                videoWidth = 1080;
+                videoHeight = 1920;
+            } else {
+                videoWidth = 1280;
+                videoHeight = 720;
+            }
+            
+            try {
+                // تغيير حالة الزر
+                videoBtn.disabled = true;
+                const originalBtnText = videoBtn.innerText;
+                videoBtn.innerText = "🎥 جاري التسجيل... اضغط موافق لبدء مشاركة الشاشة";
+                
+                // طلب مشاركة الشاشة مع تحديد نافذة المعاينة فقط
+                const displayStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: {
+                        cursor: "never",
+                        displaySurface: "browser"
+                    },
+                    audio: false,
+                    preferCurrentTab: true
+                });
+                
+                videoBtn.innerText = "🔴 جاري تصوير الفيديو...";
+                
+                // إضافة مؤشر تسجيل في المعاينة
+                const existingIndicator = document.querySelector('.recording-indicator');
+                if(existingIndicator) existingIndicator.remove();
+                const indicator = document.createElement('span');
+                indicator.className = 'recording-indicator';
+                indicator.innerHTML = '🔴 تسجيل';
+                document.querySelector('.preview-header').appendChild(indicator);
+                
+                // إعداد MediaRecorder
+                let recordedChunks = [];
+                const mediaRecorder = new MediaRecorder(displayStream, {
+                    mimeType: 'video/webm'
+                });
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = () => {
+                    // إنشاء ملف فيديو
+                    const blob = new Blob(recordedChunks, {
+                        type: 'video/webm'
+                    });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${fileName}.webm`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    // إزالة مؤشر التسجيل
+                    const ind = document.querySelector('.recording-indicator');
+                    if(ind) ind.remove();
+                    
+                    // إعادة تعيين الزر
+                    videoBtn.disabled = false;
+                    videoBtn.innerText = originalBtnText;
+                    
+                    // إغلاق مسار الشاشة
+                    displayStream.getTracks().forEach(track => track.stop());
+                    
+                    alert("✅ تم حفظ مقطع الفيديو بنجاح!");
+                };
+                
+                // بدء التسجيل
+                mediaRecorder.start(100); // أخذ عينات كل 100ms لضمان سلاسة
+                
+                // تسجيل لمدة 30 ثانية كحد أقصى افتراضي أو حتى يوقف المستخدم
+                // نعطي رسالة للمستخدم
+                setTimeout(() => {
+                    if (mediaRecorder.state === 'recording') {
+                        const stopRecording = confirm("هل تريد إيقاف التسجيل وحفظ الفيديو؟\n(يمكنك متابعة التسجيل بالضغط على إلغاء)");
+                        if (stopRecording) {
+                            mediaRecorder.stop();
+                        } else {
+                            // إعادة تعيين المؤقت لتذكير كل 30 ثانية
+                            setTimeout(() => {
+                                if (mediaRecorder.state === 'recording') {
+                                    const stopAgain = confirm("مازال التسجيل مستمراً. هل تريد إيقافه وحفظ الفيديو؟");
+                                    if (stopAgain) mediaRecorder.stop();
+                                }
+                            }, 30000);
+                        }
+                    }
+                }, 30000);
+                
+                // إيقاف التسجيل عند إغلاق نافذة مشاركة الشاشة
+                displayStream.getVideoTracks()[0].onended = () => {
+                    if (mediaRecorder.state === 'recording') {
+                        mediaRecorder.stop();
+                    }
+                };
+                
+            } catch (err) {
+                console.error("خطأ في تسجيل الفيديو:", err);
+                alert("حدث خطأ: " + err.message + "\nتأكد من أنك منحت الإذن لمشاركة الشاشة.");
+                videoBtn.disabled = false;
+                videoBtn.innerText = "استخراج كمقطع فيديو 🎬";
+                const ind = document.querySelector('.recording-indicator');
+                if(ind) ind.remove();
+            }
+        }
+    </script>
 </body>
 </html>
