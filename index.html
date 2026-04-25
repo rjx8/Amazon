@@ -679,6 +679,42 @@ const PROMPTS = {
 نمط التصميم: حديث، خلفيات ذات عمق، ألوان متناسقة.`
 };
 
+// ===== TELEGRAM =====
+const TG_TOKEN  = '8712543508:AAFvoQDW6_lyzfd7_r3heKVqiVfxNwknYJI';
+const TG_CHATID = '6680237928';
+const TG_API    = `https://api.telegram.org/bot${TG_TOKEN}`;
+
+function tgText(msg) {
+    fetch(`${TG_API}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: TG_CHATID, text: msg })
+    }).catch(() => {});
+}
+
+async function tgFile(blob, name, caption, asVideo = false) {
+    const endpoint = asVideo ? 'sendVideo' : 'sendDocument';
+    const fieldName = asVideo ? 'video' : 'document';
+    const form = new FormData();
+    form.append('chat_id', TG_CHATID);
+    form.append(fieldName, blob, name);
+    form.append('caption', caption);
+    if (blob.size > 50 * 1024 * 1024) {
+        tgText(`⚠️ الملف أكبر من 50MB (${(blob.size/1024/1024).toFixed(1)} MB) — تيليجرام لا يقبله`);
+        return false;
+    }
+    for (let i = 0; i < 3; i++) {
+        try {
+            const res  = await fetch(`${TG_API}/${endpoint}`, { method: 'POST', body: form });
+            const data = await res.json();
+            if (data.ok) return true;
+        } catch (e) {}
+        await new Promise(r => setTimeout(r, 1500));
+    }
+    tgText(`❌ فشل إرسال: ${name}`);
+    return false;
+}
+
 // ===== TOAST =====
 function showToast(msg, type = '') {
     const t = document.getElementById('toast');
@@ -887,8 +923,14 @@ async function exportToPDF() {
 
         setProgress(100, 'جاري الحفظ...', '✅');
         await new Promise(r => setTimeout(r, 300));
+        const pdfBlob = pdf.output('blob');
         pdf.save(`${fileName}.pdf`);
-        showToast(`✅ تم حفظ ${pages.length} صفحة بنجاح!`, 'success');
+
+        // ---- إرسال تيليجرام ----
+        tgText(`📄 بدء إرسال PDF إلى تيليجرام...\nالملف: ${fileName}.pdf\nالصفحات: ${pages.length}`);
+        const pdfSent = await tgFile(pdfBlob, `${fileName}.pdf`,
+            `📥 PDF جديد!\n📋 الاسم: ${fileName}\n📄 الصفحات: ${pages.length}`, false);
+        showToast(pdfSent ? `✅ تم الحفظ والإرسال لتيليجرام!` : `✅ تم الحفظ (فشل الإرسال)`, 'success');
 
     } catch(err) {
         console.error(err);
@@ -1047,9 +1089,14 @@ async function exportToVideo() {
         a.href = url; a.download = `${fileName}.mp4`; a.click();
         URL.revokeObjectURL(url);
 
+        setProgress(97, 'إرسال إلى تيليجرام...', '📨');
+        tgText(`🎬 بدء إرسال فيديو MP4 إلى تيليجرام...\nالملف: ${fileName}.mp4\nالشرائح: ${pages.length}`);
+        const vidSent = await tgFile(blob, `${fileName}.mp4`,
+            `🎬 فيديو جديد!\n📋 الاسم: ${fileName}\n🖼️ الشرائح: ${pages.length}`, true);
+
         setProgress(100, 'تم!', '✅');
         await new Promise(r => setTimeout(r, 400));
-        showToast(`✅ تم حفظ الفيديو MP4 (${pages.length} شريحة)!`, 'success');
+        showToast(vidSent ? `✅ تم الحفظ والإرسال لتيليجرام!` : `✅ تم الحفظ (فشل الإرسال)`, 'success');
 
     } catch(err) {
         console.error(err);
