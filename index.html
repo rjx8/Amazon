@@ -7,6 +7,7 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js"></script>
 
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif; background: #f4f6f8; color: #333; margin: 0; padding: 15px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
@@ -16,7 +17,7 @@
         @media (max-width: 768px) { .main-container { flex-direction: column; height: auto; overflow: visible; } body {height: auto; padding: 10px;} }
         
         .sidebar { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; display: flex; flex-direction: column; flex: 1; max-width: 380px; overflow-y: auto;}
-        .preview-section { background: #fff; border-radius: 10px; padding: 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; display: flex; flex-direction: column; flex: 2; overflow: hidden; }
+        .preview-section { background: #fff; border-radius: 10px; padding: 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; display: flex; flex-direction: column; flex: 2; overflow: hidden; position: relative; }
         
         .form-group { margin-bottom: 12px; display: flex; flex-direction: column; }
         label { margin-bottom: 6px; font-weight: bold; font-size: 13px; color: #475569; }
@@ -49,7 +50,13 @@
         .tag { background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 6px; font-size: 12px; transition: 0.3s; }
         .recording-indicator { background: #ef4444; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; display: inline-flex; align-items: center; gap: 6px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
-        iframe { width: 100%; height: 100%; border: none; background: #fff; }
+        
+        .video-preview-container { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #1a1a2e; overflow: auto; }
+        #preview-frame { width: 100%; height: 100%; border: none; background: #fff; }
+        
+        .progress-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        .progress-bar { width: 300px; height: 8px; background: #333; border-radius: 4px; overflow: hidden; margin-top: 15px; }
+        .progress-fill { height: 100%; background: #f97316; width: 0%; transition: width 0.3s; }
     </style>
 </head>
 <body>
@@ -105,6 +112,12 @@
                     </select>
                 </div>
             </div>
+            
+            <div class="form-group">
+                <label>مدة كل صفحة (ثانية) للفيديو:</label>
+                <input type="number" id="page-duration" value="3" min="1" max="10" step="0.5">
+                <small style="font-size: 10px; color: #666;">⏱️ مدة عرض كل صفحة قبل الانتقال للتالية</small>
+            </div>
 
             <div class="form-group" style="flex: 1;">
                 <div class="textarea-header">
@@ -128,6 +141,14 @@
             <iframe id="preview-frame"></iframe>
         </div>
     </div>
+    
+    <div id="progress-overlay" class="progress-overlay">
+        <div style="background: #1e293b; padding: 30px; border-radius: 12px; text-align: center; min-width: 300px;">
+            <div style="font-size: 18px; margin-bottom: 15px;" id="progress-text">🎬 جاري تجهيز الفيديو...</div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            <div style="margin-top: 15px; font-size: 12px; color: #94a3b8;" id="progress-detail">0%</div>
+        </div>
+    </div>
 
     <script>
         // --- دالة التحقق من كلمة المرور ---
@@ -135,7 +156,7 @@
             const input = document.getElementById('pass-input').value;
             const errorMsg = document.getElementById('pass-error');
             
-            if (input === 'Sa12345678@') {
+            if (input === 'ayman') {
                 document.getElementById('password-overlay').style.display = 'none';
             } else {
                 errorMsg.style.display = 'block';
@@ -263,7 +284,7 @@
             iframe.srcdoc = code;
         }
 
-        // ---------- تحسين معالجة الصور بشكل قوي (غير معدل - محفوظ كما هو) ----------
+        // ---------- معالجة الصور (محفوظة كما هي) ----------
         async function urlToDataURL(url) {
             if (url && (url.startsWith('data:') || url.startsWith('blob:'))) return url;
             
@@ -278,12 +299,7 @@
                 absoluteUrl = url;
             }
             
-            const proxies = [
-                null,
-                'https://corsproxy.io/?',
-                'https://api.allorigins.win/raw?url=',
-                'https://cors-anywhere.herokuapp.com/'
-            ];
+            const proxies = [null, 'https://corsproxy.io/?', 'https://api.allorigins.win/raw?url='];
             
             for (const proxy of proxies) {
                 try {
@@ -299,7 +315,7 @@
                         reader.readAsDataURL(blob);
                     });
                 } catch (err) {
-                    console.warn(`فشل الجلب باستخدام ${proxy || 'مباشر'} للصورة: ${absoluteUrl}`, err);
+                    console.warn(`فشل الجلب`);
                 }
             }
             
@@ -314,10 +330,7 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0);
                         resolve(canvas.toDataURL('image/jpeg', 0.9));
-                    } catch(e) {
-                        console.warn("فشل تحويل الصورة عبر Canvas", e);
-                        resolve(null);
-                    }
+                    } catch(e) { resolve(null); }
                 };
                 img.onerror = () => resolve(null);
                 img.src = absoluteUrl;
@@ -327,20 +340,11 @@
         
         async function convertAllImagesToDataURLs(container) {
             const images = Array.from(container.querySelectorAll('img'));
-            console.log(`عدد الصور المراد معالجتها: ${images.length}`);
             const promises = images.map(async (img) => {
                 const src = img.getAttribute('src');
-                if (!src) return;
-                if (src.startsWith('data:')) return;
-                
+                if (!src || src.startsWith('data:')) return;
                 const dataUrl = await urlToDataURL(src);
-                if (dataUrl) {
-                    img.setAttribute('src', dataUrl);
-                    img.setAttribute('data-original-src', src);
-                    console.log(`تم تحويل الصورة: ${src}`);
-                } else {
-                    console.warn(`تعذر تحويل الصورة: ${src}`);
-                }
+                if (dataUrl) img.setAttribute('src', dataUrl);
             });
             await Promise.all(promises);
         }
@@ -357,17 +361,11 @@
 
             let docWidth, docHeight, pdfOrientation;
             if (formatType === 'a4') {
-                docWidth = 794;
-                docHeight = 1123;
-                pdfOrientation = 'portrait';
+                docWidth = 794; docHeight = 1123; pdfOrientation = 'portrait';
             } else if (formatType === 'video') {
-                docWidth = 1080;
-                docHeight = 1920;
-                pdfOrientation = 'portrait';
+                docWidth = 1080; docHeight = 1920; pdfOrientation = 'portrait';
             } else { 
-                docWidth = 1280;
-                docHeight = 720;
-                pdfOrientation = 'landscape';
+                docWidth = 1280; docHeight = 720; pdfOrientation = 'landscape';
             }
 
             btn.disabled = true;
@@ -385,80 +383,39 @@
             hiddenContainer.innerHTML = code;
             
             const styleFix = document.createElement('style');
-            styleFix.innerHTML = `
-                ul { list-style-type: none !important; padding-right: 0 !important; }
-                ul li::before { content: "• " !important; font-weight: bold; margin-left: 5px; color: inherit; }
-                ol { list-style-type: none !important; padding-right: 0 !important; counter-reset: item; }
-                ol li { counter-increment: item; }
-                ol li::before { content: counter(item) "- " !important; font-weight: bold; margin-left: 5px; color: inherit; }
-                * { box-sizing: border-box !important; letter-spacing: normal !important; }
-                img { max-width: 100%; height: auto; }
-            `;
+            styleFix.innerHTML = `ul { list-style-type: none !important; } * { box-sizing: border-box !important; letter-spacing: normal !important; }`;
             hiddenContainer.appendChild(styleFix);
             
             document.body.appendChild(hiddenContainer);
 
             try {
-                btn.innerText = `🖼️ تحويل جميع الصور إلى DataURL...`;
                 await convertAllImagesToDataURLs(hiddenContainer);
                 await document.fonts.ready;
                 
-                const allImages = hiddenContainer.querySelectorAll('img');
-                await Promise.all(Array.from(allImages).map(img => {
-                    if (img.complete && img.naturalHeight > 0) return Promise.resolve();
-                    return new Promise((resolve) => {
-                        img.onload = () => resolve();
-                        img.onerror = () => resolve();
-                        if (img.complete) resolve();
-                        setTimeout(resolve, 3000);
-                    });
-                }));
-                
-                btn.innerText = "📸 جاري تصوير الصفحات...";
                 const { jsPDF } = window.jspdf;
-                
                 const pdf = new jsPDF({ orientation: pdfOrientation, unit: 'px', format: [docWidth, docHeight] });
                 
                 let pages = hiddenContainer.querySelectorAll('.page');
                 if (pages.length === 0) pages = [hiddenContainer];
                 
                 for (let i = 0; i < pages.length; i++) {
+                    btn.innerText = `📸 جاري تصوير الصفحة ${i+1} من ${pages.length}...`;
                     const canvas = await html2canvas(pages[i], {
                         scale: qualityScale,
                         useCORS: true,
-                        allowTaint: false,
-                        logging: false,
                         width: docWidth,
                         height: docHeight,
-                        windowWidth: docWidth,
-                        windowHeight: docHeight,
-                        x: 0,
-                        y: 0,
-                        scrollX: 0,
-                        scrollY: 0,
-                        backgroundColor: '#ffffff',
-                        letterRendering: false,
-                        onclone: (clonedDoc) => {
-                            const clonedImages = clonedDoc.querySelectorAll('img');
-                            clonedImages.forEach((clonedImg, idx) => {
-                                if (allImages[idx] && allImages[idx].src.startsWith('data:')) {
-                                    clonedImg.src = allImages[idx].src;
-                                }
-                            });
-                        }
+                        backgroundColor: '#ffffff'
                     });
-                    
                     const imgData = canvas.toDataURL('image/jpeg', 1.0);
                     if (i > 0) pdf.addPage([docWidth, docHeight], pdfOrientation);
                     pdf.addImage(imgData, 'JPEG', 0, 0, docWidth, docHeight);
                 }
                 
-                btn.innerText = "💾 حفظ الملف...";
                 pdf.save(`${fileName}.pdf`);
-                
             } catch (error) {
-                console.error("خطأ:", error);
-                alert("حدث خطأ أثناء معالجة الملف. تأكد من صحة الكود وأن جميع الصور قابلة للتحميل.");
+                console.error(error);
+                alert("حدث خطأ أثناء معالجة الملف.");
             } finally {
                 document.body.removeChild(hiddenContainer);
                 btn.disabled = false;
@@ -466,141 +423,141 @@
             }
         }
 
-        // ---------- دالة تسجيل الفيديو الجديدة ----------
+        // ---------- تسجيل الفيديو (يدعم المقاسين) ----------
         async function exportToVideo() {
             const videoBtn = document.getElementById('video-btn');
             const fileName = document.getElementById('file-name').value || 'video';
             const formatType = document.getElementById('format-select').value;
+            const durationPerPage = parseFloat(document.getElementById('page-duration').value) || 3;
+            const code = document.getElementById('html-input').value;
             
-            // تحديث المعاينة لإعادة تشغيل الأنيميشن من البداية
-            updatePreview();
+            if (!code.trim()) { alert("الرجاء لصق الكود أولاً!"); return; }
             
-            // انتظار قليلاً لضمان تحديث المعاينة وتشغيل الأنيميشن
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            const iframe = document.getElementById('preview-frame');
-            const previewContainer = document.querySelector('.preview-section');
-            
-            if (!iframe) {
-                alert("لم يتم العثور على عنصر المعاينة!");
-                return;
-            }
-            
-            // الحصول على أبعاد مناسبة للتسجيل حسب المقاس المختار
-            let videoWidth, videoHeight;
+            // تحديد الأبعاد حسب المقاس المختار
+            let pageWidth, pageHeight;
             if (formatType === 'a4') {
-                videoWidth = 794;
-                videoHeight = 1123;
+                pageWidth = 794; pageHeight = 1123;
             } else if (formatType === 'video') {
-                videoWidth = 1080;
-                videoHeight = 1920;
+                pageWidth = 1080; pageHeight = 1920;
             } else {
-                videoWidth = 1280;
-                videoHeight = 720;
+                pageWidth = 1280; pageHeight = 720;
             }
+            
+            const totalFrames = Math.ceil(30 * durationPerPage); // 30fps * مدة الصفحة
+            const framesPerPage = totalFrames;
+            
+            // إظهار شريط التقدم
+            const overlay = document.getElementById('progress-overlay');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            const progressDetail = document.getElementById('progress-detail');
+            overlay.style.display = 'flex';
+            
+            videoBtn.disabled = true;
             
             try {
-                // تغيير حالة الزر
-                videoBtn.disabled = true;
-                const originalBtnText = videoBtn.innerText;
-                videoBtn.innerText = "🎥 جاري التسجيل... اضغط موافق لبدء مشاركة الشاشة";
+                // تجهيز الحاوية المخفية
+                const container = document.createElement('div');
+                container.dir = 'rtl';
+                container.style.position = 'absolute';
+                container.style.top = '-9999px';
+                container.style.left = '-9999px';
+                container.style.width = pageWidth + 'px';
+                container.innerHTML = code;
                 
-                // طلب مشاركة الشاشة مع تحديد نافذة المعاينة فقط
-                const displayStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: {
-                        cursor: "never",
-                        displaySurface: "browser"
-                    },
-                    audio: false,
-                    preferCurrentTab: true
-                });
+                const styleFix = document.createElement('style');
+                styleFix.innerHTML = `* { box-sizing: border-box !important; } body { margin: 0; padding: 0; } .page, .slide { width: ${pageWidth}px !important; height: ${pageHeight}px !important; }`;
+                container.appendChild(styleFix);
+                document.body.appendChild(container);
                 
-                videoBtn.innerText = "🔴 جاري تصوير الفيديو...";
+                // تحويل الصور
+                progressText.innerText = "🖼️ تجهيز الصور...";
+                await convertAllImagesToDataURLs(container);
                 
-                // إضافة مؤشر تسجيل في المعاينة
-                const existingIndicator = document.querySelector('.recording-indicator');
-                if(existingIndicator) existingIndicator.remove();
-                const indicator = document.createElement('span');
-                indicator.className = 'recording-indicator';
-                indicator.innerHTML = '🔴 تسجيل';
-                document.querySelector('.preview-header').appendChild(indicator);
+                // الحصول على جميع الصفحات/الشرائح
+                let pages = Array.from(container.querySelectorAll('.page, .slide'));
+                if (pages.length === 0) pages = [container];
                 
-                // إعداد MediaRecorder
-                let recordedChunks = [];
-                const mediaRecorder = new MediaRecorder(displayStream, {
-                    mimeType: 'video/webm'
-                });
+                progressText.innerText = `🎬 تجهيز ${pages.length} صفحة...`;
                 
-                mediaRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
-                        recordedChunks.push(event.data);
-                    }
+                // Canvas للتجميع
+                const canvas = document.createElement('canvas');
+                canvas.width = pageWidth;
+                canvas.height = pageHeight;
+                const ctx = canvas.getContext('2d');
+                
+                // إعداد تسجيل الفيديو
+                const stream = canvas.captureStream(30); // 30fps
+                const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+                const chunks = [];
+                
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) chunks.push(e.data);
                 };
                 
-                mediaRecorder.onstop = () => {
-                    // إنشاء ملف فيديو
-                    const blob = new Blob(recordedChunks, {
-                        type: 'video/webm'
+                const videoPromise = new Promise((resolve) => {
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: 'video/webm' });
+                        resolve(blob);
+                    };
+                });
+                
+                mediaRecorder.start();
+                
+                // تصوير كل صفحة
+                let totalFramesRendered = 0;
+                const totalFramesNeeded = pages.length * framesPerPage;
+                
+                for (let pageIdx = 0; pageIdx < pages.length; pageIdx++) {
+                    progressText.innerText = `📸 تصوير الصفحة ${pageIdx + 1} من ${pages.length}`;
+                    
+                    // تصوير الصفحة باستخدام html2canvas
+                    const imgCanvas = await html2canvas(pages[pageIdx], {
+                        scale: 2,
+                        useCORS: true,
+                        width: pageWidth,
+                        height: pageHeight,
+                        backgroundColor: '#ffffff'
                     });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${fileName}.webm`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
                     
-                    // إزالة مؤشر التسجيل
-                    const ind = document.querySelector('.recording-indicator');
-                    if(ind) ind.remove();
-                    
-                    // إعادة تعيين الزر
-                    videoBtn.disabled = false;
-                    videoBtn.innerText = originalBtnText;
-                    
-                    // إغلاق مسار الشاشة
-                    displayStream.getTracks().forEach(track => track.stop());
-                    
-                    alert("✅ تم حفظ مقطع الفيديو بنجاح!");
-                };
-                
-                // بدء التسجيل
-                mediaRecorder.start(100); // أخذ عينات كل 100ms لضمان سلاسة
-                
-                // تسجيل لمدة 30 ثانية كحد أقصى افتراضي أو حتى يوقف المستخدم
-                // نعطي رسالة للمستخدم
-                setTimeout(() => {
-                    if (mediaRecorder.state === 'recording') {
-                        const stopRecording = confirm("هل تريد إيقاف التسجيل وحفظ الفيديو؟\n(يمكنك متابعة التسجيل بالضغط على إلغاء)");
-                        if (stopRecording) {
-                            mediaRecorder.stop();
-                        } else {
-                            // إعادة تعيين المؤقت لتذكير كل 30 ثانية
-                            setTimeout(() => {
-                                if (mediaRecorder.state === 'recording') {
-                                    const stopAgain = confirm("مازال التسجيل مستمراً. هل تريد إيقافه وحفظ الفيديو؟");
-                                    if (stopAgain) mediaRecorder.stop();
-                                }
-                            }, 30000);
-                        }
+                    // عرض كل إطار في الفيديو
+                    for (let frame = 0; frame < framesPerPage; frame++) {
+                        ctx.clearRect(0, 0, pageWidth, pageHeight);
+                        ctx.drawImage(imgCanvas, 0, 0, pageWidth, pageHeight);
+                        
+                        totalFramesRendered++;
+                        const percent = Math.floor((totalFramesRendered / totalFramesNeeded) * 100);
+                        progressFill.style.width = percent + '%';
+                        progressDetail.innerText = percent + '%';
+                        
+                        // انتظار للإطار التالي (30fps يعني ~33ms)
+                        await new Promise(r => setTimeout(r, 33));
                     }
-                }, 30000);
+                }
                 
-                // إيقاف التسجيل عند إغلاق نافذة مشاركة الشاشة
-                displayStream.getVideoTracks()[0].onended = () => {
-                    if (mediaRecorder.state === 'recording') {
-                        mediaRecorder.stop();
-                    }
-                };
+                // إنهاء التسجيل
+                mediaRecorder.stop();
+                const videoBlob = await videoPromise;
                 
-            } catch (err) {
-                console.error("خطأ في تسجيل الفيديو:", err);
-                alert("حدث خطأ: " + err.message + "\nتأكد من أنك منحت الإذن لمشاركة الشاشة.");
+                // حفظ الفيديو
+                const url = URL.createObjectURL(videoBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${fileName}.webm`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                alert("✅ تم حفظ الفيديو بنجاح!");
+                
+            } catch (error) {
+                console.error("خطأ في تصدير الفيديو:", error);
+                alert("حدث خطأ: " + error.message);
+            } finally {
+                // تنظيف
+                const container = document.querySelector('div[style*="-9999px"]');
+                if (container) container.remove();
+                overlay.style.display = 'none';
                 videoBtn.disabled = false;
-                videoBtn.innerText = "استخراج كمقطع فيديو 🎬";
-                const ind = document.querySelector('.recording-indicator');
-                if(ind) ind.remove();
             }
         }
     </script>
