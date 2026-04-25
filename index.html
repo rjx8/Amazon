@@ -29,13 +29,9 @@
             --red-glow: rgba(239,68,68,0.12);
             --purple: #a855f7;
             --purple-glow: rgba(168,85,247,0.12);
-            --yellow: #eab308;
-            --cyan: #06b6d4;
-            --cyan-glow: rgba(6,182,212,0.12);
             --text: #e2e6f3;
             --text-muted: #7a88b0;
             --text-dim: #3d4870;
-            --radius: 12px;
             --radius-sm: 8px;
             --radius-xs: 6px;
         }
@@ -49,10 +45,9 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
         }
 
-        /* ===== HEADER ===== */
+        /* HEADER */
         .header {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
@@ -71,7 +66,6 @@
             gap: 8px;
             font-size: 15px;
             font-weight: 800;
-            color: var(--text);
         }
         .logo-icon {
             width: 32px; height: 32px;
@@ -80,23 +74,17 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 16px;
         }
-        .header-badges { display: flex; gap: 6px; align-items: center; }
-        .header-badge {
-            background: var(--primary-dim);
-            border: 1px solid rgba(91,124,250,0.3);
-            color: var(--primary);
+        .header-badges { display: flex; gap: 6px; }
+        .badge {
             padding: 3px 10px;
             border-radius: 20px;
             font-size: 10px;
             font-weight: 700;
         }
-        .header-badge.orange {
-            background: var(--orange-glow);
-            border-color: rgba(249,115,22,0.3);
-            color: var(--orange);
-        }
+        .badge-blue { background: var(--primary-dim); border: 1px solid rgba(91,124,250,0.3); color: var(--primary); }
+        .badge-orange { background: var(--orange-glow); border: 1px solid rgba(249,115,22,0.3); color: var(--orange); }
 
-        /* ===== LAYOUT ===== */
+        /* LAYOUT */
         .app-body {
             display: flex;
             flex: 1;
@@ -104,10 +92,10 @@
             overflow: hidden;
         }
 
-        /* ===== SIDEBAR ===== */
+        /* SIDEBAR */
         .sidebar {
-            width: 400px;
-            min-width: 360px;
+            width: 100%;
+            max-width: 480px;
             background: var(--surface);
             border-left: 1px solid var(--border);
             display: flex;
@@ -115,17 +103,17 @@
             overflow: hidden;
         }
 
-        /* Main tabs */
+        /* MAIN TABS */
         .main-tabs {
             display: flex;
             border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
             background: var(--bg);
+            flex-shrink: 0;
         }
         .main-tab {
             flex: 1;
             padding: 10px 4px;
-            font-size: 11px;
+            font-size: 11.5px;
             font-weight: 700;
             font-family: 'Cairo', sans-serif;
             background: transparent;
@@ -134,26 +122,13 @@
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
         }
-        .main-tab.active {
-            color: var(--primary);
-            background: var(--surface);
-        }
-        .main-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 2px;
-            background: var(--primary);
-        }
-        .main-tab.orange-tab.active { color: var(--orange); }
-        .main-tab.orange-tab.active::after { background: var(--orange); }
-        .main-tab.green-tab.active { color: var(--green); }
-        .main-tab.green-tab.active::after { background: var(--green); }
+        .main-tab.active { color: var(--primary); background: var(--surface); }
+        .main-tab.active::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--primary); }
+        .main-tab.t-orange.active { color: var(--orange); }
+        .main-tab.t-orange.active::after { background: var(--orange); }
+        .main-tab.t-green.active { color: var(--green); }
+        .main-tab.t-green.active::after { background: var(--green); }
         .main-tab:hover:not(.active) { color: var(--text); background: var(--surface2); }
 
         .main-panel { display: none; flex-direction: column; flex: 1; overflow: hidden; }
@@ -162,57 +137,30 @@
         .panel-scroll {
             flex: 1;
             overflow-y: auto;
-            padding: 12px;
+            padding: 14px;
             scrollbar-width: thin;
             scrollbar-color: var(--border) transparent;
         }
 
-        /* Sub-tabs inside panels */
-        .sub-tabs {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 12px;
-            background: var(--surface2);
-            padding: 3px;
-            border-radius: var(--radius-sm);
-        }
-        .sub-tab {
-            flex: 1;
-            padding: 6px 8px;
-            font-size: 11px;
-            font-weight: 700;
-            font-family: 'Cairo', sans-serif;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s;
-            border-radius: 6px;
-        }
-        .sub-tab.active {
-            background: var(--surface);
-            color: var(--text);
-        }
-
-        /* ===== SECTION LABELS ===== */
-        .section-label {
+        /* SECTION LABELS */
+        .sec-label {
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-dim);
             margin-bottom: 8px;
-            margin-top: 14px;
+            margin-top: 16px;
         }
-        .section-label:first-child { margin-top: 0; }
+        .sec-label:first-child { margin-top: 0; }
 
-        /* ===== PROMPT CARDS ===== */
-        .prompts-grid {
+        /* PROMPT TYPE CARDS */
+        .type-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 6px;
         }
-        .prompt-card {
+        .type-card {
             background: var(--surface2);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
@@ -220,138 +168,102 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .prompt-card:hover {
-            border-color: var(--primary);
-            background: var(--primary-dim);
-            transform: translateY(-1px);
-        }
-        .prompt-card.active-selection {
-            border-color: var(--primary);
-            background: var(--primary-dim);
-        }
-        .prompt-card.video-card:hover, .prompt-card.video-card.active-selection {
-            border-color: var(--orange);
-            background: var(--orange-glow);
-        }
-        .prompt-card-icon { font-size: 18px; margin-bottom: 4px; }
-        .prompt-card-title {
-            font-size: 11.5px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 2px;
-        }
-        .prompt-card-sub {
-            font-size: 10px;
-            color: var(--text-muted);
-        }
+        .type-card:hover { border-color: var(--border-light); transform: translateY(-1px); }
+        .type-card.sel-file:hover, .type-card.sel-file.active { border-color: var(--primary); background: var(--primary-dim); }
+        .type-card.sel-video:hover, .type-card.sel-video.active { border-color: var(--orange); background: var(--orange-glow); }
+        .tc-icon { font-size: 18px; margin-bottom: 4px; }
+        .tc-title { font-size: 11.5px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+        .tc-sub { font-size: 10px; color: var(--text-muted); }
 
-        /* ===== DETAILS FORM ===== */
-        .details-form {
+        /* FIELDS SECTION */
+        .fields-section {
             background: var(--surface2);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            padding: 12px;
+            overflow: hidden;
             margin-top: 10px;
         }
-        .details-form-title {
+        .fields-header {
+            padding: 9px 12px;
+            border-bottom: 1px solid var(--border);
             font-size: 11px;
             font-weight: 700;
             color: var(--text-muted);
-            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
-        .details-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 7px;
-            margin-bottom: 8px;
+        .fields-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 7px; }
+
+        /* FIELD ROW */
+        .field-row {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            transition: opacity 0.2s;
         }
-        .detail-field { display: flex; flex-direction: column; gap: 3px; position: relative; }
-        .detail-field.full { grid-column: 1 / -1; }
-        .detail-field label {
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .field-row.removed { opacity: 0.35; }
+        .field-row.removed input, .field-row.removed textarea { pointer-events: none; }
+
+        .field-label-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-        .field-remove-btn {
+        .field-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .field-remove {
             background: transparent;
             border: none;
             color: var(--text-dim);
-            cursor: pointer;
-            font-size: 11px;
-            padding: 0 2px;
-            line-height: 1;
-            transition: color 0.15s;
-            font-family: 'Cairo', sans-serif;
-        }
-        .field-remove-btn:hover { color: var(--red); }
-        .field-remove-btn.removed { color: var(--red); }
-        .field-removed input {
-            opacity: 0.3;
-            pointer-events: none;
-            text-decoration: line-through;
-        }
-        .field-removed label { color: var(--red); opacity: 0.6; }
-        .detail-field input {
-            padding: 7px 9px;
-            font-size: 12px;
-        }
-
-        /* ===== TOGGLE SELECTORS (visual cards for options) ===== */
-        .option-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5px;
-            margin-bottom: 8px;
-        }
-        .option-cards.cols3 { grid-template-columns: 1fr 1fr 1fr; }
-        .option-card {
-            background: var(--surface3);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-xs);
-            padding: 7px 8px;
-            cursor: pointer;
-            transition: all 0.15s;
-            text-align: center;
-        }
-        .option-card:hover { border-color: var(--border-light); }
-        .option-card.active {
-            border-color: var(--orange);
-            background: var(--orange-glow);
-        }
-        .option-card-icon { font-size: 16px; line-height: 1; }
-        .option-card-label {
             font-size: 10px;
             font-weight: 700;
-            color: var(--text-muted);
-            margin-top: 3px;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            padding: 1px 6px;
+            border-radius: 4px;
+            transition: all 0.15s;
         }
-        .option-card.active .option-card-label { color: var(--orange); }
+        .field-remove:hover { color: var(--red); background: var(--red-glow); }
+        .field-remove.is-removed { color: var(--red); }
+        .field-remove.is-removed:hover { color: var(--green); background: var(--green-glow); }
 
-        /* For file prompts use primary color */
-        .option-card.file-option.active {
+        input[type=text], input[type=number], textarea, select {
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 7px 10px;
+            border-radius: var(--radius-xs);
+            font-size: 12px;
+            font-family: 'Cairo', sans-serif;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+        input[type=text]:focus, input[type=number]:focus, textarea:focus, select:focus {
+            outline: none;
             border-color: var(--primary);
-            background: var(--primary-dim);
+            box-shadow: 0 0 0 2px var(--primary-glow);
         }
-        .option-card.file-option.active .option-card-label { color: var(--primary); }
+        textarea { resize: vertical; min-height: 60px; line-height: 1.6; }
+        select option { background: var(--surface2); }
 
-        /* ===== PROMPT ACTIONS ===== */
+        /* TWO COLUMNS for short fields */
+        .fields-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+
+        /* PROMPT ACTIONS */
         .prompt-actions {
             display: flex;
             gap: 6px;
-            margin-top: 8px;
+            margin-top: 10px;
         }
-        .prompt-action-btn {
+        .action-btn {
             flex: 1;
             padding: 9px 8px;
-            border: 1px solid var(--border);
             border-radius: var(--radius-sm);
             font-size: 11px;
             font-weight: 700;
@@ -362,56 +274,25 @@
             align-items: center;
             justify-content: center;
             gap: 4px;
-        }
-        .btn-copy-ar {
-            background: var(--primary-dim);
-            color: var(--primary);
-            border-color: rgba(91,124,250,0.3);
-        }
-        .btn-copy-ar:hover { background: rgba(91,124,250,0.2); }
-        .btn-copy-en {
-            background: var(--purple-glow);
-            color: var(--purple);
-            border-color: rgba(168,85,247,0.3);
-        }
-        .btn-copy-en:hover { background: rgba(168,85,247,0.2); }
-        .btn-preview-prompt {
-            background: var(--surface3);
-            color: var(--text-muted);
-            border-color: var(--border);
-        }
-        .btn-preview-prompt:hover { color: var(--text); border-color: var(--border-light); }
-
-        /* ===== FORM ELEMENTS ===== */
-        .form-row { display: flex; gap: 7px; }
-        .form-group { display: flex; flex-direction: column; margin-bottom: 9px; flex: 1; }
-        label {
-            font-size: 10.5px;
-            font-weight: 700;
-            color: var(--text-muted);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-        input, select {
-            background: var(--surface2);
             border: 1px solid var(--border);
-            color: var(--text);
-            padding: 8px 11px;
-            border-radius: var(--radius-sm);
-            font-size: 12.5px;
-            font-family: 'Cairo', sans-serif;
-            transition: all 0.2s;
-            width: 100%;
         }
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-glow);
-        }
-        select option { background: var(--surface2); }
+        .btn-ar { background: var(--primary-dim); color: var(--primary); border-color: rgba(91,124,250,0.3); }
+        .btn-ar:hover { background: rgba(91,124,250,0.2); }
+        .btn-en { background: var(--purple-glow); color: var(--purple); border-color: rgba(168,85,247,0.3); }
+        .btn-en:hover { background: rgba(168,85,247,0.2); }
+        .btn-preview { background: var(--surface3); color: var(--text-muted); }
+        .btn-preview:hover { color: var(--text); border-color: var(--border-light); }
 
-        /* ===== DURATION DISPLAY ===== */
+        /* DIVIDER */
+        .divider { height: 1px; background: var(--border); margin: 10px 0; }
+
+        /* FORM ELEMENTS (settings panels) */
+        .form-group { display: flex; flex-direction: column; margin-bottom: 9px; }
+        .form-group label { font-size: 10.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.3px; }
+        .form-row { display: flex; gap: 7px; }
+        .form-row .form-group { flex: 1; }
+
+        /* DURATION */
         .duration-display {
             background: var(--surface3);
             border: 1px solid var(--border);
@@ -420,895 +301,562 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-top: 4px;
         }
-        .duration-display-label { font-size: 11px; color: var(--text-muted); }
-        .duration-display-value { font-size: 16px; font-weight: 900; color: var(--primary); }
+        .dur-label { font-size: 11px; color: var(--text-muted); }
+        .dur-val { font-size: 16px; font-weight: 900; color: var(--primary); }
 
-        .slides-duration-list {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            max-height: 160px;
-            overflow-y: auto;
-            margin-top: 6px;
-        }
-        .slide-duration-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-xs);
-            padding: 6px 10px;
-        }
-        .slide-duration-label { font-size: 11px; color: var(--text-muted); flex: 1; font-weight: 600; }
-        .slide-duration-input { width: 70px !important; padding: 4px 8px !important; font-size: 12px !important; text-align: center; }
+        .slides-list { display: flex; flex-direction: column; gap: 5px; max-height: 160px; overflow-y: auto; margin-top: 6px; }
+        .slide-row { display: flex; align-items: center; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-xs); padding: 6px 10px; }
+        .slide-lbl { font-size: 11px; color: var(--text-muted); flex: 1; font-weight: 600; }
+        .slide-inp { width: 70px !important; padding: 4px 8px !important; font-size: 12px !important; text-align: center; }
 
-        /* ===== TEXTAREA ===== */
-        .textarea-wrap { position: relative; display: flex; flex-direction: column; gap: 6px; }
-        .textarea-toolbar { display: flex; justify-content: space-between; align-items: center; }
-        textarea {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 12px;
-            border-radius: var(--radius-sm);
-            font-size: 12px;
-            font-family: 'Courier New', monospace;
-            direction: ltr;
-            text-align: left;
-            resize: vertical;
-            min-height: 180px;
-            line-height: 1.6;
-            transition: border-color 0.2s;
-            width: 100%;
-        }
-        textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+        /* CODE TEXTAREA */
+        .code-wrap { display: flex; flex-direction: column; gap: 6px; }
+        .code-toolbar { display: flex; justify-content: space-between; align-items: center; }
         .char-count { font-size: 10px; color: var(--text-dim); }
-        .clear-btn {
-            background: transparent;
-            border: 1px solid rgba(239,68,68,0.3);
-            color: var(--red);
-            padding: 4px 9px;
-            border-radius: 5px;
-            font-size: 10.5px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'Cairo', sans-serif;
-        }
+        .clear-btn { background: transparent; border: 1px solid rgba(239,68,68,0.3); color: var(--red); padding: 4px 9px; border-radius: 5px; font-size: 10.5px; font-weight: 700; cursor: pointer; font-family: 'Cairo', sans-serif; transition: all 0.2s; }
         .clear-btn:hover { background: var(--red-glow); border-color: var(--red); }
+        #html-input { font-family: 'Courier New', monospace; direction: ltr; text-align: left; min-height: 300px; font-size: 12px; line-height: 1.6; }
 
-        /* ===== EXPORT BUTTONS ===== */
-        .sidebar-footer {
-            padding: 10px 12px;
-            border-top: 1px solid var(--border);
-            background: var(--surface);
-            flex-shrink: 0;
-        }
+        /* TIP */
+        .tip { background: rgba(91,124,250,0.07); border: 1px solid rgba(91,124,250,0.18); border-radius: var(--radius-sm); padding: 7px 10px; font-size: 10.5px; color: var(--text-muted); line-height: 1.6; margin-top: 6px; }
+
+        /* FOOTER */
+        .sidebar-footer { padding: 10px 14px; border-top: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
         .export-row { display: flex; gap: 7px; }
-        .export-btn {
-            flex: 1;
-            padding: 11px 10px;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'Cairo', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
+        .export-btn { flex: 1; padding: 11px 10px; border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Cairo', sans-serif; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s; }
         .btn-pdf { background: var(--primary); color: white; }
         .btn-pdf:hover { background: var(--primary-hover); box-shadow: 0 4px 16px var(--primary-glow); transform: translateY(-1px); }
         .btn-video { background: var(--orange); color: white; }
         .btn-video:hover { background: var(--orange-hover); box-shadow: 0 4px 16px var(--orange-glow); transform: translateY(-1px); }
         .export-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
-        /* ===== PREVIEW ===== */
-        .preview-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background: #070910;
-            min-width: 0;
-        }
-        .preview-bar {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 8px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-shrink: 0;
-        }
-        .preview-bar-left { display: flex; align-items: center; gap: 8px; }
-        .preview-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 5px var(--green); }
-        .preview-title { font-size: 12px; font-weight: 700; color: var(--text-muted); }
-        .preview-bar-right { display: flex; align-items: center; gap: 6px; }
-        .size-badge {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 700;
-        }
-
-        /* Slide nav buttons */
-        .slide-nav-btn {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            padding: 4px 10px;
-            border-radius: var(--radius-xs);
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'Cairo', sans-serif;
-        }
-        .slide-nav-btn:hover { border-color: var(--primary); color: var(--primary); }
-        .slide-counter { font-size: 11px; color: var(--text-muted); font-weight: 700; min-width: 50px; text-align: center; }
-
-        .preview-frame-wrap {
-            flex: 1;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-            background: #070910;
-            position: relative;
-        }
-        .iframe-shadow {
-            box-shadow: 0 8px 40px rgba(0,0,0,0.7);
-            border-radius: 3px;
-            overflow: hidden;
-            flex-shrink: 0;
-            position: relative;
-        }
-        #preview-frame { border: none; display: block; background: white; }
-        .preview-empty {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            color: var(--text-dim);
-        }
-        .preview-empty-icon { font-size: 44px; opacity: 0.3; }
-        .preview-empty-text { font-size: 13px; font-weight: 600; opacity: 0.4; }
-
-        /* ===== VIDEO PLAYER ===== */
-        .video-preview-bar {
-            background: var(--surface);
-            border-top: 1px solid var(--border);
-            padding: 10px 16px;
-            display: none;
-            align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
-        }
-        .video-preview-bar.visible { display: flex; }
-        .vp-btn {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            color: var(--text);
-            width: 34px; height: 34px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-        .vp-btn:hover { border-color: var(--primary); color: var(--primary); }
-        .vp-timeline { flex: 1; }
-        .vp-track {
-            width: 100%; height: 4px;
-            background: var(--surface3);
-            border-radius: 2px;
-            cursor: pointer;
-            position: relative;
-        }
-        .vp-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--orange));
-            border-radius: 2px;
-            width: 0%;
-            transition: width 0.1s linear;
-            pointer-events: none;
-        }
-        .vp-time { font-size: 11px; color: var(--text-muted); font-weight: 600; min-width: 75px; text-align: center; }
-        .vp-download {
-            background: var(--green-glow);
-            border: 1px solid rgba(34,197,94,0.3);
-            color: var(--green);
-            padding: 6px 12px;
-            border-radius: var(--radius-xs);
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'Cairo', sans-serif;
-        }
-        .vp-download:hover { background: rgba(34,197,94,0.2); }
-
-        /* ===== PROGRESS ===== */
-        .progress-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.88);
-            z-index: 10000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(6px);
-        }
-        .progress-box {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 28px 32px;
-            border-radius: 16px;
-            text-align: center;
-            min-width: 300px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-        }
+        /* PROGRESS */
+        .progress-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 10000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(6px); }
+        .progress-box { background: var(--surface); border: 1px solid var(--border); padding: 28px 32px; border-radius: 16px; text-align: center; min-width: 300px; }
         .progress-icon { font-size: 30px; margin-bottom: 10px; }
         .progress-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
         .progress-bar-track { width: 100%; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
         .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--orange)); width: 0%; transition: width 0.3s; border-radius: 3px; }
         .progress-pct { font-size: 11px; color: var(--text-muted); }
 
-        /* ===== MODAL ===== */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            z-index: 9000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            backdrop-filter: blur(4px);
-        }
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
         .modal-overlay.open { display: flex; }
-        .modal-box {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 640px;
-            max-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-        }
-        .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 640px; max-height: 80vh; display: flex; flex-direction: column; }
+        .modal-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
         .modal-title { font-size: 14px; font-weight: 800; }
-        .modal-close { background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .modal-close { background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .modal-close:hover { color: var(--red); border-color: var(--red); }
-        .modal-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
-        .modal-preview-text { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; font-size: 12.5px; line-height: 1.8; color: var(--text); white-space: pre-wrap; direction: rtl; text-align: right; font-family: 'Cairo', sans-serif; }
-        .modal-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
-        .modal-btn { flex: 1; padding: 10px; border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; font-family: 'Cairo', sans-serif; }
+        .modal-body { flex: 1; overflow-y: auto; padding: 14px 18px; }
+        .modal-text { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; font-size: 12px; line-height: 1.8; color: var(--text); white-space: pre-wrap; direction: rtl; text-align: right; font-family: 'Cairo', sans-serif; }
+        .modal-footer { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+        .modal-btn { flex: 1; padding: 10px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; cursor: pointer; border: none; font-family: 'Cairo', sans-serif; transition: all 0.2s; }
         .modal-btn-primary { background: var(--primary); color: white; }
-        .modal-btn-primary:hover { background: var(--primary-hover); }
-        .modal-btn-secondary { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
-        .modal-btn-secondary:hover { color: var(--text); }
         .modal-btn-purple { background: var(--purple); color: white; }
-        .modal-btn-purple:hover { background: #9333ea; }
+        .modal-btn-sec { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
 
-        /* ===== TOAST ===== */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 10px 22px;
-            border-radius: 50px;
-            font-size: 12.5px;
-            font-weight: 700;
-            z-index: 20000;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 8px 28px rgba(0,0,0,0.4);
-            pointer-events: none;
-        }
+        /* TOAST */
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px 22px; border-radius: 50px; font-size: 12.5px; font-weight: 700; z-index: 20000; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); pointer-events: none; }
         .toast.show { transform: translateX(-50%) translateY(0); }
         .toast.success { border-color: var(--green); color: var(--green); }
         .toast.error { border-color: var(--red); color: var(--red); }
 
-        /* ===== TIP ===== */
-        .tip {
-            background: rgba(91,124,250,0.07);
-            border: 1px solid rgba(91,124,250,0.18);
-            border-radius: var(--radius-sm);
-            padding: 7px 10px;
-            font-size: 10.5px;
-            color: var(--text-muted);
-            line-height: 1.6;
-            margin-top: 4px;
-        }
-        .divider { height: 1px; background: var(--border); margin: 10px 0; }
-
-        /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-        /* ===== MOBILE ===== */
-        @media (max-width: 768px) {
-            .app-body { flex-direction: column-reverse; height: auto; overflow: auto; }
-            .sidebar { width: 100%; min-width: auto; border-left: none; border-top: 1px solid var(--border); max-height: 60vh; }
-            .preview-area { height: 40vh; min-height: 240px; }
-            .preview-frame-wrap { padding: 8px; }
+        @media (max-width: 600px) {
+            .sidebar { max-width: 100%; }
+            .app-body { height: auto; overflow: auto; }
         }
     </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
     <div class="header-logo">
         <div class="logo-icon">🛠️</div>
         منصة تحويل الأكواد
     </div>
     <div class="header-badges">
-        <span class="header-badge">PDF</span>
-        <span class="header-badge orange">VIDEO</span>
+        <span class="badge badge-blue">PDF</span>
+        <span class="badge badge-orange">VIDEO</span>
     </div>
 </div>
 
 <div class="app-body">
+<div class="sidebar">
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
+    <!-- MAIN TABS -->
+    <div class="main-tabs">
+        <button class="main-tab active"    onclick="switchMain('p-video', this)">🎬 مقاطع</button>
+        <button class="main-tab"           onclick="switchMain('p-file',  this)">📄 ملفات</button>
+        <button class="main-tab t-orange"  onclick="switchMain('p-vsett', this)">⚙️ فيديو</button>
+        <button class="main-tab t-green"   onclick="switchMain('p-psett', this)">📋 PDF</button>
+        <button class="main-tab"           onclick="switchMain('p-code',  this)">💻 كود</button>
+    </div>
 
-        <!-- MAIN TABS -->
-        <div class="main-tabs">
-            <button class="main-tab active" onclick="switchMain('panel-video-prompts', this)">🎬 مقاطع</button>
-            <button class="main-tab" onclick="switchMain('panel-file-prompts', this)">📄 ملفات</button>
-            <button class="main-tab orange-tab" onclick="switchMain('panel-video-settings', this)">⚙️ فيديو</button>
-            <button class="main-tab green-tab" onclick="switchMain('panel-pdf-settings', this)">📋 PDF</button>
-            <button class="main-tab" onclick="switchMain('panel-code', this)">💻 كود</button>
-        </div>
+    <!-- ═══════════════════════════
+         TAB: VIDEO PROMPTS
+    ═══════════════════════════ -->
+    <div id="p-video" class="main-panel active">
+        <div class="panel-scroll">
 
-        <!-- ============================
-             PANEL: VIDEO PROMPTS
-             ============================ -->
-        <div id="panel-video-prompts" class="main-panel active">
-            <div class="panel-scroll">
-
-                <div class="section-label">📱 نوع المقطع</div>
-                <div class="prompts-grid" id="video-type-cards">
-                    <div class="prompt-card video-card" onclick="selectVideoPrompt('reel_portrait', this)">
-                        <div class="prompt-card-icon">📱</div>
-                        <div class="prompt-card-title">ريلز / تيك توك</div>
-                        <div class="prompt-card-sub">9:16 — طولي</div>
-                    </div>
-                    <div class="prompt-card video-card" onclick="selectVideoPrompt('presentation', this)">
-                        <div class="prompt-card-icon">🖥️</div>
-                        <div class="prompt-card-title">عرض تقديمي</div>
-                        <div class="prompt-card-sub">16:9 — عرضي</div>
-                    </div>
-                    <div class="prompt-card video-card" onclick="selectVideoPrompt('infographic_vid', this)">
-                        <div class="prompt-card-icon">📊</div>
-                        <div class="prompt-card-title">إنفوجرافيك مرئي</div>
-                        <div class="prompt-card-sub">9:16 — بيانات</div>
-                    </div>
-                    <div class="prompt-card video-card" onclick="selectVideoPrompt('story_vid', this)">
-                        <div class="prompt-card-icon">📖</div>
-                        <div class="prompt-card-title">قصة / حكاية</div>
-                        <div class="prompt-card-sub">9:16 — سردي</div>
-                    </div>
-                    <div class="prompt-card video-card" onclick="selectVideoPrompt('promo_vid', this)">
-                        <div class="prompt-card-icon">📣</div>
-                        <div class="prompt-card-title">إعلان / ترويج</div>
-                        <div class="prompt-card-sub">9:16 أو 16:9</div>
-                    </div>
-                    <div class="prompt-card video-card" onclick="selectVideoPrompt('steps_vid', this)">
-                        <div class="prompt-card-icon">📋</div>
-                        <div class="prompt-card-title">خطوات / تعليمي</div>
-                        <div class="prompt-card-sub">9:16 — step by step</div>
-                    </div>
+            <div class="sec-label">📱 نوع المقطع</div>
+            <div class="type-grid">
+                <div class="type-card sel-video" onclick="selectPrompt('video','reel',this)">
+                    <div class="tc-icon">📱</div>
+                    <div class="tc-title">ريلز / تيك توك</div>
+                    <div class="tc-sub">9:16 — طولي</div>
                 </div>
-
-                <!-- VIDEO CUSTOMIZATION -->
-                <div id="video-details-wrap" style="display:none;">
-
-                    <div class="details-form" id="video-details-form">
-                        <div class="details-form-title">
-                            <span>✏️</span> <span id="video-form-title">تفاصيل المقطع</span>
-                        </div>
-                        <div class="details-grid" id="video-detail-fields"></div>
-                    </div>
-
-                    <!-- نوع الحركة -->
-                    <div class="section-label" style="margin-top:12px;">🎭 نوع الأنيميشن</div>
-                    <div class="option-cards cols3" id="anim-type-cards">
-                        <div class="option-card" onclick="selectOption('anim', 'fadeUp', this)">
-                            <div class="option-card-icon">⬆️</div>
-                            <div class="option-card-label">Fade Up</div>
-                        </div>
-                        <div class="option-card active" onclick="selectOption('anim', 'slideIn', this)">
-                            <div class="option-card-icon">➡️</div>
-                            <div class="option-card-label">Slide In</div>
-                        </div>
-                        <div class="option-card" onclick="selectOption('anim', 'zoomIn', this)">
-                            <div class="option-card-icon">🔍</div>
-                            <div class="option-card-label">Zoom In</div>
-                        </div>
-                        <div class="option-card" onclick="selectOption('anim', 'bounce', this)">
-                            <div class="option-card-icon">🏀</div>
-                            <div class="option-card-label">Bounce</div>
-                        </div>
-                        <div class="option-card" onclick="selectOption('anim', 'typewriter', this)">
-                            <div class="option-card-icon">⌨️</div>
-                            <div class="option-card-label">Typewriter</div>
-                        </div>
-                        <div class="option-card" onclick="selectOption('anim', 'glitch', this)">
-                            <div class="option-card-icon">⚡</div>
-                            <div class="option-card-label">Glitch</div>
-                        </div>
-                    </div>
-
-                    <!-- سرعة الحركة -->
-                    <div class="section-label">⏱️ سرعة الحركة</div>
-                    <div class="option-cards cols3" id="anim-speed-cards">
-                        <div class="option-card" onclick="selectOption('speed', 'slow', this)">
-                            <div class="option-card-icon">🐌</div>
-                            <div class="option-card-label">بطيء</div>
-                        </div>
-                        <div class="option-card active" onclick="selectOption('speed', 'medium', this)">
-                            <div class="option-card-icon">🚶</div>
-                            <div class="option-card-label">متوسط</div>
-                        </div>
-                        <div class="option-card" onclick="selectOption('speed', 'fast', this)">
-                            <div class="option-card-icon">⚡</div>
-                            <div class="option-card-label">سريع</div>
-                        </div>
-                    </div>
-
-                    <!-- ترتيب الظهور -->
-                    <div class="section-label">🔢 ترتيب ظهور العناصر</div>
-                    <div class="option-cards" id="appear-order-cards">
-                        <div class="option-card active" onclick="selectOption('order', 'sequential', this)">
-                            <div class="option-card-icon">1️⃣</div>
-                            <div class="option-card-label">متسلسل</div>
-                        </div>
-                        <div class="option-card" onclick="selectOption('order', 'simultaneous', this)">
-                            <div class="option-card-icon">🔄</div>
-                            <div class="option-card-label">دفعة واحدة</div>
-                        </div>
-                        <div class="option-card" onclick="selectOption('order', 'random', this)">
-                            <div class="option-card-icon">🎲</div>
-                            <div class="option-card-label">عشوائي</div>
-                        </div>
-                        <div class="option-card" onclick="selectOption('order', 'stagger', this)">
-                            <div class="option-card-icon">📊</div>
-                            <div class="option-card-label">Stagger</div>
-                        </div>
-                    </div>
-
-                    <!-- خلفية -->
-                    <div class="section-label">🎨 نمط الخلفية</div>
-                    <div class="option-cards" id="bg-style-cards">
-                        <div class="option-card active" onclick="selectOption('bg', 'gradient', this)">
-                            <div class="option-card-icon">🌈</div>
-                            <div class="option-card-label">تدرج</div>
-                        </div>
-                        <div class="option-card" onclick="selectOption('bg', 'particles', this)">
-                            <div class="option-card-icon">✨</div>
-                            <div class="option-card-label">Particles</div>
-                        </div>
-                        <div class="option-card" onclick="selectOption('bg', 'geometric', this)">
-                            <div class="option-card-icon">🔷</div>
-                            <div class="option-card-label">هندسي</div>
-                        </div>
-                        <div class="option-card" onclick="selectOption('bg', 'solid_dark', this)">
-                            <div class="option-card-icon">⬛</div>
-                            <div class="option-card-label">داكن</div>
-                        </div>
-                    </div>
-
-                    <!-- نمط الألوان -->
-                    <div class="section-label">🖌️ نمط الألوان</div>
-                    <div class="option-cards" id="color-theme-cards">
-                        <div class="option-card active" onclick="selectOption('color', 'dark_neon', this)">
-                            <div class="option-card-icon">💜</div>
-                            <div class="option-card-label">داكن + Neon</div>
-                        </div>
-                        <div class="option-card" onclick="selectOption('color', 'vibrant', this)">
-                            <div class="option-card-icon">🌈</div>
-                            <div class="option-card-label">زاهي</div>
-                        </div>
-                        <div class="option-card" onclick="selectOption('color', 'minimal_light', this)">
-                            <div class="option-card-icon">⬜</div>
-                            <div class="option-card-label">فاتح</div>
-                        </div>
-                        <div class="option-card" onclick="selectOption('color', 'gold_dark', this)">
-                            <div class="option-card-icon">✨</div>
-                            <div class="option-card-label">ذهبي</div>
-                        </div>
-                    </div>
-
-                    <!-- PROMPT ACTIONS -->
-                    <div class="prompt-actions" style="margin-top:10px;">
-                        <button class="prompt-action-btn btn-copy-ar" onclick="copyVideoPromptAR()">
-                            <span>🇸🇦</span> نسخ عربي
-                        </button>
-                        <button class="prompt-action-btn btn-copy-en" onclick="copyVideoPromptEN()">
-                            <span>🇺🇸</span> English
-                        </button>
-                        <button class="prompt-action-btn btn-preview-prompt" onclick="openVideoModal()">
-                            <span>👁️</span> معاينة
-                        </button>
-                    </div>
+                <div class="type-card sel-video" onclick="selectPrompt('video','presentation',this)">
+                    <div class="tc-icon">🖥️</div>
+                    <div class="tc-title">عرض تقديمي</div>
+                    <div class="tc-sub">16:9 — عرضي</div>
                 </div>
-
-            </div>
-        </div>
-
-        <!-- ============================
-             PANEL: FILE PROMPTS
-             ============================ -->
-        <div id="panel-file-prompts" class="main-panel">
-            <div class="panel-scroll">
-
-                <div class="section-label">📄 نوع الملف</div>
-                <div class="prompts-grid" id="file-type-cards">
-                    <div class="prompt-card" onclick="selectFilePrompt('a4_portrait', this)">
-                        <div class="prompt-card-icon">📄</div>
-                        <div class="prompt-card-title">بحث طولي</div>
-                        <div class="prompt-card-sub">A4 — 794×1123</div>
-                    </div>
-                    <div class="prompt-card" onclick="selectFilePrompt('a4_landscape', this)">
-                        <div class="prompt-card-icon">📋</div>
-                        <div class="prompt-card-title">بحث عرضي</div>
-                        <div class="prompt-card-sub">A4 — 1123×794</div>
-                    </div>
-                    <div class="prompt-card" onclick="selectFilePrompt('cv', this)">
-                        <div class="prompt-card-icon">👤</div>
-                        <div class="prompt-card-title">CV / سيرة ذاتية</div>
-                        <div class="prompt-card-sub">A4 — احترافي</div>
-                    </div>
-                    <div class="prompt-card" onclick="selectFilePrompt('poster', this)">
-                        <div class="prompt-card-icon">🎨</div>
-                        <div class="prompt-card-title">ملصق دعائي</div>
-                        <div class="prompt-card-sub">عمودي — Poster</div>
-                    </div>
-                    <div class="prompt-card" onclick="selectFilePrompt('infographic_file', this)">
-                        <div class="prompt-card-icon">📊</div>
-                        <div class="prompt-card-title">إنفوجرافيك</div>
-                        <div class="prompt-card-sub">A4 أو 9:16</div>
-                    </div>
+                <div class="type-card sel-video" onclick="selectPrompt('video','infographic',this)">
+                    <div class="tc-icon">📊</div>
+                    <div class="tc-title">إنفوجرافيك مرئي</div>
+                    <div class="tc-sub">9:16 — بيانات</div>
                 </div>
-
-                <!-- FILE DETAILS -->
-                <div id="file-details-wrap" style="display:none;">
-                    <div class="details-form" id="file-details-form">
-                        <div class="details-form-title">
-                            <span>✏️</span> <span id="file-form-title">تفاصيل الملف</span>
-                        </div>
-                        <div class="details-grid" id="file-detail-fields"></div>
-                    </div>
-
-                    <!-- File design style -->
-                    <div class="section-label" style="margin-top:12px;">🎨 نمط التصميم</div>
-                    <div class="option-cards" id="file-style-cards">
-                        <div class="option-card file-option active" onclick="selectOption('file_style', 'professional', this)">
-                            <div class="option-card-icon">👔</div>
-                            <div class="option-card-label">احترافي</div>
-                        </div>
-                        <div class="option-card file-option" onclick="selectOption('file_style', 'modern', this)">
-                            <div class="option-card-icon">✨</div>
-                            <div class="option-card-label">عصري</div>
-                        </div>
-                        <div class="option-card file-option" onclick="selectOption('file_style', 'minimal', this)">
-                            <div class="option-card-icon">⬜</div>
-                            <div class="option-card-label">بسيط</div>
-                        </div>
-                        <div class="option-card file-option" onclick="selectOption('file_style', 'bold', this)">
-                            <div class="option-card-icon">💥</div>
-                            <div class="option-card-label">جريء</div>
-                        </div>
-                    </div>
-
-                    <!-- Color scheme -->
-                    <div class="section-label">🖌️ لون رئيسي</div>
-                    <div class="option-cards cols3" id="file-color-cards">
-                        <div class="option-card file-option active" onclick="selectOption('file_color', 'blue', this)">
-                            <div class="option-card-icon">🔵</div>
-                            <div class="option-card-label">أزرق</div>
-                        </div>
-                        <div class="option-card file-option" onclick="selectOption('file_color', 'green', this)">
-                            <div class="option-card-icon">🟢</div>
-                            <div class="option-card-label">أخضر</div>
-                        </div>
-                        <div class="option-card file-option" onclick="selectOption('file_color', 'purple', this)">
-                            <div class="option-card-icon">🟣</div>
-                            <div class="option-card-label">بنفسجي</div>
-                        </div>
-                        <div class="option-card file-option" onclick="selectOption('file_color', 'red', this)">
-                            <div class="option-card-icon">🔴</div>
-                            <div class="option-card-label">أحمر</div>
-                        </div>
-                        <div class="option-card file-option" onclick="selectOption('file_color', 'gold', this)">
-                            <div class="option-card-icon">🟡</div>
-                            <div class="option-card-label">ذهبي</div>
-                        </div>
-                        <div class="option-card file-option" onclick="selectOption('file_color', 'dark', this)">
-                            <div class="option-card-icon">⚫</div>
-                            <div class="option-card-label">داكن</div>
-                        </div>
-                    </div>
-
-                    <!-- PROMPT ACTIONS -->
-                    <div class="prompt-actions" style="margin-top:10px;">
-                        <button class="prompt-action-btn btn-copy-ar" onclick="copyFilePromptAR()">
-                            <span>🇸🇦</span> نسخ عربي
-                        </button>
-                        <button class="prompt-action-btn btn-copy-en" onclick="copyFilePromptEN()">
-                            <span>🇺🇸</span> English
-                        </button>
-                        <button class="prompt-action-btn btn-preview-prompt" onclick="openFileModal()">
-                            <span>👁️</span> معاينة
-                        </button>
-                    </div>
+                <div class="type-card sel-video" onclick="selectPrompt('video','story',this)">
+                    <div class="tc-icon">📖</div>
+                    <div class="tc-title">قصة / سردي</div>
+                    <div class="tc-sub">9:16 — storytelling</div>
                 </div>
-
-            </div>
-        </div>
-
-        <!-- ============================
-             PANEL: VIDEO SETTINGS
-             ============================ -->
-        <div id="panel-video-settings" class="main-panel">
-            <div class="panel-scroll">
-                <div class="section-label">🎬 إعدادات الفيديو</div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>نوع التصدير</label>
-                        <select id="format-select-video" onchange="updatePreviewSize(); updateSlideDurations();">
-                            <option value="video_portrait">طولي (9:16)</option>
-                            <option value="video_landscape" selected>عرضي (16:9)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>FPS</label>
-                        <select id="fps-select" onchange="currentFPS = parseInt(this.value)">
-                            <option value="24">24 FPS</option>
-                            <option value="30" selected>30 FPS</option>
-                            <option value="60">60 FPS</option>
-                        </select>
-                    </div>
+                <div class="type-card sel-video" onclick="selectPrompt('video','promo',this)">
+                    <div class="tc-icon">📣</div>
+                    <div class="tc-title">إعلان / ترويج</div>
+                    <div class="tc-sub">9:16 أو 16:9</div>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>جودة الفيديو</label>
-                        <select id="video-quality-select">
-                            <option value="1">عادية</option>
-                            <option value="2" selected>عالية</option>
-                            <option value="3">ممتازة</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>الانتقال بين الشرائح</label>
-                        <select id="transition-select" onchange="currentTransition = this.value">
-                            <option value="fade">تلاشٍ</option>
-                            <option value="slide">انزلاق</option>
-                            <option value="zoom">تكبير</option>
-                            <option value="none">لا شيء</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>مدة كل شريحة (ثانية)</label>
-                    <input type="number" id="page-duration" value="3" min="0.5" max="30" step="0.5" oninput="updateTotalDuration()">
-                </div>
-
-                <div class="duration-display">
-                    <span class="duration-display-label">⏱️ المدة الكلية</span>
-                    <span class="duration-display-value" id="total-duration-display">—</span>
-                </div>
-
-                <div class="divider"></div>
-
-                <div class="section-label">🎛️ مدة كل شريحة منفردة</div>
-                <div class="tip">💡 الصق الكود في تبويب "كود" لتظهر الشرائح هنا</div>
-                <div class="slides-duration-list" id="slides-duration-list">
-                    <div style="font-size:11px; color:var(--text-dim); padding:6px; text-align:center;">الصق الكود أولاً</div>
+                <div class="type-card sel-video" onclick="selectPrompt('video','steps',this)">
+                    <div class="tc-icon">📋</div>
+                    <div class="tc-title">خطوات / تعليمي</div>
+                    <div class="tc-sub">9:16 — step by step</div>
                 </div>
             </div>
 
-            <div class="sidebar-footer">
-                <div class="export-row">
-                    <button id="video-btn" class="export-btn btn-video" onclick="exportToVideo()">
-                        🎬 تصدير فيديو
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ============================
-             PANEL: PDF SETTINGS
-             ============================ -->
-        <div id="panel-pdf-settings" class="main-panel">
-            <div class="panel-scroll">
-                <div class="section-label">📄 إعدادات PDF</div>
-
-                <div class="form-group">
-                    <label>اسم الملف</label>
-                    <input type="text" id="file-name" value="مستند_جديد" placeholder="اسم الملف...">
+            <!-- Dynamic fields -->
+            <div id="video-fields-wrap" style="display:none;">
+                <div class="fields-section" style="margin-top:10px;">
+                    <div class="fields-header">📝 <span id="video-fields-title">تفاصيل المقطع</span></div>
+                    <div class="fields-body" id="video-fields-body"></div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>تخطيط الصفحة</label>
-                        <select id="format-select-pdf" onchange="updatePreviewSize()">
-                            <option value="a4_portrait" selected>A4 طولي</option>
-                            <option value="a4_landscape">A4 عرضي</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>جودة PDF</label>
-                        <select id="quality-select">
-                            <option value="1">عادية</option>
-                            <option value="2" selected>عالية</option>
-                            <option value="3">ممتازة</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="tip">💡 تأكد أن كل صفحة تستخدم <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="page"</code></div>
-            </div>
-
-            <div class="sidebar-footer">
-                <div class="export-row">
-                    <button id="capture-btn" class="export-btn btn-pdf" onclick="exportToPDF()">
-                        📥 تصدير PDF
-                    </button>
+                <div class="prompt-actions">
+                    <button class="action-btn btn-ar"      onclick="doCopy('video','ar')">🇸🇦 نسخ عربي</button>
+                    <button class="action-btn btn-en"      onclick="doCopy('video','en')">🇺🇸 English</button>
+                    <button class="action-btn btn-preview" onclick="doPreview('video')">👁️ معاينة</button>
                 </div>
             </div>
-        </div>
 
-        <!-- ============================
-             PANEL: CODE
-             ============================ -->
-        <div id="panel-code" class="main-panel">
-            <div class="panel-scroll">
-                <div class="section-label">💻 كود HTML</div>
-                <div class="textarea-wrap">
-                    <div class="textarea-toolbar">
-                        <span id="char-count" class="char-count">0 حرف</span>
-                        <button class="clear-btn" onclick="clearCode()">🗑️ مسح</button>
-                    </div>
-                    <textarea id="html-input" oninput="onCodeInput()" placeholder="الصق كود HTML هنا...&#10;&#10;تأكد أن الصفحات تستخدم class=&quot;page&quot; أو class=&quot;slide&quot;"></textarea>
-                </div>
-                <div class="tip">💡 كل صفحة/شريحة يجب أن تستخدم <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="page"</code> أو <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="slide"</code></div>
-            </div>
-
-            <div class="sidebar-footer">
-                <div class="export-row">
-                    <button class="export-btn btn-pdf" onclick="exportToPDF()">📥 PDF</button>
-                    <button class="export-btn btn-video" onclick="exportToVideo()">🎬 فيديو</button>
-                </div>
-            </div>
-        </div>
-
-    </div><!-- /sidebar -->
-
-    <!-- PREVIEW -->
-    <div class="preview-area">
-        <div class="preview-bar">
-            <div class="preview-bar-left">
-                <div class="preview-dot"></div>
-                <span class="preview-title">المعاينة المباشرة</span>
-            </div>
-            <div class="preview-bar-right">
-                <button class="slide-nav-btn" onclick="navSlide(-1)" id="prev-slide-btn" style="display:none;">◀ السابق</button>
-                <span class="slide-counter" id="slide-counter" style="display:none;">1 / 1</span>
-                <button class="slide-nav-btn" onclick="navSlide(1)" id="next-slide-btn" style="display:none;">التالي ▶</button>
-                <span class="size-badge" id="size-tag">16:9 — 1280 × 720</span>
-            </div>
-        </div>
-        <div class="preview-frame-wrap" id="preview-wrap">
-            <div class="preview-empty" id="preview-empty">
-                <div class="preview-empty-icon">📋</div>
-                <div class="preview-empty-text">الصق الكود لتظهر المعاينة</div>
-            </div>
-            <div class="iframe-shadow" id="iframe-shadow" style="display:none;">
-                <iframe id="preview-frame"></iframe>
-            </div>
-        </div>
-        <!-- VIDEO PLAYER -->
-        <div class="video-preview-bar" id="video-preview-bar">
-            <button class="vp-btn" id="vp-play-btn" onclick="vpTogglePlay()">▶️</button>
-            <div class="vp-timeline">
-                <div class="vp-track" id="vp-track" onclick="vpSeek(event)">
-                    <div class="vp-fill" id="vp-fill"></div>
-                </div>
-            </div>
-            <span class="vp-time" id="vp-time">0:00 / 0:00</span>
-            <button class="vp-download" onclick="vpDownload()">💾 تحميل</button>
         </div>
     </div>
 
+    <!-- ═══════════════════════════
+         TAB: FILE PROMPTS
+    ═══════════════════════════ -->
+    <div id="p-file" class="main-panel">
+        <div class="panel-scroll">
+
+            <div class="sec-label">📄 نوع الملف</div>
+            <div class="type-grid">
+                <div class="type-card sel-file" onclick="selectPrompt('file','research_v',this)">
+                    <div class="tc-icon">📄</div>
+                    <div class="tc-title">بحث طولي</div>
+                    <div class="tc-sub">A4 — 794×1123</div>
+                </div>
+                <div class="type-card sel-file" onclick="selectPrompt('file','research_h',this)">
+                    <div class="tc-icon">📋</div>
+                    <div class="tc-title">بحث عرضي</div>
+                    <div class="tc-sub">A4 — 1123×794</div>
+                </div>
+                <div class="type-card sel-file" onclick="selectPrompt('file','cv',this)">
+                    <div class="tc-icon">👤</div>
+                    <div class="tc-title">CV / سيرة ذاتية</div>
+                    <div class="tc-sub">A4 — احترافي</div>
+                </div>
+                <div class="type-card sel-file" onclick="selectPrompt('file','poster',this)">
+                    <div class="tc-icon">🎨</div>
+                    <div class="tc-title">ملصق دعائي</div>
+                    <div class="tc-sub">A4 — عمودي</div>
+                </div>
+                <div class="type-card sel-file" onclick="selectPrompt('file','infographic',this)">
+                    <div class="tc-icon">📊</div>
+                    <div class="tc-title">إنفوجرافيك</div>
+                    <div class="tc-sub">A4 أو 9:16</div>
+                </div>
+            </div>
+
+            <div id="file-fields-wrap" style="display:none;">
+                <div class="fields-section" style="margin-top:10px;">
+                    <div class="fields-header">📝 <span id="file-fields-title">تفاصيل الملف</span></div>
+                    <div class="fields-body" id="file-fields-body"></div>
+                </div>
+
+                <div class="prompt-actions">
+                    <button class="action-btn btn-ar"      onclick="doCopy('file','ar')">🇸🇦 نسخ عربي</button>
+                    <button class="action-btn btn-en"      onclick="doCopy('file','en')">🇺🇸 English</button>
+                    <button class="action-btn btn-preview" onclick="doPreview('file')">👁️ معاينة</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════
+         TAB: VIDEO SETTINGS
+    ═══════════════════════════ -->
+    <div id="p-vsett" class="main-panel">
+        <div class="panel-scroll">
+            <div class="sec-label">🎬 إعدادات الفيديو</div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>الاتجاه</label>
+                    <select id="fmt-video">
+                        <option value="video_portrait">طولي 9:16</option>
+                        <option value="video_landscape" selected>عرضي 16:9</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>FPS</label>
+                    <select id="fps-sel">
+                        <option value="24">24 FPS</option>
+                        <option value="30" selected>30 FPS</option>
+                        <option value="60">60 FPS</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>جودة</label>
+                    <select id="vid-quality">
+                        <option value="1">عادية</option>
+                        <option value="2" selected>عالية</option>
+                        <option value="3">ممتازة</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>الانتقال</label>
+                    <select id="transition-sel">
+                        <option value="fade">تلاشٍ</option>
+                        <option value="slide">انزلاق</option>
+                        <option value="zoom">تكبير</option>
+                        <option value="none">لا شيء</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>مدة الشريحة الافتراضية (ثانية)</label>
+                <input type="number" id="page-dur" value="3" min="0.5" max="30" step="0.5" oninput="updateTotalDur()">
+            </div>
+
+            <div class="duration-display">
+                <span class="dur-label">⏱️ المدة الكلية</span>
+                <span class="dur-val" id="total-dur">—</span>
+            </div>
+
+            <div class="divider"></div>
+            <div class="sec-label">🎛️ مدة كل شريحة منفردة</div>
+            <div class="tip">💡 الصق الكود في تبويب "كود" لتظهر الشرائح هنا</div>
+            <div class="slides-list" id="slides-list">
+                <div style="font-size:11px;color:var(--text-dim);padding:6px;text-align:center;">الصق الكود أولاً</div>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <div class="export-row">
+                <button class="export-btn btn-video" onclick="exportToVideo()">🎬 تصدير فيديو</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════
+         TAB: PDF SETTINGS
+    ═══════════════════════════ -->
+    <div id="p-psett" class="main-panel">
+        <div class="panel-scroll">
+            <div class="sec-label">📄 إعدادات PDF</div>
+
+            <div class="form-group">
+                <label>اسم الملف</label>
+                <input type="text" id="file-name" value="مستند_جديد" placeholder="اسم الملف...">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>تخطيط الصفحة</label>
+                    <select id="fmt-pdf">
+                        <option value="a4_portrait" selected>A4 طولي</option>
+                        <option value="a4_landscape">A4 عرضي</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>جودة</label>
+                    <select id="pdf-quality">
+                        <option value="1">عادية</option>
+                        <option value="2" selected>عالية</option>
+                        <option value="3">ممتازة</option>
+                    </select>
+                </div>
+            </div>
+            <div class="tip">💡 كل صفحة يجب أن تستخدم <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="page"</code></div>
+        </div>
+        <div class="sidebar-footer">
+            <div class="export-row">
+                <button class="export-btn btn-pdf" onclick="exportToPDF()">📥 تصدير PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════
+         TAB: CODE
+    ═══════════════════════════ -->
+    <div id="p-code" class="main-panel">
+        <div class="panel-scroll">
+            <div class="sec-label">💻 كود HTML</div>
+            <div class="code-wrap">
+                <div class="code-toolbar">
+                    <span id="char-count" class="char-count">0 حرف</span>
+                    <button class="clear-btn" onclick="clearCode()">🗑️ مسح</button>
+                </div>
+                <textarea id="html-input" oninput="onCodeInput()" placeholder="الصق كود HTML هنا...&#10;&#10;تأكد أن الصفحات تستخدم class=&quot;page&quot; أو class=&quot;slide&quot;"></textarea>
+            </div>
+            <div class="tip">💡 كل صفحة/شريحة تستخدم <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="page"</code> أو <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="slide"</code></div>
+        </div>
+        <div class="sidebar-footer">
+            <div class="export-row">
+                <button class="export-btn btn-pdf"   onclick="exportToPDF()">📥 PDF</button>
+                <button class="export-btn btn-video" onclick="exportToVideo()">🎬 فيديو</button>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /sidebar -->
 </div><!-- /app-body -->
 
 <!-- PROGRESS -->
 <div id="progress-overlay" class="progress-overlay">
     <div class="progress-box">
-        <div class="progress-icon" id="progress-icon">🎬</div>
-        <div class="progress-title" id="progress-text">جاري التجهيز...</div>
-        <div class="progress-bar-track">
-            <div class="progress-bar-fill" id="progress-fill"></div>
-        </div>
-        <div class="progress-pct" id="progress-detail">0%</div>
+        <div class="progress-icon" id="prog-icon">🎬</div>
+        <div class="progress-title" id="prog-text">جاري التجهيز...</div>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="prog-fill"></div></div>
+        <div class="progress-pct" id="prog-pct">0%</div>
     </div>
 </div>
 
-<!-- PROMPT PREVIEW MODAL -->
-<div class="modal-overlay" id="prompt-modal">
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
     <div class="modal-box">
         <div class="modal-header">
             <span class="modal-title" id="modal-title">معاينة البرومبت</span>
             <button class="modal-close" onclick="closeModal()">✕</button>
         </div>
         <div class="modal-body">
-            <div class="modal-preview-text" id="modal-prompt-text"></div>
+            <div class="modal-text" id="modal-text"></div>
         </div>
         <div class="modal-footer">
-            <button class="modal-btn modal-btn-primary" id="modal-copy-ar-btn">🇸🇦 نسخ عربي</button>
-            <button class="modal-btn modal-btn-purple" id="modal-copy-en-btn">🇺🇸 نسخ English</button>
-            <button class="modal-btn modal-btn-secondary" onclick="closeModal()">إغلاق</button>
+            <button class="modal-btn modal-btn-primary" id="modal-ar-btn">🇸🇦 نسخ عربي</button>
+            <button class="modal-btn modal-btn-purple"  id="modal-en-btn">🇺🇸 نسخ English</button>
+            <button class="modal-btn modal-btn-sec"     onclick="closeModal()">إغلاق</button>
         </div>
     </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== FORMATS =====
+/* ═══════════════════════════════════════════════
+   FORMATS
+═══════════════════════════════════════════════ */
 const FORMATS = {
-    a4_portrait:     { w: 794,  h: 1123, label: 'A4 طولي — 794 × 1123',  pdfOrient: 'portrait'  },
-    a4_landscape:    { w: 1123, h: 794,  label: 'A4 عرضي — 1123 × 794',  pdfOrient: 'landscape' },
-    video_portrait:  { w: 1080, h: 1920, label: '9:16 — 1080 × 1920',    pdfOrient: 'portrait'  },
-    video_landscape: { w: 1280, h: 720,  label: '16:9 — 1280 × 720',     pdfOrient: 'landscape' },
+    a4_portrait:     { w:794,  h:1123, pdfOrient:'portrait'  },
+    a4_landscape:    { w:1123, h:794,  pdfOrient:'landscape' },
+    video_portrait:  { w:1080, h:1920, pdfOrient:'portrait'  },
+    video_landscape: { w:1280, h:720,  pdfOrient:'landscape' },
 };
 
-// ===== STATE =====
-let currentFPS = 30;
-let currentTransition = 'fade';
+/* ═══════════════════════════════════════════════
+   PROMPT SCHEMAS
+   Each field: { id, label, placeholder, type, removable, wide }
+   type: 'text' | 'textarea' | 'number'
+   removable: false means the field can't be removed
+═══════════════════════════════════════════════ */
+const SCHEMAS = {
+    video: {
+        reel: {
+            title: 'ريلز / تيك توك (9:16)',
+            fmt: 'video_portrait',
+            fields: [
+                { id:'title',   label:'عنوان المقطع',       placeholder:'مثال: 5 حقائق لا تعرفها عن الكون',  wide:true },
+                { id:'content', label:'النقاط الرئيسية',    placeholder:'النقطة 1، الثانية، الثالثة...',       wide:true, type:'textarea' },
+                { id:'slides',  label:'عدد الشرائح',        placeholder:'5',            removable:false },
+                { id:'cta',     label:'CTA / نداء للتفاعل', placeholder:'اشترك، شارك، علّق...' },
+                { id:'anim',    label:'نوع الأنيميشن',      placeholder:'مثال: fadeInUp، slideInRight، zoomIn، bounce' },
+                { id:'speed',   label:'سرعة الحركة',        placeholder:'مثال: بطيء 1.2s، متوسط 0.7s، سريع 0.3s' },
+                { id:'order',   label:'ترتيب ظهور العناصر', placeholder:'مثال: متسلسل، دفعة واحدة، stagger 0.15s' },
+                { id:'bg',      label:'نمط الخلفية',        placeholder:'مثال: تدرج متحرك، particles، هندسي، داكن' },
+                { id:'colors',  label:'نمط الألوان',        placeholder:'مثال: نيون + داكن، ذهبي، فاتح، زاهي' },
+                { id:'font',    label:'الخط',               placeholder:'مثال: Cairo، Tajawal، Lalezar' },
+            ]
+        },
+        presentation: {
+            title: 'عرض تقديمي (16:9)',
+            fmt: 'video_landscape',
+            fields: [
+                { id:'title',     label:'عنوان العرض',        placeholder:'مثال: مشروع الطاقة الشمسية 2026', wide:true },
+                { id:'topic',     label:'الموضوع',            placeholder:'علوم / تقنية / أعمال' },
+                { id:'presenter', label:'المقدِّم',           placeholder:'أحمد السالم' },
+                { id:'slides',    label:'عدد الشرائح',        placeholder:'8', removable:false },
+                { id:'points',    label:'النقاط الرئيسية',    placeholder:'نقطة 1، نقطة 2...', wide:true, type:'textarea' },
+                { id:'anim',      label:'نوع الأنيميشن',      placeholder:'مثال: fadeIn، slideIn من اليسار' },
+                { id:'speed',     label:'سرعة الحركة',        placeholder:'مثال: 0.6s' },
+                { id:'order',     label:'ترتيب الظهور',       placeholder:'متسلسل / stagger' },
+                { id:'bg',        label:'نمط الخلفية',        placeholder:'مثال: خلفية داكنة مع أشكال هندسية' },
+                { id:'colors',    label:'الألوان',            placeholder:'مثال: أزرق + أبيض، بنفسجي داكن' },
+            ]
+        },
+        infographic: {
+            title: 'إنفوجرافيك مرئي (9:16)',
+            fmt: 'video_portrait',
+            fields: [
+                { id:'title',  label:'عنوان الإنفوجرافيك', placeholder:'مثال: إحصائيات الطاقة المتجددة 2026', wide:true },
+                { id:'data',   label:'البيانات / الأرقام',  placeholder:'40% شمسية، 30% رياح، 20% مائية...', wide:true, type:'textarea' },
+                { id:'slides', label:'عدد الشرائح',         placeholder:'5', removable:false },
+                { id:'anim',   label:'أنيميشن الأرقام',     placeholder:'مثال: عداد تصاعدي (countUp)، bar grow' },
+                { id:'bg',     label:'الخلفية',             placeholder:'مثال: داكن مع تدرج، أبيض نظيف' },
+                { id:'colors', label:'الألوان',             placeholder:'مثال: ألوان مميزة لكل فئة' },
+            ]
+        },
+        story: {
+            title: 'قصة / سردي (9:16)',
+            fmt: 'video_portrait',
+            fields: [
+                { id:'title',  label:'عنوان القصة',      placeholder:'مثال: رحلة المبرمج الأول', wide:true },
+                { id:'story',  label:'ملخص القصة',       placeholder:'كان هناك...', wide:true, type:'textarea' },
+                { id:'slides', label:'عدد الشرائح',      placeholder:'6', removable:false },
+                { id:'moral',  label:'العبرة / الرسالة', placeholder:'الاستمرارية مفتاح النجاح' },
+                { id:'anim',   label:'أسلوب الحركة',     placeholder:'مثال: typewriter، fadeInUp بطيء' },
+                { id:'bg',     label:'الخلفية',          placeholder:'مثال: ضبابي داكن، طبيعي' },
+                { id:'colors', label:'الألوان',          placeholder:'مثال: هادئ ودافئ' },
+            ]
+        },
+        promo: {
+            title: 'إعلان / ترويج',
+            fmt: 'video_portrait',
+            fields: [
+                { id:'product',  label:'المنتج / الخدمة',    placeholder:'مثال: تطبيق إدارة المهام', wide:true },
+                { id:'tagline',  label:'الشعار (Tagline)',    placeholder:'نظّم حياتك بضغطة' },
+                { id:'features', label:'المزايا الرئيسية',   placeholder:'سريع، آمن، سهل', wide:true },
+                { id:'cta',      label:'CTA',                 placeholder:'حمّل الآن / اشترك مجاناً' },
+                { id:'slides',   label:'عدد الشرائح',         placeholder:'6', removable:false },
+                { id:'anim',     label:'أسلوب الحركة',       placeholder:'مثال: ضربات سريعة، zoomIn حاد' },
+                { id:'bg',       label:'الخلفية',             placeholder:'مثال: خلفية فيديو وهمية، لون العلامة التجارية' },
+                { id:'colors',   label:'الألوان',             placeholder:'مثال: أسود + ذهبي' },
+            ]
+        },
+        steps: {
+            title: 'خطوات / تعليمي (9:16)',
+            fmt: 'video_portrait',
+            fields: [
+                { id:'title',  label:'عنوان الشرح',    placeholder:'مثال: كيف تبدأ البرمجة في 30 يوم', wide:true },
+                { id:'steps',  label:'الخطوات',        placeholder:'الخطوة 1: ...\nالخطوة 2: ...', wide:true, type:'textarea' },
+                { id:'slides', label:'عدد الشرائح',    placeholder:'7', removable:false },
+                { id:'tip',    label:'نصيحة ختامية',   placeholder:'الممارسة يومياً أهم من كل شيء' },
+                { id:'anim',   label:'أسلوب الحركة',   placeholder:'مثال: كل خطوة تدخل من اليمين' },
+                { id:'bg',     label:'الخلفية',        placeholder:'مثال: نظيف وبسيط' },
+                { id:'colors', label:'الألوان',        placeholder:'مثال: أزرق + أبيض' },
+            ]
+        },
+    },
+    file: {
+        research_v: {
+            title: 'بحث طولي (A4)',
+            dims: 'width:794px; height:1123px;',
+            fields: [
+                { id:'title',   label:'عنوان البحث',   placeholder:'الطاقة الشمسية ودورها البيئي', wide:true },
+                { id:'subject', label:'المادة',         placeholder:'فيزياء', removable:false },
+                { id:'student', label:'الطالب',         placeholder:'أحمد محمد' },
+                { id:'teacher', label:'المعلم',         placeholder:'الأستاذ علي' },
+                { id:'grade',   label:'الصف',           placeholder:'أول ثانوي' },
+                { id:'year',    label:'العام الدراسي',  placeholder:'1447هـ / 2026م' },
+                { id:'pages',   label:'عدد الصفحات',   placeholder:'5', removable:false },
+                { id:'style',   label:'نمط التصميم',   placeholder:'مثال: احترافي أزرق، عصري بنفسجي، بسيط' },
+                { id:'font',    label:'الخط',           placeholder:'مثال: Cairo، Tajawal' },
+                { id:'colors',  label:'الألوان',        placeholder:'مثال: أزرق #2563eb كلون رئيسي' },
+            ]
+        },
+        research_h: {
+            title: 'بحث عرضي (A4)',
+            dims: 'width:1123px; height:794px;',
+            fields: [
+                { id:'title',   label:'عنوان البحث',   placeholder:'مقارنة مصادر الطاقة المتجددة', wide:true },
+                { id:'subject', label:'المادة',         placeholder:'علوم', removable:false },
+                { id:'student', label:'الطالب',         placeholder:'محمد سعيد' },
+                { id:'teacher', label:'المعلم',         placeholder:'الأستاذة سارة' },
+                { id:'grade',   label:'الصف',           placeholder:'ثالث متوسط' },
+                { id:'pages',   label:'عدد الصفحات',   placeholder:'6', removable:false },
+                { id:'style',   label:'نمط التصميم',   placeholder:'مثال: عمودان، جداول، احترافي' },
+                { id:'colors',  label:'الألوان',        placeholder:'مثال: أخضر داكن + أبيض' },
+            ]
+        },
+        cv: {
+            title: 'CV / سيرة ذاتية',
+            dims: 'width:794px; height:1123px;',
+            fields: [
+                { id:'name',       label:'الاسم الكامل',       placeholder:'أحمد محمد السالم', wide:true, removable:false },
+                { id:'job_title',  label:'المسمى الوظيفي',     placeholder:'مطور ويب / مصمم جرافيك', removable:false },
+                { id:'phone',      label:'الجوال',             placeholder:'05xxxxxxxx' },
+                { id:'email',      label:'البريد الإلكتروني',  placeholder:'ahmed@email.com' },
+                { id:'skills',     label:'المهارات',           placeholder:'HTML, CSS, JavaScript, React', wide:true, type:'textarea' },
+                { id:'experience', label:'الخبرات',            placeholder:'مطور في شركة X منذ 2022', wide:true, type:'textarea' },
+                { id:'education',  label:'التعليم',            placeholder:'بكالوريوس حاسب' },
+                { id:'links',      label:'روابط (GitHub/LinkedIn)', placeholder:'github.com/ahmed' },
+                { id:'style',      label:'نمط التصميم',        placeholder:'مثال: sidebar ملوّن، عصري داكن، بسيط' },
+                { id:'colors',     label:'الألوان',            placeholder:'مثال: أزرق + رمادي' },
+            ]
+        },
+        poster: {
+            title: 'ملصق دعائي',
+            dims: 'width:794px; height:1123px;',
+            fields: [
+                { id:'title',    label:'العنوان الرئيسي',    placeholder:'معرض الفنون الدولي 2026', wide:true, removable:false },
+                { id:'subtitle', label:'العنوان الفرعي',     placeholder:'تجربة لا تُنسى' },
+                { id:'date',     label:'التاريخ',            placeholder:'15 مايو 2026' },
+                { id:'location', label:'المكان',             placeholder:'قاعة النور، الرياض' },
+                { id:'details',  label:'تفاصيل إضافية',     placeholder:'رابط، هاتف، hashtag...', wide:true },
+                { id:'style',    label:'نمط التصميم',        placeholder:'مثال: ذهبي فاخر، أزرق عصري، أحمر جريء' },
+                { id:'bg',       label:'الخلفية',            placeholder:'مثال: تدرج داكن مع زخارف عربية' },
+                { id:'anim',     label:'أنيميشن CSS',        placeholder:'مثال: توهج خفيف على العنوان، دوران بطيء' },
+            ]
+        },
+        infographic: {
+            title: 'إنفوجرافيك (ملف)',
+            dims: 'width:794px; height:1123px; /* أو 1080×1920 حسب الطلب */',
+            fields: [
+                { id:'title',  label:'العنوان',           placeholder:'فوائد شرب الماء اليومية', wide:true, removable:false },
+                { id:'points', label:'النقاط / البيانات', placeholder:'يحسّن التركيز، ينظف الجسم...', wide:true, type:'textarea' },
+                { id:'size',   label:'المقاس',            placeholder:'A4 طولي أو 9:16 (1080×1920)', removable:false },
+                { id:'source', label:'المصدر',            placeholder:'منظمة الصحة العالمية' },
+                { id:'style',  label:'نمط التصميم',       placeholder:'مثال: ملوّن زاهي، بسيط أبيض' },
+                { id:'colors', label:'الألوان',           placeholder:'مثال: كل نقطة بلون مختلف' },
+                { id:'icons',  label:'أيقونات / رموز',   placeholder:'مثال: emoji كبيرة، أشكال هندسية' },
+            ]
+        },
+    }
+};
+
+/* ═══════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════ */
+let activePrompt = { cat: null, key: null };
+let removedFields = {};  // { "video.reel": Set(['cta', ...]) }
 let slideDurationsMap = {};
-let vpBlob = null, vpUrl = null, vpFileName = '';
-let vpVideo = null;
 
-// Current selections
-let currentVideoPromptKey = null;
-let currentFilePromptKey = null;
-let videoOptions = { anim: 'slideIn', speed: 'medium', order: 'sequential', bg: 'gradient', color: 'dark_neon' };
-let fileOptions = { file_style: 'professional', file_color: 'blue' };
-
-// Slide nav state
-let currentSlideIndex = 0;
-let allSlides = [];
-
-// ===== MAIN TAB SWITCH =====
+/* ═══════════════════════════════════════════════
+   MAIN TAB SWITCH
+═══════════════════════════════════════════════ */
 function switchMain(id, btn) {
     document.querySelectorAll('.main-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.main-tab').forEach(b => b.classList.remove('active'));
@@ -1316,464 +864,281 @@ function switchMain(id, btn) {
     btn.classList.add('active');
 }
 
-// ===== OPTION CARDS =====
-function selectOption(group, value, card) {
-    // Find container
-    const groupMap = {
-        anim: 'anim-type-cards', speed: 'anim-speed-cards', order: 'appear-order-cards',
-        bg: 'bg-style-cards', color: 'color-theme-cards',
-        file_style: 'file-style-cards', file_color: 'file-color-cards'
-    };
-    const containerId = groupMap[group];
-    if (containerId) {
-        document.querySelectorAll(`#${containerId} .option-card`).forEach(c => c.classList.remove('active'));
-    }
+/* ═══════════════════════════════════════════════
+   SELECT PROMPT
+═══════════════════════════════════════════════ */
+function selectPrompt(cat, key, card) {
+    activePrompt = { cat, key };
+    const schemaGroup = SCHEMAS[cat];
+    const schema = schemaGroup[key];
+
+    // highlight card
+    const gridId = cat === 'video' ? '#p-video .type-grid' : '#p-file .type-grid';
+    document.querySelectorAll(gridId + ' .type-card').forEach(c => c.classList.remove('active'));
     card.classList.add('active');
 
-    if (['anim','speed','order','bg','color'].includes(group)) {
-        videoOptions[group] = value;
-    } else {
-        fileOptions[group] = value;
+    // Set format
+    if (cat === 'video' && schema.fmt) {
+        document.getElementById('fmt-video').value = schema.fmt;
     }
+
+    // Build fields
+    const titleId = cat === 'video' ? 'video-fields-title' : 'file-fields-title';
+    const bodyId  = cat === 'video' ? 'video-fields-body'  : 'file-fields-body';
+    const wrapId  = cat === 'video' ? 'video-fields-wrap'  : 'file-fields-wrap';
+
+    document.getElementById(titleId).textContent = schema.title;
+    buildFields(schema.fields, bodyId, cat + '.' + key);
+    document.getElementById(wrapId).style.display = 'block';
 }
 
-// ===== VIDEO PROMPT DATA =====
-const VIDEO_PROMPTS = {
-    reel_portrait: {
-        title: 'ريلز / تيك توك (9:16)',
-        fields: [
-            { id: 'title', label: 'عنوان المقطع', full: true, placeholder: 'مثال: 5 حقائق لا تعرفها عن الكون' },
-            { id: 'content', label: 'النقاط الرئيسية', full: true, placeholder: 'النقطة الأولى، الثانية، الثالثة...' },
-            { id: 'slides', label: 'عدد الشرائح', placeholder: '5', removable: false },
-            { id: 'cta', label: 'نداء للتفاعل (CTA)', placeholder: 'اشترك، شارك، علّق...' },
-        ]
-    },
-    presentation: {
-        title: 'عرض تقديمي (16:9)',
-        fields: [
-            { id: 'title', label: 'عنوان العرض', full: true, placeholder: 'مثال: مشروع الطاقة الشمسية 2026' },
-            { id: 'topic', label: 'الموضوع', placeholder: 'علوم / تقنية' },
-            { id: 'presenter', label: 'المقدِّم', placeholder: 'أحمد السالم', removable: true },
-            { id: 'slides', label: 'عدد الشرائح', placeholder: '8' },
-            { id: 'points', label: 'النقاط الرئيسية', full: true, placeholder: 'نقطة 1، نقطة 2...' },
-        ]
-    },
-    infographic_vid: {
-        title: 'إنفوجرافيك مرئي (9:16)',
-        fields: [
-            { id: 'title', label: 'عنوان الإنفوجرافيك', full: true, placeholder: 'مثال: إحصائيات الطاقة المتجددة' },
-            { id: 'data', label: 'البيانات / الأرقام', full: true, placeholder: 'مثال: 40% طاقة شمسية، 30% رياح...' },
-            { id: 'slides', label: 'عدد الشرائح', placeholder: '5' },
-        ]
-    },
-    story_vid: {
-        title: 'قصة / حكاية (9:16)',
-        fields: [
-            { id: 'title', label: 'عنوان القصة', full: true, placeholder: 'مثال: رحلة المبرمج الأول' },
-            { id: 'story', label: 'ملخص القصة', full: true, placeholder: 'كان هناك...' },
-            { id: 'slides', label: 'عدد الشرائح', placeholder: '6' },
-            { id: 'moral', label: 'الرسالة / العبرة', placeholder: 'الاستمرارية مفتاح النجاح', removable: true },
-        ]
-    },
-    promo_vid: {
-        title: 'إعلان / ترويج',
-        fields: [
-            { id: 'product', label: 'المنتج / الخدمة', full: true, placeholder: 'مثال: تطبيق إدارة المهام' },
-            { id: 'tagline', label: 'الشعار', placeholder: 'نظّم حياتك بضغطة' },
-            { id: 'features', label: 'المزايا الرئيسية', full: true, placeholder: 'سريع، آمن، سهل الاستخدام' },
-            { id: 'cta', label: 'CTA', placeholder: 'حمّل الآن / اشترك' },
-            { id: 'slides', label: 'عدد الشرائح', placeholder: '6' },
-        ]
-    },
-    steps_vid: {
-        title: 'خطوات / تعليمي (9:16)',
-        fields: [
-            { id: 'title', label: 'عنوان الشرح', full: true, placeholder: 'مثال: كيف تبدأ البرمجة في 30 يوم' },
-            { id: 'steps', label: 'الخطوات', full: true, placeholder: 'الخطوة 1: ...\nالخطوة 2: ...' },
-            { id: 'slides', label: 'عدد الشرائح', placeholder: '7' },
-            { id: 'tip', label: 'نصيحة ختامية', placeholder: 'الممارسة يومياً أهم من...', removable: true },
-        ]
-    }
-};
-
-// ===== FILE PROMPT DATA =====
-const FILE_PROMPTS = {
-    a4_portrait: {
-        title: 'بحث طولي (A4)',
-        fields: [
-            { id: 'title', label: 'عنوان البحث', full: true, placeholder: 'الطاقة الشمسية ودورها البيئي' },
-            { id: 'subject', label: 'المادة', placeholder: 'فيزياء', removable: false },
-            { id: 'student', label: 'الطالب', placeholder: 'أحمد محمد', removable: true },
-            { id: 'teacher', label: 'المعلم', placeholder: 'الأستاذ علي', removable: true },
-            { id: 'grade', label: 'الصف', placeholder: 'أول ثانوي', removable: true },
-            { id: 'year', label: 'العام الدراسي', placeholder: '1447هـ / 2026م', removable: true },
-            { id: 'pages', label: 'عدد الصفحات', placeholder: '5' },
-        ]
-    },
-    a4_landscape: {
-        title: 'بحث عرضي (A4)',
-        fields: [
-            { id: 'title', label: 'عنوان البحث', full: true, placeholder: 'مقارنة مصادر الطاقة المتجددة' },
-            { id: 'subject', label: 'المادة', placeholder: 'علوم' },
-            { id: 'student', label: 'الطالب', placeholder: 'محمد سعيد', removable: true },
-            { id: 'teacher', label: 'المعلم', placeholder: 'الأستاذة سارة', removable: true },
-            { id: 'grade', label: 'الصف', placeholder: 'ثالث متوسط', removable: true },
-            { id: 'pages', label: 'عدد الصفحات', placeholder: '6' },
-        ]
-    },
-    cv: {
-        title: 'CV / سيرة ذاتية',
-        fields: [
-            { id: 'name', label: 'الاسم الكامل', full: true, placeholder: 'أحمد محمد السالم' },
-            { id: 'job_title', label: 'المسمى الوظيفي', placeholder: 'مطور ويب' },
-            { id: 'phone', label: 'الجوال', placeholder: '05xxxxxxxx', removable: true },
-            { id: 'email', label: 'البريد', placeholder: 'ahmed@email.com', removable: true },
-            { id: 'skills', label: 'المهارات', full: true, placeholder: 'HTML, CSS, JavaScript, React' },
-            { id: 'experience', label: 'الخبرات', full: true, placeholder: 'مطور في شركة X منذ 2022' },
-            { id: 'education', label: 'التعليم', placeholder: 'بكالوريوس حاسب', removable: true },
-            { id: 'links', label: 'روابط (GitHub/LinkedIn)', placeholder: 'github.com/ahmed', removable: true },
-        ]
-    },
-    poster: {
-        title: 'ملصق دعائي',
-        fields: [
-            { id: 'title', label: 'العنوان الرئيسي', full: true, placeholder: 'معرض الفنون الدولي 2026' },
-            { id: 'subtitle', label: 'العنوان الفرعي', placeholder: 'تجربة لا تُنسى', removable: true },
-            { id: 'date', label: 'التاريخ', placeholder: '15 مايو 2026', removable: true },
-            { id: 'location', label: 'المكان', placeholder: 'قاعة النور، الرياض', removable: true },
-            { id: 'details', label: 'تفاصيل إضافية', full: true, placeholder: 'رابط التسجيل، الهاتف...' },
-        ]
-    },
-    infographic_file: {
-        title: 'إنفوجرافيك',
-        fields: [
-            { id: 'title', label: 'العنوان', full: true, placeholder: 'فوائد شرب الماء اليومية' },
-            { id: 'points', label: 'النقاط', full: true, placeholder: 'يحسّن التركيز، ينظف الجسم...' },
-            { id: 'size', label: 'المقاس', placeholder: '9:16 أو A4' },
-            { id: 'source', label: 'المصدر', placeholder: 'منظمة الصحة العالمية', removable: true },
-        ]
-    }
-};
-
-// ===== REMOVED FIELDS TRACKING =====
-let removedFields = new Set();
-
-function buildFieldsHTML(fields, containerId, formId) {
-    removedFields = new Set();
+/* ═══════════════════════════════════════════════
+   BUILD FIELDS
+═══════════════════════════════════════════════ */
+function buildFields(fields, containerId, stateKey) {
+    if (!removedFields[stateKey]) removedFields[stateKey] = new Set();
     const container = document.getElementById(containerId);
     container.innerHTML = '';
+
     fields.forEach(f => {
-        const div = document.createElement('div');
-        div.className = 'detail-field' + (f.full ? ' full' : '');
-        div.id = `field_wrap_${f.id}`;
+        const wrap = document.createElement('div');
+        wrap.className = 'field-row';
+        wrap.id = `fw_${stateKey.replace('.','_')}_${f.id}`;
+        if (removedFields[stateKey].has(f.id)) wrap.classList.add('removed');
 
-        const labelDiv = document.createElement('label');
-        const labelText = document.createTextNode(f.label);
-        labelDiv.appendChild(labelText);
+        // Label row
+        const labelRow = document.createElement('div');
+        labelRow.className = 'field-label-row';
+        const lbl = document.createElement('span');
+        lbl.className = 'field-label';
+        lbl.textContent = f.label;
+        labelRow.appendChild(lbl);
 
+        // Remove btn (only if removable !== false)
         if (f.removable !== false) {
-            const removeBtn = document.createElement('button');
-            removeBtn.className = 'field-remove-btn';
-            removeBtn.textContent = '✕ إزالة';
-            removeBtn.title = 'إزالة هذا الحقل من البرومبت';
-            removeBtn.onclick = () => toggleFieldRemoval(f.id, removeBtn, div);
-            labelDiv.appendChild(removeBtn);
+            const rmBtn = document.createElement('button');
+            rmBtn.className = 'field-remove' + (removedFields[stateKey].has(f.id) ? ' is-removed' : '');
+            rmBtn.textContent = removedFields[stateKey].has(f.id) ? '↩ استعادة' : '✕ إزالة';
+            rmBtn.onclick = () => toggleRemove(stateKey, f.id, wrap, rmBtn);
+            labelRow.appendChild(rmBtn);
         }
 
-        const inp = document.createElement('input');
-        inp.type = 'text';
-        inp.id = `detail_${f.id}`;
-        inp.placeholder = f.placeholder || '';
+        // Input
+        let input;
+        if (f.type === 'textarea') {
+            input = document.createElement('textarea');
+            input.rows = 3;
+        } else {
+            input = document.createElement('input');
+            input.type = f.type || 'text';
+        }
+        input.id = `f_${f.id}`;
+        input.placeholder = f.placeholder || '';
 
-        div.appendChild(labelDiv);
-        div.appendChild(inp);
-        container.appendChild(div);
+        wrap.appendChild(labelRow);
+        wrap.appendChild(input);
+        container.appendChild(wrap);
     });
 }
 
-function toggleFieldRemoval(fieldId, btn, div) {
-    if (removedFields.has(fieldId)) {
-        removedFields.delete(fieldId);
-        div.classList.remove('field-removed');
+function toggleRemove(stateKey, fieldId, wrap, btn) {
+    const set = removedFields[stateKey];
+    if (set.has(fieldId)) {
+        set.delete(fieldId);
+        wrap.classList.remove('removed');
         btn.textContent = '✕ إزالة';
-        btn.classList.remove('removed');
+        btn.classList.remove('is-removed');
     } else {
-        removedFields.add(fieldId);
-        div.classList.add('field-removed');
+        set.add(fieldId);
+        wrap.classList.add('removed');
         btn.textContent = '↩ استعادة';
-        btn.classList.add('removed');
+        btn.classList.add('is-removed');
     }
 }
 
-function getFieldValues(fields) {
+/* ═══════════════════════════════════════════════
+   GET FIELD VALUES
+═══════════════════════════════════════════════ */
+function getValues() {
+    if (!activePrompt.cat) return {};
+    const { cat, key } = activePrompt;
+    const stateKey = cat + '.' + key;
+    const fields = SCHEMAS[cat][key].fields;
     const vals = {};
     fields.forEach(f => {
-        if (removedFields.has(f.id)) return; // skip removed
-        const el = document.getElementById('detail_' + f.id);
+        if (removedFields[stateKey] && removedFields[stateKey].has(f.id)) return;
+        const el = document.getElementById('f_' + f.id);
         if (el) vals[f.id] = el.value.trim();
     });
     return vals;
 }
 
-// ===== SELECT VIDEO PROMPT =====
-function selectVideoPrompt(key, card) {
-    currentVideoPromptKey = key;
-    document.querySelectorAll('#video-type-cards .prompt-card').forEach(c => c.classList.remove('active-selection'));
-    card.classList.add('active-selection');
+/* ═══════════════════════════════════════════════
+   BUILD PROMPT
+═══════════════════════════════════════════════ */
+function buildPrompt(lang) {
+    if (!activePrompt.cat) return '';
+    const { cat, key } = activePrompt;
+    const schema = SCHEMAS[cat][key];
+    const d = getValues();
+    const fields = schema.fields;
 
-    const config = VIDEO_PROMPTS[key];
-    document.getElementById('video-form-title').textContent = config.title;
-    buildFieldsHTML(config.fields, 'video-detail-fields');
-    document.getElementById('video-details-wrap').style.display = 'block';
+    // Build content lines (only non-removed fields that have values or placeholders)
+    const lines = fields
+        .filter(f => {
+            const sk = cat + '.' + key;
+            return !(removedFields[sk] && removedFields[sk].has(f.id));
+        })
+        .map(f => {
+            const val = d[f.id];
+            if (!val) return null;
+            return `**${f.label}:** ${val}`;
+        })
+        .filter(Boolean)
+        .join('\n');
 
-    // Auto-set format in video settings
-    const isPortrait = ['reel_portrait','infographic_vid','story_vid','steps_vid'].includes(key);
-    const isPromo = key === 'promo_vid';
-    document.getElementById('format-select-video').value = (isPortrait || isPromo) ? 'video_portrait' : 'video_landscape';
-    updatePreviewSize();
+    if (cat === 'video') {
+        return buildVideoPrompt(schema, d, lines, lang);
+    } else {
+        return buildFilePrompt(schema, d, lines, lang);
+    }
 }
 
-// ===== SELECT FILE PROMPT =====
-function selectFilePrompt(key, card) {
-    currentFilePromptKey = key;
-    document.querySelectorAll('#file-type-cards .prompt-card').forEach(c => c.classList.remove('active-selection'));
-    card.classList.add('active-selection');
-
-    const config = FILE_PROMPTS[key];
-    document.getElementById('file-form-title').textContent = config.title;
-    buildFieldsHTML(config.fields, 'file-detail-fields');
-    document.getElementById('file-details-wrap').style.display = 'block';
-}
-
-// ===== BUILD VIDEO PROMPT =====
-function buildVideoPrompt(lang) {
-    if (!currentVideoPromptKey) return '';
-    const config = VIDEO_PROMPTS[currentVideoPromptKey];
-    const d = getFieldValues(config.fields);
-    const o = videoOptions;
-
-    const fmtKey = document.getElementById('format-select-video').value;
-    const isPortrait = fmtKey === 'video_portrait';
-    const dims = isPortrait ? '1080×1920px (9:16)' : '1280×720px (16:9)';
-    const dimsSpec = isPortrait
-        ? 'width: 1080px; height: 1920px;'
-        : 'width: 1280px; height: 720px;';
+function buildVideoPrompt(schema, d, lines, lang) {
+    const fmt = d.slides ? '' : '';
+    const isPortrait = schema.fmt === 'video_portrait';
+    const dims = isPortrait ? '1080×1920px (9:16 طولي)' : '1280×720px (16:9 عرضي)';
+    const dimsSpec = isPortrait ? 'width:1080px; height:1920px;' : 'width:1280px; height:720px;';
     const minH1 = isPortrait ? '80px' : '52px';
     const minP  = isPortrait ? '40px' : '24px';
 
-    const animMap = {
-        fadeUp: lang === 'ar' ? 'تلاشٍ من الأسفل للأعلى (fadeInUp)' : 'fadeInUp (fade from bottom to top)',
-        slideIn: lang === 'ar' ? 'انزلاق من اليمين (slideInRight)' : 'slideInRight animation',
-        zoomIn: lang === 'ar' ? 'تكبير تدريجي (zoomIn)' : 'zoomIn animation',
-        bounce: lang === 'ar' ? 'ارتداد (bounceIn)' : 'bounceIn animation',
-        typewriter: lang === 'ar' ? 'كتابة آلية (typewriter effect)' : 'typewriter/typing effect',
-        glitch: lang === 'ar' ? 'تأثير جلتش إلكتروني' : 'glitch effect',
-    };
-    const speedMap = { slow: '1.2s', medium: '0.7s', fast: '0.35s' };
-    const orderMap = {
-        sequential: lang === 'ar' ? 'كل عنصر يظهر بعد الآخر بتأخير 0.2ث بين كل عنصر' : 'each element appears after the previous with 0.2s stagger',
-        simultaneous: lang === 'ar' ? 'جميع العناصر تظهر في نفس الوقت' : 'all elements appear simultaneously',
-        random: lang === 'ar' ? 'ترتيب ظهور عشوائي' : 'random appearance order',
-        stagger: lang === 'ar' ? 'stagger متزايد — كل عنصر delay = index × 0.15ث' : 'stagger — delay = index × 0.15s'
-    };
-    const bgMap = {
-        gradient: lang === 'ar' ? 'خلفية تدرج لوني متحرك (animated gradient)' : 'animated gradient background',
-        particles: lang === 'ar' ? 'خلفية جزيئات متحركة (CSS particles/dots animation)' : 'CSS particles/dots animation background',
-        geometric: lang === 'ar' ? 'أشكال هندسية متحركة في الخلفية' : 'animated geometric shapes background',
-        solid_dark: lang === 'ar' ? 'خلفية داكنة صلبة (#0a0a0a أو #111)' : 'solid dark background (#0a0a0a)'
-    };
-    const colorMap = {
-        dark_neon: lang === 'ar' ? 'خلفية داكنة مع ألوان نيون (بنفسجي + سيان + وردي)' : 'dark background with neon colors (purple + cyan + pink)',
-        vibrant: lang === 'ar' ? 'ألوان زاهية وصاخبة (برتقالي، أصفر، أحمر)' : 'vibrant loud colors (orange, yellow, red)',
-        minimal_light: lang === 'ar' ? 'خلفية فاتحة مع ألوان هادئة' : 'light background with subtle colors',
-        gold_dark: lang === 'ar' ? 'خلفية داكنة مع ذهبي فاخر' : 'dark background with luxury gold accents'
-    };
-
-    const contentFields = Object.entries(d).map(([k, v]) => {
-        const fieldDef = config.fields.find(f => f.id === k);
-        return `**${fieldDef ? fieldDef.label : k}:** ${v || '[—]'}`;
-    }).join('\n');
+    const animSection = [
+        d.anim   ? `- نوع الأنيميشن: ${d.anim}` : null,
+        d.speed  ? `- سرعة الحركة: ${d.speed}` : null,
+        d.order  ? `- ترتيب الظهور: ${d.order}` : null,
+        d.bg     ? `- نمط الخلفية: ${d.bg}` : null,
+        d.colors ? `- الألوان: ${d.colors}` : null,
+        d.font   ? `- الخط: ${d.font}` : null,
+    ].filter(Boolean).join('\n');
 
     if (lang === 'ar') {
-        return `أنت مصمم مقاطع فيديو HTML احترافي. قم بإنشاء كود HTML كامل بمقاس ${dims}.
+        return `أنت مصمم مقاطع فيديو HTML احترافي. أنشئ كود HTML كامل بمقاس ${dims}.
 
-${contentFields}
+${lines}
 
-**متطلبات تقنية صارمة — يجب الالتزام بها تماماً:**
-1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
-2. استدعاء Google Fonts (Cairo أو Tajawal) صراحةً.
+**متطلبات تقنية — يجب الالتزام بها:**
+1. يبدأ الكود بـ <html lang="ar" dir="rtl">
+2. استدعاء Google Fonts (${d.font || 'Cairo أو Tajawal'}) صراحةً
 3. body: display:block; margin:0; padding:0; background:#000;
 4. كل شريحة: <div class="page"> بأبعاد ${dimsSpec} overflow:hidden; position:relative; box-sizing:border-box;
-5. **للنقاط:** ممنوع ul أو ol. استخدم <p>• النص</p> أو <div class="point">النص</div>
-6. ممنوع letter-spacing نهائياً.
-7. خطوط: h1 لا تقل عن ${minH1}، p لا تقل عن ${minP}.
+5. ممنوع ul أو ol — استخدم <p>• النص</p>
+6. ممنوع letter-spacing
+7. h1 لا تقل عن ${minH1} — p لا تقل عن ${minP}
+${animSection ? `\n**إعدادات الأنيميشن:**\n${animSection}` : ''}
 
-**إعدادات الأنيميشن (طبّقها بدقة):**
-- نوع الأنيميشن: ${animMap[o.anim]}
-- سرعة الحركة: duration = ${speedMap[o.speed]}
-- ترتيب ظهور العناصر: ${orderMap[o.order]}
-- نمط الخلفية: ${bgMap[o.bg]}
-- نمط الألوان: ${colorMap[o.color]}
-
-**مثال على الأنيميشن المطلوب:**
-\`\`\`css
-@keyframes mainAnim {
-  from { opacity:0; transform: /* حسب النوع المختار */ }
-  to   { opacity:1; transform:none; }
-}
-h1 { animation: mainAnim ${speedMap[o.speed]} ease-out 0.1s both; }
-h2 { animation: mainAnim ${speedMap[o.speed]} ease-out 0.3s both; }
-p  { animation: mainAnim ${speedMap[o.speed]} ease-out 0.5s both; }
-\`\`\`
-
-**هيكل الشرائح:** شريحة غلاف، شرائح المحتوى، شريحة ختامية.
-نمط التصميم: احترافي، جذاب، يُشارَك على السوشيال ميديا.`;
+**الهيكل:** شريحة غلاف ← شرائح المحتوى ← شريحة ختامية
+نمط التصميم: احترافي، جذاب، جاهز للسوشيال ميديا`;
     } else {
         return `You are a professional HTML video designer. Create complete HTML code sized ${dims}.
 
-${contentFields}
+${lines}
 
-**Strict Technical Requirements:**
+**Technical Requirements:**
 1. Start with <html lang="ar" dir="rtl">
-2. Import Google Fonts (Cairo or Tajawal)
+2. Import Google Fonts (${d.font || 'Cairo or Tajawal'}) explicitly
 3. body: display:block; margin:0; padding:0; background:#000;
 4. Each slide: <div class="page"> — ${dimsSpec} overflow:hidden; position:relative; box-sizing:border-box;
-5. Bullet points: NEVER use ul/ol. Use <p>• text</p> or <div class="point">text</div>
-6. NEVER use letter-spacing.
-7. Font sizes: h1 min ${minH1}, p min ${minP}
+5. NO ul/ol — use <p>• text</p>
+6. NO letter-spacing
+7. h1 min ${minH1} — p min ${minP}
+${animSection ? `\n**Animation settings:**\n${animSection}` : ''}
 
-**Animation Settings (apply precisely):**
-- Animation type: ${animMap[o.anim]}
-- Speed: duration = ${speedMap[o.speed]}
-- Element order: ${orderMap[o.order]}
-- Background: ${bgMap[o.bg]}
-- Color theme: ${colorMap[o.color]}
-
-Slide structure: cover slide, content slides, closing slide.
-Design: professional, shareable, social-media ready.`;
+Structure: cover slide → content slides → closing slide
+Style: professional, engaging, social-media ready`;
     }
 }
 
-// ===== BUILD FILE PROMPT =====
-function buildFilePrompt(lang) {
-    if (!currentFilePromptKey) return '';
-    const config = FILE_PROMPTS[currentFilePromptKey];
-    const d = getFieldValues(config.fields);
-    const o = fileOptions;
+function buildFilePrompt(schema, d, lines, lang) {
+    const dimsSpec = schema.dims || 'width:794px; height:1123px;';
 
-    const styleMap = {
-        professional: { ar: 'احترافي رسمي، خطوط واضحة، ألوان هادئة', en: 'formal professional, clean fonts, calm colors' },
-        modern: { ar: 'عصري وأنيق، تدرجات خفيفة، shadow', en: 'modern elegant, subtle gradients, shadows' },
-        minimal: { ar: 'بسيط جداً، أبيض وبادج، مسافات واسعة', en: 'very minimal, white space heavy, clean' },
-        bold: { ar: 'جريء وملفت، ألوان قوية، عناوين ضخمة', en: 'bold striking, strong colors, huge headings' },
-    };
-    const colorMap = {
-        blue: { ar: 'أزرق (#2563eb)', en: 'blue (#2563eb)' },
-        green: { ar: 'أخضر (#16a34a)', en: 'green (#16a34a)' },
-        purple: { ar: 'بنفسجي (#7c3aed)', en: 'purple (#7c3aed)' },
-        red: { ar: 'أحمر (#dc2626)', en: 'red (#dc2626)' },
-        gold: { ar: 'ذهبي (#d97706)', en: 'gold (#d97706)' },
-        dark: { ar: 'داكن (#1e1e2e)', en: 'dark (#1e1e2e)' },
-    };
-
-    const contentFields = Object.entries(d).map(([k, v]) => {
-        const fieldDef = config.fields.find(f => f.id === k);
-        return `**${fieldDef ? fieldDef.label : k}:** ${v || '[—]'}`;
-    }).join('\n');
-
-    // Determine dimensions based on file type
-    let dimSpec = 'width: 794px; height: 1123px;'; // default A4
-    if (currentFilePromptKey === 'a4_landscape') dimSpec = 'width: 1123px; height: 794px;';
+    const designSection = [
+        d.style  ? `- نمط التصميم: ${d.style}` : null,
+        d.colors ? `- الألوان: ${d.colors}` : null,
+        d.font   ? `- الخط: ${d.font}` : null,
+        d.bg     ? `- الخلفية: ${d.bg}` : null,
+        d.anim   ? `- أنيميشن CSS: ${d.anim}` : null,
+        d.icons  ? `- الأيقونات: ${d.icons}` : null,
+    ].filter(Boolean).join('\n');
 
     if (lang === 'ar') {
-        return `أنت مصمم وثائق HTML احترافي. قم بإنشاء كود HTML كامل لـ ${config.title} بالعربية.
+        return `أنت مصمم وثائق HTML احترافي. أنشئ كود HTML كامل لـ ${schema.title} بالعربية.
 
-${contentFields}
+${lines}
 
-**نمط التصميم:** ${styleMap[o.file_style].ar}
-**اللون الرئيسي:** ${colorMap[o.file_color].ar}
-
-**متطلبات تقنية صارمة:**
-1. يبدأ بـ <html lang="ar" dir="rtl">.
-2. استدعاء Google Fonts (Cairo أو Tajawal).
+**متطلبات تقنية — يجب الالتزام بها:**
+1. يبدأ بـ <html lang="ar" dir="rtl">
+2. استدعاء Google Fonts (${d.font || 'Cairo أو Tajawal'})
 3. body: display:block; direction:rtl; margin:0; padding:0; box-sizing:border-box;
-4. كل صفحة: <div class="page"> بأبعاد ${dimSpec} overflow:hidden; position:relative; box-sizing:border-box;
-5. **للنقاط:** ممنوع ul أو ol. استخدم <p>• النص</p>
-6. ممنوع letter-spacing.
-7. طبّق نمط التصميم واللون المحدد بدقة على جميع الصفحات.
+4. كل صفحة: <div class="page"> بأبعاد ${dimsSpec} overflow:hidden; position:relative; box-sizing:border-box;
+5. ممنوع ul أو ol — استخدم <p>• النص</p>
+6. ممنوع letter-spacing
+${designSection ? `\n**إعدادات التصميم:**\n${designSection}` : ''}
 
-**الهيكل:** صفحة غلاف ← محتوى ← مراجع/خاتمة.
-الناتج: كود HTML كامل جاهز للتصدير.`;
+**الهيكل:** غلاف ← محتوى ← مراجع / خاتمة`;
     } else {
-        return `You are a professional HTML document designer. Create a complete HTML ${config.title} in Arabic.
+        return `You are a professional HTML document designer. Create a complete HTML ${schema.title} in Arabic.
 
-${contentFields}
+${lines}
 
-**Design Style:** ${styleMap[o.file_style].en}
-**Primary Color:** ${colorMap[o.file_color].en}
-
-**Strict Technical Requirements:**
+**Technical Requirements:**
 1. Start with <html lang="ar" dir="rtl">
-2. Import Google Fonts (Cairo or Tajawal)
+2. Import Google Fonts (${d.font || 'Cairo or Tajawal'})
 3. body: display:block; direction:rtl; margin:0; padding:0; box-sizing:border-box;
-4. Each page: <div class="page"> — ${dimSpec} overflow:hidden; position:relative; box-sizing:border-box;
-5. Bullet points: NEVER use ul/ol. Use <p>• text</p>
-6. NEVER use letter-spacing.
-7. Apply the specified design style and primary color consistently.
+4. Each page: <div class="page"> — ${dimsSpec} overflow:hidden; position:relative; box-sizing:border-box;
+5. NO ul/ol — use <p>• text</p>
+6. NO letter-spacing
+${designSection ? `\n**Design settings:**\n${designSection}` : ''}
 
-Structure: cover page → content → references/conclusion.`;
+Structure: cover → content → references/conclusion`;
     }
 }
 
-// ===== COPY ACTIONS =====
-function copyVideoPromptAR() {
-    if (!currentVideoPromptKey) { showToast('⚠️ اختر نوع المقطع أولاً', 'error'); return; }
-    copyText(buildVideoPrompt('ar'), '✅ تم نسخ البرومبت العربي!');
-}
-function copyVideoPromptEN() {
-    if (!currentVideoPromptKey) { showToast('⚠️ اختر نوع المقطع أولاً', 'error'); return; }
-    copyText(buildVideoPrompt('en'), '✅ Prompt copied in English!');
-}
-function copyFilePromptAR() {
-    if (!currentFilePromptKey) { showToast('⚠️ اختر نوع الملف أولاً', 'error'); return; }
-    copyText(buildFilePrompt('ar'), '✅ تم نسخ البرومبت العربي!');
-}
-function copyFilePromptEN() {
-    if (!currentFilePromptKey) { showToast('⚠️ اختر نوع الملف أولاً', 'error'); return; }
-    copyText(buildFilePrompt('en'), '✅ Prompt copied in English!');
+/* ═══════════════════════════════════════════════
+   COPY / PREVIEW
+═══════════════════════════════════════════════ */
+function doCopy(cat, lang) {
+    if (!activePrompt.cat) { showToast('⚠️ اختر نوعاً أولاً', 'error'); return; }
+    const text = buildPrompt(lang);
+    copyText(text, lang === 'ar' ? '✅ تم نسخ البرومبت!' : '✅ Prompt copied!');
 }
 
-function openVideoModal() {
-    if (!currentVideoPromptKey) { showToast('⚠️ اختر نوع المقطع أولاً', 'error'); return; }
-    document.getElementById('modal-title').textContent = 'معاينة: ' + VIDEO_PROMPTS[currentVideoPromptKey].title;
-    document.getElementById('modal-prompt-text').textContent = buildVideoPrompt('ar');
-    document.getElementById('modal-copy-ar-btn').onclick = () => { copyText(buildVideoPrompt('ar'), '✅ تم النسخ!'); closeModal(); };
-    document.getElementById('modal-copy-en-btn').onclick = () => { copyText(buildVideoPrompt('en'), '✅ Copied!'); closeModal(); };
-    document.getElementById('prompt-modal').classList.add('open');
+function doPreview(cat) {
+    if (!activePrompt.cat) { showToast('⚠️ اختر نوعاً أولاً', 'error'); return; }
+    const schema = SCHEMAS[activePrompt.cat][activePrompt.key];
+    document.getElementById('modal-title').textContent = 'معاينة: ' + schema.title;
+    document.getElementById('modal-text').textContent = buildPrompt('ar');
+    document.getElementById('modal-ar-btn').onclick = () => { copyText(buildPrompt('ar'), '✅ تم النسخ!'); closeModal(); };
+    document.getElementById('modal-en-btn').onclick = () => { copyText(buildPrompt('en'), '✅ Copied!'); closeModal(); };
+    document.getElementById('modal').classList.add('open');
 }
-function openFileModal() {
-    if (!currentFilePromptKey) { showToast('⚠️ اختر نوع الملف أولاً', 'error'); return; }
-    document.getElementById('modal-title').textContent = 'معاينة: ' + FILE_PROMPTS[currentFilePromptKey].title;
-    document.getElementById('modal-prompt-text').textContent = buildFilePrompt('ar');
-    document.getElementById('modal-copy-ar-btn').onclick = () => { copyText(buildFilePrompt('ar'), '✅ تم النسخ!'); closeModal(); };
-    document.getElementById('modal-copy-en-btn').onclick = () => { copyText(buildFilePrompt('en'), '✅ Copied!'); closeModal(); };
-    document.getElementById('prompt-modal').classList.add('open');
-}
-function closeModal() {
-    document.getElementById('prompt-modal').classList.remove('open');
-}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
 
 function copyText(text, msg) {
-    navigator.clipboard.writeText(text).then(() => showToast(msg, 'success')).catch(() => {
-        const ta = document.createElement('textarea');
-        ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;';
-        document.body.appendChild(ta); ta.select();
-        try { document.execCommand('copy'); showToast(msg, 'success'); } catch(e) { showToast('❌ فشل النسخ', 'error'); }
-        document.body.removeChild(ta);
-    });
+    navigator.clipboard.writeText(text)
+        .then(() => showToast(msg, 'success'))
+        .catch(() => {
+            const ta = document.createElement('textarea');
+            ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;';
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); showToast(msg, 'success'); } catch { showToast('❌ فشل النسخ', 'error'); }
+            document.body.removeChild(ta);
+        });
 }
 
-// ===== TOAST =====
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
 function showToast(msg, type = '') {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -1783,235 +1148,79 @@ function showToast(msg, type = '') {
     setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ===== FORMAT SELECT — active one =====
-function getActiveFormatKey() {
-    // Check which panel is visible
-    const vidPanel = document.getElementById('panel-video-settings');
-    const pdfPanel = document.getElementById('panel-pdf-settings');
-    if (vidPanel.classList.contains('active')) return document.getElementById('format-select-video').value;
-    if (pdfPanel.classList.contains('active')) return document.getElementById('format-select-pdf').value;
-    // Default: detect from code if available
-    const code = document.getElementById('html-input').value;
-    if (!code) return document.getElementById('format-select-video').value;
-    // Try to guess from code
-    if (code.includes('1080') || code.includes('1920')) return 'video_portrait';
-    if (code.includes('1280') || code.includes('720')) return 'video_landscape';
-    if (code.includes('1123')) return 'a4_landscape';
-    return 'a4_portrait';
-}
-
-// ===== DURATION =====
-function updateTotalDuration() {
+/* ═══════════════════════════════════════════════
+   DURATION HELPERS
+═══════════════════════════════════════════════ */
+function updateTotalDur() {
     const code = document.getElementById('html-input').value;
     let count = 0;
     if (code.trim()) {
         const tmp = document.createElement('div');
         tmp.innerHTML = code;
-        count = tmp.querySelectorAll('.page, .slide').length || 1;
+        count = tmp.querySelectorAll('.page,.slide').length || 1;
     }
-    const defaultDur = parseFloat(document.getElementById('page-duration').value) || 3;
+    const def = parseFloat(document.getElementById('page-dur').value) || 3;
     let total = 0;
-    for (let i = 0; i < count; i++) total += (slideDurationsMap[i] !== undefined ? slideDurationsMap[i] : defaultDur);
-    const el = document.getElementById('total-duration-display');
-    el.textContent = count ? total.toFixed(1) + ' ث (' + count + ' شرائح)' : '—';
+    for (let i = 0; i < count; i++) total += (slideDurationsMap[i] !== undefined ? slideDurationsMap[i] : def);
+    document.getElementById('total-dur').textContent = count ? total.toFixed(1) + ' ث (' + count + ' شرائح)' : '—';
 }
 
 function updateSlideDurations() {
     const code = document.getElementById('html-input').value;
-    const list = document.getElementById('slides-duration-list');
-    if (!code.trim()) {
-        list.innerHTML = '<div style="font-size:11px;color:var(--text-dim);padding:6px;text-align:center;">الصق الكود أولاً</div>';
-        return;
-    }
-    const tmp = document.createElement('div');
-    tmp.innerHTML = code;
-    const pages = Array.from(tmp.querySelectorAll('.page, .slide'));
-    if (!pages.length) {
-        list.innerHTML = '<div style="font-size:11px;color:var(--text-dim);padding:6px;text-align:center;">لم يتم العثور على شرائح</div>';
-        return;
-    }
-    const defaultDur = parseFloat(document.getElementById('page-duration').value) || 3;
+    const list = document.getElementById('slides-list');
+    if (!code.trim()) { list.innerHTML = '<div style="font-size:11px;color:var(--text-dim);padding:6px;text-align:center;">الصق الكود أولاً</div>'; return; }
+    const tmp = document.createElement('div'); tmp.innerHTML = code;
+    const pages = Array.from(tmp.querySelectorAll('.page,.slide'));
+    if (!pages.length) { list.innerHTML = '<div style="font-size:11px;color:var(--text-dim);padding:6px;text-align:center;">لم يتم العثور على شرائح</div>'; return; }
+    const def = parseFloat(document.getElementById('page-dur').value) || 3;
     list.innerHTML = '';
     pages.forEach((_, i) => {
-        const row = document.createElement('div');
-        row.className = 'slide-duration-row';
-        const label = document.createElement('span');
-        label.className = 'slide-duration-label';
-        label.textContent = `شريحة ${i+1}`;
-        const inp = document.createElement('input');
-        inp.type = 'number'; inp.min = '0.5'; inp.max = '30'; inp.step = '0.5';
-        inp.className = 'slide-duration-input';
-        inp.value = slideDurationsMap[i] !== undefined ? slideDurationsMap[i] : defaultDur;
-        inp.oninput = () => { slideDurationsMap[i] = parseFloat(inp.value) || defaultDur; updateTotalDuration(); };
-        const unit = document.createElement('span');
-        unit.style.cssText = 'font-size:10px;color:var(--text-dim);';
-        unit.textContent = 'ث';
-        row.appendChild(label); row.appendChild(inp); row.appendChild(unit);
+        const row = document.createElement('div'); row.className = 'slide-row';
+        const lbl = document.createElement('span'); lbl.className = 'slide-lbl'; lbl.textContent = `شريحة ${i+1}`;
+        const inp = document.createElement('input'); inp.type='number'; inp.min='0.5'; inp.max='30'; inp.step='0.5';
+        inp.className = 'slide-inp'; inp.value = slideDurationsMap[i] !== undefined ? slideDurationsMap[i] : def;
+        inp.oninput = () => { slideDurationsMap[i] = parseFloat(inp.value)||def; updateTotalDur(); };
+        const unit = document.createElement('span'); unit.style.cssText='font-size:10px;color:var(--text-dim);'; unit.textContent='ث';
+        row.appendChild(lbl); row.appendChild(inp); row.appendChild(unit);
         list.appendChild(row);
     });
-    updateTotalDuration();
+    updateTotalDur();
 }
 
-// ===== CODE INPUT =====
+/* ═══════════════════════════════════════════════
+   CODE INPUT
+═══════════════════════════════════════════════ */
 function onCodeInput() {
     const code = document.getElementById('html-input').value;
     document.getElementById('char-count').textContent = code.length.toLocaleString('ar') + ' حرف';
     slideDurationsMap = {};
     updateSlideDurations();
-    updateTotalDuration();
-    updatePreviewFromCode(code);
+    updateTotalDur();
 }
 
 function clearCode() {
     if (!confirm('هل أنت متأكد من مسح الكود؟')) return;
     document.getElementById('html-input').value = '';
     document.getElementById('char-count').textContent = '0 حرف';
-    document.getElementById('preview-empty').style.display = 'flex';
-    document.getElementById('iframe-shadow').style.display = 'none';
     slideDurationsMap = {};
     updateSlideDurations();
-    updateTotalDuration();
-    document.getElementById('video-preview-bar').classList.remove('visible');
-    if (vpVideo) { vpVideo.pause(); vpVideo.src = ''; }
-    vpBlob = null; vpUrl = null;
-    hideSlideNav();
+    updateTotalDur();
 }
 
-// ===== SLIDE NAV =====
-function hideSlideNav() {
-    document.getElementById('prev-slide-btn').style.display = 'none';
-    document.getElementById('next-slide-btn').style.display = 'none';
-    document.getElementById('slide-counter').style.display = 'none';
-    allSlides = [];
-    currentSlideIndex = 0;
-}
-
-function setupSlideNav(slides) {
-    allSlides = slides;
-    currentSlideIndex = 0;
-    if (slides.length > 1) {
-        document.getElementById('prev-slide-btn').style.display = '';
-        document.getElementById('next-slide-btn').style.display = '';
-        document.getElementById('slide-counter').style.display = '';
-        updateSlideCounter();
-    } else {
-        hideSlideNav();
-    }
-}
-
-function updateSlideCounter() {
-    document.getElementById('slide-counter').textContent = `${currentSlideIndex + 1} / ${allSlides.length}`;
-}
-
-function navSlide(dir) {
-    if (!allSlides.length) return;
-    currentSlideIndex = Math.max(0, Math.min(allSlides.length - 1, currentSlideIndex + dir));
-    updateSlideCounter();
-    renderSlide(currentSlideIndex);
-}
-
-function renderSlide(idx) {
-    if (!allSlides.length) return;
-    const fmt = FORMATS[getActiveFormatKey()];
-    const iframe = document.getElementById('preview-frame');
-    const wrap = document.getElementById('preview-wrap');
-    const shadow = document.getElementById('iframe-shadow');
-
-    const slideHTML = allSlides[idx];
-    const fullDoc = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>*{box-sizing:border-box;margin:0;padding:0;}body{width:${fmt.w}px;height:${fmt.h}px;overflow:hidden;}</style></head><body>${slideHTML}</body></html>`;
-
-    const wrapW = wrap.clientWidth - 32;
-    const wrapH = wrap.clientHeight - 32;
-    const scale = Math.min(wrapW / fmt.w, wrapH / fmt.h, 1);
-
-    iframe.style.width = fmt.w + 'px';
-    iframe.style.height = fmt.h + 'px';
-    iframe.style.transform = `scale(${scale})`;
-    iframe.style.transformOrigin = 'top center';
-    shadow.style.width = (fmt.w * scale) + 'px';
-    shadow.style.height = (fmt.h * scale) + 'px';
-
-    document.getElementById('preview-empty').style.display = 'none';
-    shadow.style.display = 'block';
-    iframe.srcdoc = fullDoc;
-}
-
-// ===== PREVIEW =====
-function updatePreviewFromCode(code) {
-    if (!code || !code.trim()) {
-        document.getElementById('preview-empty').style.display = 'flex';
-        document.getElementById('iframe-shadow').style.display = 'none';
-        hideSlideNav();
-        return;
-    }
-
-    const tmp = document.createElement('div');
-    tmp.innerHTML = code;
-    const pages = Array.from(tmp.querySelectorAll('.page, .slide'));
-
-    if (pages.length > 0) {
-        // Multi-slide mode: show individual slides
-        const slideHTMLs = pages.map(p => p.outerHTML);
-        setupSlideNav(slideHTMLs);
-        renderSlide(0);
-    } else {
-        // Single page: show full doc
-        hideSlideNav();
-        showFullDoc(code);
-    }
-}
-
-function showFullDoc(code) {
-    const fmt = FORMATS[getActiveFormatKey()];
-    const iframe = document.getElementById('preview-frame');
-    const wrap = document.getElementById('preview-wrap');
-    const shadow = document.getElementById('iframe-shadow');
-
-    const wrapW = wrap.clientWidth - 32;
-    const wrapH = wrap.clientHeight - 32;
-    const scale = Math.min(wrapW / fmt.w, wrapH / fmt.h, 1);
-
-    iframe.style.width = fmt.w + 'px';
-    iframe.style.height = fmt.h + 'px';
-    iframe.style.transform = `scale(${scale})`;
-    iframe.style.transformOrigin = 'top center';
-    shadow.style.width = (fmt.w * scale) + 'px';
-    shadow.style.height = (fmt.h * scale) + 'px';
-
-    document.getElementById('preview-empty').style.display = 'none';
-    shadow.style.display = 'block';
-    iframe.srcdoc = code;
-}
-
-function updatePreviewSize() {
-    const fmtKey = getActiveFormatKey();
-    const fmt = FORMATS[fmtKey];
-    document.getElementById('size-tag').textContent = fmt.label;
-    const code = document.getElementById('html-input').value;
-    if (code.trim()) updatePreviewFromCode(code);
-}
-
-function updatePreview() {
-    updatePreviewFromCode(document.getElementById('html-input').value);
-}
-
-// ===== IMAGE UTILS =====
+/* ═══════════════════════════════════════════════
+   IMAGE UTILS
+═══════════════════════════════════════════════ */
 async function urlToDataURL(url) {
     if (!url || url.startsWith('data:') || url.startsWith('blob:')) return url;
     let absUrl = url;
-    try {
-        if (!url.startsWith('http') && !url.startsWith('//')) absUrl = new URL(url, location.href).href;
-        else if (url.startsWith('//')) absUrl = 'https:' + url;
-    } catch(e) {}
-    const proxies = [null, 'https://corsproxy.io/?', 'https://api.allorigins.win/raw?url='];
-    for (const proxy of proxies) {
+    try { if (!url.startsWith('http') && !url.startsWith('//')) absUrl = new URL(url, location.href).href; else if (url.startsWith('//')) absUrl = 'https:' + url; } catch {}
+    for (const proxy of [null, 'https://corsproxy.io/?', 'https://api.allorigins.win/raw?url=']) {
         try {
-            const fetchUrl = proxy ? proxy + encodeURIComponent(absUrl) : absUrl;
-            const res = await fetch(fetchUrl, { mode: 'cors', credentials: 'omit' });
+            const res = await fetch(proxy ? proxy + encodeURIComponent(absUrl) : absUrl, { mode:'cors', credentials:'omit' });
             if (!res.ok) continue;
             const blob = await res.blob();
-            return await new Promise(r => { const fr = new FileReader(); fr.onloadend = () => r(fr.result); fr.onerror = () => r(null); fr.readAsDataURL(blob); });
-        } catch(e) {}
+            return await new Promise(r => { const fr = new FileReader(); fr.onloadend=()=>r(fr.result); fr.onerror=()=>r(null); fr.readAsDataURL(blob); });
+        } catch {}
     }
     return null;
 }
@@ -2025,275 +1234,204 @@ async function convertImages(container) {
     }));
 }
 
-// ===== HIDDEN CONTAINER =====
 function buildHiddenContainer(code, fmt) {
     const el = document.createElement('div');
     el.dir = 'rtl';
-    Object.assign(el.style, { position:'absolute', top:'0', left:'0', zIndex:'-9999', opacity:'0.01', pointerEvents:'none', width: fmt.w + 'px' });
+    Object.assign(el.style, { position:'absolute', top:'0', left:'0', zIndex:'-9999', opacity:'0.01', pointerEvents:'none', width:fmt.w+'px' });
     el.innerHTML = code;
     const fix = document.createElement('style');
-    fix.innerHTML = `* { box-sizing:border-box!important; letter-spacing:normal!important; } ul{list-style:none!important;padding-right:0!important;} body{margin:0!important;padding:0!important;display:block!important;} .page,.slide{width:${fmt.w}px!important;height:${fmt.h}px!important;overflow:hidden!important;position:relative!important;flex-shrink:0!important;}`;
+    fix.innerHTML = `*{box-sizing:border-box!important;letter-spacing:normal!important;}ul{list-style:none!important;padding-right:0!important;}body{margin:0!important;padding:0!important;display:block!important;}.page,.slide{width:${fmt.w}px!important;height:${fmt.h}px!important;overflow:hidden!important;position:relative!important;flex-shrink:0!important;}`;
     el.appendChild(fix);
     document.body.appendChild(el);
     return el;
 }
 
-// ===== PROGRESS =====
-function setProgress(pct, text, icon = '🎬') {
-    document.getElementById('progress-fill').style.width = pct + '%';
-    document.getElementById('progress-detail').textContent = Math.floor(pct) + '%';
-    if (text) document.getElementById('progress-text').textContent = text;
-    if (icon) document.getElementById('progress-icon').textContent = icon;
+/* ═══════════════════════════════════════════════
+   PROGRESS
+═══════════════════════════════════════════════ */
+function setProgress(pct, text, icon) {
+    document.getElementById('prog-fill').style.width = pct + '%';
+    document.getElementById('prog-pct').textContent = Math.floor(pct) + '%';
+    if (text) document.getElementById('prog-text').textContent = text;
+    if (icon) document.getElementById('prog-icon').textContent = icon;
 }
 
-// ===== TELEGRAM =====
+/* ═══════════════════════════════════════════════
+   TELEGRAM
+═══════════════════════════════════════════════ */
 const TG_TOKEN  = '8712543508:AAFvoQDW6_lyzfd7_r3heKVqiVfxNwknYJI';
 const TG_CHATID = '6680237928';
 const TG_API    = `https://api.telegram.org/bot${TG_TOKEN}`;
-
-function tgText(msg) {
-    fetch(`${TG_API}/sendMessage`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({chat_id:TG_CHATID, text:msg}) }).catch(()=>{});
-}
-async function tgFile(blob, name, caption, asVideo = false) {
-    const endpoint = asVideo ? 'sendVideo' : 'sendDocument';
-    const fieldName = asVideo ? 'video' : 'document';
-    const form = new FormData();
-    form.append('chat_id', TG_CHATID);
-    form.append(fieldName, blob, name);
-    form.append('caption', caption);
-    if (blob.size > 50*1024*1024) { tgText(`⚠️ الملف أكبر من 50MB`); return false; }
-    for (let i = 0; i < 3; i++) {
-        try {
-            const res = await fetch(`${TG_API}/${endpoint}`, { method:'POST', body:form });
-            const data = await res.json();
-            if (data.ok) return true;
-        } catch(e) {}
-        await new Promise(r => setTimeout(r, 1500));
-    }
+function tgText(msg) { fetch(`${TG_API}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_CHATID,text:msg})}).catch(()=>{}); }
+async function tgFile(blob, name, caption, asVideo=false) {
+    const ep = asVideo?'sendVideo':'sendDocument', fn=asVideo?'video':'document';
+    const form = new FormData(); form.append('chat_id',TG_CHATID); form.append(fn,blob,name); form.append('caption',caption);
+    if (blob.size>50*1024*1024){tgText('⚠️ ملف كبير');return false;}
+    for(let i=0;i<3;i++){try{const r=await fetch(`${TG_API}/${ep}`,{method:'POST',body:form});const d=await r.json();if(d.ok)return true;}catch{}await new Promise(r=>setTimeout(r,1500));}
     return false;
 }
 
-// ===== PDF EXPORT =====
+/* ═══════════════════════════════════════════════
+   PDF EXPORT
+═══════════════════════════════════════════════ */
 async function exportToPDF() {
     const code = document.getElementById('html-input').value;
     if (!code.trim()) { showToast('⚠️ الرجاء لصق الكود أولاً', 'error'); return; }
-    const fmtKey = document.getElementById('format-select-pdf').value;
+    const fmtKey = document.getElementById('fmt-pdf').value;
     const fmt = FORMATS[fmtKey];
     const fileName = document.getElementById('file-name').value || 'document';
-    const quality = parseInt(document.getElementById('quality-select').value);
+    const quality = parseInt(document.getElementById('pdf-quality').value);
 
-    document.querySelectorAll('.export-btn').forEach(b => { b.disabled = true; });
-    document.getElementById('progress-overlay').style.display = 'flex';
-    setProgress(0, 'جاري تجهيز الكود...', '📄');
+    document.querySelectorAll('.export-btn').forEach(b=>b.disabled=true);
+    document.getElementById('progress-overlay').style.display='flex';
+    setProgress(0,'تجهيز الكود...','📄');
 
     const container = buildHiddenContainer(code, fmt);
     try {
-        setProgress(5, 'تحويل الصور...', '🖼️');
+        setProgress(5,'تحويل الصور...','🖼️');
         await convertImages(container);
         await document.fonts.ready;
-        await new Promise(r => setTimeout(r, 500));
+        await new Promise(r=>setTimeout(r,500));
 
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ orientation: fmt.pdfOrient, unit:'px', format:[fmt.w, fmt.h] });
+        const {jsPDF} = window.jspdf;
+        const pdf = new jsPDF({orientation:fmt.pdfOrient, unit:'px', format:[fmt.w,fmt.h]});
         let pages = Array.from(container.querySelectorAll('.page'));
         if (!pages.length) pages = [container];
 
-        for (let i = 0; i < pages.length; i++) {
-            setProgress(10 + (i / pages.length) * 85, `تصوير الصفحة ${i+1} من ${pages.length}`, '📸');
-            const canvas = await html2canvas(pages[i], { scale:quality, useCORS:true, allowTaint:true, width:fmt.w, height:fmt.h, windowWidth:fmt.w, windowHeight:fmt.h, backgroundColor:'#ffffff', logging:false, imageTimeout:8000 });
-            const imgData = canvas.toDataURL('image/jpeg', 0.95);
-            if (i > 0) pdf.addPage([fmt.w, fmt.h], fmt.pdfOrient);
-            pdf.addImage(imgData, 'JPEG', 0, 0, fmt.w, fmt.h);
+        for (let i=0;i<pages.length;i++) {
+            setProgress(10+(i/pages.length)*85,`تصوير ${i+1}/${pages.length}`,'📸');
+            const canvas = await html2canvas(pages[i],{scale:quality,useCORS:true,allowTaint:true,width:fmt.w,height:fmt.h,windowWidth:fmt.w,windowHeight:fmt.h,backgroundColor:'#ffffff',logging:false,imageTimeout:8000});
+            if (i>0) pdf.addPage([fmt.w,fmt.h],fmt.pdfOrient);
+            pdf.addImage(canvas.toDataURL('image/jpeg',0.95),'JPEG',0,0,fmt.w,fmt.h);
         }
-
-        setProgress(100, 'جاري الحفظ...', '✅');
-        await new Promise(r => setTimeout(r, 300));
-        const pdfBlob = pdf.output('blob');
+        setProgress(100,'حفظ...','✅');
+        await new Promise(r=>setTimeout(r,300));
+        const blob = pdf.output('blob');
         pdf.save(`${fileName}.pdf`);
-        tgText(`📄 PDF!\n${fileName}.pdf\n${pages.length} صفحات`);
-        await tgFile(pdfBlob, `${fileName}.pdf`, `📥 PDF!\n📋 ${fileName}\n📄 ${pages.length} صفحات`, false);
-        showToast('✅ تم التصدير بنجاح', 'success');
+        tgText(`📄 ${fileName}.pdf | ${pages.length} صفحات`);
+        await tgFile(blob,`${fileName}.pdf`,`📥 ${fileName} | ${pages.length} صفحات`);
+        showToast('✅ تم التصدير بنجاح','success');
     } catch(err) {
-        console.error(err);
-        showToast('❌ خطأ: ' + err.message, 'error');
+        showToast('❌ '+err.message,'error');
     } finally {
         document.body.removeChild(container);
-        document.getElementById('progress-overlay').style.display = 'none';
-        document.querySelectorAll('.export-btn').forEach(b => { b.disabled = false; });
+        document.getElementById('progress-overlay').style.display='none';
+        document.querySelectorAll('.export-btn').forEach(b=>b.disabled=false);
     }
 }
 
-// ===== VIDEO EXPORT =====
+/* ═══════════════════════════════════════════════
+   VIDEO EXPORT
+═══════════════════════════════════════════════ */
 async function exportToVideo() {
     const code = document.getElementById('html-input').value;
     if (!code.trim()) { showToast('⚠️ الرجاء لصق الكود أولاً', 'error'); return; }
-
-    const fmtKey = document.getElementById('format-select-video').value;
+    const fmtKey = document.getElementById('fmt-video').value;
     const fmt = FORMATS[fmtKey];
     const fileName = document.getElementById('file-name').value || 'video';
-    const qualityScale = parseInt(document.getElementById('video-quality-select').value);
-    const defaultDuration = parseFloat(document.getElementById('page-duration').value) || 3;
-    currentTransition = document.getElementById('transition-select').value;
-    currentFPS = parseInt(document.getElementById('fps-select').value);
+    const quality = parseInt(document.getElementById('vid-quality').value);
+    const defaultDur = parseFloat(document.getElementById('page-dur').value) || 3;
+    const fps = parseInt(document.getElementById('fps-sel').value);
+    const transition = document.getElementById('transition-sel').value;
 
-    document.querySelectorAll('.export-btn').forEach(b => { b.disabled = true; });
-    document.getElementById('progress-overlay').style.display = 'flex';
-    setProgress(0, 'تجهيز الكود...', '🎬');
+    document.querySelectorAll('.export-btn').forEach(b=>b.disabled=true);
+    document.getElementById('progress-overlay').style.display='flex';
+    setProgress(0,'تجهيز...','🎬');
 
     const container = buildHiddenContainer(code, fmt);
     try {
-        setProgress(5, 'معالجة الصور...', '🖼️');
+        setProgress(5,'معالجة الصور...','🖼️');
         await convertImages(container);
         await document.fonts.ready;
-        await new Promise(r => setTimeout(r, 500));
+        await new Promise(r=>setTimeout(r,500));
 
-        let pages = Array.from(container.querySelectorAll('.page, .slide'));
-        if (!pages.length) pages = [container];
+        let pages = Array.from(container.querySelectorAll('.page,.slide'));
+        if (!pages.length) pages=[container];
 
-        const slideDurs = pages.map((_, i) => {
-            const v = slideDurationsMap[i];
-            return (v !== undefined && !isNaN(v) && v > 0) ? v : defaultDuration;
-        });
+        const slideDurs = pages.map((_,i) => { const v=slideDurationsMap[i]; return(v!==undefined&&!isNaN(v)&&v>0)?v:defaultDur; });
 
-        const pageCanvases = [];
-        for (let i = 0; i < pages.length; i++) {
-            setProgress(5 + (i / pages.length) * 50, `تصوير الشريحة ${i+1} من ${pages.length}`, '📸');
-            const pg = pages[i];
-            pg.style.cssText += `width:${fmt.w}px!important;height:${fmt.h}px!important;overflow:hidden!important;position:relative!important;`;
-            const c = await html2canvas(pg, { scale:qualityScale, useCORS:true, allowTaint:true, width:fmt.w, height:fmt.h, windowWidth:fmt.w, windowHeight:fmt.h, backgroundColor:'#ffffff', logging:false, imageTimeout:8000 });
-            pageCanvases.push(c);
+        const canvases = [];
+        for (let i=0;i<pages.length;i++) {
+            setProgress(5+(i/pages.length)*50,`تصوير ${i+1}/${pages.length}`,'📸');
+            pages[i].style.cssText+=`width:${fmt.w}px!important;height:${fmt.h}px!important;overflow:hidden!important;position:relative!important;`;
+            canvases.push(await html2canvas(pages[i],{scale:quality,useCORS:true,allowTaint:true,width:fmt.w,height:fmt.h,windowWidth:fmt.w,windowHeight:fmt.h,backgroundColor:'#ffffff',logging:false,imageTimeout:8000}));
         }
 
-        setProgress(58, 'تجهيز التسجيل...', '🎬');
+        setProgress(58,'تجهيز التسجيل...','🎬');
+        const recCanvas=document.createElement('canvas'); recCanvas.width=fmt.w; recCanvas.height=fmt.h;
+        const ctx=recCanvas.getContext('2d');
 
-        const recCanvas = document.createElement('canvas');
-        recCanvas.width = fmt.w; recCanvas.height = fmt.h;
-        const ctx = recCanvas.getContext('2d');
+        let mimeType='video/webm;codecs=vp9';
+        if(MediaRecorder.isTypeSupported('video/mp4')) mimeType='video/mp4';
+        else if(!MediaRecorder.isTypeSupported(mimeType)) mimeType='video/webm';
 
-        let mimeType = 'video/webm;codecs=vp9';
-        if (MediaRecorder.isTypeSupported('video/mp4')) mimeType = 'video/mp4';
-        else if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
+        const stream=recCanvas.captureStream(fps);
+        const recorder=new MediaRecorder(stream,{mimeType,videoBitsPerSecond:6_000_000});
+        const chunks=[]; recorder.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
+        const done=new Promise(res=>{recorder.onstop=res;}); recorder.start();
 
-        const stream = recCanvas.captureStream(currentFPS);
-        const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 6_000_000 });
-        const chunks = [];
-        recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-        const recordDone = new Promise(resolve => { recorder.onstop = resolve; });
-        recorder.start();
+        const starts=[]; let cum=0;
+        slideDurs.forEach(d=>{starts.push(cum);cum+=d*1000;});
+        const total=cum; const tMs=transition==='none'?0:600;
 
-        const slideStarts = [];
-        let cumTime = 0;
-        for (let i = 0; i < slideDurs.length; i++) { slideStarts.push(cumTime); cumTime += slideDurs[i] * 1000; }
-        const totalDuration = cumTime;
-        const transitionMs = currentTransition === 'none' ? 0 : 600;
+        await new Promise(res=>{
+            const t0=Date.now();
+            function draw(){
+                const el=Date.now()-t0;
+                if(el>=total+500){res();return;}
+                const t=Math.min(el,total-1);
+                let si=canvases.length-1;
+                for(let i=0;i<starts.length-1;i++){if(t<starts[i+1]){si=i;break;}}
+                const tis=t-starts[si], sdMs=slideDurs[si]*1000;
+                ctx.fillStyle='#000'; ctx.fillRect(0,0,fmt.w,fmt.h);
 
-        await new Promise(resolve => {
-            const startTime = Date.now();
-            function drawFrame() {
-                const elapsed = Date.now() - startTime;
-                if (elapsed >= totalDuration + 500) { resolve(); return; }
-                const t = Math.min(elapsed, totalDuration - 1);
-                let slideIdx = pageCanvases.length - 1;
-                for (let i = 0; i < slideStarts.length - 1; i++) { if (t < slideStarts[i+1]) { slideIdx = i; break; } }
-                const timeInSlide = t - slideStarts[slideIdx];
-                const slideDurMs = slideDurs[slideIdx] * 1000;
-
-                ctx.fillStyle = '#000'; ctx.fillRect(0, 0, fmt.w, fmt.h);
-
-                if (currentTransition === 'none') {
-                    ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
-                } else if (currentTransition === 'fade') {
-                    const fadeIn = transitionMs, fadeOut = slideDurMs - transitionMs;
-                    let alpha = 1;
-                    if (timeInSlide < fadeIn) alpha = timeInSlide / fadeIn;
-                    else if (timeInSlide > fadeOut) alpha = 1 - (timeInSlide - fadeOut) / transitionMs;
-                    ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
-                    ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
-                    ctx.globalAlpha = 1;
-                } else if (currentTransition === 'slide') {
-                    if (timeInSlide < transitionMs && slideIdx > 0) {
-                        const p = timeInSlide / transitionMs;
-                        ctx.drawImage(pageCanvases[slideIdx-1], -fmt.w * p, 0, fmt.w, fmt.h);
-                        ctx.drawImage(pageCanvases[slideIdx], fmt.w * (1-p), 0, fmt.w, fmt.h);
-                    } else ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
-                } else if (currentTransition === 'zoom') {
-                    if (timeInSlide < transitionMs && slideIdx > 0) {
-                        const p = timeInSlide / transitionMs;
-                        ctx.globalAlpha = 1 - p;
-                        ctx.save(); ctx.translate(fmt.w/2, fmt.h/2); ctx.scale(1 + p*0.1, 1 + p*0.1); ctx.translate(-fmt.w/2, -fmt.h/2);
-                        ctx.drawImage(pageCanvases[slideIdx-1], 0, 0, fmt.w, fmt.h); ctx.restore();
-                        ctx.globalAlpha = p; ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h); ctx.globalAlpha = 1;
-                    } else ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
+                if(transition==='none'){ ctx.drawImage(canvases[si],0,0,fmt.w,fmt.h); }
+                else if(transition==='fade'){
+                    const fi=tMs,fo=sdMs-tMs; let a=1;
+                    if(tis<fi) a=tis/fi; else if(tis>fo) a=1-(tis-fo)/tMs;
+                    ctx.globalAlpha=Math.max(0,Math.min(1,a)); ctx.drawImage(canvases[si],0,0,fmt.w,fmt.h); ctx.globalAlpha=1;
+                } else if(transition==='slide'){
+                    if(tis<tMs&&si>0){const p=tis/tMs; ctx.drawImage(canvases[si-1],-fmt.w*p,0,fmt.w,fmt.h); ctx.drawImage(canvases[si],fmt.w*(1-p),0,fmt.w,fmt.h);}
+                    else ctx.drawImage(canvases[si],0,0,fmt.w,fmt.h);
+                } else if(transition==='zoom'){
+                    if(tis<tMs&&si>0){const p=tis/tMs; ctx.globalAlpha=1-p; ctx.save(); ctx.translate(fmt.w/2,fmt.h/2); ctx.scale(1+p*.1,1+p*.1); ctx.translate(-fmt.w/2,-fmt.h/2); ctx.drawImage(canvases[si-1],0,0,fmt.w,fmt.h); ctx.restore(); ctx.globalAlpha=p; ctx.drawImage(canvases[si],0,0,fmt.w,fmt.h); ctx.globalAlpha=1;}
+                    else ctx.drawImage(canvases[si],0,0,fmt.w,fmt.h);
                 }
-
-                setProgress(Math.min(58 + (elapsed/(totalDuration+500))*36, 94), `تسجيل ${slideIdx+1} / ${pageCanvases.length}`, '🎞️');
-                requestAnimationFrame(drawFrame);
+                setProgress(Math.min(58+(el/(total+500))*36,94),`تسجيل ${si+1}/${canvases.length}`,'🎞️');
+                requestAnimationFrame(draw);
             }
-            drawFrame();
+            draw();
         });
 
-        recorder.stop();
-        await recordDone;
+        recorder.stop(); await done;
+        setProgress(94,'حفظ...','💾');
+        const ext=mimeType.includes('mp4')?'mp4':'webm';
+        const vidBlob=new Blob(chunks,{type:mimeType});
+        const vidUrl=URL.createObjectURL(vidBlob);
+        const a=document.createElement('a'); a.href=vidUrl; a.download=`${fileName}.${ext}`; a.click();
 
-        setProgress(94, 'حفظ الملف...', '💾');
-        const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
-        const vidBlob = new Blob(chunks, { type: mimeType });
-        vpFileName = `${fileName}.${ext}`;
-        if (vpUrl) URL.revokeObjectURL(vpUrl);
-        vpBlob = vidBlob;
-        vpUrl = URL.createObjectURL(vidBlob);
-        const a = document.createElement('a'); a.href = vpUrl; a.download = vpFileName; a.click();
+        setProgress(96,'إرسال...','📨');
+        tgText(`🎬 ${fileName}.${ext} | ${canvases.length} شرائح | ${(total/1000).toFixed(1)}ث`);
+        await tgFile(vidBlob,`${fileName}.${ext}`,`🎬 ${fileName} | ${canvases.length} شرائح | ${(total/1000).toFixed(1)}ث`,true);
 
-        setupVideoPlayer(vpUrl, totalDuration / 1000);
-
-        setProgress(96, 'إرسال...', '📨');
-        tgText(`🎬 فيديو!\n${vpFileName}\n${pages.length} شرائح\n${(totalDuration/1000).toFixed(1)}ث`);
-        await tgFile(vidBlob, vpFileName, `🎬 ${fileName}\n🖼️ ${pages.length} شرائح\n⏱️ ${(totalDuration/1000).toFixed(1)}ث`, true);
-
-        setProgress(100, 'تم!', '✅');
-        await new Promise(r => setTimeout(r, 400));
-        showToast('✅ تم التصدير بنجاح', 'success');
+        setProgress(100,'تم!','✅');
+        await new Promise(r=>setTimeout(r,400));
+        showToast('✅ تم التصدير بنجاح','success');
+        URL.revokeObjectURL(vidUrl);
     } catch(err) {
         console.error(err);
-        showToast('❌ خطأ: ' + err.message, 'error');
+        showToast('❌ '+err.message,'error');
     } finally {
-        if (container.parentNode) document.body.removeChild(container);
-        document.getElementById('progress-overlay').style.display = 'none';
-        document.querySelectorAll('.export-btn').forEach(b => { b.disabled = false; });
+        if(container.parentNode) document.body.removeChild(container);
+        document.getElementById('progress-overlay').style.display='none';
+        document.querySelectorAll('.export-btn').forEach(b=>b.disabled=false);
     }
 }
 
-// ===== VIDEO PLAYER =====
-function setupVideoPlayer(url, durationSec) {
-    document.getElementById('video-preview-bar').classList.add('visible');
-    if (!vpVideo) { vpVideo = document.createElement('video'); vpVideo.style.display = 'none'; document.body.appendChild(vpVideo); }
-    vpVideo.src = url; vpVideo.load();
-    vpVideo.ontimeupdate = () => {
-        const pct = (vpVideo.currentTime / vpVideo.duration) * 100 || 0;
-        document.getElementById('vp-fill').style.width = pct + '%';
-        document.getElementById('vp-time').textContent = formatTime(vpVideo.currentTime) + ' / ' + formatTime(vpVideo.duration || durationSec);
-    };
-    vpVideo.onended = () => document.getElementById('vp-play-btn').textContent = '▶️';
-    vpVideo.onpause = () => document.getElementById('vp-play-btn').textContent = '▶️';
-    vpVideo.onplay  = () => document.getElementById('vp-play-btn').textContent = '⏸️';
-    const videoHTML = `<!DOCTYPE html><html><head><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;height:100vh;}video{max-width:100%;max-height:100%;}</style></head><body><video src="${url}" controls autoplay style="width:100%;height:100%;"></video></body></html>`;
-    document.getElementById('preview-frame').srcdoc = videoHTML;
-}
-
-function vpTogglePlay() { if (!vpVideo) return; vpVideo.paused ? vpVideo.play() : vpVideo.pause(); }
-function vpSeek(e) { if (!vpVideo) return; const r = document.getElementById('vp-track').getBoundingClientRect(); vpVideo.currentTime = ((e.clientX - r.left) / r.width) * (vpVideo.duration || 0); }
-function vpDownload() { if (!vpUrl || !vpFileName) return; const a = document.createElement('a'); a.href=vpUrl; a.download=vpFileName; a.click(); }
-function formatTime(sec) { if (isNaN(sec)) return '0:00'; return Math.floor(sec/60) + ':' + String(Math.floor(sec%60)).padStart(2,'0'); }
-
-// ===== INIT =====
-updatePreviewSize();
-window.addEventListener('resize', () => {
-    if (allSlides.length) renderSlide(currentSlideIndex);
-    else updatePreview();
-});
-document.getElementById('page-duration').addEventListener('input', updateTotalDuration);
-document.getElementById('format-select-video').addEventListener('change', () => { updatePreviewSize(); updateSlideDurations(); });
-document.getElementById('format-select-pdf').addEventListener('change', updatePreviewSize);
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+document.getElementById('page-dur').addEventListener('input', updateTotalDur);
 </script>
 </body>
 </html>
