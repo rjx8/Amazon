@@ -3,108 +3,492 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة تحويل الأكواد إلى PDF وفيديو</title>
-    
+    <title>منصة تحويل الأكواد</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js"></script>
-
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif; background: #f4f6f8; color: #333; margin: 0; padding: 15px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
-        .header { text-align: center; margin-bottom: 15px; }
-        .header h2 { margin: 0; color: #1e293b; font-size: 22px;}
-        .main-container { display: flex; gap: 15px; flex: 1; overflow: hidden; }
-        @media (max-width: 768px) { .main-container { flex-direction: column; height: auto; overflow: visible; } body {height: auto; padding: 10px;} }
-        
-        .sidebar { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; display: flex; flex-direction: column; flex: 1; max-width: 380px; overflow-y: auto;}
-        .preview-section { background: #fff; border-radius: 10px; padding: 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; display: flex; flex-direction: column; flex: 2; overflow: hidden; position: relative; }
-        
-        .form-group { margin-bottom: 12px; display: flex; flex-direction: column; }
-        label { margin-bottom: 6px; font-weight: bold; font-size: 13px; color: #475569; }
-        input, select, textarea { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-family: inherit; transition: 0.2s;}
-        input:focus, select:focus, textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-        
-        .textarea-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .clear-btn { background: #fee2e2; color: #ef4444; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .clear-btn:hover { background: #fca5a5; color: #b91c1c; }
-        
-        textarea { flex: 1; min-height: 180px; resize: vertical; direction: ltr; font-family: monospace; background: #f8fafc; font-size: 12px;}
-        
-        .row { display: flex; gap: 10px; }
-        .row .form-group { flex: 1; }
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #22263a;
+            --border: #2e3350;
+            --border-light: #3a4060;
+            --primary: #5b7cfa;
+            --primary-hover: #4a6cf7;
+            --primary-glow: rgba(91,124,250,0.18);
+            --orange: #f97316;
+            --orange-hover: #ea580c;
+            --orange-glow: rgba(249,115,22,0.18);
+            --green: #22c55e;
+            --green-glow: rgba(34,197,94,0.15);
+            --red: #ef4444;
+            --text: #e8eaf0;
+            --text-muted: #8892b0;
+            --text-dim: #4a5580;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
 
-        .ai-prompts { background: #f0fdf4; border: 1px dashed #22c55e; padding: 12px; border-radius: 8px; margin-bottom: 15px;}
-        .ai-prompts p { margin: 0 0 8px 0; font-size: 12px; color: #166534; font-weight: bold; text-align: center;}
-        .prompt-btns { display: flex; gap: 8px; }
-        .prompt-btn { flex: 1; background: #fff; border: 1px solid #22c55e; color: #15803d; padding: 8px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px;}
-        .prompt-btn:hover { background: #22c55e; color: #fff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .export-buttons { display: flex; gap: 10px; margin-top: 5px; }
-        .export-btn { background: #2563eb; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; flex: 1; }
-        .export-btn:hover { background: #1d4ed8; transform: translateY(-1px);}
-        .export-btn:disabled { background: #94a3b8; cursor: not-allowed; transform: none;}
-        .video-export-btn { background: #f97316; }
-        .video-export-btn:hover { background: #ea580c; }
-        
-        .preview-header { padding: 12px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 14px; font-weight: bold; color: #475569; display: flex; justify-content: space-between; align-items: center;}
-        .tag { background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 6px; font-size: 12px; transition: 0.3s; }
-        .recording-indicator { background: #ef4444; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; display: inline-flex; align-items: center; gap: 6px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
-        
-        .video-preview-container { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #1a1a2e; overflow: auto; }
-        #preview-frame { width: 100%; height: 100%; border: none; background: #fff; }
-        
-        .progress-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
-        .progress-bar { width: 300px; height: 8px; background: #333; border-radius: 4px; overflow: hidden; margin-top: 15px; }
-        .progress-fill { height: 100%; background: #f97316; width: 0%; transition: width 0.3s; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .logo-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+        .header-badge {
+            background: var(--primary-glow);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* ===== LAYOUT ===== */
+        .app-body {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 65px);
+            overflow: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 400px;
+            min-width: 360px;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .sidebar-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        /* ===== SECTION TITLES ===== */
+        .section-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+            margin-top: 18px;
+            padding-right: 2px;
+        }
+        .section-label:first-child { margin-top: 0; }
+
+        /* ===== PROMPTS ===== */
+        .prompts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 7px;
+            margin-bottom: 4px;
+        }
+        .prompt-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 10px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 11.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Cairo', sans-serif;
+            text-align: right;
+        }
+        .prompt-btn:hover {
+            background: var(--primary-glow);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+        .prompt-btn .icon { font-size: 14px; flex-shrink: 0; }
+        .prompt-btn.success {
+            background: var(--green-glow);
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        /* ===== FORM ELEMENTS ===== */
+        .form-row { display: flex; gap: 8px; }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 10px; flex: 1; }
+        label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        input, select {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        select option { background: var(--surface2); }
+
+        /* ===== TEXTAREA ===== */
+        .textarea-wrap {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .textarea-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        textarea {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+            text-align: left;
+            resize: vertical;
+            min-height: 200px;
+            line-height: 1.6;
+            transition: border-color 0.2s;
+            width: 100%;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        .char-count {
+            font-size: 10px;
+            color: var(--text-dim);
+            text-align: left;
+        }
+        .clear-btn {
+            background: transparent;
+            border: 1px solid #3f2020;
+            color: var(--red);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Cairo', sans-serif;
+        }
+        .clear-btn:hover { background: rgba(239,68,68,0.15); border-color: var(--red); }
+
+        /* ===== EXPORT BUTTONS ===== */
+        .sidebar-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .export-row { display: flex; gap: 8px; }
+        .export-btn {
+            flex: 1;
+            padding: 13px 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Cairo', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-pdf {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-pdf:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 20px var(--primary-glow); }
+        .btn-video {
+            background: var(--orange);
+            color: white;
+        }
+        .btn-video:hover { background: var(--orange-hover); transform: translateY(-1px); box-shadow: 0 4px 20px var(--orange-glow); }
+        .export-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* ===== PREVIEW ===== */
+        .preview-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #080a0f;
+        }
+        .preview-bar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .preview-bar-left { display: flex; align-items: center; gap: 10px; }
+        .preview-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+        .preview-title { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+        .size-badge {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .preview-frame-wrap {
+            flex: 1;
+            overflow: auto;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 24px;
+            background: #080a0f;
+        }
+        .iframe-shadow {
+            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+            border-radius: 4px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        #preview-frame {
+            border: none;
+            display: block;
+            background: white;
+        }
+        .preview-empty {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            color: var(--text-dim);
+        }
+        .preview-empty-icon { font-size: 48px; opacity: 0.4; }
+        .preview-empty-text { font-size: 14px; font-weight: 600; opacity: 0.5; }
+
+        /* ===== PROGRESS ===== */
+        .progress-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .progress-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 32px 36px;
+            border-radius: 16px;
+            text-align: center;
+            min-width: 320px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .progress-icon { font-size: 32px; margin-bottom: 12px; }
+        .progress-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+        .progress-bar-track {
+            width: 100%;
+            height: 6px;
+            background: var(--surface2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--orange));
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 3px;
+        }
+        .progress-pct { font-size: 12px; color: var(--text-muted); }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 20000;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.success { border-color: var(--green); color: var(--green); }
+        .toast.error { border-color: var(--red); color: var(--red); }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .app-body { flex-direction: column; height: auto; overflow: auto; }
+            .sidebar { width: 100%; min-width: auto; border-left: none; border-top: 1px solid var(--border); height: auto; }
+            .preview-area { height: 50vh; min-height: 300px; }
+        }
+
+        /* ===== DIVIDER ===== */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 14px 0;
+        }
+
+        /* info tip */
+        .tip {
+            background: rgba(91,124,250,0.08);
+            border: 1px solid rgba(91,124,250,0.2);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
 
-    <div id="password-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f6f8; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-        <div style="background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; text-align: center; width: 90%; max-width: 350px;">
-            <h3 style="margin-top: 0; color: #1e293b;">🔒 حماية المنصة</h3>
-            <p style="font-size: 13px; color: #475569; margin-bottom: 20px;">الرجاء إدخال كلمة المرور للوصول.</p>
-            <div class="form-group" style="margin-bottom: 15px;">
-                <input type="password" id="pass-input" placeholder="كلمة المرور..." style="text-align: center; letter-spacing: 2px;" onkeypress="if(event.key === 'Enter') checkPassword()">
-            </div>
-            <button onclick="checkPassword()" class="export-btn" style="width: 100%; padding: 10px; margin-top: 0;">تسجيل الدخول</button>
-            <p id="pass-error" style="color: #ef4444; font-size: 12px; display: none; margin-top: 15px; font-weight: bold; margin-bottom: 0;">❌ كلمة المرور غير صحيحة!</p>
-        </div>
+<!-- HEADER -->
+<div class="header">
+    <div class="header-logo">
+        <div class="logo-icon">🛠️</div>
+        منصة تحويل الأكواد
     </div>
+    <div class="header-badge">PDF & VIDEO</div>
+</div>
 
-    <div class="header">
-        <h2>🛠️ منصة تحويل الأكواد إلى PDF وفيديو</h2>
-    </div>
+<div class="app-body">
 
-    <div class="main-container">
-        <div class="sidebar">
-            
-            <div class="ai-prompts">
-                <p>🤖 نسخ أمر جاهز للذكاء الاصطناعي:</p>
-                <div class="prompt-btns">
-                    <button class="prompt-btn" onclick="copyPrompt('a4', this)">📄 بحث أكاديمي (A4)</button>
-                    <button class="prompt-btn" onclick="copyPrompt('169', this)">🖥️ عرض تقديمي (16:9)</button>
-                    <button class="prompt-btn" onclick="copyPrompt('video', this)">📱 فيديو جوال (9:16)</button>
-                </div>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-scroll">
+
+            <!-- PROMPTS -->
+            <div class="section-label">📋 نسخ برومبت جاهز للذكاء الاصطناعي</div>
+            <div class="prompts-grid">
+                <button class="prompt-btn" onclick="copyPrompt('a4_portrait', this)">
+                    <span class="icon">📄</span> بحث طولي (A4)
+                </button>
+                <button class="prompt-btn" onclick="copyPrompt('a4_landscape', this)">
+                    <span class="icon">📋</span> بحث عرضي (A4)
+                </button>
+                <button class="prompt-btn" onclick="copyPrompt('video_portrait', this)">
+                    <span class="icon">📱</span> مقطع طولي (9:16)
+                </button>
+                <button class="prompt-btn" onclick="copyPrompt('video_landscape', this)">
+                    <span class="icon">🖥️</span> مقطع عرضي (16:9)
+                </button>
             </div>
+
+            <div class="divider"></div>
+
+            <!-- FILE SETTINGS -->
+            <div class="section-label">⚙️ إعدادات الملف</div>
 
             <div class="form-group">
-                <label>اسم الملف المستخرج:</label>
-                <input type="text" id="file-name" value="مستند_جديد" placeholder="اكتب اسم الملف هنا...">
+                <label>اسم الملف</label>
+                <input type="text" id="file-name" value="مستند_جديد" placeholder="اكتب اسم الملف...">
             </div>
 
-            <div class="row">
+            <div class="form-row">
                 <div class="form-group">
-                    <label>مقاس الصفحة:</label>
-                    <select id="format-select" onchange="updateTag()">
-                        <option value="169">عرض تقديمي (16:9)</option>
-                        <option value="a4">بحث / تقرير (A4)</option>
-                        <option value="video">فيديو جوال (9:16)</option>
+                    <label>نوع التصدير</label>
+                    <select id="format-select" onchange="updatePreviewSize()">
+                        <option value="a4_portrait">بحث طولي (A4)</option>
+                        <option value="a4_landscape">بحث عرضي (A4)</option>
+                        <option value="video_portrait">مقطع طولي (9:16)</option>
+                        <option value="video_landscape" selected>مقطع عرضي (16:9)</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>جودة الـ PDF:</label>
+                    <label>جودة PDF</label>
                     <select id="quality-select">
                         <option value="1">عادية</option>
                         <option value="2" selected>عالية</option>
@@ -112,63 +496,88 @@
                     </select>
                 </div>
             </div>
-            
+
             <div class="form-group">
-                <label>مدة كل صفحة (ثانية) للفيديو:</label>
-                <input type="number" id="page-duration" value="3" min="1" max="10" step="0.5">
-                <small style="font-size: 10px; color: #666;">⏱️ مدة عرض كل صفحة قبل الانتقال للتالية</small>
+                <label>مدة كل شريحة بالثانية (للفيديو)</label>
+                <input type="number" id="page-duration" value="3" min="1" max="15" step="0.5">
             </div>
 
-            <div class="form-group" style="flex: 1;">
-                <div class="textarea-header">
-                    <label style="margin:0;">كود الـ HTML (الصق هنا):</label>
-                    <button class="clear-btn" onclick="clearCode()">🗑️ مسح الكود</button>
+            <div class="divider"></div>
+
+            <!-- CODE INPUT -->
+            <div class="section-label">💻 كود HTML</div>
+            <div class="textarea-wrap">
+                <div class="textarea-toolbar">
+                    <span id="char-count" class="char-count">0 حرف</span>
+                    <button class="clear-btn" onclick="clearCode()">🗑️ مسح</button>
                 </div>
-                <textarea id="html-input" oninput="updatePreview()" placeholder="الصق الكود الذي أعطاك إياه الذكاء الاصطناعي هنا..."></textarea>
+                <textarea id="html-input" oninput="onCodeInput()" placeholder="الصق كود HTML هنا..."></textarea>
+                <div class="tip">💡 تأكد أن الصفحات تستخدم class="page" أو class="slide"</div>
             </div>
 
-            <div class="export-buttons">
-                <button id="capture-btn" class="export-btn" onclick="exportToPDF()">استخراج كملف PDF 📥</button>
-                <button id="video-btn" class="export-btn video-export-btn" onclick="exportToVideo()">استخراج كمقطع فيديو 🎬</button>
-            </div>
         </div>
 
-        <div class="preview-section">
-            <div class="preview-header">
-                <span>👁️ المعاينة المباشرة</span>
-                <span class="tag" id="size-tag">الأبعاد: 1280 × 720</span>
+        <!-- FOOTER BUTTONS -->
+        <div class="sidebar-footer">
+            <div class="export-row">
+                <button id="capture-btn" class="export-btn btn-pdf" onclick="exportToPDF()">
+                    📥 PDF
+                </button>
+                <button id="video-btn" class="export-btn btn-video" onclick="exportToVideo()">
+                    🎬 فيديو
+                </button>
             </div>
-            <iframe id="preview-frame"></iframe>
-        </div>
-    </div>
-    
-    <div id="progress-overlay" class="progress-overlay">
-        <div style="background: #1e293b; padding: 30px; border-radius: 12px; text-align: center; min-width: 300px;">
-            <div style="font-size: 18px; margin-bottom: 15px;" id="progress-text">🎬 جاري تجهيز الفيديو...</div>
-            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-            <div style="margin-top: 15px; font-size: 12px; color: #94a3b8;" id="progress-detail">0%</div>
         </div>
     </div>
 
-    <script>
-        // --- دالة التحقق من كلمة المرور ---
-        function checkPassword() {
-            const input = document.getElementById('pass-input').value;
-            const errorMsg = document.getElementById('pass-error');
-            
-            if (input === 'ayman') {
-                document.getElementById('password-overlay').style.display = 'none';
-            } else {
-                errorMsg.style.display = 'block';
-                setTimeout(() => {
-                    errorMsg.style.display = 'none';
-                }, 3000);
-            }
-        }
-        // -----------------------------------
+    <!-- PREVIEW -->
+    <div class="preview-area">
+        <div class="preview-bar">
+            <div class="preview-bar-left">
+                <div class="preview-dot"></div>
+                <span class="preview-title">المعاينة المباشرة</span>
+            </div>
+            <span class="size-badge" id="size-tag">16:9 — 1280 × 720</span>
+        </div>
+        <div class="preview-frame-wrap" id="preview-wrap">
+            <div class="preview-empty" id="preview-empty">
+                <div class="preview-empty-icon">📋</div>
+                <div class="preview-empty-text">الصق الكود لتظهر المعاينة هنا</div>
+            </div>
+            <div class="iframe-shadow" id="iframe-shadow" style="display:none;">
+                <iframe id="preview-frame"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
 
-        const prompts = {
-            a4: `أنت مصمم وثائق HTML محترف. قم بإنشاء كود HTML كامل لبحث أكاديمي بالعربية وفق المواصفات التالية:
+<!-- PROGRESS -->
+<div id="progress-overlay" class="progress-overlay">
+    <div class="progress-box">
+        <div class="progress-icon" id="progress-icon">🎬</div>
+        <div class="progress-title" id="progress-text">جاري التجهيز...</div>
+        <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-pct" id="progress-detail">0%</div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== DIMENSIONS CONFIG =====
+const FORMATS = {
+    a4_portrait:   { w: 794,  h: 1123, label: 'A4 طولي — 794 × 1123',  pdfOrient: 'portrait'  },
+    a4_landscape:  { w: 1123, h: 794,  label: 'A4 عرضي — 1123 × 794',  pdfOrient: 'landscape' },
+    video_portrait:  { w: 1080, h: 1920, label: '9:16 — 1080 × 1920', pdfOrient: 'portrait'  },
+    video_landscape: { w: 1280, h: 720,  label: '16:9 — 1280 × 720',  pdfOrient: 'landscape' },
+};
+
+// ===== PROMPTS =====
+const PROMPTS = {
+    a4_portrait: `أنت مصمم وثائق HTML محترف. قم بإنشاء كود HTML كامل لبحث أكاديمي بالعربية وفق المواصفات التالية:
 
 **عنوان البحث:** [اكتب العنوان هنا]
 **المادة:** [مثال: فيزياء / كيمياء / رياضيات]
@@ -182,384 +591,446 @@
 1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
 2. استدعاء خطوط Google Fonts صراحةً (مثل Cairo أو Tajawal).
 3. الـ body يحتوي على: display: block; direction: rtl; text-align: right; margin: 0; padding: 0; box-sizing: border-box;
-4. كل صفحة تكون: <div class="page">. أبعادها: width: 794px; height: 1123px; overflow: hidden; position: relative; box-sizing: border-box;
-5. **مهم جداً للنقاط:** لا تستخدم القوائم الافتراضية (ul, ol). للترقيم أو النقاط، استخدم عناصر <p> أو <div> عادية وأضف النقطة كجزء من النص هكذا: <p>• النقطة الأولى</p> أو <p>1- النقطة الأولى</p>.
+4. كل صفحة تكون: <div class="page">. أبعادها الثابتة: width: 794px; height: 1123px; overflow: hidden; position: relative; box-sizing: border-box;
+5. **مهم جداً للنقاط:** لا تستخدم القوائم الافتراضية (ul, ol). للترقيم أو النقاط استخدم <p> أو <div> وأضف النقطة داخل النص: <p>• النقطة الأولى</p>
 6. ممنوع استخدام letter-spacing نهائياً.
 
-**هيكل كل صفحة:**
-صفحة 1: غلاف احترافي.
-صفحة 2+: محتوى البحث.
-صفحة أخيرة: المراجع.
+**هيكل الصفحات:**
+- صفحة 1: غلاف احترافي (شعار، عنوان، بيانات الطالب).
+- صفحات 2+: محتوى البحث منظم (مقدمة، فصول، خاتمة).
+- صفحة أخيرة: المراجع.
 نمط التصميم: احترافي وأنيق بألوان متناسقة.`,
-            
-            169: `أنت مصمم عروض HTML محترف. قم بإنشاء كود HTML كامل لعرض تقديمي بالعربية وفق المواصفات التالية:
+
+    a4_landscape: `أنت مصمم وثائق HTML محترف. قم بإنشاء كود HTML كامل لبحث أكاديمي عرضي (Landscape) بالعربية وفق المواصفات التالية:
+
+**عنوان البحث:** [اكتب العنوان هنا]
+**المادة:** [مثال: فيزياء / كيمياء / رياضيات]
+**الطالب:** [الاسم]
+**المعلم:** [الاسم]
+**الصف:** [مثال: أول ثانوي]
+**العام الدراسي:** [مثال: 1447هـ / 2026م]
+**عدد الصفحات المطلوبة:** [مثال: 5 صفحات]
+
+**متطلبات تقنية صارمة جداً — لا تتجاوزها:**
+1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
+2. استدعاء خطوط Google Fonts صراحةً (مثل Cairo أو Tajawal).
+3. الـ body يحتوي على: display: block; direction: rtl; text-align: right; margin: 0; padding: 0; box-sizing: border-box;
+4. كل صفحة تكون: <div class="page">. أبعادها الثابتة: width: 1123px; height: 794px; overflow: hidden; position: relative; box-sizing: border-box;
+5. **مهم جداً للنقاط:** لا تستخدم القوائم الافتراضية (ul, ol). استخدم <p> أو <div> وأضف النقطة داخل النص.
+6. ممنوع استخدام letter-spacing نهائياً.
+7. **استغل العرض الأفقي:** استخدم تخطيط عمودين (two-column layout) داخل كل صفحة لاستغلال المساحة الأفقية بشكل جمالي.
+
+**هيكل الصفحات:**
+- صفحة 1: غلاف احترافي.
+- صفحات 2+: محتوى بتخطيط عمودين.
+- صفحة أخيرة: المراجع.
+نمط التصميم: احترافي بتخطيط أفقي منظم.`,
+
+    video_portrait: `أنت مصمم مقاطع فيديو قصيرة للجوال (TikTok/Reels). قم بإنشاء كود HTML كامل بمقاس (9:16) مع أنيميشن CSS جذاب.
+
+**عنوان المقطع:** [اكتب العنوان هنا]
+**المحتوى الأساسي:** [اكتب النقاط الرئيسية]
+**عدد الشرائح:** [مثال: 5 شرائح]
+
+**متطلبات تقنية صارمة جداً — لا تتجاوزها:**
+1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
+2. استدعاء خطوط Google Fonts (مثل Cairo أو Tajawal).
+3. الـ body يحتوي على: display: block; margin: 0; padding: 0; background: #000;
+4. كل شريحة تكون: <div class="page">. أبعادها الثابتة: width: 1080px; height: 1920px; overflow: hidden; position: relative; box-sizing: border-box;
+5. **أنيميشن fadeInUp إجباري لكل عناصر النص:**
+   @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+   العنوان: animation: fadeInUp 0.7s ease-out 0.1s both;
+   العنوان الفرعي: animation: fadeInUp 0.7s ease-out 0.3s both;
+   النقاط: animation: fadeInUp 0.7s ease-out 0.5s both;
+6. **مهم جداً للنقاط:** لا تستخدم ul أو ol. استخدم <p> أو <div> وأضف النقطة داخل النص.
+7. ممنوع letter-spacing.
+8. خطوط النص كبيرة (h1 لا تقل عن 80px، p لا تقل عن 40px).
+
+**الهيكل المطلوب:**
+- شريحة 1: غلاف (عنوان ضخم + خلفية جذابة).
+- شرائح 2-4: كل شريحة عنوان فرعي ونقطتان رئيسيتان.
+- شريحة أخيرة: خاتمة تحفيزية.
+نمط التصميم: عصري وجريء، خلفيات متدرجة، ألوان مضيئة.`,
+
+    video_landscape: `أنت مصمم عروض تقديمية وفيديوهات HTML احترافية. قم بإنشاء كود HTML كامل بمقاس (16:9) مناسب للعرض والتقديم.
 
 **عنوان العرض:** [اكتب العنوان هنا]
-**المادة / الموضوع:** [مثال: مشروع فيزياء / درس تاريخ]
+**الموضوع / المادة:** [مثال: مشروع علمي / درس تاريخ]
 **المقدِّم:** [الاسم]
 **عدد الشرائح:** [مثال: 8 شرائح]
 
 **متطلبات تقنية صارمة جداً — لا تتجاوزها:**
 1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
 2. استدعاء خطوط Google Fonts صراحةً (مثل Cairo أو Tajawal).
-3. الـ body يحتوي على: display: block; direction: rtl; text-align: right; margin: 0; padding: 0; box-sizing: border-box;
-4. كل شريحة تكون: <div class="page">. أبعادها: width: 1280px; height: 720px; overflow: hidden; position: relative; box-sizing: border-box;
-5. **مهم جداً للنقاط:** لا تستخدم القوائم الافتراضية (ul, ol). للترقيم أو النقاط، استخدم عناصر <p> أو <div> عادية وأضف النقطة كجزء من النص هكذا: <p>• النقطة الأولى</p> أو <p>1- النقطة الأولى</p>.
-6. ممنوع استخدام letter-spacing نهائياً.
-
-**هيكل الشرائح:**
-شريحة 1: غلاف (عنوان كبير + اسم المقدِّم).
-شرائح 2+: محتوى منظم.
-نمط التصميم: حديث، خلفيات ملونة، نصوص واسعة. خطوط كبيرة وواضحة.`,
-
-            video: `أنت مصمم محتوى فيديوهات قصيرة لمشاهدة الجوال. قم بإنشاء كود HTML كامل بمقاس (9:16) مع أنيميشن CSS جذاب.
-
-**عنوان الفيديو:** [اكتب العنوان هنا]
-**المحتوى الأساسي:** [اكتب النقاط الرئيسية التي تريد عرضها]
-
-**متطلبات تقنية صارمة جداً — لا تتجاوزها:**
-1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
-2. استدعاء خطوط Google Fonts (مثل Cairo أو Tajawal).
-3. الـ body يحتوي على: display: flex; align-items: center; justify-content: center; direction: rtl; text-align: right; margin: 0; padding: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-4. كل عنصر محتوى يكون داخل <div class="slide">. أبعاده: width: 1080px; height: 1920px; overflow: hidden; position: relative; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; padding: 40px;
-5. **استخدام أنيميشن CSS:** أضف أنيميشن fadeInUp لعناصر النص داخل كل شريحة:
-   @keyframes fadeInUp {
-       from { opacity: 0; transform: translateY(30px); }
-       to { opacity: 1; transform: translateY(0); }
-   }
-   .slide h1, .slide h2, .slide p { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; }
-   .slide h1 { animation-delay: 0.1s; }
-   .slide h2 { animation-delay: 0.3s; }
-   .slide p { animation-delay: 0.5s; }
-6. **مهم جداً للنقاط:** لا تستخدم القوائم الافتراضية (ul, ol). استخدم عناصر <p> أو <div> عادية وأضف النقطة كجزء من النص.
+3. الـ body يحتوي على: display: block; margin: 0; padding: 0; background: #000;
+4. كل شريحة تكون: <div class="page">. أبعادها الثابتة: width: 1280px; height: 720px; overflow: hidden; position: relative; box-sizing: border-box;
+5. **أنيميشن fadeIn لكل عناصر النص:**
+   @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+   .page h1, .page h2 { animation: fadeIn 0.6s ease-out 0.1s both; }
+   .page p, .page div.point { animation: fadeIn 0.6s ease-out 0.4s both; }
+6. **مهم جداً للنقاط:** لا تستخدم ul أو ol. استخدم <p> أو <div> وأضف النقطة داخل النص.
+7. ممنوع letter-spacing.
+8. خطوط واضحة: h1 لا تقل عن 52px، h2 لا تقل عن 36px، p لا تقل عن 24px.
 
 **الهيكل المطلوب:**
-- شريحة 1: عنوان كبير ومثير + خلفية جذابة.
-- شريحة 2-4: كل شريحة تحتوي على عنوان فرعي ونقطتين أو ثلاث نقاط رئيسية.
-- شريحة أخيرة: خاتمة أو عبارة تحفيزية + أيقونة أو رمز.
+- شريحة 1: غلاف (عنوان + اسم المقدِّم).
+- شرائح 2+: محتوى بتصميم حديث ومتناسق.
+- شريحة أخيرة: شكر وتقدير أو خاتمة.
+نمط التصميم: حديث، خلفيات ذات عمق، ألوان متناسقة.`
+};
 
-نمط التصميم: عصري بألوان جذابة، نصوص كبيرة وواضحة، خلفيات متدرجة، ومسافات مريحة.`
-        };
+// ===== TOAST =====
+function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
 
-        function copyPrompt(type, btnElement) {
-            navigator.clipboard.writeText(prompts[type]).then(() => {
-                const originalText = btnElement.innerText;
-                const originalBg = btnElement.style.background;
-                const originalColor = btnElement.style.color;
+// ===== COPY PROMPT =====
+function copyPrompt(type, btn) {
+    navigator.clipboard.writeText(PROMPTS[type]).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<span class="icon">✅</span> تم النسخ!';
+        btn.classList.add('success');
+        setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('success'); }, 2000);
+        showToast('✅ تم نسخ البرومبت بنجاح!', 'success');
+    }).catch(() => showToast('❌ فشل النسخ', 'error'));
+}
 
-                btnElement.innerText = "✅ تم النسخ!";
-                btnElement.style.background = "#22c55e";
-                btnElement.style.color = "#fff";
+// ===== CODE INPUT =====
+function onCodeInput() {
+    const code = document.getElementById('html-input').value;
+    document.getElementById('char-count').textContent = code.length.toLocaleString('ar') + ' حرف';
+    updatePreview(code);
+}
 
-                setTimeout(() => {
-                    btnElement.innerText = originalText;
-                    btnElement.style.background = originalBg;
-                    btnElement.style.color = originalColor;
-                }, 2000);
+function clearCode() {
+    if (!confirm('هل أنت متأكد من مسح الكود؟')) return;
+    document.getElementById('html-input').value = '';
+    document.getElementById('char-count').textContent = '0 حرف';
+    document.getElementById('preview-empty').style.display = 'flex';
+    document.getElementById('iframe-shadow').style.display = 'none';
+}
+
+// ===== PREVIEW =====
+function updatePreview(code) {
+    if (!code) code = document.getElementById('html-input').value;
+    const empty = document.getElementById('preview-empty');
+    const shadow = document.getElementById('iframe-shadow');
+    const iframe = document.getElementById('preview-frame');
+    const fmt = FORMATS[document.getElementById('format-select').value];
+
+    if (!code.trim()) {
+        empty.style.display = 'flex';
+        shadow.style.display = 'none';
+        return;
+    }
+
+    empty.style.display = 'none';
+    shadow.style.display = 'block';
+
+    // Scale iframe to fit nicely
+    const wrap = document.getElementById('preview-wrap');
+    const wrapW = wrap.clientWidth - 48;
+    const wrapH = wrap.clientHeight - 48;
+    const scaleX = wrapW / fmt.w;
+    const scaleY = wrapH / fmt.h;
+    const scale = Math.min(scaleX, scaleY, 1);
+
+    iframe.style.width = fmt.w + 'px';
+    iframe.style.height = fmt.h + 'px';
+    iframe.style.transform = `scale(${scale})`;
+    iframe.style.transformOrigin = 'top center';
+    shadow.style.width = (fmt.w * scale) + 'px';
+    shadow.style.height = (fmt.h * scale) + 'px';
+
+    iframe.srcdoc = code;
+}
+
+function updatePreviewSize() {
+    const fmt = FORMATS[document.getElementById('format-select').value];
+    document.getElementById('size-tag').textContent = fmt.label;
+    updatePreview();
+}
+
+// ===== IMAGE UTILS =====
+async function urlToDataURL(url) {
+    if (!url || url.startsWith('data:') || url.startsWith('blob:')) return url;
+    let absUrl = url;
+    try {
+        if (!url.startsWith('http') && !url.startsWith('//')) absUrl = new URL(url, location.href).href;
+        else if (url.startsWith('//')) absUrl = 'https:' + url;
+    } catch(e) {}
+
+    const proxies = [null, 'https://corsproxy.io/?', 'https://api.allorigins.win/raw?url='];
+    for (const proxy of proxies) {
+        try {
+            const fetchUrl = proxy ? proxy + encodeURIComponent(absUrl) : absUrl;
+            const res = await fetch(fetchUrl, { mode: 'cors', credentials: 'omit' });
+            if (!res.ok) continue;
+            const blob = await res.blob();
+            return await new Promise(r => { const fr = new FileReader(); fr.onloadend = () => r(fr.result); fr.onerror = () => r(null); fr.readAsDataURL(blob); });
+        } catch(e) {}
+    }
+    return new Promise(r => {
+        const img = new Image(); img.crossOrigin = 'Anonymous';
+        img.onload = () => { try { const c = document.createElement('canvas'); c.width = img.width; c.height = img.height; c.getContext('2d').drawImage(img,0,0); r(c.toDataURL('image/jpeg',0.9)); } catch(e){ r(null); } };
+        img.onerror = () => r(null);
+        img.src = absUrl;
+        setTimeout(() => r(null), 5000);
+    });
+}
+
+async function convertImages(container) {
+    const imgs = Array.from(container.querySelectorAll('img'));
+    await Promise.all(imgs.map(async img => {
+        const src = img.getAttribute('src');
+        if (!src || src.startsWith('data:')) return;
+        const d = await urlToDataURL(src);
+        if (d) img.setAttribute('src', d);
+    }));
+}
+
+// ===== HIDDEN CONTAINER =====
+function buildHiddenContainer(code, fmt) {
+    const el = document.createElement('div');
+    el.dir = 'rtl';
+    Object.assign(el.style, {
+        position: 'absolute', top: '0', left: '0',
+        zIndex: '-9999', opacity: '0.01',
+        pointerEvents: 'none', width: fmt.w + 'px'
+    });
+    el.innerHTML = code;
+
+    // Fix common rendering issues
+    const fix = document.createElement('style');
+    fix.innerHTML = `
+        * { box-sizing: border-box !important; letter-spacing: normal !important; }
+        ul { list-style: none !important; padding-right: 0 !important; }
+        body { margin: 0 !important; padding: 0 !important; display: block !important; }
+        .page, .slide {
+            width: ${fmt.w}px !important;
+            height: ${fmt.h}px !important;
+            overflow: hidden !important;
+            position: relative !important;
+            flex-shrink: 0 !important;
+        }
+    `;
+    el.appendChild(fix);
+    document.body.appendChild(el);
+    return el;
+}
+
+// ===== PROGRESS =====
+function setProgress(pct, text, icon = '🎬') {
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-detail').textContent = Math.floor(pct) + '%';
+    if (text) document.getElementById('progress-text').textContent = text;
+    if (icon) document.getElementById('progress-icon').textContent = icon;
+}
+
+// ===== PDF EXPORT =====
+async function exportToPDF() {
+    const btn = document.getElementById('capture-btn');
+    const code = document.getElementById('html-input').value;
+    if (!code.trim()) { showToast('⚠️ الرجاء لصق الكود أولاً', 'error'); return; }
+
+    const fmtKey = document.getElementById('format-select').value;
+    const fmt = FORMATS[fmtKey];
+    const fileName = document.getElementById('file-name').value || 'document';
+    const quality = parseInt(document.getElementById('quality-select').value);
+
+    btn.disabled = true;
+    btn.textContent = '⏳ جاري...';
+    document.getElementById('progress-overlay').style.display = 'flex';
+    setProgress(0, 'جاري تجهيز الكود...', '📄');
+
+    const container = buildHiddenContainer(code, fmt);
+
+    try {
+        setProgress(5, 'تحويل الصور...', '🖼️');
+        await convertImages(container);
+        await document.fonts.ready;
+
+        // Small delay for fonts/animations to settle
+        await new Promise(r => setTimeout(r, 500));
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: fmt.pdfOrient, unit: 'px', format: [fmt.w, fmt.h] });
+
+        let pages = Array.from(container.querySelectorAll('.page'));
+        if (pages.length === 0) pages = [container];
+
+        for (let i = 0; i < pages.length; i++) {
+            const pct = 10 + ((i / pages.length) * 85);
+            setProgress(pct, `تصوير الصفحة ${i+1} من ${pages.length}`, '📸');
+
+            const canvas = await html2canvas(pages[i], {
+                scale: quality,
+                useCORS: true,
+                allowTaint: true,
+                width: fmt.w,
+                height: fmt.h,
+                windowWidth: fmt.w,
+                windowHeight: fmt.h,
+                backgroundColor: '#ffffff',
+                logging: false,
+                imageTimeout: 8000,
             });
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            if (i > 0) pdf.addPage([fmt.w, fmt.h], fmt.pdfOrient);
+            pdf.addImage(imgData, 'JPEG', 0, 0, fmt.w, fmt.h);
         }
 
-        function clearCode() {
-            if(confirm("هل أنت متأكد من مسح الكود الحالي؟")) {
-                document.getElementById('html-input').value = '';
-                updatePreview();
-            }
-        }
+        setProgress(100, 'جاري الحفظ...', '✅');
+        await new Promise(r => setTimeout(r, 300));
+        pdf.save(`${fileName}.pdf`);
+        showToast(`✅ تم حفظ ${pages.length} صفحة بنجاح!`, 'success');
 
-        function updateTag() {
-            const format = document.getElementById('format-select').value;
-            const tag = document.getElementById('size-tag');
-            if(format === 'a4') {
-                tag.innerText = "الأبعاد: 794 × 1123 (A4)";
-            } else if(format === 'video') {
-                tag.innerText = "الأبعاد: 1080 × 1920 (9:16)";
-            } else {
-                tag.innerText = "الأبعاد: 1280 × 720 (16:9)";
-            }
-        }
+    } catch(err) {
+        console.error(err);
+        showToast('❌ حدث خطأ: ' + err.message, 'error');
+    } finally {
+        document.body.removeChild(container);
+        document.getElementById('progress-overlay').style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = '📥 PDF';
+    }
+}
 
-        function updatePreview() {
-            const code = document.getElementById('html-input').value;
-            const iframe = document.getElementById('preview-frame');
-            iframe.srcdoc = code;
-        }
+// ===== VIDEO EXPORT =====
+async function exportToVideo() {
+    const btn = document.getElementById('video-btn');
+    const code = document.getElementById('html-input').value;
+    if (!code.trim()) { showToast('⚠️ الرجاء لصق الكود أولاً', 'error'); return; }
 
-        // ---------- معالجة الصور (محفوظة كما هي) ----------
-        async function urlToDataURL(url) {
-            if (url && (url.startsWith('data:') || url.startsWith('blob:'))) return url;
-            
-            let absoluteUrl = url;
-            try {
-                if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('//')) {
-                    absoluteUrl = new URL(url, window.location.href).href;
-                } else if (url.startsWith('//')) {
-                    absoluteUrl = 'https:' + url;
-                }
-            } catch(e) {
-                absoluteUrl = url;
-            }
-            
-            const proxies = [null, 'https://corsproxy.io/?', 'https://api.allorigins.win/raw?url='];
-            
-            for (const proxy of proxies) {
-                try {
-                    let fetchUrl = absoluteUrl;
-                    if (proxy) fetchUrl = proxy + encodeURIComponent(absoluteUrl);
-                    const response = await fetch(fetchUrl, { mode: 'cors', credentials: 'omit' });
-                    if (!response.ok) continue;
-                    const blob = await response.blob();
-                    return await new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onloadend = () => resolve(reader.result);
-                        reader.onerror = () => resolve(null);
-                        reader.readAsDataURL(blob);
-                    });
-                } catch (err) {
-                    console.warn(`فشل الجلب`);
-                }
-            }
-            
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.crossOrigin = "Anonymous";
-                img.onload = () => {
-                    try {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0);
-                        resolve(canvas.toDataURL('image/jpeg', 0.9));
-                    } catch(e) { resolve(null); }
-                };
-                img.onerror = () => resolve(null);
-                img.src = absoluteUrl;
-                setTimeout(() => resolve(null), 5000);
+    const fmtKey = document.getElementById('format-select').value;
+    const fmt = FORMATS[fmtKey];
+    const fileName = document.getElementById('file-name').value || 'video';
+    const durationPerPage = parseFloat(document.getElementById('page-duration').value) || 3;
+    const FPS = 30;
+    const framesPerPage = Math.ceil(FPS * durationPerPage);
+
+    btn.disabled = true;
+    btn.textContent = '⏳ جاري...';
+    document.getElementById('progress-overlay').style.display = 'flex';
+    setProgress(0, 'تجهيز الكود...', '🎬');
+
+    const container = buildHiddenContainer(code, fmt);
+
+    // Canvas for video frames
+    const canvas = document.createElement('canvas');
+    canvas.width = fmt.w;
+    canvas.height = fmt.h;
+    const ctx = canvas.getContext('2d');
+
+    try {
+        setProgress(3, 'تحويل الصور...', '🖼️');
+        await convertImages(container);
+        await document.fonts.ready;
+        await new Promise(r => setTimeout(r, 600));
+
+        let pages = Array.from(container.querySelectorAll('.page, .slide'));
+        if (pages.length === 0) pages = [container];
+
+        setProgress(5, `تصوير ${pages.length} شريحة...`, '📸');
+
+        // ---- PRE-RENDER all pages to canvases ----
+        const renderedCanvases = [];
+        for (let i = 0; i < pages.length; i++) {
+            const pct = 5 + ((i / pages.length) * 55);
+            setProgress(pct, `تصوير الشريحة ${i+1} من ${pages.length}`, '📸');
+
+            // Ensure page has correct size before capture
+            const pg = pages[i];
+            pg.style.width = fmt.w + 'px';
+            pg.style.height = fmt.h + 'px';
+            pg.style.overflow = 'hidden';
+            pg.style.position = 'relative';
+
+            const imgCanvas = await html2canvas(pg, {
+                scale: 1,           // scale=1 for video (faster, less memory)
+                useCORS: true,
+                allowTaint: true,
+                width: fmt.w,
+                height: fmt.h,
+                windowWidth: fmt.w,
+                windowHeight: fmt.h,
+                backgroundColor: '#ffffff',
+                logging: false,
+                imageTimeout: 8000,
             });
+            renderedCanvases.push(imgCanvas);
         }
-        
-        async function convertAllImagesToDataURLs(container) {
-            const images = Array.from(container.querySelectorAll('img'));
-            const promises = images.map(async (img) => {
-                const src = img.getAttribute('src');
-                if (!src || src.startsWith('data:')) return;
-                const dataUrl = await urlToDataURL(src);
-                if (dataUrl) img.setAttribute('src', dataUrl);
-            });
-            await Promise.all(promises);
-        }
-        
-        // -------------------------------------------------
-        async function exportToPDF() {
-            const btn = document.getElementById('capture-btn');
-            const code = document.getElementById('html-input').value;
-            const fileName = document.getElementById('file-name').value || 'document';
-            const qualityScale = parseInt(document.getElementById('quality-select').value);
-            const formatType = document.getElementById('format-select').value;
 
-            if (!code.trim()) { alert("الرجاء لصق الكود أولاً!"); return; }
+        setProgress(60, 'تجهيز التسجيل...', '🎬');
 
-            let docWidth, docHeight, pdfOrientation;
-            if (formatType === 'a4') {
-                docWidth = 794; docHeight = 1123; pdfOrientation = 'portrait';
-            } else if (formatType === 'video') {
-                docWidth = 1080; docHeight = 1920; pdfOrientation = 'portrait';
-            } else { 
-                docWidth = 1280; docHeight = 720; pdfOrientation = 'landscape';
-            }
+        // ---- Setup MediaRecorder ----
+        const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+            ? 'video/webm;codecs=vp9'
+            : MediaRecorder.isTypeSupported('video/webm')
+            ? 'video/webm'
+            : 'video/webm';
 
-            btn.disabled = true;
-            btn.innerText = `⏳ جاري تجهيز الصفحات...`;
+        const stream = canvas.captureStream(FPS);
+        const recorder = new MediaRecorder(stream, {
+            mimeType,
+            videoBitsPerSecond: 8_000_000
+        });
+        const chunks = [];
+        recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
 
-            const hiddenContainer = document.createElement('div');
-            hiddenContainer.dir = 'rtl'; 
-            hiddenContainer.style.position = 'absolute';
-            hiddenContainer.style.top = '0';
-            hiddenContainer.style.left = '0';
-            hiddenContainer.style.zIndex = '-9999';
-            hiddenContainer.style.opacity = '0.01'; 
-            hiddenContainer.style.pointerEvents = 'none';
-            hiddenContainer.style.width = docWidth + 'px'; 
-            hiddenContainer.innerHTML = code;
-            
-            const styleFix = document.createElement('style');
-            styleFix.innerHTML = `ul { list-style-type: none !important; } * { box-sizing: border-box !important; letter-spacing: normal !important; }`;
-            hiddenContainer.appendChild(styleFix);
-            
-            document.body.appendChild(hiddenContainer);
+        const done = new Promise(res => { recorder.onstop = res; });
+        recorder.start();
 
-            try {
-                await convertAllImagesToDataURLs(hiddenContainer);
-                await document.fonts.ready;
-                
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({ orientation: pdfOrientation, unit: 'px', format: [docWidth, docHeight] });
-                
-                let pages = hiddenContainer.querySelectorAll('.page');
-                if (pages.length === 0) pages = [hiddenContainer];
-                
-                for (let i = 0; i < pages.length; i++) {
-                    btn.innerText = `📸 جاري تصوير الصفحة ${i+1} من ${pages.length}...`;
-                    const canvas = await html2canvas(pages[i], {
-                        scale: qualityScale,
-                        useCORS: true,
-                        width: docWidth,
-                        height: docHeight,
-                        backgroundColor: '#ffffff'
-                    });
-                    const imgData = canvas.toDataURL('image/jpeg', 1.0);
-                    if (i > 0) pdf.addPage([docWidth, docHeight], pdfOrientation);
-                    pdf.addImage(imgData, 'JPEG', 0, 0, docWidth, docHeight);
-                }
-                
-                pdf.save(`${fileName}.pdf`);
-            } catch (error) {
-                console.error(error);
-                alert("حدث خطأ أثناء معالجة الملف.");
-            } finally {
-                document.body.removeChild(hiddenContainer);
-                btn.disabled = false;
-                btn.innerText = "استخراج كملف PDF 📥";
+        const totalFrames = pages.length * framesPerPage;
+        let rendered = 0;
+
+        // ---- Draw frames ----
+        for (let p = 0; p < renderedCanvases.length; p++) {
+            const src = renderedCanvases[p];
+            for (let f = 0; f < framesPerPage; f++) {
+                ctx.clearRect(0, 0, fmt.w, fmt.h);
+                ctx.drawImage(src, 0, 0, fmt.w, fmt.h);
+                rendered++;
+                const pct = 60 + ((rendered / totalFrames) * 35);
+                setProgress(pct, `تجميع الإطارات: شريحة ${p+1}/${renderedCanvases.length}`, '🎞️');
+                // Yield to browser to actually capture the frame
+                await new Promise(r => setTimeout(r, Math.ceil(1000 / FPS)));
             }
         }
 
-        // ---------- تسجيل الفيديو (يدعم المقاسين) ----------
-        async function exportToVideo() {
-            const videoBtn = document.getElementById('video-btn');
-            const fileName = document.getElementById('file-name').value || 'video';
-            const formatType = document.getElementById('format-select').value;
-            const durationPerPage = parseFloat(document.getElementById('page-duration').value) || 3;
-            const code = document.getElementById('html-input').value;
-            
-            if (!code.trim()) { alert("الرجاء لصق الكود أولاً!"); return; }
-            
-            // تحديد الأبعاد حسب المقاس المختار
-            let pageWidth, pageHeight;
-            if (formatType === 'a4') {
-                pageWidth = 794; pageHeight = 1123;
-            } else if (formatType === 'video') {
-                pageWidth = 1080; pageHeight = 1920;
-            } else {
-                pageWidth = 1280; pageHeight = 720;
-            }
-            
-            const totalFrames = Math.ceil(30 * durationPerPage); // 30fps * مدة الصفحة
-            const framesPerPage = totalFrames;
-            
-            // إظهار شريط التقدم
-            const overlay = document.getElementById('progress-overlay');
-            const progressFill = document.getElementById('progress-fill');
-            const progressText = document.getElementById('progress-text');
-            const progressDetail = document.getElementById('progress-detail');
-            overlay.style.display = 'flex';
-            
-            videoBtn.disabled = true;
-            
-            try {
-                // تجهيز الحاوية المخفية
-                const container = document.createElement('div');
-                container.dir = 'rtl';
-                container.style.position = 'absolute';
-                container.style.top = '-9999px';
-                container.style.left = '-9999px';
-                container.style.width = pageWidth + 'px';
-                container.innerHTML = code;
-                
-                const styleFix = document.createElement('style');
-                styleFix.innerHTML = `* { box-sizing: border-box !important; } body { margin: 0; padding: 0; } .page, .slide { width: ${pageWidth}px !important; height: ${pageHeight}px !important; }`;
-                container.appendChild(styleFix);
-                document.body.appendChild(container);
-                
-                // تحويل الصور
-                progressText.innerText = "🖼️ تجهيز الصور...";
-                await convertAllImagesToDataURLs(container);
-                
-                // الحصول على جميع الصفحات/الشرائح
-                let pages = Array.from(container.querySelectorAll('.page, .slide'));
-                if (pages.length === 0) pages = [container];
-                
-                progressText.innerText = `🎬 تجهيز ${pages.length} صفحة...`;
-                
-                // Canvas للتجميع
-                const canvas = document.createElement('canvas');
-                canvas.width = pageWidth;
-                canvas.height = pageHeight;
-                const ctx = canvas.getContext('2d');
-                
-                // إعداد تسجيل الفيديو
-                const stream = canvas.captureStream(30); // 30fps
-                const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-                const chunks = [];
-                
-                mediaRecorder.ondataavailable = (e) => {
-                    if (e.data.size > 0) chunks.push(e.data);
-                };
-                
-                const videoPromise = new Promise((resolve) => {
-                    mediaRecorder.onstop = () => {
-                        const blob = new Blob(chunks, { type: 'video/webm' });
-                        resolve(blob);
-                    };
-                });
-                
-                mediaRecorder.start();
-                
-                // تصوير كل صفحة
-                let totalFramesRendered = 0;
-                const totalFramesNeeded = pages.length * framesPerPage;
-                
-                for (let pageIdx = 0; pageIdx < pages.length; pageIdx++) {
-                    progressText.innerText = `📸 تصوير الصفحة ${pageIdx + 1} من ${pages.length}`;
-                    
-                    // تصوير الصفحة باستخدام html2canvas
-                    const imgCanvas = await html2canvas(pages[pageIdx], {
-                        scale: 2,
-                        useCORS: true,
-                        width: pageWidth,
-                        height: pageHeight,
-                        backgroundColor: '#ffffff'
-                    });
-                    
-                    // عرض كل إطار في الفيديو
-                    for (let frame = 0; frame < framesPerPage; frame++) {
-                        ctx.clearRect(0, 0, pageWidth, pageHeight);
-                        ctx.drawImage(imgCanvas, 0, 0, pageWidth, pageHeight);
-                        
-                        totalFramesRendered++;
-                        const percent = Math.floor((totalFramesRendered / totalFramesNeeded) * 100);
-                        progressFill.style.width = percent + '%';
-                        progressDetail.innerText = percent + '%';
-                        
-                        // انتظار للإطار التالي (30fps يعني ~33ms)
-                        await new Promise(r => setTimeout(r, 33));
-                    }
-                }
-                
-                // إنهاء التسجيل
-                mediaRecorder.stop();
-                const videoBlob = await videoPromise;
-                
-                // حفظ الفيديو
-                const url = URL.createObjectURL(videoBlob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${fileName}.webm`;
-                a.click();
-                URL.revokeObjectURL(url);
-                
-                alert("✅ تم حفظ الفيديو بنجاح!");
-                
-            } catch (error) {
-                console.error("خطأ في تصدير الفيديو:", error);
-                alert("حدث خطأ: " + error.message);
-            } finally {
-                // تنظيف
-                const container = document.querySelector('div[style*="-9999px"]');
-                if (container) container.remove();
-                overlay.style.display = 'none';
-                videoBtn.disabled = false;
-            }
-        }
-    </script>
+        recorder.stop();
+        await done;
+
+        setProgress(98, 'حفظ الملف...', '💾');
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `${fileName}.webm`; a.click();
+        URL.revokeObjectURL(url);
+
+        setProgress(100, 'تم!', '✅');
+        await new Promise(r => setTimeout(r, 400));
+        showToast(`✅ تم حفظ الفيديو (${pages.length} شريحة)!`, 'success');
+
+    } catch(err) {
+        console.error(err);
+        showToast('❌ خطأ في التصدير: ' + err.message, 'error');
+    } finally {
+        if (container.parentNode) document.body.removeChild(container);
+        document.getElementById('progress-overlay').style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = '🎬 فيديو';
+    }
+}
+
+// ===== INIT =====
+updatePreviewSize();
+window.addEventListener('resize', () => updatePreview());
+</script>
 </body>
 </html>
