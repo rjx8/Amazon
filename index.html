@@ -30,6 +30,8 @@
             --purple: #a855f7;
             --purple-glow: rgba(168,85,247,0.12);
             --yellow: #eab308;
+            --cyan: #06b6d4;
+            --cyan-glow: rgba(6,182,212,0.12);
             --text: #e2e6f3;
             --text-muted: #7a88b0;
             --text-dim: #3d4870;
@@ -54,28 +56,29 @@
         .header {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
-            padding: 12px 20px;
+            padding: 10px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: sticky;
             top: 0;
             z-index: 100;
+            flex-shrink: 0;
         }
         .header-logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 16px;
+            gap: 8px;
+            font-size: 15px;
             font-weight: 800;
             color: var(--text);
         }
         .logo-icon {
-            width: 34px; height: 34px;
+            width: 32px; height: 32px;
             background: linear-gradient(135deg, var(--primary), #7c3aed);
             border-radius: 9px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 17px;
+            font-size: 16px;
         }
         .header-badges { display: flex; gap: 6px; align-items: center; }
         .header-badge {
@@ -97,14 +100,14 @@
         .app-body {
             display: flex;
             flex: 1;
-            height: calc(100vh - 58px);
+            height: calc(100vh - 52px);
             overflow: hidden;
         }
 
         /* ===== SIDEBAR ===== */
         .sidebar {
-            width: 420px;
-            min-width: 380px;
+            width: 400px;
+            min-width: 360px;
             background: var(--surface);
             border-left: 1px solid var(--border);
             display: flex;
@@ -112,16 +115,17 @@
             overflow: hidden;
         }
 
-        /* Tabs */
-        .sidebar-tabs {
+        /* Main tabs */
+        .main-tabs {
             display: flex;
             border-bottom: 1px solid var(--border);
             flex-shrink: 0;
+            background: var(--bg);
         }
-        .sidebar-tab {
+        .main-tab {
             flex: 1;
-            padding: 10px 6px;
-            font-size: 11.5px;
+            padding: 10px 4px;
+            font-size: 11px;
             font-weight: 700;
             font-family: 'Cairo', sans-serif;
             background: transparent;
@@ -130,32 +134,67 @@
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
         }
-        .sidebar-tab.active {
+        .main-tab.active {
             color: var(--primary);
-            background: var(--primary-dim);
+            background: var(--surface);
         }
-        .sidebar-tab.active::after {
+        .main-tab.active::after {
             content: '';
             position: absolute;
             bottom: 0; left: 0; right: 0;
             height: 2px;
             background: var(--primary);
         }
-        .sidebar-tab:hover:not(.active) { color: var(--text); background: var(--surface2); }
+        .main-tab.orange-tab.active { color: var(--orange); }
+        .main-tab.orange-tab.active::after { background: var(--orange); }
+        .main-tab.green-tab.active { color: var(--green); }
+        .main-tab.green-tab.active::after { background: var(--green); }
+        .main-tab:hover:not(.active) { color: var(--text); background: var(--surface2); }
 
-        .tab-panel { display: none; }
-        .tab-panel.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+        .main-panel { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+        .main-panel.active { display: flex; }
 
-        .sidebar-scroll {
+        .panel-scroll {
             flex: 1;
             overflow-y: auto;
-            padding: 14px;
+            padding: 12px;
             scrollbar-width: thin;
             scrollbar-color: var(--border) transparent;
         }
 
-        /* ===== SECTION TITLES ===== */
+        /* Sub-tabs inside panels */
+        .sub-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 12px;
+            background: var(--surface2);
+            padding: 3px;
+            border-radius: var(--radius-sm);
+        }
+        .sub-tab {
+            flex: 1;
+            padding: 6px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 6px;
+        }
+        .sub-tab.active {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        /* ===== SECTION LABELS ===== */
         .section-label {
             font-size: 10px;
             font-weight: 700;
@@ -163,11 +202,11 @@
             letter-spacing: 1px;
             color: var(--text-dim);
             margin-bottom: 8px;
-            margin-top: 16px;
+            margin-top: 14px;
         }
         .section-label:first-child { margin-top: 0; }
 
-        /* ===== PROMPTS ===== */
+        /* ===== PROMPT CARDS ===== */
         .prompts-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -180,7 +219,6 @@
             padding: 10px 9px;
             cursor: pointer;
             transition: all 0.2s;
-            position: relative;
         }
         .prompt-card:hover {
             border-color: var(--primary);
@@ -190,6 +228,10 @@
         .prompt-card.active-selection {
             border-color: var(--primary);
             background: var(--primary-dim);
+        }
+        .prompt-card.video-card:hover, .prompt-card.video-card.active-selection {
+            border-color: var(--orange);
+            background: var(--orange-glow);
         }
         .prompt-card-icon { font-size: 18px; margin-bottom: 4px; }
         .prompt-card-title {
@@ -226,7 +268,7 @@
             gap: 7px;
             margin-bottom: 8px;
         }
-        .detail-field { display: flex; flex-direction: column; gap: 3px; }
+        .detail-field { display: flex; flex-direction: column; gap: 3px; position: relative; }
         .detail-field.full { grid-column: 1 / -1; }
         .detail-field label {
             font-size: 10px;
@@ -234,12 +276,71 @@
             color: var(--text-dim);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
+        .field-remove-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 11px;
+            padding: 0 2px;
+            line-height: 1;
+            transition: color 0.15s;
+            font-family: 'Cairo', sans-serif;
+        }
+        .field-remove-btn:hover { color: var(--red); }
+        .field-remove-btn.removed { color: var(--red); }
+        .field-removed input {
+            opacity: 0.3;
+            pointer-events: none;
+            text-decoration: line-through;
+        }
+        .field-removed label { color: var(--red); opacity: 0.6; }
         .detail-field input {
             padding: 7px 9px;
             font-size: 12px;
         }
+
+        /* ===== TOGGLE SELECTORS (visual cards for options) ===== */
+        .option-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+        .option-cards.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+        .option-card {
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xs);
+            padding: 7px 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+        }
+        .option-card:hover { border-color: var(--border-light); }
+        .option-card.active {
+            border-color: var(--orange);
+            background: var(--orange-glow);
+        }
+        .option-card-icon { font-size: 16px; line-height: 1; }
+        .option-card-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+        .option-card.active .option-card-label { color: var(--orange); }
+
+        /* For file prompts use primary color */
+        .option-card.file-option.active {
+            border-color: var(--primary);
+            background: var(--primary-dim);
+        }
+        .option-card.file-option.active .option-card-label { color: var(--primary); }
 
         /* ===== PROMPT ACTIONS ===== */
         .prompt-actions {
@@ -252,7 +353,7 @@
             padding: 9px 8px;
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
@@ -260,7 +361,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 4px;
         }
         .btn-copy-ar {
             background: var(--primary-dim);
@@ -280,11 +381,6 @@
             border-color: var(--border);
         }
         .btn-preview-prompt:hover { color: var(--text); border-color: var(--border-light); }
-        .btn-success {
-            background: var(--green-glow) !important;
-            color: var(--green) !important;
-            border-color: rgba(34,197,94,0.3) !important;
-        }
 
         /* ===== FORM ELEMENTS ===== */
         .form-row { display: flex; gap: 7px; }
@@ -308,7 +404,6 @@
             transition: all 0.2s;
             width: 100%;
         }
-        input[type=color] { padding: 3px 6px; height: 34px; cursor: pointer; }
         input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
@@ -316,32 +411,7 @@
         }
         select option { background: var(--surface2); }
 
-        /* ===== TOGGLE BUTTONS ===== */
-        .toggle-group {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-        .toggle-btn {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'Cairo', sans-serif;
-        }
-        .toggle-btn.active {
-            background: var(--primary-dim);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        .toggle-btn:hover:not(.active) { border-color: var(--border-light); color: var(--text); }
-
-        /* ===== DURATION PREVIEW ===== */
+        /* ===== DURATION DISPLAY ===== */
         .duration-display {
             background: var(--surface3);
             border: 1px solid var(--border);
@@ -355,7 +425,6 @@
         .duration-display-label { font-size: 11px; color: var(--text-muted); }
         .duration-display-value { font-size: 16px; font-weight: 900; color: var(--primary); }
 
-        /* Per-slide durations */
         .slides-duration-list {
             display: flex;
             flex-direction: column;
@@ -373,31 +442,12 @@
             border-radius: var(--radius-xs);
             padding: 6px 10px;
         }
-        .slide-duration-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            flex: 1;
-            font-weight: 600;
-        }
-        .slide-duration-input {
-            width: 70px !important;
-            padding: 4px 8px !important;
-            font-size: 12px !important;
-            text-align: center;
-        }
+        .slide-duration-label { font-size: 11px; color: var(--text-muted); flex: 1; font-weight: 600; }
+        .slide-duration-input { width: 70px !important; padding: 4px 8px !important; font-size: 12px !important; text-align: center; }
 
         /* ===== TEXTAREA ===== */
-        .textarea-wrap {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .textarea-toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .textarea-wrap { position: relative; display: flex; flex-direction: column; gap: 6px; }
+        .textarea-toolbar { display: flex; justify-content: space-between; align-items: center; }
         textarea {
             background: var(--surface2);
             border: 1px solid var(--border);
@@ -414,11 +464,7 @@
             transition: border-color 0.2s;
             width: 100%;
         }
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-glow);
-        }
+        textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
         .char-count { font-size: 10px; color: var(--text-dim); }
         .clear-btn {
             background: transparent;
@@ -436,7 +482,7 @@
 
         /* ===== EXPORT BUTTONS ===== */
         .sidebar-footer {
-            padding: 10px 14px;
+            padding: 10px 12px;
             border-top: 1px solid var(--border);
             background: var(--surface);
             flex-shrink: 0;
@@ -447,7 +493,7 @@
             padding: 11px 10px;
             border: none;
             border-radius: var(--radius-sm);
-            font-size: 13.5px;
+            font-size: 13px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
@@ -470,43 +516,63 @@
             flex-direction: column;
             overflow: hidden;
             background: #070910;
+            min-width: 0;
         }
         .preview-bar {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
-            padding: 9px 18px;
+            padding: 8px 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-shrink: 0;
         }
-        .preview-bar-left { display: flex; align-items: center; gap: 10px; }
+        .preview-bar-left { display: flex; align-items: center; gap: 8px; }
         .preview-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 5px var(--green); }
-        .preview-title { font-size: 12.5px; font-weight: 700; color: var(--text-muted); }
-        .preview-bar-right { display: flex; align-items: center; gap: 8px; }
+        .preview-title { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+        .preview-bar-right { display: flex; align-items: center; gap: 6px; }
         .size-badge {
             background: var(--surface2);
             border: 1px solid var(--border);
             color: var(--text-muted);
             padding: 3px 10px;
             border-radius: 20px;
-            font-size: 10.5px;
+            font-size: 10px;
             font-weight: 700;
         }
+
+        /* Slide nav buttons */
+        .slide-nav-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: var(--radius-xs);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Cairo', sans-serif;
+        }
+        .slide-nav-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .slide-counter { font-size: 11px; color: var(--text-muted); font-weight: 700; min-width: 50px; text-align: center; }
+
         .preview-frame-wrap {
             flex: 1;
-            overflow: auto;
+            overflow: hidden;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 16px;
             background: #070910;
+            position: relative;
         }
         .iframe-shadow {
             box-shadow: 0 8px 40px rgba(0,0,0,0.7);
             border-radius: 3px;
             overflow: hidden;
             flex-shrink: 0;
+            position: relative;
         }
         #preview-frame { border: none; display: block; background: white; }
         .preview-empty {
@@ -525,10 +591,10 @@
         .video-preview-bar {
             background: var(--surface);
             border-top: 1px solid var(--border);
-            padding: 10px 18px;
+            padding: 10px 16px;
             display: none;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             flex-shrink: 0;
         }
         .video-preview-bar.visible { display: flex; }
@@ -536,18 +602,17 @@
             background: var(--surface2);
             border: 1px solid var(--border);
             color: var(--text);
-            width: 36px; height: 36px;
+            width: 34px; height: 34px;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             transition: all 0.2s;
         }
         .vp-btn:hover { border-color: var(--primary); color: var(--primary); }
-        .vp-timeline { flex: 1; position: relative; }
+        .vp-timeline { flex: 1; }
         .vp-track {
-            width: 100%;
-            height: 4px;
+            width: 100%; height: 4px;
             background: var(--surface3);
             border-radius: 2px;
             cursor: pointer;
@@ -561,7 +626,7 @@
             transition: width 0.1s linear;
             pointer-events: none;
         }
-        .vp-time { font-size: 11px; color: var(--text-muted); font-weight: 600; min-width: 80px; text-align: center; }
+        .vp-time { font-size: 11px; color: var(--text-muted); font-weight: 600; min-width: 75px; text-align: center; }
         .vp-download {
             background: var(--green-glow);
             border: 1px solid rgba(34,197,94,0.3);
@@ -598,20 +663,8 @@
         }
         .progress-icon { font-size: 30px; margin-bottom: 10px; }
         .progress-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
-        .progress-bar-track {
-            width: 100%; height: 5px;
-            background: var(--surface2);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 8px;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--orange));
-            width: 0%;
-            transition: width 0.3s;
-            border-radius: 3px;
-        }
+        .progress-bar-track { width: 100%; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--orange)); width: 0%; transition: width 0.3s; border-radius: 3px; }
         .progress-pct { font-size: 11px; color: var(--text-muted); }
 
         /* ===== MODAL ===== */
@@ -638,61 +691,14 @@
             flex-direction: column;
             box-shadow: 0 20px 60px rgba(0,0,0,0.6);
         }
-        .modal-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+        .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
         .modal-title { font-size: 14px; font-weight: 800; }
-        .modal-close {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            width: 30px; height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s;
-        }
+        .modal-close { background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .modal-close:hover { color: var(--red); border-color: var(--red); }
-        .modal-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px 20px;
-        }
-        .modal-preview-text {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 14px;
-            font-size: 12.5px;
-            line-height: 1.8;
-            color: var(--text);
-            white-space: pre-wrap;
-            direction: rtl;
-            text-align: right;
-            font-family: 'Cairo', sans-serif;
-        }
-        .modal-footer {
-            padding: 12px 20px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 8px;
-        }
-        .modal-btn {
-            flex: 1;
-            padding: 10px;
-            border-radius: var(--radius-sm);
-            font-size: 12.5px;
-            font-weight: 700;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-            font-family: 'Cairo', sans-serif;
-        }
+        .modal-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
+        .modal-preview-text { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; font-size: 12.5px; line-height: 1.8; color: var(--text); white-space: pre-wrap; direction: rtl; text-align: right; font-family: 'Cairo', sans-serif; }
+        .modal-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+        .modal-btn { flex: 1; padding: 10px; border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; font-family: 'Cairo', sans-serif; }
         .modal-btn-primary { background: var(--primary); color: white; }
         .modal-btn-primary:hover { background: var(--primary-hover); }
         .modal-btn-secondary { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
@@ -733,17 +739,19 @@
             line-height: 1.6;
             margin-top: 4px;
         }
-        .divider { height: 1px; background: var(--border); margin: 12px 0; }
+        .divider { height: 1px; background: var(--border); margin: 10px 0; }
 
         /* ===== SCROLLBAR ===== */
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+        /* ===== MOBILE ===== */
         @media (max-width: 768px) {
-            .app-body { flex-direction: column; height: auto; overflow: auto; }
-            .sidebar { width: 100%; min-width: auto; border-left: none; border-top: 1px solid var(--border); }
-            .preview-area { height: 50vh; min-height: 280px; }
+            .app-body { flex-direction: column-reverse; height: auto; overflow: auto; }
+            .sidebar { width: 100%; min-width: auto; border-left: none; border-top: 1px solid var(--border); max-height: 60vh; }
+            .preview-area { height: 40vh; min-height: 240px; }
+            .preview-frame-wrap { padding: 8px; }
         }
     </style>
 </head>
@@ -765,94 +773,394 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <!-- TABS -->
-        <div class="sidebar-tabs">
-            <button class="sidebar-tab active" onclick="switchTab('tab-prompts')">📋 البرومبتات</button>
-            <button class="sidebar-tab" onclick="switchTab('tab-export')">⚙️ الإعدادات</button>
-            <button class="sidebar-tab" onclick="switchTab('tab-code')">💻 الكود</button>
+
+        <!-- MAIN TABS -->
+        <div class="main-tabs">
+            <button class="main-tab active" onclick="switchMain('panel-video-prompts', this)">🎬 مقاطع</button>
+            <button class="main-tab" onclick="switchMain('panel-file-prompts', this)">📄 ملفات</button>
+            <button class="main-tab orange-tab" onclick="switchMain('panel-video-settings', this)">⚙️ فيديو</button>
+            <button class="main-tab green-tab" onclick="switchMain('panel-pdf-settings', this)">📋 PDF</button>
+            <button class="main-tab" onclick="switchMain('panel-code', this)">💻 كود</button>
         </div>
 
-        <!-- TAB: PROMPTS -->
-        <div id="tab-prompts" class="tab-panel active">
-            <div class="sidebar-scroll">
-                <div class="section-label">🎨 اختر نوع التصميم</div>
-                <div class="prompts-grid">
-                    <div class="prompt-card" onclick="selectPrompt('a4_portrait', this)">
+        <!-- ============================
+             PANEL: VIDEO PROMPTS
+             ============================ -->
+        <div id="panel-video-prompts" class="main-panel active">
+            <div class="panel-scroll">
+
+                <div class="section-label">📱 نوع المقطع</div>
+                <div class="prompts-grid" id="video-type-cards">
+                    <div class="prompt-card video-card" onclick="selectVideoPrompt('reel_portrait', this)">
+                        <div class="prompt-card-icon">📱</div>
+                        <div class="prompt-card-title">ريلز / تيك توك</div>
+                        <div class="prompt-card-sub">9:16 — طولي</div>
+                    </div>
+                    <div class="prompt-card video-card" onclick="selectVideoPrompt('presentation', this)">
+                        <div class="prompt-card-icon">🖥️</div>
+                        <div class="prompt-card-title">عرض تقديمي</div>
+                        <div class="prompt-card-sub">16:9 — عرضي</div>
+                    </div>
+                    <div class="prompt-card video-card" onclick="selectVideoPrompt('infographic_vid', this)">
+                        <div class="prompt-card-icon">📊</div>
+                        <div class="prompt-card-title">إنفوجرافيك مرئي</div>
+                        <div class="prompt-card-sub">9:16 — بيانات</div>
+                    </div>
+                    <div class="prompt-card video-card" onclick="selectVideoPrompt('story_vid', this)">
+                        <div class="prompt-card-icon">📖</div>
+                        <div class="prompt-card-title">قصة / حكاية</div>
+                        <div class="prompt-card-sub">9:16 — سردي</div>
+                    </div>
+                    <div class="prompt-card video-card" onclick="selectVideoPrompt('promo_vid', this)">
+                        <div class="prompt-card-icon">📣</div>
+                        <div class="prompt-card-title">إعلان / ترويج</div>
+                        <div class="prompt-card-sub">9:16 أو 16:9</div>
+                    </div>
+                    <div class="prompt-card video-card" onclick="selectVideoPrompt('steps_vid', this)">
+                        <div class="prompt-card-icon">📋</div>
+                        <div class="prompt-card-title">خطوات / تعليمي</div>
+                        <div class="prompt-card-sub">9:16 — step by step</div>
+                    </div>
+                </div>
+
+                <!-- VIDEO CUSTOMIZATION -->
+                <div id="video-details-wrap" style="display:none;">
+
+                    <div class="details-form" id="video-details-form">
+                        <div class="details-form-title">
+                            <span>✏️</span> <span id="video-form-title">تفاصيل المقطع</span>
+                        </div>
+                        <div class="details-grid" id="video-detail-fields"></div>
+                    </div>
+
+                    <!-- نوع الحركة -->
+                    <div class="section-label" style="margin-top:12px;">🎭 نوع الأنيميشن</div>
+                    <div class="option-cards cols3" id="anim-type-cards">
+                        <div class="option-card" onclick="selectOption('anim', 'fadeUp', this)">
+                            <div class="option-card-icon">⬆️</div>
+                            <div class="option-card-label">Fade Up</div>
+                        </div>
+                        <div class="option-card active" onclick="selectOption('anim', 'slideIn', this)">
+                            <div class="option-card-icon">➡️</div>
+                            <div class="option-card-label">Slide In</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption('anim', 'zoomIn', this)">
+                            <div class="option-card-icon">🔍</div>
+                            <div class="option-card-label">Zoom In</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption('anim', 'bounce', this)">
+                            <div class="option-card-icon">🏀</div>
+                            <div class="option-card-label">Bounce</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption('anim', 'typewriter', this)">
+                            <div class="option-card-icon">⌨️</div>
+                            <div class="option-card-label">Typewriter</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption('anim', 'glitch', this)">
+                            <div class="option-card-icon">⚡</div>
+                            <div class="option-card-label">Glitch</div>
+                        </div>
+                    </div>
+
+                    <!-- سرعة الحركة -->
+                    <div class="section-label">⏱️ سرعة الحركة</div>
+                    <div class="option-cards cols3" id="anim-speed-cards">
+                        <div class="option-card" onclick="selectOption('speed', 'slow', this)">
+                            <div class="option-card-icon">🐌</div>
+                            <div class="option-card-label">بطيء</div>
+                        </div>
+                        <div class="option-card active" onclick="selectOption('speed', 'medium', this)">
+                            <div class="option-card-icon">🚶</div>
+                            <div class="option-card-label">متوسط</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption('speed', 'fast', this)">
+                            <div class="option-card-icon">⚡</div>
+                            <div class="option-card-label">سريع</div>
+                        </div>
+                    </div>
+
+                    <!-- ترتيب الظهور -->
+                    <div class="section-label">🔢 ترتيب ظهور العناصر</div>
+                    <div class="option-cards" id="appear-order-cards">
+                        <div class="option-card active" onclick="selectOption('order', 'sequential', this)">
+                            <div class="option-card-icon">1️⃣</div>
+                            <div class="option-card-label">متسلسل</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption('order', 'simultaneous', this)">
+                            <div class="option-card-icon">🔄</div>
+                            <div class="option-card-label">دفعة واحدة</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption('order', 'random', this)">
+                            <div class="option-card-icon">🎲</div>
+                            <div class="option-card-label">عشوائي</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption('order', 'stagger', this)">
+                            <div class="option-card-icon">📊</div>
+                            <div class="option-card-label">Stagger</div>
+                        </div>
+                    </div>
+
+                    <!-- خلفية -->
+                    <div class="section-label">🎨 نمط الخلفية</div>
+                    <div class="option-cards" id="bg-style-cards">
+                        <div class="option-card active" onclick="selectOption('bg', 'gradient', this)">
+                            <div class="option-card-icon">🌈</div>
+                            <div class="option-card-label">تدرج</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption('bg', 'particles', this)">
+                            <div class="option-card-icon">✨</div>
+                            <div class="option-card-label">Particles</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption('bg', 'geometric', this)">
+                            <div class="option-card-icon">🔷</div>
+                            <div class="option-card-label">هندسي</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption('bg', 'solid_dark', this)">
+                            <div class="option-card-icon">⬛</div>
+                            <div class="option-card-label">داكن</div>
+                        </div>
+                    </div>
+
+                    <!-- نمط الألوان -->
+                    <div class="section-label">🖌️ نمط الألوان</div>
+                    <div class="option-cards" id="color-theme-cards">
+                        <div class="option-card active" onclick="selectOption('color', 'dark_neon', this)">
+                            <div class="option-card-icon">💜</div>
+                            <div class="option-card-label">داكن + Neon</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption('color', 'vibrant', this)">
+                            <div class="option-card-icon">🌈</div>
+                            <div class="option-card-label">زاهي</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption('color', 'minimal_light', this)">
+                            <div class="option-card-icon">⬜</div>
+                            <div class="option-card-label">فاتح</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption('color', 'gold_dark', this)">
+                            <div class="option-card-icon">✨</div>
+                            <div class="option-card-label">ذهبي</div>
+                        </div>
+                    </div>
+
+                    <!-- PROMPT ACTIONS -->
+                    <div class="prompt-actions" style="margin-top:10px;">
+                        <button class="prompt-action-btn btn-copy-ar" onclick="copyVideoPromptAR()">
+                            <span>🇸🇦</span> نسخ عربي
+                        </button>
+                        <button class="prompt-action-btn btn-copy-en" onclick="copyVideoPromptEN()">
+                            <span>🇺🇸</span> English
+                        </button>
+                        <button class="prompt-action-btn btn-preview-prompt" onclick="openVideoModal()">
+                            <span>👁️</span> معاينة
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ============================
+             PANEL: FILE PROMPTS
+             ============================ -->
+        <div id="panel-file-prompts" class="main-panel">
+            <div class="panel-scroll">
+
+                <div class="section-label">📄 نوع الملف</div>
+                <div class="prompts-grid" id="file-type-cards">
+                    <div class="prompt-card" onclick="selectFilePrompt('a4_portrait', this)">
                         <div class="prompt-card-icon">📄</div>
                         <div class="prompt-card-title">بحث طولي</div>
                         <div class="prompt-card-sub">A4 — 794×1123</div>
                     </div>
-                    <div class="prompt-card" onclick="selectPrompt('a4_landscape', this)">
+                    <div class="prompt-card" onclick="selectFilePrompt('a4_landscape', this)">
                         <div class="prompt-card-icon">📋</div>
                         <div class="prompt-card-title">بحث عرضي</div>
                         <div class="prompt-card-sub">A4 — 1123×794</div>
                     </div>
-                    <div class="prompt-card" onclick="selectPrompt('video_portrait', this)">
-                        <div class="prompt-card-icon">📱</div>
-                        <div class="prompt-card-title">مقطع طولي</div>
-                        <div class="prompt-card-sub">9:16 — 1080×1920</div>
-                    </div>
-                    <div class="prompt-card" onclick="selectPrompt('video_landscape', this)">
-                        <div class="prompt-card-icon">🖥️</div>
-                        <div class="prompt-card-title">مقطع عرضي</div>
-                        <div class="prompt-card-sub">16:9 — 1280×720</div>
-                    </div>
-                    <div class="prompt-card" onclick="selectPrompt('infographic_portrait', this)">
-                        <div class="prompt-card-icon">📊</div>
-                        <div class="prompt-card-title">إنفوجرافيك طولي</div>
-                        <div class="prompt-card-sub">9:16 أو A4</div>
-                    </div>
-                    <div class="prompt-card" onclick="selectPrompt('cv', this)">
+                    <div class="prompt-card" onclick="selectFilePrompt('cv', this)">
                         <div class="prompt-card-icon">👤</div>
-                        <div class="prompt-card-title">CV / بطاقة تعريفية</div>
+                        <div class="prompt-card-title">CV / سيرة ذاتية</div>
                         <div class="prompt-card-sub">A4 — احترافي</div>
                     </div>
-                    <div class="prompt-card" onclick="selectPrompt('poster', this)">
+                    <div class="prompt-card" onclick="selectFilePrompt('poster', this)">
                         <div class="prompt-card-icon">🎨</div>
                         <div class="prompt-card-title">ملصق دعائي</div>
                         <div class="prompt-card-sub">عمودي — Poster</div>
                     </div>
-                </div>
-
-                <!-- DETAILS FORM -->
-                <div class="details-form" id="details-form" style="display:none;">
-                    <div class="details-form-title">
-                        <span>✏️</span> <span id="details-form-title-text">اكتب تفاصيلك</span>
+                    <div class="prompt-card" onclick="selectFilePrompt('infographic_file', this)">
+                        <div class="prompt-card-icon">📊</div>
+                        <div class="prompt-card-title">إنفوجرافيك</div>
+                        <div class="prompt-card-sub">A4 أو 9:16</div>
                     </div>
-                    <div class="details-grid" id="details-fields"></div>
                 </div>
 
-                <!-- PROMPT ACTIONS -->
-                <div class="prompt-actions" id="prompt-actions" style="display:none;">
-                    <button class="prompt-action-btn btn-copy-ar" onclick="copyPromptAR()">
-                        <span>🇸🇦</span> نسخ عربي
-                    </button>
-                    <button class="prompt-action-btn btn-copy-en" onclick="copyPromptEN()">
-                        <span>🇺🇸</span> نسخ English
-                    </button>
-                    <button class="prompt-action-btn btn-preview-prompt" onclick="openPromptModal()">
-                        <span>👁️</span> معاينة
+                <!-- FILE DETAILS -->
+                <div id="file-details-wrap" style="display:none;">
+                    <div class="details-form" id="file-details-form">
+                        <div class="details-form-title">
+                            <span>✏️</span> <span id="file-form-title">تفاصيل الملف</span>
+                        </div>
+                        <div class="details-grid" id="file-detail-fields"></div>
+                    </div>
+
+                    <!-- File design style -->
+                    <div class="section-label" style="margin-top:12px;">🎨 نمط التصميم</div>
+                    <div class="option-cards" id="file-style-cards">
+                        <div class="option-card file-option active" onclick="selectOption('file_style', 'professional', this)">
+                            <div class="option-card-icon">👔</div>
+                            <div class="option-card-label">احترافي</div>
+                        </div>
+                        <div class="option-card file-option" onclick="selectOption('file_style', 'modern', this)">
+                            <div class="option-card-icon">✨</div>
+                            <div class="option-card-label">عصري</div>
+                        </div>
+                        <div class="option-card file-option" onclick="selectOption('file_style', 'minimal', this)">
+                            <div class="option-card-icon">⬜</div>
+                            <div class="option-card-label">بسيط</div>
+                        </div>
+                        <div class="option-card file-option" onclick="selectOption('file_style', 'bold', this)">
+                            <div class="option-card-icon">💥</div>
+                            <div class="option-card-label">جريء</div>
+                        </div>
+                    </div>
+
+                    <!-- Color scheme -->
+                    <div class="section-label">🖌️ لون رئيسي</div>
+                    <div class="option-cards cols3" id="file-color-cards">
+                        <div class="option-card file-option active" onclick="selectOption('file_color', 'blue', this)">
+                            <div class="option-card-icon">🔵</div>
+                            <div class="option-card-label">أزرق</div>
+                        </div>
+                        <div class="option-card file-option" onclick="selectOption('file_color', 'green', this)">
+                            <div class="option-card-icon">🟢</div>
+                            <div class="option-card-label">أخضر</div>
+                        </div>
+                        <div class="option-card file-option" onclick="selectOption('file_color', 'purple', this)">
+                            <div class="option-card-icon">🟣</div>
+                            <div class="option-card-label">بنفسجي</div>
+                        </div>
+                        <div class="option-card file-option" onclick="selectOption('file_color', 'red', this)">
+                            <div class="option-card-icon">🔴</div>
+                            <div class="option-card-label">أحمر</div>
+                        </div>
+                        <div class="option-card file-option" onclick="selectOption('file_color', 'gold', this)">
+                            <div class="option-card-icon">🟡</div>
+                            <div class="option-card-label">ذهبي</div>
+                        </div>
+                        <div class="option-card file-option" onclick="selectOption('file_color', 'dark', this)">
+                            <div class="option-card-icon">⚫</div>
+                            <div class="option-card-label">داكن</div>
+                        </div>
+                    </div>
+
+                    <!-- PROMPT ACTIONS -->
+                    <div class="prompt-actions" style="margin-top:10px;">
+                        <button class="prompt-action-btn btn-copy-ar" onclick="copyFilePromptAR()">
+                            <span>🇸🇦</span> نسخ عربي
+                        </button>
+                        <button class="prompt-action-btn btn-copy-en" onclick="copyFilePromptEN()">
+                            <span>🇺🇸</span> English
+                        </button>
+                        <button class="prompt-action-btn btn-preview-prompt" onclick="openFileModal()">
+                            <span>👁️</span> معاينة
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ============================
+             PANEL: VIDEO SETTINGS
+             ============================ -->
+        <div id="panel-video-settings" class="main-panel">
+            <div class="panel-scroll">
+                <div class="section-label">🎬 إعدادات الفيديو</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>نوع التصدير</label>
+                        <select id="format-select-video" onchange="updatePreviewSize(); updateSlideDurations();">
+                            <option value="video_portrait">طولي (9:16)</option>
+                            <option value="video_landscape" selected>عرضي (16:9)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>FPS</label>
+                        <select id="fps-select" onchange="currentFPS = parseInt(this.value)">
+                            <option value="24">24 FPS</option>
+                            <option value="30" selected>30 FPS</option>
+                            <option value="60">60 FPS</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>جودة الفيديو</label>
+                        <select id="video-quality-select">
+                            <option value="1">عادية</option>
+                            <option value="2" selected>عالية</option>
+                            <option value="3">ممتازة</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الانتقال بين الشرائح</label>
+                        <select id="transition-select" onchange="currentTransition = this.value">
+                            <option value="fade">تلاشٍ</option>
+                            <option value="slide">انزلاق</option>
+                            <option value="zoom">تكبير</option>
+                            <option value="none">لا شيء</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>مدة كل شريحة (ثانية)</label>
+                    <input type="number" id="page-duration" value="3" min="0.5" max="30" step="0.5" oninput="updateTotalDuration()">
+                </div>
+
+                <div class="duration-display">
+                    <span class="duration-display-label">⏱️ المدة الكلية</span>
+                    <span class="duration-display-value" id="total-duration-display">—</span>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="section-label">🎛️ مدة كل شريحة منفردة</div>
+                <div class="tip">💡 الصق الكود في تبويب "كود" لتظهر الشرائح هنا</div>
+                <div class="slides-duration-list" id="slides-duration-list">
+                    <div style="font-size:11px; color:var(--text-dim); padding:6px; text-align:center;">الصق الكود أولاً</div>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="export-row">
+                    <button id="video-btn" class="export-btn btn-video" onclick="exportToVideo()">
+                        🎬 تصدير فيديو
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- TAB: EXPORT SETTINGS -->
-        <div id="tab-export" class="tab-panel">
-            <div class="sidebar-scroll">
-                <div class="section-label">📁 إعدادات الملف</div>
+        <!-- ============================
+             PANEL: PDF SETTINGS
+             ============================ -->
+        <div id="panel-pdf-settings" class="main-panel">
+            <div class="panel-scroll">
+                <div class="section-label">📄 إعدادات PDF</div>
+
                 <div class="form-group">
                     <label>اسم الملف</label>
-                    <input type="text" id="file-name" value="مستند_جديد" placeholder="اكتب اسم الملف...">
+                    <input type="text" id="file-name" value="مستند_جديد" placeholder="اسم الملف...">
                 </div>
+
                 <div class="form-row">
                     <div class="form-group">
-                        <label>نوع التصدير</label>
-                        <select id="format-select" onchange="updatePreviewSize(); updateSlideDurations();">
-                            <option value="a4_portrait">بحث طولي (A4)</option>
-                            <option value="a4_landscape">بحث عرضي (A4)</option>
-                            <option value="video_portrait">مقطع طولي (9:16)</option>
-                            <option value="video_landscape" selected>مقطع عرضي (16:9)</option>
+                        <label>تخطيط الصفحة</label>
+                        <select id="format-select-pdf" onchange="updatePreviewSize()">
+                            <option value="a4_portrait" selected>A4 طولي</option>
+                            <option value="a4_landscape">A4 عرضي</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -865,74 +1173,23 @@
                     </div>
                 </div>
 
-                <div class="divider"></div>
-
-                <div class="section-label">🎬 إعدادات الفيديو</div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>FPS</label>
-                        <div class="toggle-group">
-                            <button class="toggle-btn" onclick="setFPS(24, this)">24</button>
-                            <button class="toggle-btn active" onclick="setFPS(30, this)">30</button>
-                            <button class="toggle-btn" onclick="setFPS(60, this)">60</button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>لون خلفية الانتقال</label>
-                        <div class="form-row" style="margin-bottom:0; gap:5px;">
-                            <button class="toggle-btn active" id="tc-black" onclick="setTransColor('black', this)" style="flex:1;">⬛</button>
-                            <button class="toggle-btn" id="tc-white" onclick="setTransColor('white', this)" style="flex:1;">⬜</button>
-                            <button class="toggle-btn" id="tc-match" onclick="setTransColor('match', this)" style="flex:1;">🎨</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>نوع الانتقال بين الشرائح</label>
-                    <div class="toggle-group">
-                        <button class="toggle-btn active" onclick="setTransition('fade', this)">🌅 تلاشٍ</button>
-                        <button class="toggle-btn" onclick="setTransition('slide', this)">➡️ انزلاق</button>
-                        <button class="toggle-btn" onclick="setTransition('zoom', this)">🔍 تكبير</button>
-                        <button class="toggle-btn" onclick="setTransition('none', this)">⛔ لا شيء</button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>مدة كل شريحة (ثانية) — افتراضية</label>
-                    <input type="number" id="page-duration" value="3" min="0.5" max="30" step="0.5" oninput="updateTotalDuration()">
-                </div>
-
-                <div class="duration-display">
-                    <span class="duration-display-label">⏱️ المدة الكلية المتوقعة</span>
-                    <span class="duration-display-value" id="total-duration-display">—</span>
-                </div>
-
-                <div class="divider"></div>
-
-                <div class="section-label">🎛️ مدة كل شريحة بشكل منفرد</div>
-                <div class="tip">💡 الكود يجب أن يكون موجوداً في حقل الكود لتظهر الشرائح هنا</div>
-                <div class="slides-duration-list" id="slides-duration-list">
-                    <div style="font-size:11px; color:var(--text-dim); padding:6px; text-align:center;">الصق الكود أولاً</div>
-                </div>
+                <div class="tip">💡 تأكد أن كل صفحة تستخدم <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="page"</code></div>
             </div>
 
-            <!-- FOOTER BUTTONS -->
             <div class="sidebar-footer">
                 <div class="export-row">
                     <button id="capture-btn" class="export-btn btn-pdf" onclick="exportToPDF()">
                         📥 تصدير PDF
                     </button>
-                    <button id="video-btn" class="export-btn btn-video" onclick="exportToVideo()">
-                        🎬 تصدير فيديو
-                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- TAB: CODE -->
-        <div id="tab-code" class="tab-panel">
-            <div class="sidebar-scroll">
+        <!-- ============================
+             PANEL: CODE
+             ============================ -->
+        <div id="panel-code" class="main-panel">
+            <div class="panel-scroll">
                 <div class="section-label">💻 كود HTML</div>
                 <div class="textarea-wrap">
                     <div class="textarea-toolbar">
@@ -941,21 +1198,18 @@
                     </div>
                     <textarea id="html-input" oninput="onCodeInput()" placeholder="الصق كود HTML هنا...&#10;&#10;تأكد أن الصفحات تستخدم class=&quot;page&quot; أو class=&quot;slide&quot;"></textarea>
                 </div>
-                <div class="tip">💡 كل صفحة يجب أن تستخدم <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="page"</code> أو <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="slide"</code></div>
+                <div class="tip">💡 كل صفحة/شريحة يجب أن تستخدم <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="page"</code> أو <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="slide"</code></div>
             </div>
 
             <div class="sidebar-footer">
                 <div class="export-row">
-                    <button id="capture-btn2" class="export-btn btn-pdf" onclick="exportToPDF()">
-                        📥 PDF
-                    </button>
-                    <button id="video-btn2" class="export-btn btn-video" onclick="exportToVideo()">
-                        🎬 فيديو
-                    </button>
+                    <button class="export-btn btn-pdf" onclick="exportToPDF()">📥 PDF</button>
+                    <button class="export-btn btn-video" onclick="exportToVideo()">🎬 فيديو</button>
                 </div>
             </div>
         </div>
-    </div>
+
+    </div><!-- /sidebar -->
 
     <!-- PREVIEW -->
     <div class="preview-area">
@@ -965,13 +1219,16 @@
                 <span class="preview-title">المعاينة المباشرة</span>
             </div>
             <div class="preview-bar-right">
+                <button class="slide-nav-btn" onclick="navSlide(-1)" id="prev-slide-btn" style="display:none;">◀ السابق</button>
+                <span class="slide-counter" id="slide-counter" style="display:none;">1 / 1</span>
+                <button class="slide-nav-btn" onclick="navSlide(1)" id="next-slide-btn" style="display:none;">التالي ▶</button>
                 <span class="size-badge" id="size-tag">16:9 — 1280 × 720</span>
             </div>
         </div>
         <div class="preview-frame-wrap" id="preview-wrap">
             <div class="preview-empty" id="preview-empty">
                 <div class="preview-empty-icon">📋</div>
-                <div class="preview-empty-text">الصق الكود لتظهر المعاينة هنا</div>
+                <div class="preview-empty-text">الصق الكود لتظهر المعاينة</div>
             </div>
             <div class="iframe-shadow" id="iframe-shadow" style="display:none;">
                 <iframe id="preview-frame"></iframe>
@@ -989,7 +1246,8 @@
             <button class="vp-download" onclick="vpDownload()">💾 تحميل</button>
         </div>
     </div>
-</div>
+
+</div><!-- /app-body -->
 
 <!-- PROGRESS -->
 <div id="progress-overlay" class="progress-overlay">
@@ -1008,15 +1266,15 @@
     <div class="modal-box">
         <div class="modal-header">
             <span class="modal-title" id="modal-title">معاينة البرومبت</span>
-            <button class="modal-close" onclick="closePromptModal()">✕</button>
+            <button class="modal-close" onclick="closeModal()">✕</button>
         </div>
         <div class="modal-body">
             <div class="modal-preview-text" id="modal-prompt-text"></div>
         </div>
         <div class="modal-footer">
-            <button class="modal-btn modal-btn-primary" onclick="copyFromModal('ar')">🇸🇦 نسخ عربي</button>
-            <button class="modal-btn modal-btn-purple" onclick="copyFromModal('en')">🇺🇸 نسخ English</button>
-            <button class="modal-btn modal-btn-secondary" onclick="closePromptModal()">إغلاق</button>
+            <button class="modal-btn modal-btn-primary" id="modal-copy-ar-btn">🇸🇦 نسخ عربي</button>
+            <button class="modal-btn modal-btn-purple" id="modal-copy-en-btn">🇺🇸 نسخ English</button>
+            <button class="modal-btn modal-btn-secondary" onclick="closeModal()">إغلاق</button>
         </div>
     </div>
 </div>
@@ -1027,51 +1285,519 @@
 <script>
 // ===== FORMATS =====
 const FORMATS = {
-    a4_portrait:   { w: 794,  h: 1123, label: 'A4 طولي — 794 × 1123',  pdfOrient: 'portrait'  },
-    a4_landscape:  { w: 1123, h: 794,  label: 'A4 عرضي — 1123 × 794',  pdfOrient: 'landscape' },
-    video_portrait:  { w: 1080, h: 1920, label: '9:16 — 1080 × 1920', pdfOrient: 'portrait'  },
-    video_landscape: { w: 1280, h: 720,  label: '16:9 — 1280 × 720',  pdfOrient: 'landscape' },
+    a4_portrait:     { w: 794,  h: 1123, label: 'A4 طولي — 794 × 1123',  pdfOrient: 'portrait'  },
+    a4_landscape:    { w: 1123, h: 794,  label: 'A4 عرضي — 1123 × 794',  pdfOrient: 'landscape' },
+    video_portrait:  { w: 1080, h: 1920, label: '9:16 — 1080 × 1920',    pdfOrient: 'portrait'  },
+    video_landscape: { w: 1280, h: 720,  label: '16:9 — 1280 × 720',     pdfOrient: 'landscape' },
 };
 
-// ===== VIDEO SETTINGS =====
+// ===== STATE =====
 let currentFPS = 30;
 let currentTransition = 'fade';
-let transitionColor = 'black';
-let currentPromptKey = null;
 let slideDurationsMap = {};
-
-// ===== VIDEO PLAYER STATE =====
 let vpBlob = null, vpUrl = null, vpFileName = '';
 let vpVideo = null;
 
-// ===== TABS =====
-function switchTab(id) {
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.sidebar-tab').forEach(b => b.classList.remove('active'));
+// Current selections
+let currentVideoPromptKey = null;
+let currentFilePromptKey = null;
+let videoOptions = { anim: 'slideIn', speed: 'medium', order: 'sequential', bg: 'gradient', color: 'dark_neon' };
+let fileOptions = { file_style: 'professional', file_color: 'blue' };
+
+// Slide nav state
+let currentSlideIndex = 0;
+let allSlides = [];
+
+// ===== MAIN TAB SWITCH =====
+function switchMain(id, btn) {
+    document.querySelectorAll('.main-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.main-tab').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    event.currentTarget.classList.add('active');
-}
-
-// ===== FPS TOGGLE =====
-function setFPS(fps, btn) {
-    currentFPS = fps;
-    document.querySelectorAll('.toggle-btn[onclick^="setFPS"]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    updateTotalDuration();
-}
-
-// ===== TRANSITION =====
-function setTransition(type, btn) {
-    currentTransition = type;
-    document.querySelectorAll('.toggle-btn[onclick^="setTransition"]').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 }
 
-// ===== TRANSITION COLOR =====
-function setTransColor(color, btn) {
-    transitionColor = color;
-    ['tc-black','tc-white','tc-match'].forEach(id => document.getElementById(id).classList.remove('active'));
-    btn.classList.add('active');
+// ===== OPTION CARDS =====
+function selectOption(group, value, card) {
+    // Find container
+    const groupMap = {
+        anim: 'anim-type-cards', speed: 'anim-speed-cards', order: 'appear-order-cards',
+        bg: 'bg-style-cards', color: 'color-theme-cards',
+        file_style: 'file-style-cards', file_color: 'file-color-cards'
+    };
+    const containerId = groupMap[group];
+    if (containerId) {
+        document.querySelectorAll(`#${containerId} .option-card`).forEach(c => c.classList.remove('active'));
+    }
+    card.classList.add('active');
+
+    if (['anim','speed','order','bg','color'].includes(group)) {
+        videoOptions[group] = value;
+    } else {
+        fileOptions[group] = value;
+    }
+}
+
+// ===== VIDEO PROMPT DATA =====
+const VIDEO_PROMPTS = {
+    reel_portrait: {
+        title: 'ريلز / تيك توك (9:16)',
+        fields: [
+            { id: 'title', label: 'عنوان المقطع', full: true, placeholder: 'مثال: 5 حقائق لا تعرفها عن الكون' },
+            { id: 'content', label: 'النقاط الرئيسية', full: true, placeholder: 'النقطة الأولى، الثانية، الثالثة...' },
+            { id: 'slides', label: 'عدد الشرائح', placeholder: '5', removable: false },
+            { id: 'cta', label: 'نداء للتفاعل (CTA)', placeholder: 'اشترك، شارك، علّق...' },
+        ]
+    },
+    presentation: {
+        title: 'عرض تقديمي (16:9)',
+        fields: [
+            { id: 'title', label: 'عنوان العرض', full: true, placeholder: 'مثال: مشروع الطاقة الشمسية 2026' },
+            { id: 'topic', label: 'الموضوع', placeholder: 'علوم / تقنية' },
+            { id: 'presenter', label: 'المقدِّم', placeholder: 'أحمد السالم', removable: true },
+            { id: 'slides', label: 'عدد الشرائح', placeholder: '8' },
+            { id: 'points', label: 'النقاط الرئيسية', full: true, placeholder: 'نقطة 1، نقطة 2...' },
+        ]
+    },
+    infographic_vid: {
+        title: 'إنفوجرافيك مرئي (9:16)',
+        fields: [
+            { id: 'title', label: 'عنوان الإنفوجرافيك', full: true, placeholder: 'مثال: إحصائيات الطاقة المتجددة' },
+            { id: 'data', label: 'البيانات / الأرقام', full: true, placeholder: 'مثال: 40% طاقة شمسية، 30% رياح...' },
+            { id: 'slides', label: 'عدد الشرائح', placeholder: '5' },
+        ]
+    },
+    story_vid: {
+        title: 'قصة / حكاية (9:16)',
+        fields: [
+            { id: 'title', label: 'عنوان القصة', full: true, placeholder: 'مثال: رحلة المبرمج الأول' },
+            { id: 'story', label: 'ملخص القصة', full: true, placeholder: 'كان هناك...' },
+            { id: 'slides', label: 'عدد الشرائح', placeholder: '6' },
+            { id: 'moral', label: 'الرسالة / العبرة', placeholder: 'الاستمرارية مفتاح النجاح', removable: true },
+        ]
+    },
+    promo_vid: {
+        title: 'إعلان / ترويج',
+        fields: [
+            { id: 'product', label: 'المنتج / الخدمة', full: true, placeholder: 'مثال: تطبيق إدارة المهام' },
+            { id: 'tagline', label: 'الشعار', placeholder: 'نظّم حياتك بضغطة' },
+            { id: 'features', label: 'المزايا الرئيسية', full: true, placeholder: 'سريع، آمن، سهل الاستخدام' },
+            { id: 'cta', label: 'CTA', placeholder: 'حمّل الآن / اشترك' },
+            { id: 'slides', label: 'عدد الشرائح', placeholder: '6' },
+        ]
+    },
+    steps_vid: {
+        title: 'خطوات / تعليمي (9:16)',
+        fields: [
+            { id: 'title', label: 'عنوان الشرح', full: true, placeholder: 'مثال: كيف تبدأ البرمجة في 30 يوم' },
+            { id: 'steps', label: 'الخطوات', full: true, placeholder: 'الخطوة 1: ...\nالخطوة 2: ...' },
+            { id: 'slides', label: 'عدد الشرائح', placeholder: '7' },
+            { id: 'tip', label: 'نصيحة ختامية', placeholder: 'الممارسة يومياً أهم من...', removable: true },
+        ]
+    }
+};
+
+// ===== FILE PROMPT DATA =====
+const FILE_PROMPTS = {
+    a4_portrait: {
+        title: 'بحث طولي (A4)',
+        fields: [
+            { id: 'title', label: 'عنوان البحث', full: true, placeholder: 'الطاقة الشمسية ودورها البيئي' },
+            { id: 'subject', label: 'المادة', placeholder: 'فيزياء', removable: false },
+            { id: 'student', label: 'الطالب', placeholder: 'أحمد محمد', removable: true },
+            { id: 'teacher', label: 'المعلم', placeholder: 'الأستاذ علي', removable: true },
+            { id: 'grade', label: 'الصف', placeholder: 'أول ثانوي', removable: true },
+            { id: 'year', label: 'العام الدراسي', placeholder: '1447هـ / 2026م', removable: true },
+            { id: 'pages', label: 'عدد الصفحات', placeholder: '5' },
+        ]
+    },
+    a4_landscape: {
+        title: 'بحث عرضي (A4)',
+        fields: [
+            { id: 'title', label: 'عنوان البحث', full: true, placeholder: 'مقارنة مصادر الطاقة المتجددة' },
+            { id: 'subject', label: 'المادة', placeholder: 'علوم' },
+            { id: 'student', label: 'الطالب', placeholder: 'محمد سعيد', removable: true },
+            { id: 'teacher', label: 'المعلم', placeholder: 'الأستاذة سارة', removable: true },
+            { id: 'grade', label: 'الصف', placeholder: 'ثالث متوسط', removable: true },
+            { id: 'pages', label: 'عدد الصفحات', placeholder: '6' },
+        ]
+    },
+    cv: {
+        title: 'CV / سيرة ذاتية',
+        fields: [
+            { id: 'name', label: 'الاسم الكامل', full: true, placeholder: 'أحمد محمد السالم' },
+            { id: 'job_title', label: 'المسمى الوظيفي', placeholder: 'مطور ويب' },
+            { id: 'phone', label: 'الجوال', placeholder: '05xxxxxxxx', removable: true },
+            { id: 'email', label: 'البريد', placeholder: 'ahmed@email.com', removable: true },
+            { id: 'skills', label: 'المهارات', full: true, placeholder: 'HTML, CSS, JavaScript, React' },
+            { id: 'experience', label: 'الخبرات', full: true, placeholder: 'مطور في شركة X منذ 2022' },
+            { id: 'education', label: 'التعليم', placeholder: 'بكالوريوس حاسب', removable: true },
+            { id: 'links', label: 'روابط (GitHub/LinkedIn)', placeholder: 'github.com/ahmed', removable: true },
+        ]
+    },
+    poster: {
+        title: 'ملصق دعائي',
+        fields: [
+            { id: 'title', label: 'العنوان الرئيسي', full: true, placeholder: 'معرض الفنون الدولي 2026' },
+            { id: 'subtitle', label: 'العنوان الفرعي', placeholder: 'تجربة لا تُنسى', removable: true },
+            { id: 'date', label: 'التاريخ', placeholder: '15 مايو 2026', removable: true },
+            { id: 'location', label: 'المكان', placeholder: 'قاعة النور، الرياض', removable: true },
+            { id: 'details', label: 'تفاصيل إضافية', full: true, placeholder: 'رابط التسجيل، الهاتف...' },
+        ]
+    },
+    infographic_file: {
+        title: 'إنفوجرافيك',
+        fields: [
+            { id: 'title', label: 'العنوان', full: true, placeholder: 'فوائد شرب الماء اليومية' },
+            { id: 'points', label: 'النقاط', full: true, placeholder: 'يحسّن التركيز، ينظف الجسم...' },
+            { id: 'size', label: 'المقاس', placeholder: '9:16 أو A4' },
+            { id: 'source', label: 'المصدر', placeholder: 'منظمة الصحة العالمية', removable: true },
+        ]
+    }
+};
+
+// ===== REMOVED FIELDS TRACKING =====
+let removedFields = new Set();
+
+function buildFieldsHTML(fields, containerId, formId) {
+    removedFields = new Set();
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    fields.forEach(f => {
+        const div = document.createElement('div');
+        div.className = 'detail-field' + (f.full ? ' full' : '');
+        div.id = `field_wrap_${f.id}`;
+
+        const labelDiv = document.createElement('label');
+        const labelText = document.createTextNode(f.label);
+        labelDiv.appendChild(labelText);
+
+        if (f.removable !== false) {
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'field-remove-btn';
+            removeBtn.textContent = '✕ إزالة';
+            removeBtn.title = 'إزالة هذا الحقل من البرومبت';
+            removeBtn.onclick = () => toggleFieldRemoval(f.id, removeBtn, div);
+            labelDiv.appendChild(removeBtn);
+        }
+
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.id = `detail_${f.id}`;
+        inp.placeholder = f.placeholder || '';
+
+        div.appendChild(labelDiv);
+        div.appendChild(inp);
+        container.appendChild(div);
+    });
+}
+
+function toggleFieldRemoval(fieldId, btn, div) {
+    if (removedFields.has(fieldId)) {
+        removedFields.delete(fieldId);
+        div.classList.remove('field-removed');
+        btn.textContent = '✕ إزالة';
+        btn.classList.remove('removed');
+    } else {
+        removedFields.add(fieldId);
+        div.classList.add('field-removed');
+        btn.textContent = '↩ استعادة';
+        btn.classList.add('removed');
+    }
+}
+
+function getFieldValues(fields) {
+    const vals = {};
+    fields.forEach(f => {
+        if (removedFields.has(f.id)) return; // skip removed
+        const el = document.getElementById('detail_' + f.id);
+        if (el) vals[f.id] = el.value.trim();
+    });
+    return vals;
+}
+
+// ===== SELECT VIDEO PROMPT =====
+function selectVideoPrompt(key, card) {
+    currentVideoPromptKey = key;
+    document.querySelectorAll('#video-type-cards .prompt-card').forEach(c => c.classList.remove('active-selection'));
+    card.classList.add('active-selection');
+
+    const config = VIDEO_PROMPTS[key];
+    document.getElementById('video-form-title').textContent = config.title;
+    buildFieldsHTML(config.fields, 'video-detail-fields');
+    document.getElementById('video-details-wrap').style.display = 'block';
+
+    // Auto-set format in video settings
+    const isPortrait = ['reel_portrait','infographic_vid','story_vid','steps_vid'].includes(key);
+    const isPromo = key === 'promo_vid';
+    document.getElementById('format-select-video').value = (isPortrait || isPromo) ? 'video_portrait' : 'video_landscape';
+    updatePreviewSize();
+}
+
+// ===== SELECT FILE PROMPT =====
+function selectFilePrompt(key, card) {
+    currentFilePromptKey = key;
+    document.querySelectorAll('#file-type-cards .prompt-card').forEach(c => c.classList.remove('active-selection'));
+    card.classList.add('active-selection');
+
+    const config = FILE_PROMPTS[key];
+    document.getElementById('file-form-title').textContent = config.title;
+    buildFieldsHTML(config.fields, 'file-detail-fields');
+    document.getElementById('file-details-wrap').style.display = 'block';
+}
+
+// ===== BUILD VIDEO PROMPT =====
+function buildVideoPrompt(lang) {
+    if (!currentVideoPromptKey) return '';
+    const config = VIDEO_PROMPTS[currentVideoPromptKey];
+    const d = getFieldValues(config.fields);
+    const o = videoOptions;
+
+    const fmtKey = document.getElementById('format-select-video').value;
+    const isPortrait = fmtKey === 'video_portrait';
+    const dims = isPortrait ? '1080×1920px (9:16)' : '1280×720px (16:9)';
+    const dimsSpec = isPortrait
+        ? 'width: 1080px; height: 1920px;'
+        : 'width: 1280px; height: 720px;';
+    const minH1 = isPortrait ? '80px' : '52px';
+    const minP  = isPortrait ? '40px' : '24px';
+
+    const animMap = {
+        fadeUp: lang === 'ar' ? 'تلاشٍ من الأسفل للأعلى (fadeInUp)' : 'fadeInUp (fade from bottom to top)',
+        slideIn: lang === 'ar' ? 'انزلاق من اليمين (slideInRight)' : 'slideInRight animation',
+        zoomIn: lang === 'ar' ? 'تكبير تدريجي (zoomIn)' : 'zoomIn animation',
+        bounce: lang === 'ar' ? 'ارتداد (bounceIn)' : 'bounceIn animation',
+        typewriter: lang === 'ar' ? 'كتابة آلية (typewriter effect)' : 'typewriter/typing effect',
+        glitch: lang === 'ar' ? 'تأثير جلتش إلكتروني' : 'glitch effect',
+    };
+    const speedMap = { slow: '1.2s', medium: '0.7s', fast: '0.35s' };
+    const orderMap = {
+        sequential: lang === 'ar' ? 'كل عنصر يظهر بعد الآخر بتأخير 0.2ث بين كل عنصر' : 'each element appears after the previous with 0.2s stagger',
+        simultaneous: lang === 'ar' ? 'جميع العناصر تظهر في نفس الوقت' : 'all elements appear simultaneously',
+        random: lang === 'ar' ? 'ترتيب ظهور عشوائي' : 'random appearance order',
+        stagger: lang === 'ar' ? 'stagger متزايد — كل عنصر delay = index × 0.15ث' : 'stagger — delay = index × 0.15s'
+    };
+    const bgMap = {
+        gradient: lang === 'ar' ? 'خلفية تدرج لوني متحرك (animated gradient)' : 'animated gradient background',
+        particles: lang === 'ar' ? 'خلفية جزيئات متحركة (CSS particles/dots animation)' : 'CSS particles/dots animation background',
+        geometric: lang === 'ar' ? 'أشكال هندسية متحركة في الخلفية' : 'animated geometric shapes background',
+        solid_dark: lang === 'ar' ? 'خلفية داكنة صلبة (#0a0a0a أو #111)' : 'solid dark background (#0a0a0a)'
+    };
+    const colorMap = {
+        dark_neon: lang === 'ar' ? 'خلفية داكنة مع ألوان نيون (بنفسجي + سيان + وردي)' : 'dark background with neon colors (purple + cyan + pink)',
+        vibrant: lang === 'ar' ? 'ألوان زاهية وصاخبة (برتقالي، أصفر، أحمر)' : 'vibrant loud colors (orange, yellow, red)',
+        minimal_light: lang === 'ar' ? 'خلفية فاتحة مع ألوان هادئة' : 'light background with subtle colors',
+        gold_dark: lang === 'ar' ? 'خلفية داكنة مع ذهبي فاخر' : 'dark background with luxury gold accents'
+    };
+
+    const contentFields = Object.entries(d).map(([k, v]) => {
+        const fieldDef = config.fields.find(f => f.id === k);
+        return `**${fieldDef ? fieldDef.label : k}:** ${v || '[—]'}`;
+    }).join('\n');
+
+    if (lang === 'ar') {
+        return `أنت مصمم مقاطع فيديو HTML احترافي. قم بإنشاء كود HTML كامل بمقاس ${dims}.
+
+${contentFields}
+
+**متطلبات تقنية صارمة — يجب الالتزام بها تماماً:**
+1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
+2. استدعاء Google Fonts (Cairo أو Tajawal) صراحةً.
+3. body: display:block; margin:0; padding:0; background:#000;
+4. كل شريحة: <div class="page"> بأبعاد ${dimsSpec} overflow:hidden; position:relative; box-sizing:border-box;
+5. **للنقاط:** ممنوع ul أو ol. استخدم <p>• النص</p> أو <div class="point">النص</div>
+6. ممنوع letter-spacing نهائياً.
+7. خطوط: h1 لا تقل عن ${minH1}، p لا تقل عن ${minP}.
+
+**إعدادات الأنيميشن (طبّقها بدقة):**
+- نوع الأنيميشن: ${animMap[o.anim]}
+- سرعة الحركة: duration = ${speedMap[o.speed]}
+- ترتيب ظهور العناصر: ${orderMap[o.order]}
+- نمط الخلفية: ${bgMap[o.bg]}
+- نمط الألوان: ${colorMap[o.color]}
+
+**مثال على الأنيميشن المطلوب:**
+\`\`\`css
+@keyframes mainAnim {
+  from { opacity:0; transform: /* حسب النوع المختار */ }
+  to   { opacity:1; transform:none; }
+}
+h1 { animation: mainAnim ${speedMap[o.speed]} ease-out 0.1s both; }
+h2 { animation: mainAnim ${speedMap[o.speed]} ease-out 0.3s both; }
+p  { animation: mainAnim ${speedMap[o.speed]} ease-out 0.5s both; }
+\`\`\`
+
+**هيكل الشرائح:** شريحة غلاف، شرائح المحتوى، شريحة ختامية.
+نمط التصميم: احترافي، جذاب، يُشارَك على السوشيال ميديا.`;
+    } else {
+        return `You are a professional HTML video designer. Create complete HTML code sized ${dims}.
+
+${contentFields}
+
+**Strict Technical Requirements:**
+1. Start with <html lang="ar" dir="rtl">
+2. Import Google Fonts (Cairo or Tajawal)
+3. body: display:block; margin:0; padding:0; background:#000;
+4. Each slide: <div class="page"> — ${dimsSpec} overflow:hidden; position:relative; box-sizing:border-box;
+5. Bullet points: NEVER use ul/ol. Use <p>• text</p> or <div class="point">text</div>
+6. NEVER use letter-spacing.
+7. Font sizes: h1 min ${minH1}, p min ${minP}
+
+**Animation Settings (apply precisely):**
+- Animation type: ${animMap[o.anim]}
+- Speed: duration = ${speedMap[o.speed]}
+- Element order: ${orderMap[o.order]}
+- Background: ${bgMap[o.bg]}
+- Color theme: ${colorMap[o.color]}
+
+Slide structure: cover slide, content slides, closing slide.
+Design: professional, shareable, social-media ready.`;
+    }
+}
+
+// ===== BUILD FILE PROMPT =====
+function buildFilePrompt(lang) {
+    if (!currentFilePromptKey) return '';
+    const config = FILE_PROMPTS[currentFilePromptKey];
+    const d = getFieldValues(config.fields);
+    const o = fileOptions;
+
+    const styleMap = {
+        professional: { ar: 'احترافي رسمي، خطوط واضحة، ألوان هادئة', en: 'formal professional, clean fonts, calm colors' },
+        modern: { ar: 'عصري وأنيق، تدرجات خفيفة، shadow', en: 'modern elegant, subtle gradients, shadows' },
+        minimal: { ar: 'بسيط جداً، أبيض وبادج، مسافات واسعة', en: 'very minimal, white space heavy, clean' },
+        bold: { ar: 'جريء وملفت، ألوان قوية، عناوين ضخمة', en: 'bold striking, strong colors, huge headings' },
+    };
+    const colorMap = {
+        blue: { ar: 'أزرق (#2563eb)', en: 'blue (#2563eb)' },
+        green: { ar: 'أخضر (#16a34a)', en: 'green (#16a34a)' },
+        purple: { ar: 'بنفسجي (#7c3aed)', en: 'purple (#7c3aed)' },
+        red: { ar: 'أحمر (#dc2626)', en: 'red (#dc2626)' },
+        gold: { ar: 'ذهبي (#d97706)', en: 'gold (#d97706)' },
+        dark: { ar: 'داكن (#1e1e2e)', en: 'dark (#1e1e2e)' },
+    };
+
+    const contentFields = Object.entries(d).map(([k, v]) => {
+        const fieldDef = config.fields.find(f => f.id === k);
+        return `**${fieldDef ? fieldDef.label : k}:** ${v || '[—]'}`;
+    }).join('\n');
+
+    // Determine dimensions based on file type
+    let dimSpec = 'width: 794px; height: 1123px;'; // default A4
+    if (currentFilePromptKey === 'a4_landscape') dimSpec = 'width: 1123px; height: 794px;';
+
+    if (lang === 'ar') {
+        return `أنت مصمم وثائق HTML احترافي. قم بإنشاء كود HTML كامل لـ ${config.title} بالعربية.
+
+${contentFields}
+
+**نمط التصميم:** ${styleMap[o.file_style].ar}
+**اللون الرئيسي:** ${colorMap[o.file_color].ar}
+
+**متطلبات تقنية صارمة:**
+1. يبدأ بـ <html lang="ar" dir="rtl">.
+2. استدعاء Google Fonts (Cairo أو Tajawal).
+3. body: display:block; direction:rtl; margin:0; padding:0; box-sizing:border-box;
+4. كل صفحة: <div class="page"> بأبعاد ${dimSpec} overflow:hidden; position:relative; box-sizing:border-box;
+5. **للنقاط:** ممنوع ul أو ol. استخدم <p>• النص</p>
+6. ممنوع letter-spacing.
+7. طبّق نمط التصميم واللون المحدد بدقة على جميع الصفحات.
+
+**الهيكل:** صفحة غلاف ← محتوى ← مراجع/خاتمة.
+الناتج: كود HTML كامل جاهز للتصدير.`;
+    } else {
+        return `You are a professional HTML document designer. Create a complete HTML ${config.title} in Arabic.
+
+${contentFields}
+
+**Design Style:** ${styleMap[o.file_style].en}
+**Primary Color:** ${colorMap[o.file_color].en}
+
+**Strict Technical Requirements:**
+1. Start with <html lang="ar" dir="rtl">
+2. Import Google Fonts (Cairo or Tajawal)
+3. body: display:block; direction:rtl; margin:0; padding:0; box-sizing:border-box;
+4. Each page: <div class="page"> — ${dimSpec} overflow:hidden; position:relative; box-sizing:border-box;
+5. Bullet points: NEVER use ul/ol. Use <p>• text</p>
+6. NEVER use letter-spacing.
+7. Apply the specified design style and primary color consistently.
+
+Structure: cover page → content → references/conclusion.`;
+    }
+}
+
+// ===== COPY ACTIONS =====
+function copyVideoPromptAR() {
+    if (!currentVideoPromptKey) { showToast('⚠️ اختر نوع المقطع أولاً', 'error'); return; }
+    copyText(buildVideoPrompt('ar'), '✅ تم نسخ البرومبت العربي!');
+}
+function copyVideoPromptEN() {
+    if (!currentVideoPromptKey) { showToast('⚠️ اختر نوع المقطع أولاً', 'error'); return; }
+    copyText(buildVideoPrompt('en'), '✅ Prompt copied in English!');
+}
+function copyFilePromptAR() {
+    if (!currentFilePromptKey) { showToast('⚠️ اختر نوع الملف أولاً', 'error'); return; }
+    copyText(buildFilePrompt('ar'), '✅ تم نسخ البرومبت العربي!');
+}
+function copyFilePromptEN() {
+    if (!currentFilePromptKey) { showToast('⚠️ اختر نوع الملف أولاً', 'error'); return; }
+    copyText(buildFilePrompt('en'), '✅ Prompt copied in English!');
+}
+
+function openVideoModal() {
+    if (!currentVideoPromptKey) { showToast('⚠️ اختر نوع المقطع أولاً', 'error'); return; }
+    document.getElementById('modal-title').textContent = 'معاينة: ' + VIDEO_PROMPTS[currentVideoPromptKey].title;
+    document.getElementById('modal-prompt-text').textContent = buildVideoPrompt('ar');
+    document.getElementById('modal-copy-ar-btn').onclick = () => { copyText(buildVideoPrompt('ar'), '✅ تم النسخ!'); closeModal(); };
+    document.getElementById('modal-copy-en-btn').onclick = () => { copyText(buildVideoPrompt('en'), '✅ Copied!'); closeModal(); };
+    document.getElementById('prompt-modal').classList.add('open');
+}
+function openFileModal() {
+    if (!currentFilePromptKey) { showToast('⚠️ اختر نوع الملف أولاً', 'error'); return; }
+    document.getElementById('modal-title').textContent = 'معاينة: ' + FILE_PROMPTS[currentFilePromptKey].title;
+    document.getElementById('modal-prompt-text').textContent = buildFilePrompt('ar');
+    document.getElementById('modal-copy-ar-btn').onclick = () => { copyText(buildFilePrompt('ar'), '✅ تم النسخ!'); closeModal(); };
+    document.getElementById('modal-copy-en-btn').onclick = () => { copyText(buildFilePrompt('en'), '✅ Copied!'); closeModal(); };
+    document.getElementById('prompt-modal').classList.add('open');
+}
+function closeModal() {
+    document.getElementById('prompt-modal').classList.remove('open');
+}
+
+function copyText(text, msg) {
+    navigator.clipboard.writeText(text).then(() => showToast(msg, 'success')).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); showToast(msg, 'success'); } catch(e) { showToast('❌ فشل النسخ', 'error'); }
+        document.body.removeChild(ta);
+    });
+}
+
+// ===== TOAST =====
+function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type;
+    void t.offsetWidth;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ===== FORMAT SELECT — active one =====
+function getActiveFormatKey() {
+    // Check which panel is visible
+    const vidPanel = document.getElementById('panel-video-settings');
+    const pdfPanel = document.getElementById('panel-pdf-settings');
+    if (vidPanel.classList.contains('active')) return document.getElementById('format-select-video').value;
+    if (pdfPanel.classList.contains('active')) return document.getElementById('format-select-pdf').value;
+    // Default: detect from code if available
+    const code = document.getElementById('html-input').value;
+    if (!code) return document.getElementById('format-select-video').value;
+    // Try to guess from code
+    if (code.includes('1080') || code.includes('1920')) return 'video_portrait';
+    if (code.includes('1280') || code.includes('720')) return 'video_landscape';
+    if (code.includes('1123')) return 'a4_landscape';
+    return 'a4_portrait';
 }
 
 // ===== DURATION =====
@@ -1081,17 +1807,13 @@ function updateTotalDuration() {
     if (code.trim()) {
         const tmp = document.createElement('div');
         tmp.innerHTML = code;
-        const pages = tmp.querySelectorAll('.page, .slide');
-        count = pages.length || 1;
+        count = tmp.querySelectorAll('.page, .slide').length || 1;
     }
     const defaultDur = parseFloat(document.getElementById('page-duration').value) || 3;
     let total = 0;
-    for (let i = 0; i < count; i++) {
-        total += slideDurationsMap[i] !== undefined ? slideDurationsMap[i] : defaultDur;
-    }
-    const display = document.getElementById('total-duration-display');
-    if (count === 0) { display.textContent = '—'; return; }
-    display.textContent = total.toFixed(1) + ' ث (' + count + ' شرائح)';
+    for (let i = 0; i < count; i++) total += (slideDurationsMap[i] !== undefined ? slideDurationsMap[i] : defaultDur);
+    const el = document.getElementById('total-duration-display');
+    el.textContent = count ? total.toFixed(1) + ' ث (' + count + ' شرائح)' : '—';
 }
 
 function updateSlideDurations() {
@@ -1104,420 +1826,40 @@ function updateSlideDurations() {
     const tmp = document.createElement('div');
     tmp.innerHTML = code;
     const pages = Array.from(tmp.querySelectorAll('.page, .slide'));
-    if (pages.length === 0) {
+    if (!pages.length) {
         list.innerHTML = '<div style="font-size:11px;color:var(--text-dim);padding:6px;text-align:center;">لم يتم العثور على شرائح</div>';
         return;
     }
     const defaultDur = parseFloat(document.getElementById('page-duration').value) || 3;
     list.innerHTML = '';
-    pages.forEach((p, i) => {
+    pages.forEach((_, i) => {
         const row = document.createElement('div');
         row.className = 'slide-duration-row';
         const label = document.createElement('span');
         label.className = 'slide-duration-label';
         label.textContent = `شريحة ${i+1}`;
         const inp = document.createElement('input');
-        inp.type = 'number';
-        inp.min = '0.5';
-        inp.max = '30';
-        inp.step = '0.5';
+        inp.type = 'number'; inp.min = '0.5'; inp.max = '30'; inp.step = '0.5';
         inp.className = 'slide-duration-input';
         inp.value = slideDurationsMap[i] !== undefined ? slideDurationsMap[i] : defaultDur;
         inp.oninput = () => { slideDurationsMap[i] = parseFloat(inp.value) || defaultDur; updateTotalDuration(); };
         const unit = document.createElement('span');
         unit.style.cssText = 'font-size:10px;color:var(--text-dim);';
         unit.textContent = 'ث';
-        row.appendChild(label);
-        row.appendChild(inp);
-        row.appendChild(unit);
+        row.appendChild(label); row.appendChild(inp); row.appendChild(unit);
         list.appendChild(row);
     });
     updateTotalDuration();
-}
-
-// ===== PROMPTS DATA =====
-const PROMPT_CONFIGS = {
-    a4_portrait: {
-        title: 'بحث طولي (A4)',
-        fields: [
-            { id: 'title', label: 'عنوان البحث', full: true, placeholder: 'مثال: الطاقة الشمسية ودورها البيئي' },
-            { id: 'subject', label: 'المادة', placeholder: 'فيزياء' },
-            { id: 'student', label: 'اسم الطالب', placeholder: 'أحمد محمد' },
-            { id: 'teacher', label: 'المعلم', placeholder: 'الأستاذ علي' },
-            { id: 'grade', label: 'الصف', placeholder: 'أول ثانوي' },
-            { id: 'year', label: 'العام الدراسي', placeholder: '1447هـ / 2026م' },
-            { id: 'pages', label: 'عدد الصفحات', placeholder: '5' },
-        ],
-        ar: (d) => `أنت مصمم وثائق HTML محترف. قم بإنشاء كود HTML كامل لبحث أكاديمي بالعربية وفق المواصفات التالية:
-
-**عنوان البحث:** ${d.title || '[اكتب العنوان هنا]'}
-**المادة:** ${d.subject || '[مثال: فيزياء / كيمياء]'}
-**الطالب:** ${d.student || '[الاسم]'}
-**المعلم:** ${d.teacher || '[الاسم]'}
-**الصف:** ${d.grade || '[مثال: أول ثانوي]'}
-**العام الدراسي:** ${d.year || '[مثال: 1447هـ / 2026م]'}
-**عدد الصفحات المطلوبة:** ${d.pages || '5'} صفحات
-
-**متطلبات تقنية صارمة جداً — لا تتجاوزها:**
-1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
-2. استدعاء خطوط Google Fonts صراحةً (مثل Cairo أو Tajawal).
-3. الـ body: display: block; direction: rtl; margin: 0; padding: 0; box-sizing: border-box;
-4. كل صفحة: <div class="page"> بأبعاد width: 794px; height: 1123px; overflow: hidden; position: relative; box-sizing: border-box;
-5. **للنقاط:** لا تستخدم ul أو ol. استخدم <p> أو <div> وأضف النقطة داخل النص: <p>• النص</p>
-6. ممنوع استخدام letter-spacing نهائياً.
-
-**هيكل الصفحات:**
-- صفحة 1: غلاف احترافي (شعار، عنوان، بيانات الطالب).
-- صفحات 2+: محتوى البحث (مقدمة، فصول، خاتمة).
-- صفحة أخيرة: المراجع.
-نمط التصميم: احترافي وأنيق بألوان متناسقة.`,
-        en: (d) => `You are a professional HTML document designer. Create a complete HTML code for an Arabic academic research paper with the following specifications:
-
-**Research Title:** ${d.title || '[Write title here]'}
-**Subject:** ${d.subject || '[e.g., Physics / Chemistry]'}
-**Student:** ${d.student || '[Name]'}
-**Teacher:** ${d.teacher || '[Name]'}
-**Grade:** ${d.grade || '[e.g., Grade 10]'}
-**Academic Year:** ${d.year || '[e.g., 2025/2026]'}
-**Number of Pages:** ${d.pages || '5'} pages
-
-**Strict Technical Requirements:**
-1. Start with <html lang="ar" dir="rtl">.
-2. Import Google Fonts explicitly (Cairo or Tajawal).
-3. Body styles: display: block; direction: rtl; margin: 0; padding: 0; box-sizing: border-box;
-4. Each page: <div class="page"> with width: 794px; height: 1123px; overflow: hidden; position: relative; box-sizing: border-box;
-5. **For bullet points:** Never use ul or ol. Use <p> or <div> and add the bullet inside the text: <p>• Text</p>
-6. Never use letter-spacing.
-
-**Page Structure:** Cover page, content pages (intro, chapters, conclusion), references page.
-Design style: Professional and elegant with coordinated colors.`
-    },
-    a4_landscape: {
-        title: 'بحث عرضي (A4)',
-        fields: [
-            { id: 'title', label: 'عنوان البحث', full: true, placeholder: 'مثال: مقارنة مصادر الطاقة المتجددة' },
-            { id: 'subject', label: 'المادة', placeholder: 'علوم' },
-            { id: 'student', label: 'اسم الطالب', placeholder: 'محمد سعيد' },
-            { id: 'teacher', label: 'المعلم', placeholder: 'الأستاذة سارة' },
-            { id: 'grade', label: 'الصف', placeholder: 'ثالث متوسط' },
-            { id: 'pages', label: 'عدد الصفحات', placeholder: '6' },
-        ],
-        ar: (d) => `أنت مصمم وثائق HTML محترف. قم بإنشاء كود HTML كامل لبحث أكاديمي عرضي (Landscape) بالعربية:
-
-**عنوان البحث:** ${d.title || '[العنوان]'}
-**المادة:** ${d.subject || '[المادة]'}
-**الطالب:** ${d.student || '[الاسم]'}
-**المعلم:** ${d.teacher || '[الاسم]'}
-**الصف:** ${d.grade || '[الصف]'}
-**عدد الصفحات:** ${d.pages || '6'} صفحات
-
-**متطلبات تقنية صارمة:**
-1. يبدأ الكود بـ <html lang="ar" dir="rtl">.
-2. استدعاء Google Fonts (Cairo أو Tajawal).
-3. body: display: block; direction: rtl; margin: 0; padding: 0; box-sizing: border-box;
-4. كل صفحة: <div class="page"> بأبعاد width: 1123px; height: 794px; overflow: hidden; position: relative; box-sizing: border-box;
-5. **للنقاط:** لا تستخدم ul أو ol. استخدم <p>• النص</p>
-6. ممنوع letter-spacing.
-7. **استغل العرض الأفقي:** استخدم تخطيط عمودين داخل كل صفحة.
-
-**الهيكل:** غلاف، محتوى بعمودين، مراجع.`,
-        en: (d) => `You are a professional HTML designer. Create a complete HTML landscape (A4) research document in Arabic:
-
-**Title:** ${d.title || '[Title]'} | **Subject:** ${d.subject || '[Subject]'} | **Student:** ${d.student || '[Name]'} | **Grade:** ${d.grade || '[Grade]'} | **Pages:** ${d.pages || '6'}
-
-Requirements: html[dir=rtl], Cairo/Tajawal fonts, each .page = 1123×794px overflow:hidden, NO ul/ol (use <p>• text</p>), NO letter-spacing, two-column layout per page. Professional elegant design.`
-    },
-    video_portrait: {
-        title: 'مقطع طولي (9:16)',
-        fields: [
-            { id: 'title', label: 'عنوان المقطع', full: true, placeholder: 'مثال: 5 حقائق لا تعرفها عن القمر' },
-            { id: 'content', label: 'النقاط الرئيسية', full: true, placeholder: 'مثال: القمر يبتعد 3.8 سم سنوياً، ليس كروياً...' },
-            { id: 'slides', label: 'عدد الشرائح', placeholder: '5' },
-        ],
-        ar: (d) => `أنت مصمم مقاطع فيديو قصيرة للجوال (TikTok/Reels). قم بإنشاء كود HTML كامل بمقاس (9:16) مع أنيميشن CSS جذاب.
-
-**عنوان المقطع:** ${d.title || '[العنوان]'}
-**المحتوى الأساسي:** ${d.content || '[النقاط الرئيسية]'}
-**عدد الشرائح:** ${d.slides || '5'} شرائح
-
-**متطلبات تقنية صارمة:**
-1. يبدأ بـ <html lang="ar" dir="rtl">.
-2. استدعاء Google Fonts (Cairo أو Tajawal).
-3. body: display: block; margin: 0; padding: 0; background: #000;
-4. كل شريحة: <div class="page"> بأبعاد width: 1080px; height: 1920px; overflow: hidden; position: relative; box-sizing: border-box;
-5. **أنيميشن fadeInUp إجباري:**
-   @keyframes fadeInUp { from { opacity:0; transform:translateY(40px); } to { opacity:1; transform:translateY(0); } }
-   h1: animation: fadeInUp 0.7s ease-out 0.1s both;
-   h2: animation: fadeInUp 0.7s ease-out 0.3s both;
-   p, div: animation: fadeInUp 0.7s ease-out 0.5s both;
-6. **للنقاط:** لا تستخدم ul أو ol. استخدم <p>• النص</p>
-7. ممنوع letter-spacing.
-8. خطوط كبيرة: h1 لا تقل عن 80px، p لا تقل عن 40px.
-
-**الهيكل:** شريحة غلاف ضخمة، شرائح محتوى، خاتمة تحفيزية.
-نمط التصميم: عصري جريء، خلفيات متدرجة، ألوان مضيئة.`,
-        en: (d) => `You are a mobile video designer (TikTok/Reels). Create complete HTML code in 9:16 format with CSS animations.
-
-**Title:** ${d.title || '[Title]'}
-**Content:** ${d.content || '[Main points]'}
-**Slides:** ${d.slides || '5'}
-
-Requirements: html[dir=rtl], Cairo/Tajawal fonts, body{background:#000;margin:0}, each .page = 1080×1920px, mandatory fadeInUp animation for all text elements, NO ul/ol (use <p>• text</p>), NO letter-spacing, large fonts (h1 min 80px, p min 40px). Bold modern design with gradients.`
-    },
-    video_landscape: {
-        title: 'مقطع عرضي (16:9)',
-        fields: [
-            { id: 'title', label: 'عنوان العرض', full: true, placeholder: 'مثال: مشروع الطاقة الشمسية 2026' },
-            { id: 'topic', label: 'الموضوع / المادة', placeholder: 'علوم / تقنية' },
-            { id: 'presenter', label: 'المقدِّم', placeholder: 'أحمد السالم' },
-            { id: 'slides', label: 'عدد الشرائح', placeholder: '8' },
-        ],
-        ar: (d) => `أنت مصمم عروض تقديمية HTML احترافية. قم بإنشاء كود HTML كامل بمقاس (16:9).
-
-**عنوان العرض:** ${d.title || '[العنوان]'}
-**الموضوع / المادة:** ${d.topic || '[الموضوع]'}
-**المقدِّم:** ${d.presenter || '[الاسم]'}
-**عدد الشرائح:** ${d.slides || '8'} شرائح
-
-**متطلبات تقنية صارمة:**
-1. يبدأ بـ <html lang="ar" dir="rtl">.
-2. استدعاء Google Fonts (Cairo أو Tajawal).
-3. body: display: block; margin: 0; padding: 0; background: #000;
-4. كل شريحة: <div class="page"> بأبعاد width: 1280px; height: 720px; overflow: hidden; position: relative; box-sizing: border-box;
-5. **أنيميشن fadeIn:**
-   @keyframes fadeIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-   h1,h2: animation: fadeIn 0.6s ease-out 0.1s both;
-   p, div.point: animation: fadeIn 0.6s ease-out 0.4s both;
-6. **للنقاط:** لا تستخدم ul أو ol. استخدم <p>• النص</p>
-7. ممنوع letter-spacing.
-8. خطوط واضحة: h1 لا تقل عن 52px، p لا تقل عن 24px.
-
-**الهيكل:** غلاف، شرائح محتوى، شريحة شكر وتقدير.
-نمط التصميم: حديث، خلفيات ذات عمق، ألوان متناسقة.`,
-        en: (d) => `You are a professional HTML presentation designer. Create a complete 16:9 HTML presentation.
-
-**Title:** ${d.title || '[Title]'} | **Topic:** ${d.topic || '[Topic]'} | **Presenter:** ${d.presenter || '[Name]'} | **Slides:** ${d.slides || '8'}
-
-Requirements: html[dir=rtl], Cairo/Tajawal fonts, body{background:#000;margin:0}, each .page = 1280×720px, fadeIn animation for all text, NO ul/ol (use <p>• text</p>), NO letter-spacing, clear fonts (h1 min 52px, p min 24px). Modern deep-background design.`
-    },
-    infographic_portrait: {
-        title: 'إنفوجرافيك طولي',
-        fields: [
-            { id: 'title', label: 'عنوان الإنفوجرافيك', full: true, placeholder: 'مثال: فوائد شرب الماء اليومية' },
-            { id: 'points', label: 'النقاط (مفصولة بـ ،)', full: true, placeholder: 'يحسّن التركيز، ينظف الجسم، يقوي المناعة' },
-            { id: 'size', label: 'المقاس', placeholder: '9:16 أو A4' },
-        ],
-        ar: (d) => `أنت مصمم إنفوجرافيك HTML احترافي. قم بإنشاء إنفوجرافيك بصري وجذاب بالعربية:
-
-**عنوان الإنفوجرافيك:** ${d.title || '[العنوان]'}
-**النقاط الرئيسية:** ${d.points || '[النقاط]'}
-**المقاس:** ${d.size === 'A4' ? '794×1123px (A4 طولي)' : '1080×1920px (9:16)'}
-
-**متطلبات تقنية صارمة:**
-1. يبدأ بـ <html lang="ar" dir="rtl">.
-2. استدعاء Google Fonts (Cairo أو Tajawal).
-3. body: display: block; direction: rtl; margin: 0; padding: 0;
-4. صفحة واحدة: <div class="page"> بالأبعاد المحددة، overflow: hidden; position: relative;
-5. **للنقاط:** لا تستخدم ul أو ol. استخدم <div> أو <p> مع أيقونات نصية.
-6. ممنوع letter-spacing.
-7. **التصميم:** استخدم أشكالاً هندسية، ألواناً زاهية، أيقونات emoji كبيرة، تدرجات ملونة، ونسب وأرقام بارزة بصرياً.
-8. أضف animation CSS خفيف لكل عنصر.
-
-نمط التصميم: بصري مبهج، ألوان نابضة، تصميم عصري يُشارَك على السوشيال ميديا.`,
-        en: (d) => `You are a professional HTML infographic designer. Create a visually striking Arabic infographic:
-
-**Title:** ${d.title || '[Title]'}
-**Points:** ${d.points || '[Points]'}
-**Size:** ${d.size === 'A4' ? '794×1123px (A4 portrait)' : '1080×1920px (9:16)'}
-
-Requirements: html[dir=rtl], Cairo/Tajawal fonts, single .page div with specified dimensions, NO ul/ol, NO letter-spacing, use geometric shapes, vibrant gradients, large emoji icons, bold numbers. Add subtle CSS animations. Modern shareable social media style.`
-    },
-    cv: {
-        title: 'CV / بطاقة تعريفية',
-        fields: [
-            { id: 'name', label: 'الاسم الكامل', full: true, placeholder: 'أحمد محمد السالم' },
-            { id: 'title', label: 'المسمى الوظيفي', placeholder: 'مطور ويب' },
-            { id: 'phone', label: 'رقم الجوال', placeholder: '05xxxxxxxx' },
-            { id: 'email', label: 'البريد الإلكتروني', placeholder: 'ahmed@email.com' },
-            { id: 'skills', label: 'المهارات الرئيسية', full: true, placeholder: 'HTML, CSS, JavaScript, React' },
-            { id: 'experience', label: 'الخبرات (مختصرة)', full: true, placeholder: 'مطور في شركة X - 2022 حتى الآن' },
-            { id: 'style', label: 'نمط التصميم', placeholder: 'كلاسيكي / عصري / داكن' },
-        ],
-        ar: (d) => `أنت مصمم CV و بطاقات تعريفية HTML احترافية. قم بإنشاء CV كامل بالعربية بمقاس A4:
-
-**الاسم:** ${d.name || '[الاسم]'}
-**المسمى الوظيفي:** ${d.title || '[المسمى]'}
-**الجوال:** ${d.phone || '[الجوال]'}
-**البريد:** ${d.email || '[البريد]'}
-**المهارات:** ${d.skills || '[المهارات]'}
-**الخبرات:** ${d.experience || '[الخبرات]'}
-**نمط التصميم:** ${d.style || 'عصري'}
-
-**متطلبات تقنية:**
-1. يبدأ بـ <html lang="ar" dir="rtl">.
-2. Google Fonts (Cairo أو Tajawal).
-3. صفحة واحدة: <div class="page"> بأبعاد width: 794px; height: 1123px; overflow: hidden; position: relative; box-sizing: border-box;
-4. لا تستخدم ul أو ol. لا letter-spacing.
-5. **التصميم:** شريط جانبي ملون (sidebar) للمعلومات الشخصية والمهارات، والمنطقة الرئيسية للخبرات والتعليم. صورة دائرية placeholder في الأعلى.
-6. أضف أشرطة تقدم (progress bars) للمهارات.
-7. الفصل بين الأقسام بأيقونات emoji واضحة.
-
-نمط التصميم: ${d.style || 'عصري'} — احترافي وأنيق.`,
-        en: (d) => `You are a professional HTML CV designer. Create a complete Arabic A4 CV:
-
-**Name:** ${d.name || '[Name]'} | **Job Title:** ${d.title || '[Title]'} | **Phone:** ${d.phone || '[Phone]'} | **Email:** ${d.email || '[Email]'}
-**Skills:** ${d.skills || '[Skills]'} | **Experience:** ${d.experience || '[Experience]'} | **Style:** ${d.style || 'Modern'}
-
-Requirements: html[dir=rtl], Google Fonts, single .page = 794×1123px overflow:hidden, NO ul/ol, NO letter-spacing. Design: colored sidebar for personal info/skills, main area for experience/education, circular placeholder photo, skill progress bars, emoji section icons. Professional ${d.style || 'modern'} aesthetic.`
-    },
-    poster: {
-        title: 'ملصق دعائي',
-        fields: [
-            { id: 'title', label: 'العنوان الرئيسي', full: true, placeholder: 'مثال: معرض الفنون الدولي 2026' },
-            { id: 'subtitle', label: 'العنوان الفرعي', placeholder: 'تجربة لا تُنسى' },
-            { id: 'date', label: 'التاريخ', placeholder: '15 مايو 2026' },
-            { id: 'location', label: 'المكان', placeholder: 'قاعة النور، الرياض' },
-            { id: 'details', label: 'تفاصيل إضافية', full: true, placeholder: 'رابط التسجيل، الهاتف، إلخ...' },
-            { id: 'style', label: 'نمط اللون', placeholder: 'ذهبي / أزرق / أحمر / داكن' },
-        ],
-        ar: (d) => `أنت مصمم ملصقات دعائية HTML احترافية. قم بإنشاء ملصق (Poster) عمودي جذاب بالعربية:
-
-**العنوان الرئيسي:** ${d.title || '[العنوان]'}
-**العنوان الفرعي:** ${d.subtitle || '[الفرعي]'}
-**التاريخ:** ${d.date || '[التاريخ]'}
-**المكان:** ${d.location || '[المكان]'}
-**التفاصيل:** ${d.details || '[التفاصيل]'}
-**نمط اللون:** ${d.style || 'ذهبي داكن فاخر'}
-
-**متطلبات تقنية:**
-1. يبدأ بـ <html lang="ar" dir="rtl">.
-2. Google Fonts (مثل Cairo أو Scheherazade أو Lalezar).
-3. صفحة واحدة: <div class="page"> بأبعاد width: 794px; height: 1123px; overflow: hidden; position: relative; box-sizing: border-box;
-4. لا ul أو ol. لا letter-spacing.
-5. **التصميم:**
-   - خلفية فنية: تدرجات، أشكال هندسية، زخارف عربية.
-   - العنوان ضخم وجريء يملأ الجزء الأكبر.
-   - طبقات متعددة (layering) لعمق بصري.
-   - أيقونات emoji كبيرة لتمييز المعلومات.
-   - شريط سفلي للتفاصيل.
-6. أضف @keyframes للزخارف (دوران خفيف أو توهج).
-
-نمط: ${d.style || 'ذهبي داكن فاخر'} — مبهر ومميز.`,
-        en: (d) => `You are a professional HTML poster designer. Create a stunning vertical poster in Arabic:
-
-**Main Title:** ${d.title || '[Title]'} | **Subtitle:** ${d.subtitle || '[Subtitle]'} | **Date:** ${d.date || '[Date]'} | **Location:** ${d.location || '[Location]'} | **Details:** ${d.details || '[Details]'} | **Color Style:** ${d.style || 'Dark Gold Luxury'}
-
-Requirements: html[dir=rtl], Cairo/Lalezar fonts, single .page = 794×1123px, NO ul/ol, NO letter-spacing. Design: artistic background with gradients and geometric shapes, huge bold headline, layered depth effect, large emoji icons, bottom info strip, CSS keyframe animations for decorative elements. Style: ${d.style || 'Dark gold luxury'}.`
-    }
-};
-
-// ===== PROMPT SELECTION =====
-function selectPrompt(key, card) {
-    currentPromptKey = key;
-    document.querySelectorAll('.prompt-card').forEach(c => c.classList.remove('active-selection'));
-    card.classList.add('active-selection');
-
-    const config = PROMPT_CONFIGS[key];
-    const formEl = document.getElementById('details-form');
-    const actionsEl = document.getElementById('prompt-actions');
-    const titleEl = document.getElementById('details-form-title-text');
-
-    titleEl.textContent = `✏️ تفاصيل: ${config.title}`;
-    formEl.style.display = 'block';
-    actionsEl.style.display = 'flex';
-
-    const fieldsEl = document.getElementById('details-fields');
-    fieldsEl.innerHTML = '';
-    config.fields.forEach(f => {
-        const div = document.createElement('div');
-        div.className = 'detail-field' + (f.full ? ' full' : '');
-        div.innerHTML = `<label>${f.label}</label><input type="text" id="detail_${f.id}" placeholder="${f.placeholder || ''}">`;
-        fieldsEl.appendChild(div);
-    });
-}
-
-function getDetailValues() {
-    if (!currentPromptKey) return {};
-    const config = PROMPT_CONFIGS[currentPromptKey];
-    const vals = {};
-    config.fields.forEach(f => {
-        const el = document.getElementById('detail_' + f.id);
-        if (el) vals[f.id] = el.value.trim();
-    });
-    return vals;
-}
-
-function buildPrompt(lang) {
-    if (!currentPromptKey) return '';
-    const config = PROMPT_CONFIGS[currentPromptKey];
-    const vals = getDetailValues();
-    return lang === 'ar' ? config.ar(vals) : config.en(vals);
-}
-
-function copyPromptAR() {
-    const text = buildPrompt('ar');
-    if (!text) { showToast('⚠️ اختر نوع التصميم أولاً', 'error'); return; }
-    copyText(text, '✅ تم نسخ البرومبت العربي!');
-}
-
-function copyPromptEN() {
-    const text = buildPrompt('en');
-    if (!text) { showToast('⚠️ اختر نوع التصميم أولاً', 'error'); return; }
-    copyText(text, '✅ Prompt copied in English!');
-}
-
-function copyText(text, successMsg) {
-    navigator.clipboard.writeText(text).then(() => {
-        showToast(successMsg, 'success');
-    }).catch(() => {
-        // Fallback
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
-        try { document.execCommand('copy'); showToast(successMsg, 'success'); } catch(e) { showToast('❌ فشل النسخ', 'error'); }
-        document.body.removeChild(ta);
-    });
-}
-
-function openPromptModal() {
-    if (!currentPromptKey) { showToast('⚠️ اختر نوع التصميم أولاً', 'error'); return; }
-    const text = buildPrompt('ar');
-    document.getElementById('modal-prompt-text').textContent = text;
-    document.getElementById('modal-title').textContent = 'معاينة: ' + PROMPT_CONFIGS[currentPromptKey].title;
-    document.getElementById('prompt-modal').classList.add('open');
-}
-
-function closePromptModal() {
-    document.getElementById('prompt-modal').classList.remove('open');
-}
-
-function copyFromModal(lang) {
-    const text = buildPrompt(lang);
-    copyText(text, lang === 'ar' ? '✅ تم نسخ البرومبت العربي!' : '✅ Prompt copied in English!');
-    closePromptModal();
-}
-
-// ===== TOAST =====
-function showToast(msg, type = '') {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = 'toast ' + type;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 // ===== CODE INPUT =====
 function onCodeInput() {
     const code = document.getElementById('html-input').value;
     document.getElementById('char-count').textContent = code.length.toLocaleString('ar') + ' حرف';
-    updatePreview(code);
-    updateSlideDurations();
-    updateTotalDuration();
     slideDurationsMap = {};
     updateSlideDurations();
+    updateTotalDuration();
+    updatePreviewFromCode(code);
 }
 
 function clearCode() {
@@ -1529,35 +1871,58 @@ function clearCode() {
     slideDurationsMap = {};
     updateSlideDurations();
     updateTotalDuration();
-    // Hide video player
     document.getElementById('video-preview-bar').classList.remove('visible');
     if (vpVideo) { vpVideo.pause(); vpVideo.src = ''; }
     vpBlob = null; vpUrl = null;
+    hideSlideNav();
 }
 
-// ===== PREVIEW =====
-function updatePreview(code) {
-    if (!code) code = document.getElementById('html-input').value;
-    const empty = document.getElementById('preview-empty');
-    const shadow = document.getElementById('iframe-shadow');
-    const iframe = document.getElementById('preview-frame');
-    const fmt = FORMATS[document.getElementById('format-select').value];
+// ===== SLIDE NAV =====
+function hideSlideNav() {
+    document.getElementById('prev-slide-btn').style.display = 'none';
+    document.getElementById('next-slide-btn').style.display = 'none';
+    document.getElementById('slide-counter').style.display = 'none';
+    allSlides = [];
+    currentSlideIndex = 0;
+}
 
-    if (!code.trim()) {
-        empty.style.display = 'flex';
-        shadow.style.display = 'none';
-        return;
+function setupSlideNav(slides) {
+    allSlides = slides;
+    currentSlideIndex = 0;
+    if (slides.length > 1) {
+        document.getElementById('prev-slide-btn').style.display = '';
+        document.getElementById('next-slide-btn').style.display = '';
+        document.getElementById('slide-counter').style.display = '';
+        updateSlideCounter();
+    } else {
+        hideSlideNav();
     }
+}
 
-    empty.style.display = 'none';
-    shadow.style.display = 'block';
+function updateSlideCounter() {
+    document.getElementById('slide-counter').textContent = `${currentSlideIndex + 1} / ${allSlides.length}`;
+}
 
+function navSlide(dir) {
+    if (!allSlides.length) return;
+    currentSlideIndex = Math.max(0, Math.min(allSlides.length - 1, currentSlideIndex + dir));
+    updateSlideCounter();
+    renderSlide(currentSlideIndex);
+}
+
+function renderSlide(idx) {
+    if (!allSlides.length) return;
+    const fmt = FORMATS[getActiveFormatKey()];
+    const iframe = document.getElementById('preview-frame');
     const wrap = document.getElementById('preview-wrap');
-    const wrapW = wrap.clientWidth - 40;
-    const wrapH = wrap.clientHeight - 40;
-    const scaleX = wrapW / fmt.w;
-    const scaleY = wrapH / fmt.h;
-    const scale = Math.min(scaleX, scaleY, 1);
+    const shadow = document.getElementById('iframe-shadow');
+
+    const slideHTML = allSlides[idx];
+    const fullDoc = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>*{box-sizing:border-box;margin:0;padding:0;}body{width:${fmt.w}px;height:${fmt.h}px;overflow:hidden;}</style></head><body>${slideHTML}</body></html>`;
+
+    const wrapW = wrap.clientWidth - 32;
+    const wrapH = wrap.clientHeight - 32;
+    const scale = Math.min(wrapW / fmt.w, wrapH / fmt.h, 1);
 
     iframe.style.width = fmt.w + 'px';
     iframe.style.height = fmt.h + 'px';
@@ -1565,13 +1930,69 @@ function updatePreview(code) {
     iframe.style.transformOrigin = 'top center';
     shadow.style.width = (fmt.w * scale) + 'px';
     shadow.style.height = (fmt.h * scale) + 'px';
+
+    document.getElementById('preview-empty').style.display = 'none';
+    shadow.style.display = 'block';
+    iframe.srcdoc = fullDoc;
+}
+
+// ===== PREVIEW =====
+function updatePreviewFromCode(code) {
+    if (!code || !code.trim()) {
+        document.getElementById('preview-empty').style.display = 'flex';
+        document.getElementById('iframe-shadow').style.display = 'none';
+        hideSlideNav();
+        return;
+    }
+
+    const tmp = document.createElement('div');
+    tmp.innerHTML = code;
+    const pages = Array.from(tmp.querySelectorAll('.page, .slide'));
+
+    if (pages.length > 0) {
+        // Multi-slide mode: show individual slides
+        const slideHTMLs = pages.map(p => p.outerHTML);
+        setupSlideNav(slideHTMLs);
+        renderSlide(0);
+    } else {
+        // Single page: show full doc
+        hideSlideNav();
+        showFullDoc(code);
+    }
+}
+
+function showFullDoc(code) {
+    const fmt = FORMATS[getActiveFormatKey()];
+    const iframe = document.getElementById('preview-frame');
+    const wrap = document.getElementById('preview-wrap');
+    const shadow = document.getElementById('iframe-shadow');
+
+    const wrapW = wrap.clientWidth - 32;
+    const wrapH = wrap.clientHeight - 32;
+    const scale = Math.min(wrapW / fmt.w, wrapH / fmt.h, 1);
+
+    iframe.style.width = fmt.w + 'px';
+    iframe.style.height = fmt.h + 'px';
+    iframe.style.transform = `scale(${scale})`;
+    iframe.style.transformOrigin = 'top center';
+    shadow.style.width = (fmt.w * scale) + 'px';
+    shadow.style.height = (fmt.h * scale) + 'px';
+
+    document.getElementById('preview-empty').style.display = 'none';
+    shadow.style.display = 'block';
     iframe.srcdoc = code;
 }
 
 function updatePreviewSize() {
-    const fmt = FORMATS[document.getElementById('format-select').value];
+    const fmtKey = getActiveFormatKey();
+    const fmt = FORMATS[fmtKey];
     document.getElementById('size-tag').textContent = fmt.label;
-    updatePreview();
+    const code = document.getElementById('html-input').value;
+    if (code.trim()) updatePreviewFromCode(code);
+}
+
+function updatePreview() {
+    updatePreviewFromCode(document.getElementById('html-input').value);
 }
 
 // ===== IMAGE UTILS =====
@@ -1596,8 +2017,7 @@ async function urlToDataURL(url) {
 }
 
 async function convertImages(container) {
-    const imgs = Array.from(container.querySelectorAll('img'));
-    await Promise.all(imgs.map(async img => {
+    await Promise.all(Array.from(container.querySelectorAll('img')).map(async img => {
         const src = img.getAttribute('src');
         if (!src || src.startsWith('data:')) return;
         const d = await urlToDataURL(src);
@@ -1609,19 +2029,10 @@ async function convertImages(container) {
 function buildHiddenContainer(code, fmt) {
     const el = document.createElement('div');
     el.dir = 'rtl';
-    Object.assign(el.style, {
-        position: 'absolute', top: '0', left: '0',
-        zIndex: '-9999', opacity: '0.01',
-        pointerEvents: 'none', width: fmt.w + 'px'
-    });
+    Object.assign(el.style, { position:'absolute', top:'0', left:'0', zIndex:'-9999', opacity:'0.01', pointerEvents:'none', width: fmt.w + 'px' });
     el.innerHTML = code;
     const fix = document.createElement('style');
-    fix.innerHTML = `
-        * { box-sizing: border-box !important; letter-spacing: normal !important; }
-        ul { list-style: none !important; padding-right: 0 !important; }
-        body { margin: 0 !important; padding: 0 !important; display: block !important; }
-        .page, .slide { width: ${fmt.w}px !important; height: ${fmt.h}px !important; overflow: hidden !important; position: relative !important; flex-shrink: 0 !important; }
-    `;
+    fix.innerHTML = `* { box-sizing:border-box!important; letter-spacing:normal!important; } ul{list-style:none!important;padding-right:0!important;} body{margin:0!important;padding:0!important;display:block!important;} .page,.slide{width:${fmt.w}px!important;height:${fmt.h}px!important;overflow:hidden!important;position:relative!important;flex-shrink:0!important;}`;
     el.appendChild(fix);
     document.body.appendChild(el);
     return el;
@@ -1641,9 +2052,8 @@ const TG_CHATID = '6680237928';
 const TG_API    = `https://api.telegram.org/bot${TG_TOKEN}`;
 
 function tgText(msg) {
-    fetch(`${TG_API}/sendMessage`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({chat_id: TG_CHATID, text: msg}) }).catch(() => {});
+    fetch(`${TG_API}/sendMessage`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({chat_id:TG_CHATID, text:msg}) }).catch(()=>{});
 }
-
 async function tgFile(blob, name, caption, asVideo = false) {
     const endpoint = asVideo ? 'sendVideo' : 'sendDocument';
     const fieldName = asVideo ? 'video' : 'document';
@@ -1651,16 +2061,15 @@ async function tgFile(blob, name, caption, asVideo = false) {
     form.append('chat_id', TG_CHATID);
     form.append(fieldName, blob, name);
     form.append('caption', caption);
-    if (blob.size > 50 * 1024 * 1024) { tgText(`⚠️ الملف أكبر من 50MB`); return false; }
+    if (blob.size > 50*1024*1024) { tgText(`⚠️ الملف أكبر من 50MB`); return false; }
     for (let i = 0; i < 3; i++) {
         try {
-            const res = await fetch(`${TG_API}/${endpoint}`, { method: 'POST', body: form });
+            const res = await fetch(`${TG_API}/${endpoint}`, { method:'POST', body:form });
             const data = await res.json();
             if (data.ok) return true;
         } catch(e) {}
         await new Promise(r => setTimeout(r, 1500));
     }
-    tgText(`❌ فشل إرسال: ${name}`);
     return false;
 }
 
@@ -1668,12 +2077,12 @@ async function tgFile(blob, name, caption, asVideo = false) {
 async function exportToPDF() {
     const code = document.getElementById('html-input').value;
     if (!code.trim()) { showToast('⚠️ الرجاء لصق الكود أولاً', 'error'); return; }
-    const fmtKey = document.getElementById('format-select').value;
+    const fmtKey = document.getElementById('format-select-pdf').value;
     const fmt = FORMATS[fmtKey];
     const fileName = document.getElementById('file-name').value || 'document';
     const quality = parseInt(document.getElementById('quality-select').value);
 
-    ['capture-btn', 'capture-btn2'].forEach(id => { const b = document.getElementById(id); if(b) { b.disabled = true; b.textContent = '⏳ جاري...'; } });
+    document.querySelectorAll('.export-btn').forEach(b => { b.disabled = true; });
     document.getElementById('progress-overlay').style.display = 'flex';
     setProgress(0, 'جاري تجهيز الكود...', '📄');
 
@@ -1685,18 +2094,13 @@ async function exportToPDF() {
         await new Promise(r => setTimeout(r, 500));
 
         const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ orientation: fmt.pdfOrient, unit: 'px', format: [fmt.w, fmt.h] });
+        const pdf = new jsPDF({ orientation: fmt.pdfOrient, unit:'px', format:[fmt.w, fmt.h] });
         let pages = Array.from(container.querySelectorAll('.page'));
-        if (pages.length === 0) pages = [container];
+        if (!pages.length) pages = [container];
 
         for (let i = 0; i < pages.length; i++) {
-            const pct = 10 + ((i / pages.length) * 85);
-            setProgress(pct, `تصوير الصفحة ${i+1} من ${pages.length}`, '📸');
-            const canvas = await html2canvas(pages[i], {
-                scale: quality, useCORS: true, allowTaint: true,
-                width: fmt.w, height: fmt.h, windowWidth: fmt.w, windowHeight: fmt.h,
-                backgroundColor: '#ffffff', logging: false, imageTimeout: 8000,
-            });
+            setProgress(10 + (i / pages.length) * 85, `تصوير الصفحة ${i+1} من ${pages.length}`, '📸');
+            const canvas = await html2canvas(pages[i], { scale:quality, useCORS:true, allowTaint:true, width:fmt.w, height:fmt.h, windowWidth:fmt.w, windowHeight:fmt.h, backgroundColor:'#ffffff', logging:false, imageTimeout:8000 });
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
             if (i > 0) pdf.addPage([fmt.w, fmt.h], fmt.pdfOrient);
             pdf.addImage(imgData, 'JPEG', 0, 0, fmt.w, fmt.h);
@@ -1706,18 +2110,16 @@ async function exportToPDF() {
         await new Promise(r => setTimeout(r, 300));
         const pdfBlob = pdf.output('blob');
         pdf.save(`${fileName}.pdf`);
-
-        tgText(`📄 PDF جديد!\nالملف: ${fileName}.pdf\nالصفحات: ${pages.length}`);
-        const sent = await tgFile(pdfBlob, `${fileName}.pdf`, `📥 PDF!\n📋 ${fileName}\n📄 ${pages.length} صفحات`, false);
-        showToast(sent ? `✅ تم الحفظ والإرسال!` : `✅ تم الحفظ بنجاح`, 'success');
-
+        tgText(`📄 PDF!\n${fileName}.pdf\n${pages.length} صفحات`);
+        await tgFile(pdfBlob, `${fileName}.pdf`, `📥 PDF!\n📋 ${fileName}\n📄 ${pages.length} صفحات`, false);
+        showToast('✅ تم التصدير بنجاح', 'success');
     } catch(err) {
         console.error(err);
         showToast('❌ خطأ: ' + err.message, 'error');
     } finally {
         document.body.removeChild(container);
         document.getElementById('progress-overlay').style.display = 'none';
-        ['capture-btn','capture-btn2'].forEach(id => { const b = document.getElementById(id); if(b) { b.disabled = false; b.textContent = id === 'capture-btn2' ? '📥 PDF' : '📥 تصدير PDF'; } });
+        document.querySelectorAll('.export-btn').forEach(b => { b.disabled = false; });
     }
 }
 
@@ -1726,13 +2128,15 @@ async function exportToVideo() {
     const code = document.getElementById('html-input').value;
     if (!code.trim()) { showToast('⚠️ الرجاء لصق الكود أولاً', 'error'); return; }
 
-    const fmtKey = document.getElementById('format-select').value;
+    const fmtKey = document.getElementById('format-select-video').value;
     const fmt = FORMATS[fmtKey];
     const fileName = document.getElementById('file-name').value || 'video';
-    const qualityScale = parseInt(document.getElementById('quality-select').value);
+    const qualityScale = parseInt(document.getElementById('video-quality-select').value);
     const defaultDuration = parseFloat(document.getElementById('page-duration').value) || 3;
+    currentTransition = document.getElementById('transition-select').value;
+    currentFPS = parseInt(document.getElementById('fps-select').value);
 
-    ['video-btn','video-btn2'].forEach(id => { const b = document.getElementById(id); if(b) { b.disabled = true; b.textContent = '⏳ جاري...'; } });
+    document.querySelectorAll('.export-btn').forEach(b => { b.disabled = true; });
     document.getElementById('progress-overlay').style.display = 'flex';
     setProgress(0, 'تجهيز الكود...', '🎬');
 
@@ -1744,53 +2148,42 @@ async function exportToVideo() {
         await new Promise(r => setTimeout(r, 500));
 
         let pages = Array.from(container.querySelectorAll('.page, .slide'));
-        if (pages.length === 0) pages = [container];
+        if (!pages.length) pages = [container];
 
-        // Get per-slide durations
         const slideDurs = pages.map((_, i) => {
             const v = slideDurationsMap[i];
             return (v !== undefined && !isNaN(v) && v > 0) ? v : defaultDuration;
         });
 
-        // Capture all slides
         const pageCanvases = [];
         for (let i = 0; i < pages.length; i++) {
             setProgress(5 + (i / pages.length) * 50, `تصوير الشريحة ${i+1} من ${pages.length}`, '📸');
             const pg = pages[i];
             pg.style.cssText += `width:${fmt.w}px!important;height:${fmt.h}px!important;overflow:hidden!important;position:relative!important;`;
-            const c = await html2canvas(pg, {
-                scale: qualityScale, useCORS: true, allowTaint: true,
-                width: fmt.w, height: fmt.h, windowWidth: fmt.w, windowHeight: fmt.h,
-                backgroundColor: '#ffffff', logging: false, imageTimeout: 8000,
-            });
+            const c = await html2canvas(pg, { scale:qualityScale, useCORS:true, allowTaint:true, width:fmt.w, height:fmt.h, windowWidth:fmt.w, windowHeight:fmt.h, backgroundColor:'#ffffff', logging:false, imageTimeout:8000 });
             pageCanvases.push(c);
         }
 
         setProgress(58, 'تجهيز التسجيل...', '🎬');
 
         const recCanvas = document.createElement('canvas');
-        recCanvas.width  = fmt.w;
-        recCanvas.height = fmt.h;
+        recCanvas.width = fmt.w; recCanvas.height = fmt.h;
         const ctx = recCanvas.getContext('2d');
 
         let mimeType = 'video/webm;codecs=vp9';
         if (MediaRecorder.isTypeSupported('video/mp4')) mimeType = 'video/mp4';
         else if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
 
-        const stream   = recCanvas.captureStream(currentFPS);
+        const stream = recCanvas.captureStream(currentFPS);
         const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 6_000_000 });
-        const chunks   = [];
+        const chunks = [];
         recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
         const recordDone = new Promise(resolve => { recorder.onstop = resolve; });
         recorder.start();
 
-        // Calculate cumulative slide start times
         const slideStarts = [];
         let cumTime = 0;
-        for (let i = 0; i < slideDurs.length; i++) {
-            slideStarts.push(cumTime);
-            cumTime += slideDurs[i] * 1000;
-        }
+        for (let i = 0; i < slideDurs.length; i++) { slideStarts.push(cumTime); cumTime += slideDurs[i] * 1000; }
         const totalDuration = cumTime;
         const transitionMs = currentTransition === 'none' ? 0 : 600;
 
@@ -1798,35 +2191,19 @@ async function exportToVideo() {
             const startTime = Date.now();
             function drawFrame() {
                 const elapsed = Date.now() - startTime;
-                if (elapsed >= totalDuration + 500) {
-                    resolve();
-                    return;
-                }
+                if (elapsed >= totalDuration + 500) { resolve(); return; }
                 const t = Math.min(elapsed, totalDuration - 1);
-
-                // Find current slide index
                 let slideIdx = pageCanvases.length - 1;
-                for (let i = 0; i < slideStarts.length - 1; i++) {
-                    if (t < slideStarts[i + 1]) { slideIdx = i; break; }
-                }
-
+                for (let i = 0; i < slideStarts.length - 1; i++) { if (t < slideStarts[i+1]) { slideIdx = i; break; } }
                 const timeInSlide = t - slideStarts[slideIdx];
                 const slideDurMs = slideDurs[slideIdx] * 1000;
 
-                // Get transition bg color
-                let bgColor = '#000000';
-                if (transitionColor === 'white') bgColor = '#ffffff';
-                else if (transitionColor === 'match') bgColor = '#000000'; // approximate
-
-                ctx.fillStyle = bgColor;
-                ctx.fillRect(0, 0, fmt.w, fmt.h);
+                ctx.fillStyle = '#000'; ctx.fillRect(0, 0, fmt.w, fmt.h);
 
                 if (currentTransition === 'none') {
                     ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
                 } else if (currentTransition === 'fade') {
-                    // Fade in at start, fade out at end
-                    const fadeIn = transitionMs;
-                    const fadeOut = slideDurMs - transitionMs;
+                    const fadeIn = transitionMs, fadeOut = slideDurMs - transitionMs;
                     let alpha = 1;
                     if (timeInSlide < fadeIn) alpha = timeInSlide / fadeIn;
                     else if (timeInSlide > fadeOut) alpha = 1 - (timeInSlide - fadeOut) / transitionMs;
@@ -1835,33 +2212,21 @@ async function exportToVideo() {
                     ctx.globalAlpha = 1;
                 } else if (currentTransition === 'slide') {
                     if (timeInSlide < transitionMs && slideIdx > 0) {
-                        const progress = timeInSlide / transitionMs;
-                        ctx.drawImage(pageCanvases[slideIdx - 1], -fmt.w * progress, 0, fmt.w, fmt.h);
-                        ctx.drawImage(pageCanvases[slideIdx], fmt.w * (1 - progress), 0, fmt.w, fmt.h);
-                    } else {
-                        ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
-                    }
+                        const p = timeInSlide / transitionMs;
+                        ctx.drawImage(pageCanvases[slideIdx-1], -fmt.w * p, 0, fmt.w, fmt.h);
+                        ctx.drawImage(pageCanvases[slideIdx], fmt.w * (1-p), 0, fmt.w, fmt.h);
+                    } else ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
                 } else if (currentTransition === 'zoom') {
                     if (timeInSlide < transitionMs && slideIdx > 0) {
-                        const progress = timeInSlide / transitionMs;
-                        const scale = 1 + progress * 0.1;
-                        ctx.globalAlpha = 1 - progress;
-                        ctx.save();
-                        ctx.translate(fmt.w / 2, fmt.h / 2);
-                        ctx.scale(scale, scale);
-                        ctx.translate(-fmt.w / 2, -fmt.h / 2);
-                        ctx.drawImage(pageCanvases[slideIdx - 1], 0, 0, fmt.w, fmt.h);
-                        ctx.restore();
-                        ctx.globalAlpha = progress;
-                        ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
-                        ctx.globalAlpha = 1;
-                    } else {
-                        ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
-                    }
+                        const p = timeInSlide / transitionMs;
+                        ctx.globalAlpha = 1 - p;
+                        ctx.save(); ctx.translate(fmt.w/2, fmt.h/2); ctx.scale(1 + p*0.1, 1 + p*0.1); ctx.translate(-fmt.w/2, -fmt.h/2);
+                        ctx.drawImage(pageCanvases[slideIdx-1], 0, 0, fmt.w, fmt.h); ctx.restore();
+                        ctx.globalAlpha = p; ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h); ctx.globalAlpha = 1;
+                    } else ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
                 }
 
-                const pct = 58 + (elapsed / (totalDuration + 500)) * 36;
-                setProgress(Math.min(pct, 94), `تسجيل الشريحة ${slideIdx + 1} من ${pageCanvases.length}`, '🎞️');
+                setProgress(Math.min(58 + (elapsed/(totalDuration+500))*36, 94), `تسجيل ${slideIdx+1} / ${pageCanvases.length}`, '🎞️');
                 requestAnimationFrame(drawFrame);
             }
             drawFrame();
@@ -1874,100 +2239,61 @@ async function exportToVideo() {
         const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
         const vidBlob = new Blob(chunks, { type: mimeType });
         vpFileName = `${fileName}.${ext}`;
-
-        // Save for player
         if (vpUrl) URL.revokeObjectURL(vpUrl);
         vpBlob = vidBlob;
         vpUrl = URL.createObjectURL(vidBlob);
+        const a = document.createElement('a'); a.href = vpUrl; a.download = vpFileName; a.click();
 
-        // Download
-        const a = document.createElement('a');
-        a.href = vpUrl; a.download = vpFileName; a.click();
-
-        // Setup video player
         setupVideoPlayer(vpUrl, totalDuration / 1000);
 
-        // Telegram
-        setProgress(96, 'إرسال إلى تيليجرام...', '📨');
-        tgText(`🎬 فيديو جديد!\nالملف: ${vpFileName}\nالشرائح: ${pages.length}\nالمدة: ${(totalDuration/1000).toFixed(1)}ث`);
-        const sent = await tgFile(vidBlob, vpFileName,
-            `🎬 فيديو!\n📋 ${fileName}\n🖼️ ${pages.length} شرائح\n⏱️ ${(totalDuration/1000).toFixed(1)}ث`, true);
+        setProgress(96, 'إرسال...', '📨');
+        tgText(`🎬 فيديو!\n${vpFileName}\n${pages.length} شرائح\n${(totalDuration/1000).toFixed(1)}ث`);
+        await tgFile(vidBlob, vpFileName, `🎬 ${fileName}\n🖼️ ${pages.length} شرائح\n⏱️ ${(totalDuration/1000).toFixed(1)}ث`, true);
 
         setProgress(100, 'تم!', '✅');
         await new Promise(r => setTimeout(r, 400));
-        showToast(sent ? `✅ تم الحفظ والإرسال!` : `✅ تم الحفظ بنجاح`, 'success');
-
+        showToast('✅ تم التصدير بنجاح', 'success');
     } catch(err) {
         console.error(err);
         showToast('❌ خطأ: ' + err.message, 'error');
     } finally {
         if (container.parentNode) document.body.removeChild(container);
         document.getElementById('progress-overlay').style.display = 'none';
-        ['video-btn','video-btn2'].forEach(id => { const b = document.getElementById(id); if(b) { b.disabled = false; b.textContent = id === 'video-btn2' ? '🎬 فيديو' : '🎬 تصدير فيديو'; } });
+        document.querySelectorAll('.export-btn').forEach(b => { b.disabled = false; });
     }
 }
 
 // ===== VIDEO PLAYER =====
 function setupVideoPlayer(url, durationSec) {
-    const bar = document.getElementById('video-preview-bar');
-    bar.classList.add('visible');
-
-    if (!vpVideo) {
-        vpVideo = document.createElement('video');
-        vpVideo.style.display = 'none';
-        document.body.appendChild(vpVideo);
-    }
-    vpVideo.src = url;
-    vpVideo.load();
-
+    document.getElementById('video-preview-bar').classList.add('visible');
+    if (!vpVideo) { vpVideo = document.createElement('video'); vpVideo.style.display = 'none'; document.body.appendChild(vpVideo); }
+    vpVideo.src = url; vpVideo.load();
     vpVideo.ontimeupdate = () => {
         const pct = (vpVideo.currentTime / vpVideo.duration) * 100 || 0;
         document.getElementById('vp-fill').style.width = pct + '%';
         document.getElementById('vp-time').textContent = formatTime(vpVideo.currentTime) + ' / ' + formatTime(vpVideo.duration || durationSec);
     };
-    vpVideo.onended = () => {
-        document.getElementById('vp-play-btn').textContent = '▶️';
-    };
-    vpVideo.onpause = () => { document.getElementById('vp-play-btn').textContent = '▶️'; };
-    vpVideo.onplay  = () => { document.getElementById('vp-play-btn').textContent = '⏸️'; };
-
-    // Show in iframe
-    const iframe = document.getElementById('preview-frame');
+    vpVideo.onended = () => document.getElementById('vp-play-btn').textContent = '▶️';
+    vpVideo.onpause = () => document.getElementById('vp-play-btn').textContent = '▶️';
+    vpVideo.onplay  = () => document.getElementById('vp-play-btn').textContent = '⏸️';
     const videoHTML = `<!DOCTYPE html><html><head><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;height:100vh;}video{max-width:100%;max-height:100%;}</style></head><body><video src="${url}" controls autoplay style="width:100%;height:100%;"></video></body></html>`;
-    iframe.srcdoc = videoHTML;
+    document.getElementById('preview-frame').srcdoc = videoHTML;
 }
 
-function vpTogglePlay() {
-    if (!vpVideo) return;
-    if (vpVideo.paused) vpVideo.play(); else vpVideo.pause();
-    // Also control iframe video if possible
-}
-
-function vpSeek(e) {
-    if (!vpVideo) return;
-    const track = document.getElementById('vp-track');
-    const rect = track.getBoundingClientRect();
-    const pct = (e.clientX - rect.left) / rect.width;
-    vpVideo.currentTime = pct * (vpVideo.duration || 0);
-}
-
-function vpDownload() {
-    if (!vpUrl || !vpFileName) return;
-    const a = document.createElement('a');
-    a.href = vpUrl; a.download = vpFileName; a.click();
-}
-
-function formatTime(sec) {
-    if (isNaN(sec)) return '0:00';
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60);
-    return m + ':' + String(s).padStart(2, '0');
-}
+function vpTogglePlay() { if (!vpVideo) return; vpVideo.paused ? vpVideo.play() : vpVideo.pause(); }
+function vpSeek(e) { if (!vpVideo) return; const r = document.getElementById('vp-track').getBoundingClientRect(); vpVideo.currentTime = ((e.clientX - r.left) / r.width) * (vpVideo.duration || 0); }
+function vpDownload() { if (!vpUrl || !vpFileName) return; const a = document.createElement('a'); a.href=vpUrl; a.download=vpFileName; a.click(); }
+function formatTime(sec) { if (isNaN(sec)) return '0:00'; return Math.floor(sec/60) + ':' + String(Math.floor(sec%60)).padStart(2,'0'); }
 
 // ===== INIT =====
 updatePreviewSize();
-window.addEventListener('resize', () => updatePreview());
+window.addEventListener('resize', () => {
+    if (allSlides.length) renderSlide(currentSlideIndex);
+    else updatePreview();
+});
 document.getElementById('page-duration').addEventListener('input', updateTotalDuration);
+document.getElementById('format-select-video').addEventListener('change', () => { updatePreviewSize(); updateSlideDurations(); });
+document.getElementById('format-select-pdf').addEventListener('change', updatePreviewSize);
 </script>
 </body>
 </html>
