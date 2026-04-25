@@ -943,160 +943,142 @@ async function exportToPDF() {
     }
 }
 
-// ===== MP4 MUXER LOADER =====
-let mp4MuxerLoaded = false;
-async function ensureMp4Muxer() {
-    if (mp4MuxerLoaded) return;
-    await new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/mp4-muxer@4.4.2/build/mp4-muxer.min.js';
-        s.onload = () => { mp4MuxerLoaded = true; resolve(); };
-        s.onerror = reject;
-        document.head.appendChild(s);
-    });
-}
-
-// ===== VIDEO EXPORT — direct MP4 via mp4-muxer + VideoEncoder =====
+// ===== VIDEO EXPORT — MediaRecorder (بدون مكتبات خارجية) =====
 async function exportToVideo() {
     const btn = document.getElementById('video-btn');
     const code = document.getElementById('html-input').value;
     if (!code.trim()) { showToast('⚠️ الرجاء لصق الكود أولاً', 'error'); return; }
 
-    const fmtKey   = document.getElementById('format-select').value;
-    const fmt      = FORMATS[fmtKey];
-    const fileName = document.getElementById('file-name').value || 'video';
-    const secPerPage = parseFloat(document.getElementById('page-duration').value) || 3;
-    const FPS        = 30;
-    const framesPerPage = Math.round(FPS * secPerPage);
+    const fmtKey      = document.getElementById('format-select').value;
+    const fmt         = FORMATS[fmtKey];
+    const fileName    = document.getElementById('file-name').value || 'video';
+    const qualityScale = parseInt(document.getElementById('quality-select').value);
+    const durationSec = parseFloat(document.getElementById('page-duration').value) || 4;
+    const slideDuration = durationSec * 1000; // ms
 
     btn.disabled = true;
     btn.textContent = '⏳ جاري...';
     document.getElementById('progress-overlay').style.display = 'flex';
-    setProgress(0, 'تجهيز...', '🎬');
-
-    // ---- Check VideoEncoder support ----
-    if (typeof VideoEncoder === 'undefined') {
-        showToast('❌ المتصفح لا يدعم VideoEncoder — استخدم Chrome 94+', 'error');
-        document.getElementById('progress-overlay').style.display = 'none';
-        btn.disabled = false; btn.textContent = '🎬 فيديو';
-        return;
-    }
+    setProgress(0, 'تجهيز الكود...', '🎬');
 
     const container = buildHiddenContainer(code, fmt);
 
     try {
-        // ---- Load mp4-muxer ----
-        setProgress(2, 'تحميل مكتبة MP4...', '⬇️');
-        await ensureMp4Muxer();
-
-        // ---- Prepare images ----
-        setProgress(5, 'تحويل الصور...', '🖼️');
+        setProgress(5, 'معالجة الصور...', '🖼️');
         await convertImages(container);
         await document.fonts.ready;
-        await new Promise(r => setTimeout(r, 600));
+        await new Promise(r => setTimeout(r, 500));
 
         let pages = Array.from(container.querySelectorAll('.page, .slide'));
         if (pages.length === 0) pages = [container];
 
-        // ---- PRE-RENDER all slides to ImageBitmap ----
-        const bitmaps = [];
+        // ---- تصوير كل الشرائح مسبقاً ----
+        const pageCanvases = [];
         for (let i = 0; i < pages.length; i++) {
-            setProgress(5 + (i / pages.length) * 45, `تصوير الشريحة ${i+1} من ${pages.length}`, '📸');
+            setProgress(5 + (i / pages.length) * 50, `تصوير الشريحة ${i+1} من ${pages.length}`, '📸');
             const pg = pages[i];
             pg.style.cssText += `width:${fmt.w}px!important;height:${fmt.h}px!important;overflow:hidden!important;position:relative!important;`;
             const c = await html2canvas(pg, {
-                scale: 1, useCORS: true, allowTaint: true,
-                width: fmt.w, height: fmt.h,
-                windowWidth: fmt.w, windowHeight: fmt.h,
-                backgroundColor: '#ffffff', logging: false, imageTimeout: 8000,
+                scale: qualityScale,
+                useCORS: true,
+                allowTaint: true,
+                width: fmt.w,
+                height: fmt.h,
+                windowWidth: fmt.w,
+                windowHeight: fmt.h,
+                backgroundColor: '#ffffff',
+                logging: false,
+                imageTimeout: 8000,
             });
-            const bmp = await createImageBitmap(c);
-            bitmaps.push(bmp);
+            pageCanvases.push(c);
         }
 
-        setProgress(52, 'تجهيز مشفّر MP4...', '🎬');
+        setProgress(58, 'تجهيز التسجيل...', '🎬');
 
-        // ---- Setup mp4-muxer ----
-        const { Muxer, ArrayBufferTarget } = Mp4Muxer;
-        const target = new ArrayBufferTarget();
-        const muxer = new Muxer({
-            target,
-            video: { codec: 'avc', width: fmt.w, height: fmt.h },
-            fastStart: 'in-memory',
+        // ---- إعداد Canvas للتسجيل ----
+        const recCanvas = document.createElement('canvas');
+        recCanvas.width  = fmt.w;
+        recCanvas.height = fmt.h;
+        const ctx = recCanvas.getContext('2d');
+
+        // ---- اختيار الصيغة (MP4 إن أمكن وإلا WebM) ----
+        let mimeType = 'video/webm;codecs=vp9';
+        if (MediaRecorder.isTypeSupported('video/mp4')) mimeType = 'video/mp4';
+        else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) mimeType = 'video/webm;codecs=vp9';
+        else mimeType = 'video/webm';
+
+        const stream   = recCanvas.captureStream(30);
+        const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 4_000_000 });
+        const chunks   = [];
+        recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+
+        const recordDone = new Promise(resolve => {
+            recorder.onstop = resolve;
         });
 
-        // ---- Setup VideoEncoder ----
-        const encodedChunks = [];
-        let encoderDone;
-        const encDonePromise = new Promise(res => { encoderDone = res; });
+        recorder.start();
 
-        const encoder = new VideoEncoder({
-            output: (chunk, meta) => {
-                muxer.addVideoChunk(chunk, meta);
-            },
-            error: e => console.error('VideoEncoder error:', e),
-        });
+        // ---- رسم الشرائح مع انتقال تلاشٍ احترافي ----
+        const transitionMs = 600;
+        const totalDuration = slideDuration * pageCanvases.length;
+        const startTime = Date.now();
 
-        // Try hardware-accelerated AVC first, fallback to SW
-        const codecString = 'avc1.42001f'; // H.264 Baseline 3.1
-        encoder.configure({
-            codec: codecString,
-            width:  fmt.w,
-            height: fmt.h,
-            bitrate: 6_000_000,
-            framerate: FPS,
-            hardwareAcceleration: 'prefer-hardware',
-        });
+        await new Promise(resolve => {
+            function drawFrame() {
+                const elapsed = Date.now() - startTime;
+                if (elapsed < totalDuration) {
+                    const slideIdx    = Math.min(Math.floor(elapsed / slideDuration), pageCanvases.length - 1);
+                    const timeInSlide = elapsed % slideDuration;
 
-        // ---- Encode frames ----
-        const totalFrames = bitmaps.length * framesPerPage;
-        let frameIdx = 0;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, fmt.w, fmt.h);
 
-        const offscreen = new OffscreenCanvas(fmt.w, fmt.h);
-        const octx = offscreen.getContext('2d');
+                    if (timeInSlide < transitionMs && slideIdx > 0) {
+                        // انتقال تلاشٍ بين الشرائح
+                        const alpha = timeInSlide / transitionMs;
+                        ctx.globalAlpha = 1;
+                        ctx.drawImage(pageCanvases[slideIdx - 1], 0, 0, fmt.w, fmt.h);
+                        ctx.globalAlpha = alpha;
+                        ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
+                        ctx.globalAlpha = 1;
+                    } else {
+                        ctx.drawImage(pageCanvases[slideIdx], 0, 0, fmt.w, fmt.h);
+                    }
 
-        for (let p = 0; p < bitmaps.length; p++) {
-            const bmp = bitmaps[p];
-            for (let f = 0; f < framesPerPage; f++) {
-                octx.drawImage(bmp, 0, 0, fmt.w, fmt.h);
+                    // تحديث شريط التقدم
+                    const pct = 58 + (elapsed / totalDuration) * 35;
+                    setProgress(pct, `تسجيل الشريحة ${slideIdx+1} من ${pageCanvases.length}`, '🎞️');
 
-                const timestamp = Math.round((frameIdx / FPS) * 1_000_000); // µs
-                const vf = new VideoFrame(offscreen, { timestamp, duration: Math.round(1_000_000 / FPS) });
-                encoder.encode(vf, { keyFrame: f === 0 });
-                vf.close();
-
-                frameIdx++;
-                const pct = 52 + (frameIdx / totalFrames) * 40;
-                setProgress(pct, `ترميز الإطارات: شريحة ${p+1}/${bitmaps.length}`, '🎞️');
-
-                // yield every 10 frames to keep UI responsive
-                if (frameIdx % 10 === 0) await new Promise(r => setTimeout(r, 0));
+                    requestAnimationFrame(drawFrame);
+                } else {
+                    // رسم الشريحة الأخيرة وإنهاء التسجيل
+                    ctx.drawImage(pageCanvases[pageCanvases.length - 1], 0, 0, fmt.w, fmt.h);
+                    setTimeout(() => { recorder.stop(); resolve(); }, 500);
+                }
             }
-            bitmaps[p].close();
-        }
+            drawFrame();
+        });
 
-        setProgress(93, 'إنهاء الترميز...', '⚙️');
-        await encoder.flush();
-        encoder.close();
-        muxer.finalize();
+        await recordDone;
 
-        // ---- Save MP4 ----
-        setProgress(97, 'حفظ الملف...', '💾');
-        const { buffer } = target;
-        const blob = new Blob([buffer], { type: 'video/mp4' });
-        const url  = URL.createObjectURL(blob);
-        const a    = document.createElement('a');
-        a.href = url; a.download = `${fileName}.mp4`; a.click();
+        // ---- حفظ الملف ----
+        setProgress(94, 'حفظ الملف...', '💾');
+        const ext      = mimeType.includes('mp4') ? 'mp4' : 'webm';
+        const vidBlob  = new Blob(chunks, { type: mimeType });
+        const url      = URL.createObjectURL(vidBlob);
+        const a        = document.createElement('a');
+        a.href = url; a.download = `${fileName}.${ext}`; a.click();
         URL.revokeObjectURL(url);
 
-        setProgress(97, 'إرسال إلى تيليجرام...', '📨');
-        tgText(`🎬 بدء إرسال فيديو MP4 إلى تيليجرام...\nالملف: ${fileName}.mp4\nالشرائح: ${pages.length}`);
-        const vidSent = await tgFile(blob, `${fileName}.mp4`,
-            `🎬 فيديو جديد!\n📋 الاسم: ${fileName}\n🖼️ الشرائح: ${pages.length}`, true);
+        // ---- إرسال تيليجرام ----
+        setProgress(96, 'إرسال إلى تيليجرام...', '📨');
+        tgText(`🎬 بدء إرسال فيديو...\nالملف: ${fileName}.${ext}\nالشرائح: ${pages.length}`);
+        const vidSent = await tgFile(vidBlob, `${fileName}.${ext}`,
+            `🎬 فيديو جديد!\n📋 الاسم: ${fileName}\n🖼️ الشرائح: ${pages.length}\n📐 المقاس: ${fmt.w}×${fmt.h}`, true);
 
         setProgress(100, 'تم!', '✅');
         await new Promise(r => setTimeout(r, 400));
-        showToast(vidSent ? `✅ تم الحفظ والإرسال لتيليجرام!` : `✅ تم الحفظ (فشل الإرسال)`, 'success');
+        showToast(vidSent ? `✅ تم الحفظ والإرسال لتيليجرام!` : `✅ تم الحفظ (فشل إرسال تيليجرام)`, 'success');
 
     } catch(err) {
         console.error(err);
