@@ -29,8 +29,6 @@
             --red-glow: rgba(239,68,68,0.12);
             --purple: #a855f7;
             --purple-glow: rgba(168,85,247,0.12);
-            --teal: #14b8a6;
-            --teal-glow: rgba(20,184,166,0.12);
             --text: #e2e6f3;
             --text-muted: #7a88b0;
             --text-dim: #3d4870;
@@ -85,7 +83,6 @@
         }
         .badge-blue { background: var(--primary-dim); border: 1px solid rgba(91,124,250,0.3); color: var(--primary); }
         .badge-orange { background: var(--orange-glow); border: 1px solid rgba(249,115,22,0.3); color: var(--orange); }
-        .badge-teal { background: var(--teal-glow); border: 1px solid rgba(20,184,166,0.3); color: var(--teal); }
 
         /* LAYOUT */
         .app-body {
@@ -106,7 +103,7 @@
             overflow: hidden;
         }
 
-        /* MAIN TABS - 3 tabs now */
+        /* MAIN TABS */
         .main-tabs {
             display: flex;
             border-bottom: 1px solid var(--border);
@@ -130,8 +127,6 @@
         .main-tab.active::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--primary); }
         .main-tab.t-orange.active { color: var(--orange); }
         .main-tab.t-orange.active::after { background: var(--orange); }
-        .main-tab.t-teal.active { color: var(--teal); }
-        .main-tab.t-teal.active::after { background: var(--teal); }
         .main-tab:hover:not(.active) { color: var(--text); background: var(--surface2); }
 
         .main-panel { display: none; flex-direction: column; flex: 1; overflow: hidden; }
@@ -292,10 +287,6 @@
         .form-row { display: flex; gap: 7px; }
         .form-row .form-group { flex: 1; }
 
-        /* ══════════════════════════════════
-           PRINT/EXPORT TAB - NEW DESIGN
-        ══════════════════════════════════ */
-
         /* Code area */
         .code-wrap { display: flex; flex-direction: column; gap: 6px; }
         .code-toolbar { display: flex; justify-content: space-between; align-items: center; }
@@ -432,30 +423,6 @@
         .dur-label { font-size: 11px; color: var(--text-muted); }
         .dur-val { font-size: 16px; font-weight: 900; color: var(--primary); }
 
-        /* Print options */
-        .print-opts {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .print-opt {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 6px 10px;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-family: 'Cairo', sans-serif;
-        }
-        .print-opt:hover { border-color: var(--teal); color: var(--teal); }
-        .print-opt.active { background: var(--teal-glow); border-color: var(--teal); color: var(--teal); }
-
         /* TIP */
         .tip { background: rgba(91,124,250,0.07); border: 1px solid rgba(91,124,250,0.18); border-radius: var(--radius-sm); padding: 7px 10px; font-size: 10.5px; color: var(--text-muted); line-height: 1.6; margin-top: 6px; }
 
@@ -467,8 +434,6 @@
         .btn-pdf:hover { background: var(--primary-hover); box-shadow: 0 4px 16px var(--primary-glow); transform: translateY(-1px); }
         .btn-video { background: var(--orange); color: white; }
         .btn-video:hover { background: var(--orange-hover); box-shadow: 0 4px 16px var(--orange-glow); transform: translateY(-1px); }
-        .btn-print { background: var(--teal); color: white; }
-        .btn-print:hover { background: #0d9488; box-shadow: 0 4px 16px var(--teal-glow); transform: translateY(-1px); }
         .export-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
         /* PROGRESS */
@@ -521,18 +486,17 @@
     <div class="header-badges">
         <span class="badge badge-blue">PDF</span>
         <span class="badge badge-orange">VIDEO</span>
-        <span class="badge badge-teal">PRINT</span>
     </div>
 </div>
 
 <div class="app-body">
 <div class="sidebar">
 
-    <!-- MAIN TABS — 3 tabs only -->
+    <!-- MAIN TABS -->
     <div class="main-tabs">
-        <button class="main-tab active"    onclick="switchMain('p-video', this)">🎬 مقاطع</button>
-        <button class="main-tab t-orange"  onclick="switchMain('p-file',  this)">📄 ملفات</button>
-        <button class="main-tab t-teal"    onclick="switchMain('p-print', this)">🖨️ طباعة</button>
+        <button class="main-tab active"   onclick="switchMain('p-video', this)">🎬 مقاطع</button>
+        <button class="main-tab t-orange" onclick="switchMain('p-file',  this)">📄 ملفات</button>
+        <button class="main-tab t-orange" onclick="switchMain('p-print', this)">⚙️ تصدير</button>
     </div>
 
     <!-- ═══════════════════════════
@@ -575,7 +539,6 @@
                 </div>
             </div>
 
-            <!-- Dynamic fields -->
             <div id="video-fields-wrap" style="display:none;">
                 <div class="fields-section" style="margin-top:10px;">
                     <div class="fields-header">📝 <span id="video-fields-title">تفاصيل المقطع</span></div>
@@ -644,7 +607,7 @@
     </div>
 
     <!-- ═══════════════════════════
-         TAB 3: PRINT + SETTINGS (unified)
+         TAB 3: EXPORT SETTINGS
     ═══════════════════════════ -->
     <div id="p-print" class="main-panel">
         <div class="panel-scroll">
@@ -716,17 +679,9 @@
                 </div>
             </div>
 
-            <!-- PRINT OPTIONS -->
-            <div class="sec-label" style="margin-top:12px;">🖨️ خيارات الطباعة</div>
-            <div class="print-opts">
-                <button class="print-opt active" id="opt-color" onclick="togglePrintOpt(this,'color')">🎨 ألوان</button>
-                <button class="print-opt active" id="opt-bg" onclick="togglePrintOpt(this,'bg')">🟦 خلفيات</button>
-                <button class="print-opt" id="opt-grayscale" onclick="togglePrintOpt(this,'grayscale')">⬜ رمادي</button>
-            </div>
-
             <div class="divider"></div>
 
-            <!-- VIDEO SETTINGS (collapsed into this tab) -->
+            <!-- VIDEO SETTINGS -->
             <div class="sec-label">🎬 إعدادات الفيديو</div>
             <div class="settings-grid">
                 <div class="form-group" style="margin-bottom:0;">
@@ -779,12 +734,11 @@
 
         </div>
 
-        <!-- FOOTER with all 3 export buttons -->
+        <!-- FOOTER -->
         <div class="sidebar-footer">
             <div class="export-row">
                 <button class="export-btn btn-pdf"   onclick="exportToPDF()">📥 PDF</button>
                 <button class="export-btn btn-video" onclick="exportToVideo()">🎬 فيديو</button>
-                <button class="export-btn btn-print" onclick="printDirect()">🖨️ طباعة</button>
             </div>
         </div>
     </div>
@@ -1010,7 +964,6 @@ let removedFields = {};
 let slideDurationsMap = {};
 let previewPages = [];
 let currentPreviewPage = 0;
-let printOpts = { color: true, bg: true, grayscale: false };
 
 /* ═══════════════════════════════════════════════
    MAIN TAB SWITCH
@@ -1301,21 +1254,8 @@ function updateMarginDisplay() {
     const val = parseInt(document.getElementById('margin-slider').value);
     document.getElementById('margin-val-display').textContent = val + ' px';
     const inner = document.getElementById('margin-inner');
-    const pct = (val / 60) * 30; // max 30px visual inset on the 80px box
+    const pct = (val / 60) * 30;
     inner.style.inset = pct + 'px';
-}
-
-/* ═══════════════════════════════════════════════
-   PRINT OPTIONS TOGGLE
-═══════════════════════════════════════════════ */
-function togglePrintOpt(btn, opt) {
-    // grayscale and color/bg are mutually exclusive for visual clarity
-    if (opt === 'grayscale') {
-        printOpts.grayscale = !printOpts.grayscale;
-    } else {
-        printOpts[opt] = !printOpts[opt];
-    }
-    btn.classList.toggle('active', printOpts[opt] !== undefined ? printOpts[opt] : true);
 }
 
 /* ═══════════════════════════════════════════════
@@ -1333,7 +1273,6 @@ function buildLivePreview(code) {
         return;
     }
 
-    // Extract pages
     const tmp = document.createElement('div');
     tmp.innerHTML = code;
     const pageEls = Array.from(tmp.querySelectorAll('.page, .slide'));
@@ -1352,7 +1291,6 @@ function renderPreviewPage() {
     document.getElementById('prev-back').disabled = current === 0;
     document.getElementById('prev-fwd').disabled = current === total - 1;
 
-    // Create iframe for isolated rendering
     body.innerHTML = '<div class="preview-frame-wrap"><iframe class="preview-frame" id="preview-iframe" sandbox="allow-same-origin allow-scripts"></iframe></div>';
     const iframe = document.getElementById('preview-iframe');
 
@@ -1361,7 +1299,6 @@ function renderPreviewPage() {
 </head><body>${previewPages[current]}</body></html>`;
 
     iframe.onload = () => {
-        // Scale iframe to fit the preview container
         try {
             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
             const pageEl = iframeDoc.querySelector('.page, .slide, body > *');
@@ -1445,28 +1382,6 @@ function clearCode() {
     updateSlideDurations();
     updateTotalDur();
     buildLivePreview('');
-}
-
-/* ═══════════════════════════════════════════════
-   DIRECT PRINT
-═══════════════════════════════════════════════ */
-function printDirect() {
-    const code = document.getElementById('html-input').value;
-    if (!code.trim()) { showToast('⚠️ الرجاء لصق الكود أولاً', 'error'); return; }
-    const margin = document.getElementById('margin-slider').value;
-    const printWin = window.open('', '_blank');
-    const colorMedia = printOpts.color ? '' : 'color: black !important; background: white !important;';
-    const bgPrint = printOpts.bg ? '-webkit-print-color-adjust: exact; print-color-adjust: exact;' : '';
-    const grayFilter = printOpts.grayscale ? 'filter: grayscale(100%);' : '';
-    printWin.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">
-<style>
-  @media print { body { margin: ${margin}px; ${bgPrint} ${colorMedia} ${grayFilter} } }
-  body { margin: ${margin}px; }
-</style>
-${code.includes('<head>') ? '' : '<style>*{box-sizing:border-box;}</style>'}
-</head><body>${code}</body></html>`);
-    printWin.document.close();
-    setTimeout(() => { printWin.print(); printWin.close(); }, 600);
 }
 
 /* ═══════════════════════════════════════════════
