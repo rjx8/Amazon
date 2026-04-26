@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة تحويل الأكواد</title>
+    <title>منصة تحويل الأكواد - النسخة المتطورة</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
+        /* ========== المتغيرات والتصميم الأساسي ========== */
         :root {
             --bg: #0b0d14;
             --surface: #141720;
@@ -19,16 +20,11 @@
             --primary: #5b7cfa;
             --primary-hover: #4a6cf7;
             --primary-glow: rgba(91,124,250,0.15);
-            --primary-dim: rgba(91,124,250,0.08);
             --orange: #f97316;
             --orange-hover: #ea580c;
-            --orange-glow: rgba(249,115,22,0.15);
             --green: #22c55e;
-            --green-glow: rgba(34,197,94,0.12);
-            --red: #ef4444;
-            --red-glow: rgba(239,68,68,0.12);
             --purple: #a855f7;
-            --purple-glow: rgba(168,85,247,0.12);
+            --red: #ef4444;
             --text: #e2e6f3;
             --text-muted: #7a88b0;
             --text-dim: #3d4870;
@@ -47,11 +43,11 @@
             flex-direction: column;
         }
 
-        /* HEADER */
+        /* ========== الهيدر ========== */
         .header {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
-            padding: 10px 16px;
+            padding: 10px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -60,42 +56,48 @@
             z-index: 100;
             flex-shrink: 0;
         }
+
         .header-logo {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 15px;
+            gap: 10px;
+            font-size: 16px;
             font-weight: 800;
         }
+
         .logo-icon {
-            width: 32px; height: 32px;
-            background: linear-gradient(135deg, var(--primary), #7c3aed);
-            border-radius: 9px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px;
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--purple));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
         }
-        .header-badges { display: flex; gap: 6px; }
+
         .badge {
-            padding: 3px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
         }
-        .badge-blue { background: var(--primary-dim); border: 1px solid rgba(91,124,250,0.3); color: var(--primary); }
-        .badge-orange { background: var(--orange-glow); border: 1px solid rgba(249,115,22,0.3); color: var(--orange); }
 
-        /* LAYOUT */
+        .badge-blue { background: var(--primary-dim); border: 1px solid rgba(91,124,250,0.3); color: var(--primary); }
+        .badge-orange { background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.3); color: var(--orange); }
+
+        /* ========== جسم التطبيق ========== */
         .app-body {
             display: flex;
             flex: 1;
-            height: calc(100vh - 52px);
+            height: calc(100vh - 58px);
             overflow: hidden;
         }
 
-        /* SIDEBAR */
+        /* ========== الشريط الجانبي ========== */
         .sidebar {
             width: 100%;
-            max-width: 480px;
+            max-width: 520px;
             background: var(--surface);
             border-left: 1px solid var(--border);
             display: flex;
@@ -103,540 +105,704 @@
             overflow: hidden;
         }
 
-        /* MAIN TABS */
+        /* ========== التبويبات الرئيسية ========== */
         .main-tabs {
             display: flex;
             border-bottom: 1px solid var(--border);
             background: var(--bg);
             flex-shrink: 0;
         }
+
         .main-tab {
             flex: 1;
-            padding: 10px 4px;
-            font-size: 11.5px;
+            padding: 12px 4px;
+            font-size: 12px;
             font-weight: 700;
-            font-family: 'Cairo', sans-serif;
             background: transparent;
             border: none;
             color: var(--text-muted);
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
+            font-family: 'Cairo', sans-serif;
         }
+
         .main-tab.active { color: var(--primary); background: var(--surface); }
-        .main-tab.active::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--primary); }
-        .main-tab.t-orange.active { color: var(--orange); }
-        .main-tab.t-orange.active::after { background: var(--orange); }
-        .main-tab.t-green.active { color: var(--green); }
-        .main-tab.t-green.active::after { background: var(--green); }
+        .main-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .main-tab.print-tab.active { color: var(--orange); }
+        .main-tab.print-tab.active::after { background: var(--orange); }
+
         .main-tab:hover:not(.active) { color: var(--text); background: var(--surface2); }
 
+        /* ========== اللوحات ========== */
         .main-panel { display: none; flex-direction: column; flex: 1; overflow: hidden; }
         .main-panel.active { display: flex; }
 
         .panel-scroll {
             flex: 1;
             overflow-y: auto;
-            padding: 14px;
+            padding: 16px;
             scrollbar-width: thin;
-            scrollbar-color: var(--border) transparent;
         }
 
-        /* SECTION LABELS */
+        /* ========== عناصر مشتركة ========== */
         .sec-label {
-            font-size: 10px;
-            font-weight: 700;
+            font-size: 11px;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-dim);
-            margin-bottom: 8px;
-            margin-top: 16px;
+            margin-bottom: 12px;
+            margin-top: 20px;
         }
         .sec-label:first-child { margin-top: 0; }
 
-        /* PROMPT TYPE CARDS */
+        /* ========== شبكة الأنواع ========== */
         .type-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
         }
+
         .type-card {
             background: var(--surface2);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            padding: 10px 9px;
+            padding: 10px 8px;
             cursor: pointer;
             transition: all 0.2s;
+            text-align: center;
         }
-        .type-card:hover { border-color: var(--border-light); transform: translateY(-1px); }
-        .type-card.sel-file:hover, .type-card.sel-file.active { border-color: var(--primary); background: var(--primary-dim); }
-        .type-card.sel-video:hover, .type-card.sel-video.active { border-color: var(--orange); background: var(--orange-glow); }
-        .tc-icon { font-size: 18px; margin-bottom: 4px; }
-        .tc-title { font-size: 11.5px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+
+        .type-card:hover { border-color: var(--border-light); transform: translateY(-2px); background: var(--surface3); }
+        .type-card.active { border-color: var(--primary); background: var(--primary-dim); }
+
+        .tc-icon { font-size: 24px; margin-bottom: 6px; }
+        .tc-title { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
         .tc-sub { font-size: 10px; color: var(--text-muted); }
 
-        /* FIELDS SECTION */
+        /* ========== حقول البرومبت ========== */
         .fields-section {
             background: var(--surface2);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
             overflow: hidden;
-            margin-top: 10px;
+            margin-top: 12px;
         }
-        .fields-header {
-            padding: 9px 12px;
-            border-bottom: 1px solid var(--border);
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .fields-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 7px; }
 
-        /* FIELD ROW */
+        .fields-header {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--surface3);
+        }
+
+        .fields-body {
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         .field-row {
             display: flex;
             flex-direction: column;
-            gap: 3px;
-            transition: opacity 0.2s;
+            gap: 5px;
         }
-        .field-row.removed { opacity: 0.35; }
-        .field-row.removed input, .field-row.removed textarea { pointer-events: none; }
 
-        .field-label-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
         .field-label {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
+            color: var(--text-muted);
         }
-        .field-remove {
-            background: transparent;
-            border: none;
-            color: var(--text-dim);
-            font-size: 10px;
-            font-weight: 700;
-            font-family: 'Cairo', sans-serif;
-            cursor: pointer;
-            padding: 1px 6px;
-            border-radius: 4px;
-            transition: all 0.15s;
-        }
-        .field-remove:hover { color: var(--red); background: var(--red-glow); }
-        .field-remove.is-removed { color: var(--red); }
-        .field-remove.is-removed:hover { color: var(--green); background: var(--green-glow); }
 
-        input[type=text], input[type=number], textarea, select {
+        input, textarea, select {
             background: var(--surface3);
             border: 1px solid var(--border);
             color: var(--text);
-            padding: 7px 10px;
+            padding: 8px 12px;
             border-radius: var(--radius-xs);
-            font-size: 12px;
+            font-size: 13px;
             font-family: 'Cairo', sans-serif;
             width: 100%;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
-        input[type=text]:focus, input[type=number]:focus, textarea:focus, select:focus {
+
+        input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 2px var(--primary-glow);
         }
-        textarea { resize: vertical; min-height: 60px; line-height: 1.6; }
-        select option { background: var(--surface2); }
 
-        /* TWO COLUMNS for short fields */
-        .fields-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+        textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
 
-        /* PROMPT ACTIONS */
+        /* ========== أزرار الإجراءات ========== */
         .prompt-actions {
             display: flex;
-            gap: 6px;
-            margin-top: 10px;
+            gap: 8px;
+            margin-top: 16px;
         }
+
         .action-btn {
             flex: 1;
-            padding: 9px 8px;
+            padding: 10px;
             border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--surface3);
+            color: var(--text);
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover { background: var(--surface2); transform: translateY(-1px); }
+        .btn-ar { background: var(--primary-dim); color: var(--primary); border-color: rgba(91,124,250,0.3); }
+        .btn-en { background: rgba(168,85,247,0.1); color: var(--purple); border-color: rgba(168,85,247,0.3); }
+
+        /* ========== منطقة الكود ========== */
+        .code-wrap { display: flex; flex-direction: column; gap: 10px; }
+        .code-toolbar { display: flex; justify-content: space-between; align-items: center; }
+        .char-count { font-size: 11px; color: var(--text-dim); }
+        .clear-btn {
+            background: transparent;
+            border: 1px solid rgba(239,68,68,0.3);
+            color: var(--red);
+            padding: 5px 12px;
+            border-radius: 5px;
             font-size: 11px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
+        }
+        .clear-btn:hover { background: var(--red-glow); border-color: var(--red); }
+        #html-input {
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+            text-align: left;
+            min-height: 350px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        /* ========== إعدادات الطباعة ========== */
+        .settings-grid {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .setting-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .setting-item label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .setting-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            padding: 0;
+            height: 4px;
+            -webkit-appearance: none;
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        input[type="range"]:focus { outline: none; }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 5px;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        /* ========== معاينة الطباعة ========== */
+        .print-preview-area {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            margin-top: 16px;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .preview-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .preview-nav button {
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 5px 12px;
+            border-radius: var(--radius-xs);
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .preview-nav button:hover { background: var(--surface); }
+
+        .preview-container {
+            background: #fff;
+            border-radius: var(--radius-xs);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        .preview-iframe {
+            width: 100%;
+            height: 250px;
+            border: none;
+            transform: scale(0.6);
+            transform-origin: top center;
+        }
+
+        /* ========== أزرار التصدير ========== */
+        .sidebar-footer {
+            padding: 14px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            flex-shrink: 0;
+        }
+
+        .export-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .export-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
             font-family: 'Cairo', sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
-            border: 1px solid var(--border);
+            gap: 6px;
+            transition: all 0.2s;
         }
-        .btn-ar { background: var(--primary-dim); color: var(--primary); border-color: rgba(91,124,250,0.3); }
-        .btn-ar:hover { background: rgba(91,124,250,0.2); }
-        .btn-en { background: var(--purple-glow); color: var(--purple); border-color: rgba(168,85,247,0.3); }
-        .btn-en:hover { background: rgba(168,85,247,0.2); }
-        .btn-preview { background: var(--surface3); color: var(--text-muted); }
-        .btn-preview:hover { color: var(--text); border-color: var(--border-light); }
 
-        /* DIVIDER */
-        .divider { height: 1px; background: var(--border); margin: 10px 0; }
+        .btn-pdf { background: var(--primary); color: white; }
+        .btn-pdf:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .btn-video { background: var(--orange); color: white; }
+        .btn-video:hover { background: var(--orange-hover); transform: translateY(-2px); }
+        .btn-print { background: var(--green); color: white; }
+        .btn-print:hover { background: #16a34a; transform: translateY(-2px); }
+        .export-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        /* FORM ELEMENTS (settings panels) */
-        .form-group { display: flex; flex-direction: column; margin-bottom: 9px; }
-        .form-group label { font-size: 10.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.3px; }
-        .form-row { display: flex; gap: 7px; }
-        .form-row .form-group { flex: 1; }
+        /* ========== التلميحات ========== */
+        .tip {
+            background: var(--primary-glow);
+            border: 1px solid rgba(91,124,250,0.2);
+            border-radius: var(--radius-sm);
+            padding: 8px 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 12px;
+        }
 
-        /* DURATION */
-        .duration-display {
+        .tip code {
             background: var(--surface3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+
+        /* ========== شريط التقدم ========== */
+        .progress-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .progress-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px 40px;
+            text-align: center;
+            min-width: 320px;
+        }
+
+        .progress-icon { font-size: 40px; margin-bottom: 12px; }
+        .progress-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+        .progress-bar-track {
+            width: 100%;
+            height: 6px;
+            background: var(--surface2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--orange));
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .progress-pct { font-size: 12px; color: var(--text-muted); }
+
+        /* ========== المودال ========== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 9000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 650px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title { font-size: 15px; font-weight: 800; }
+        .modal-close {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .modal-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
+        .modal-text {
+            background: var(--surface2);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            padding: 10px 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            padding: 14px;
+            font-size: 12px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            direction: rtl;
+            text-align: right;
         }
-        .dur-label { font-size: 11px; color: var(--text-muted); }
-        .dur-val { font-size: 16px; font-weight: 900; color: var(--primary); }
-
-        .slides-list { display: flex; flex-direction: column; gap: 5px; max-height: 160px; overflow-y: auto; margin-top: 6px; }
-        .slide-row { display: flex; align-items: center; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-xs); padding: 6px 10px; }
-        .slide-lbl { font-size: 11px; color: var(--text-muted); flex: 1; font-weight: 600; }
-        .slide-inp { width: 70px !important; padding: 4px 8px !important; font-size: 12px !important; text-align: center; }
-
-        /* CODE TEXTAREA */
-        .code-wrap { display: flex; flex-direction: column; gap: 6px; }
-        .code-toolbar { display: flex; justify-content: space-between; align-items: center; }
-        .char-count { font-size: 10px; color: var(--text-dim); }
-        .clear-btn { background: transparent; border: 1px solid rgba(239,68,68,0.3); color: var(--red); padding: 4px 9px; border-radius: 5px; font-size: 10.5px; font-weight: 700; cursor: pointer; font-family: 'Cairo', sans-serif; transition: all 0.2s; }
-        .clear-btn:hover { background: var(--red-glow); border-color: var(--red); }
-        #html-input { font-family: 'Courier New', monospace; direction: ltr; text-align: left; min-height: 300px; font-size: 12px; line-height: 1.6; }
-
-        /* TIP */
-        .tip { background: rgba(91,124,250,0.07); border: 1px solid rgba(91,124,250,0.18); border-radius: var(--radius-sm); padding: 7px 10px; font-size: 10.5px; color: var(--text-muted); line-height: 1.6; margin-top: 6px; }
-
-        /* FOOTER */
-        .sidebar-footer { padding: 10px 14px; border-top: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
-        .export-row { display: flex; gap: 7px; }
-        .export-btn { flex: 1; padding: 11px 10px; border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Cairo', sans-serif; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s; }
-        .btn-pdf { background: var(--primary); color: white; }
-        .btn-pdf:hover { background: var(--primary-hover); box-shadow: 0 4px 16px var(--primary-glow); transform: translateY(-1px); }
-        .btn-video { background: var(--orange); color: white; }
-        .btn-video:hover { background: var(--orange-hover); box-shadow: 0 4px 16px var(--orange-glow); transform: translateY(-1px); }
-        .export-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
-
-        /* PROGRESS */
-        .progress-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 10000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(6px); }
-        .progress-box { background: var(--surface); border: 1px solid var(--border); padding: 28px 32px; border-radius: 16px; text-align: center; min-width: 300px; }
-        .progress-icon { font-size: 30px; margin-bottom: 10px; }
-        .progress-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
-        .progress-bar-track { width: 100%; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
-        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--orange)); width: 0%; transition: width 0.3s; border-radius: 3px; }
-        .progress-pct { font-size: 11px; color: var(--text-muted); }
-
-        /* MODAL */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
-        .modal-overlay.open { display: flex; }
-        .modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 640px; max-height: 80vh; display: flex; flex-direction: column; }
-        .modal-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .modal-title { font-size: 14px; font-weight: 800; }
-        .modal-close { background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .modal-close:hover { color: var(--red); border-color: var(--red); }
-        .modal-body { flex: 1; overflow-y: auto; padding: 14px 18px; }
-        .modal-text { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; font-size: 12px; line-height: 1.8; color: var(--text); white-space: pre-wrap; direction: rtl; text-align: right; font-family: 'Cairo', sans-serif; }
-        .modal-footer { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
-        .modal-btn { flex: 1; padding: 10px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; cursor: pointer; border: none; font-family: 'Cairo', sans-serif; transition: all 0.2s; }
+        .modal-footer {
+            padding: 12px 18px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+        }
         .modal-btn-primary { background: var(--primary); color: white; }
         .modal-btn-purple { background: var(--purple); color: white; }
         .modal-btn-sec { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
 
-        /* TOAST */
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px 22px; border-radius: 50px; font-size: 12.5px; font-weight: 700; z-index: 20000; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); pointer-events: none; }
+        /* ========== توست ========== */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 700;
+            z-index: 20000;
+            transition: transform 0.3s;
+            pointer-events: none;
+        }
         .toast.show { transform: translateX(-50%) translateY(0); }
         .toast.success { border-color: var(--green); color: var(--green); }
         .toast.error { border-color: var(--red); color: var(--red); }
 
+        /* ========== متفرقات ========== */
+        .divider { height: 1px; background: var(--border); margin: 16px 0; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-        @media (max-width: 600px) {
-            .sidebar { max-width: 100%; }
-            .app-body { height: auto; overflow: auto; }
-        }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div class="header-logo">
-        <div class="logo-icon">🛠️</div>
-        منصة تحويل الأكواد
+        <div class="logo-icon">🎬</div>
+        <span>منصة تحويل الأكواد</span>
     </div>
-    <div class="header-badges">
+    <div class="badge-group" style="display: flex; gap: 6px;">
         <span class="badge badge-blue">PDF</span>
-        <span class="badge badge-orange">VIDEO</span>
+        <span class="badge badge-orange">فيديو متحرك</span>
     </div>
 </div>
 
 <div class="app-body">
 <div class="sidebar">
 
-    <!-- MAIN TABS -->
+    <!-- تبويبات رئيسية -->
     <div class="main-tabs">
-        <button class="main-tab active"    onclick="switchMain('p-video', this)">🎬 مقاطع</button>
-        <button class="main-tab"           onclick="switchMain('p-file',  this)">📄 ملفات</button>
-        <button class="main-tab t-orange"  onclick="switchMain('p-vsett', this)">⚙️ فيديو</button>
-        <button class="main-tab t-green"   onclick="switchMain('p-psett', this)">📋 PDF</button>
-        <button class="main-tab"           onclick="switchMain('p-code',  this)">💻 كود</button>
+        <button class="main-tab active" onclick="switchMain('p-video', this)">🎬 مقاطع</button>
+        <button class="main-tab" onclick="switchMain('p-file', this)">📄 ملفات</button>
+        <button class="main-tab print-tab" onclick="switchMain('p-print', this)">🖨️ طباعة + إعدادات</button>
     </div>
 
-    <!-- ═══════════════════════════
-         TAB: VIDEO PROMPTS
-    ═══════════════════════════ -->
+    <!-- ========== تبويب المقاطع (فيديو) ========== -->
     <div id="p-video" class="main-panel active">
         <div class="panel-scroll">
-
-            <div class="sec-label">📱 نوع المقطع</div>
-            <div class="type-grid">
-                <div class="type-card sel-video" onclick="selectPrompt('video','reel',this)">
+            <div class="sec-label">🎥 أنواع المقاطع</div>
+            <div class="type-grid" id="video-types">
+                <div class="type-card" data-type="reel" onclick="selectPrompt('video','reel',this)">
                     <div class="tc-icon">📱</div>
                     <div class="tc-title">ريلز / تيك توك</div>
-                    <div class="tc-sub">9:16 — طولي</div>
+                    <div class="tc-sub">9:16 طولي</div>
                 </div>
-                <div class="type-card sel-video" onclick="selectPrompt('video','presentation',this)">
+                <div class="type-card" data-type="presentation" onclick="selectPrompt('video','presentation',this)">
                     <div class="tc-icon">🖥️</div>
                     <div class="tc-title">عرض تقديمي</div>
-                    <div class="tc-sub">16:9 — عرضي</div>
+                    <div class="tc-sub">16:9 عرضي</div>
                 </div>
-                <div class="type-card sel-video" onclick="selectPrompt('video','infographic',this)">
+                <div class="type-card" data-type="infographic" onclick="selectPrompt('video','infographic',this)">
                     <div class="tc-icon">📊</div>
-                    <div class="tc-title">إنفوجرافيك مرئي</div>
-                    <div class="tc-sub">9:16 — بيانات</div>
+                    <div class="tc-title">إنفوجرافيك</div>
+                    <div class="tc-sub">بيانات متحركة</div>
                 </div>
-                <div class="type-card sel-video" onclick="selectPrompt('video','story',this)">
+                <div class="type-card" data-type="story" onclick="selectPrompt('video','story',this)">
                     <div class="tc-icon">📖</div>
                     <div class="tc-title">قصة / سردي</div>
-                    <div class="tc-sub">9:16 — storytelling</div>
+                    <div class="tc-sub">storytelling</div>
                 </div>
-                <div class="type-card sel-video" onclick="selectPrompt('video','promo',this)">
+                <div class="type-card" data-type="promo" onclick="selectPrompt('video','promo',this)">
                     <div class="tc-icon">📣</div>
                     <div class="tc-title">إعلان / ترويج</div>
-                    <div class="tc-sub">9:16 أو 16:9</div>
+                    <div class="tc-sub">جذاب وسريع</div>
                 </div>
-                <div class="type-card sel-video" onclick="selectPrompt('video','steps',this)">
+                <div class="type-card" data-type="steps" onclick="selectPrompt('video','steps',this)">
                     <div class="tc-icon">📋</div>
-                    <div class="tc-title">خطوات / تعليمي</div>
-                    <div class="tc-sub">9:16 — step by step</div>
+                    <div class="tc-title">خطوات تعليمي</div>
+                    <div class="tc-sub">step by step</div>
                 </div>
             </div>
 
-            <!-- Dynamic fields -->
             <div id="video-fields-wrap" style="display:none;">
-                <div class="fields-section" style="margin-top:10px;">
-                    <div class="fields-header">📝 <span id="video-fields-title">تفاصيل المقطع</span></div>
+                <div class="fields-section">
+                    <div class="fields-header">
+                        <span>📝 <span id="video-fields-title">تفاصيل المقطع</span></span>
+                    </div>
                     <div class="fields-body" id="video-fields-body"></div>
                 </div>
 
                 <div class="prompt-actions">
-                    <button class="action-btn btn-ar"      onclick="doCopy('video','ar')">🇸🇦 نسخ عربي</button>
-                    <button class="action-btn btn-en"      onclick="doCopy('video','en')">🇺🇸 English</button>
-                    <button class="action-btn btn-preview" onclick="doPreview('video')">👁️ معاينة</button>
+                    <button class="action-btn btn-ar" onclick="doCopy('video','ar')">🇸🇦 نسخ عربي</button>
+                    <button class="action-btn btn-en" onclick="doCopy('video','en')">🇺🇸 English</button>
+                    <button class="action-btn" onclick="doPreview('video')">👁️ معاينة</button>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <!-- ═══════════════════════════
-         TAB: FILE PROMPTS
-    ═══════════════════════════ -->
+    <!-- ========== تبويب الملفات (مستندات) ========== -->
     <div id="p-file" class="main-panel">
         <div class="panel-scroll">
-
-            <div class="sec-label">📄 نوع الملف</div>
-            <div class="type-grid">
-                <div class="type-card sel-file" onclick="selectPrompt('file','research_v',this)">
-                    <div class="tc-icon">📄</div>
-                    <div class="tc-title">بحث طولي</div>
-                    <div class="tc-sub">A4 — 794×1123</div>
+            <div class="sec-label">📄 أنواع المستندات</div>
+            <div class="type-grid" id="file-types">
+                <div class="type-card" data-type="research_v" onclick="selectPrompt('file','research_v',this)">
+                    <div class="tc-icon">📚</div>
+                    <div class="tc-title">بحث علمي طولي</div>
+                    <div class="tc-sub">A4 عمودي</div>
                 </div>
-                <div class="type-card sel-file" onclick="selectPrompt('file','research_h',this)">
+                <div class="type-card" data-type="research_h" onclick="selectPrompt('file','research_h',this)">
                     <div class="tc-icon">📋</div>
-                    <div class="tc-title">بحث عرضي</div>
-                    <div class="tc-sub">A4 — 1123×794</div>
+                    <div class="tc-title">بحث علمي عرضي</div>
+                    <div class="tc-sub">A4 أفقي</div>
                 </div>
-                <div class="type-card sel-file" onclick="selectPrompt('file','cv',this)">
+                <div class="type-card" data-type="cv" onclick="selectPrompt('file','cv',this)">
                     <div class="tc-icon">👤</div>
-                    <div class="tc-title">CV / سيرة ذاتية</div>
-                    <div class="tc-sub">A4 — احترافي</div>
+                    <div class="tc-title">سيرة ذاتية CV</div>
+                    <div class="tc-sub">احترافي</div>
                 </div>
-                <div class="type-card sel-file" onclick="selectPrompt('file','poster',this)">
+                <div class="type-card" data-type="poster" onclick="selectPrompt('file','poster',this)">
                     <div class="tc-icon">🎨</div>
                     <div class="tc-title">ملصق دعائي</div>
-                    <div class="tc-sub">A4 — عمودي</div>
+                    <div class="tc-sub">بوستر احترافي</div>
                 </div>
-                <div class="type-card sel-file" onclick="selectPrompt('file','infographic',this)">
+                <div class="type-card" data-type="infographic" onclick="selectPrompt('file','infographic',this)">
                     <div class="tc-icon">📊</div>
                     <div class="tc-title">إنفوجرافيك</div>
-                    <div class="tc-sub">A4 أو 9:16</div>
+                    <div class="tc-sub">معلومات مصورة</div>
                 </div>
             </div>
 
             <div id="file-fields-wrap" style="display:none;">
-                <div class="fields-section" style="margin-top:10px;">
-                    <div class="fields-header">📝 <span id="file-fields-title">تفاصيل الملف</span></div>
+                <div class="fields-section">
+                    <div class="fields-header">
+                        <span>📝 <span id="file-fields-title">تفاصيل المستند</span></span>
+                    </div>
                     <div class="fields-body" id="file-fields-body"></div>
                 </div>
 
                 <div class="prompt-actions">
-                    <button class="action-btn btn-ar"      onclick="doCopy('file','ar')">🇸🇦 نسخ عربي</button>
-                    <button class="action-btn btn-en"      onclick="doCopy('file','en')">🇺🇸 English</button>
-                    <button class="action-btn btn-preview" onclick="doPreview('file')">👁️ معاينة</button>
+                    <button class="action-btn btn-ar" onclick="doCopy('file','ar')">🇸🇦 نسخ عربي</button>
+                    <button class="action-btn btn-en" onclick="doCopy('file','en')">🇺🇸 English</button>
+                    <button class="action-btn" onclick="doPreview('file')">👁️ معاينة</button>
                 </div>
             </div>
 
-        </div>
-    </div>
-
-    <!-- ═══════════════════════════
-         TAB: VIDEO SETTINGS
-    ═══════════════════════════ -->
-    <div id="p-vsett" class="main-panel">
-        <div class="panel-scroll">
-            <div class="sec-label">🎬 إعدادات الفيديو</div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>الاتجاه</label>
-                    <select id="fmt-video">
-                        <option value="video_portrait">طولي 9:16</option>
-                        <option value="video_landscape" selected>عرضي 16:9</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>FPS</label>
-                    <select id="fps-sel">
-                        <option value="24">24 FPS</option>
-                        <option value="30" selected>30 FPS</option>
-                        <option value="60">60 FPS</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>جودة</label>
-                    <select id="vid-quality">
-                        <option value="1">عادية</option>
-                        <option value="2" selected>عالية</option>
-                        <option value="3">ممتازة</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>الانتقال</label>
-                    <select id="transition-sel">
-                        <option value="fade">تلاشٍ</option>
-                        <option value="slide">انزلاق</option>
-                        <option value="zoom">تكبير</option>
-                        <option value="none">لا شيء</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>مدة الشريحة الافتراضية (ثانية)</label>
-                <input type="number" id="page-dur" value="3" min="0.5" max="30" step="0.5" oninput="updateTotalDur()">
-            </div>
-
-            <div class="duration-display">
-                <span class="dur-label">⏱️ المدة الكلية</span>
-                <span class="dur-val" id="total-dur">—</span>
-            </div>
-
-            <div class="divider"></div>
-            <div class="sec-label">🎛️ مدة كل شريحة منفردة</div>
-            <div class="tip">💡 الصق الكود في تبويب "كود" لتظهر الشرائح هنا</div>
-            <div class="slides-list" id="slides-list">
-                <div style="font-size:11px;color:var(--text-dim);padding:6px;text-align:center;">الصق الكود أولاً</div>
-            </div>
-        </div>
-        <div class="sidebar-footer">
-            <div class="export-row">
-                <button class="export-btn btn-video" onclick="exportToVideo()">🎬 تصدير فيديو</button>
+            <div class="tip">
+                💡 <strong>ملاحظة للمستندات:</strong> الكود المنتج سيكون جاهزاً للطباعة مباشرة مع هوامش مناسبة.
             </div>
         </div>
     </div>
 
-    <!-- ═══════════════════════════
-         TAB: PDF SETTINGS
-    ═══════════════════════════ -->
-    <div id="p-psett" class="main-panel">
+    <!-- ========== تبويب الطباعة والإعدادات ========== -->
+    <div id="p-print" class="main-panel">
         <div class="panel-scroll">
-            <div class="sec-label">📄 إعدادات PDF</div>
+            <div class="sec-label">⚙️ إعدادات الطباعة والتنسيق</div>
+            
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <label>📄 مقاس الورق</label>
+                    <select id="print-size">
+                        <option value="A4">A4 - 210 × 297 مم (الافتراضي)</option>
+                        <option value="A3">A3 - 297 × 420 مم (كبير)</option>
+                        <option value="Letter">Letter - 216 × 279 مم (أمريكي)</option>
+                        <option value="Legal">Legal - 216 × 356 مم (قانوني)</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label>اسم الملف</label>
-                <input type="text" id="file-name" value="مستند_جديد" placeholder="اسم الملف...">
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>تخطيط الصفحة</label>
-                    <select id="fmt-pdf">
-                        <option value="a4_portrait" selected>A4 طولي</option>
-                        <option value="a4_landscape">A4 عرضي</option>
+                <div class="setting-item">
+                    <label>🎨 جودة الطباعة</label>
+                    <select id="print-quality">
+                        <option value="high">عالية - أفضل جودة (بطيئة)</option>
+                        <option value="normal" selected>عادية - متوازنة</option>
+                        <option value="draft">مسودة - توفير حبر (سريعة)</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>جودة</label>
-                    <select id="pdf-quality">
-                        <option value="1">عادية</option>
-                        <option value="2" selected>عالية</option>
-                        <option value="3">ممتازة</option>
-                    </select>
+
+                <div class="setting-item">
+                    <label>📏 الهوامش (ملم)</label>
+                    <div class="setting-row">
+                        <input type="range" id="print-margin" min="5" max="30" value="15" step="1">
+                        <span id="margin-value" style="min-width: 35px;">15</span>
+                        <span>ملم</span>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <label>🎨 خيارات إضافية</label>
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" id="print-colors" checked> طباعة بالألوان
+                        </label>
+                        <label>
+                            <input type="checkbox" id="print-bg"> طباعة الخلفيات (تستهلك حبراً أكثر)
+                        </label>
+                    </div>
                 </div>
             </div>
-            <div class="tip">💡 كل صفحة يجب أن تستخدم <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="page"</code></div>
+
+            <div class="sec-label" style="margin-top: 20px;">📄 معاينة الصفحات</div>
+            <div class="print-preview-area">
+                <div class="preview-header">
+                    <span class="preview-info" id="preview-info">لا توجد صفحات للمعاينة</span>
+                    <div class="preview-nav">
+                        <button onclick="previewPrev()">◀ السابق</button>
+                        <button onclick="previewNext()">التالي ▶</button>
+                    </div>
+                </div>
+                <div class="preview-container" id="preview-container">
+                    <div style="color: var(--text-dim); padding: 40px; text-align: center;">
+                        ⚠️ الصق كود HTML في تبويب الكود أولاً
+                    </div>
+                </div>
+            </div>
         </div>
+
         <div class="sidebar-footer">
             <div class="export-row">
                 <button class="export-btn btn-pdf" onclick="exportToPDF()">📥 تصدير PDF</button>
+                <button class="export-btn btn-video" onclick="exportToVideo()">🎬 تصدير فيديو</button>
+                <button class="export-btn btn-print" onclick="directPrint()">🖨️ طباعة مباشرة</button>
             </div>
         </div>
     </div>
 
-    <!-- ═══════════════════════════
-         TAB: CODE
-    ═══════════════════════════ -->
-    <div id="p-code" class="main-panel">
-        <div class="panel-scroll">
-            <div class="sec-label">💻 كود HTML</div>
-            <div class="code-wrap">
-                <div class="code-toolbar">
-                    <span id="char-count" class="char-count">0 حرف</span>
-                    <button class="clear-btn" onclick="clearCode()">🗑️ مسح</button>
-                </div>
-                <textarea id="html-input" oninput="onCodeInput()" placeholder="الصق كود HTML هنا...&#10;&#10;تأكد أن الصفحات تستخدم class=&quot;page&quot; أو class=&quot;slide&quot;"></textarea>
-            </div>
-            <div class="tip">💡 كل صفحة/شريحة تستخدم <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="page"</code> أو <code style="background:var(--surface3);padding:1px 4px;border-radius:3px;">class="slide"</code></div>
-        </div>
-        <div class="sidebar-footer">
-            <div class="export-row">
-                <button class="export-btn btn-pdf"   onclick="exportToPDF()">📥 PDF</button>
-                <button class="export-btn btn-video" onclick="exportToVideo()">🎬 فيديو</button>
-            </div>
-        </div>
-    </div>
+</div>
+</div>
 
-</div><!-- /sidebar -->
-</div><!-- /app-body -->
-
-<!-- PROGRESS -->
+<!-- شريط التقدم -->
 <div id="progress-overlay" class="progress-overlay">
     <div class="progress-box">
         <div class="progress-icon" id="prog-icon">🎬</div>
@@ -646,7 +812,7 @@
     </div>
 </div>
 
-<!-- MODAL -->
+<!-- مودال المعاينة -->
 <div class="modal-overlay" id="modal">
     <div class="modal-box">
         <div class="modal-header">
@@ -658,780 +824,691 @@
         </div>
         <div class="modal-footer">
             <button class="modal-btn modal-btn-primary" id="modal-ar-btn">🇸🇦 نسخ عربي</button>
-            <button class="modal-btn modal-btn-purple"  id="modal-en-btn">🇺🇸 نسخ English</button>
-            <button class="modal-btn modal-btn-sec"     onclick="closeModal()">إغلاق</button>
+            <button class="modal-btn modal-btn-purple" id="modal-en-btn">🇺🇸 نسخ English</button>
+            <button class="modal-btn modal-btn-sec" onclick="closeModal()">إغلاق</button>
         </div>
     </div>
 </div>
 
+<!-- توست -->
 <div class="toast" id="toast"></div>
 
 <script>
-/* ═══════════════════════════════════════════════
-   FORMATS
-═══════════════════════════════════════════════ */
-const FORMATS = {
-    a4_portrait:     { w:794,  h:1123, pdfOrient:'portrait'  },
-    a4_landscape:    { w:1123, h:794,  pdfOrient:'landscape' },
-    video_portrait:  { w:1080, h:1920, pdfOrient:'portrait'  },
-    video_landscape: { w:1280, h:720,  pdfOrient:'landscape' },
-};
-
-/* ═══════════════════════════════════════════════
-   PROMPT SCHEMAS
-   Each field: { id, label, placeholder, type, removable, wide }
-   type: 'text' | 'textarea' | 'number'
-   removable: false means the field can't be removed
-═══════════════════════════════════════════════ */
-const SCHEMAS = {
+/* ========== بيانات البرومبتات ========== */
+const PROMPTS = {
     video: {
         reel: {
             title: 'ريلز / تيك توك (9:16)',
-            fmt: 'video_portrait',
+            format: '1080x1920',
             fields: [
-                { id:'title',   label:'عنوان المقطع',       placeholder:'مثال: 5 حقائق لا تعرفها عن الكون',  wide:true },
-                { id:'content', label:'النقاط الرئيسية',    placeholder:'النقطة 1، الثانية، الثالثة...',       wide:true, type:'textarea' },
-                { id:'slides',  label:'عدد الشرائح',        placeholder:'5',            removable:false },
-                { id:'cta',     label:'CTA / نداء للتفاعل', placeholder:'اشترك، شارك، علّق...' },
-                { id:'anim',    label:'نوع الأنيميشن',      placeholder:'مثال: fadeInUp، slideInRight، zoomIn، bounce' },
-                { id:'speed',   label:'سرعة الحركة',        placeholder:'مثال: بطيء 1.2s، متوسط 0.7s، سريع 0.3s' },
-                { id:'order',   label:'ترتيب ظهور العناصر', placeholder:'مثال: متسلسل، دفعة واحدة، stagger 0.15s' },
-                { id:'bg',      label:'نمط الخلفية',        placeholder:'مثال: تدرج متحرك، particles، هندسي، داكن' },
-                { id:'colors',  label:'نمط الألوان',        placeholder:'مثال: نيون + داكن، ذهبي، فاتح، زاهي' },
-                { id:'font',    label:'الخط',               placeholder:'مثال: Cairo، Tajawal، Lalezar' },
+                { id: 'title', label: 'عنوان المقطع', placeholder: 'مثال: 5 حقائق لا تعرفها عن الذكاء الاصطناعي', type: 'text', wide: true },
+                { id: 'content', label: 'النقاط الرئيسية', placeholder: '• النقطة الأولى\n• النقطة الثانية\n• النقطة الثالثة', type: 'textarea', wide: true },
+                { id: 'slides', label: 'عدد الشرائح', placeholder: '5', type: 'number' },
+                { id: 'duration', label: 'مدة كل شريحة (ثانية)', placeholder: '3', type: 'number' },
+                { id: 'animation', label: 'نوع الحركة', placeholder: 'fadeIn / slideUp / zoomIn / bounce', type: 'text' },
+                { id: 'bg', label: 'نمط الخلفية', placeholder: 'تدرج أزرق / نيون / داكن فاخر', type: 'text' },
+                { id: 'colors', label: 'الألوان الرئيسية', placeholder: '#1e3a8a, #3b82f6, #ffffff', type: 'text' },
+                { id: 'cta', label: 'دعوة للتفاعل (CTA)', placeholder: 'اشترك الآن / تابعنا للمزيد', type: 'text' }
             ]
         },
         presentation: {
             title: 'عرض تقديمي (16:9)',
-            fmt: 'video_landscape',
+            format: '1280x720',
             fields: [
-                { id:'title',     label:'عنوان العرض',        placeholder:'مثال: مشروع الطاقة الشمسية 2026', wide:true },
-                { id:'topic',     label:'الموضوع',            placeholder:'علوم / تقنية / أعمال' },
-                { id:'presenter', label:'المقدِّم',           placeholder:'أحمد السالم' },
-                { id:'slides',    label:'عدد الشرائح',        placeholder:'8', removable:false },
-                { id:'points',    label:'النقاط الرئيسية',    placeholder:'نقطة 1، نقطة 2...', wide:true, type:'textarea' },
-                { id:'anim',      label:'نوع الأنيميشن',      placeholder:'مثال: fadeIn، slideIn من اليسار' },
-                { id:'speed',     label:'سرعة الحركة',        placeholder:'مثال: 0.6s' },
-                { id:'order',     label:'ترتيب الظهور',       placeholder:'متسلسل / stagger' },
-                { id:'bg',        label:'نمط الخلفية',        placeholder:'مثال: خلفية داكنة مع أشكال هندسية' },
-                { id:'colors',    label:'الألوان',            placeholder:'مثال: أزرق + أبيض، بنفسجي داكن' },
+                { id: 'title', label: 'عنوان العرض', placeholder: 'مثال: خطة التسويق 2026', type: 'text', wide: true },
+                { id: 'topic', label: 'الموضوع الرئيسي', placeholder: 'تسويق / تقنية / تعليم', type: 'text' },
+                { id: 'slides', label: 'عدد الشرائح', placeholder: '8', type: 'number' },
+                { id: 'points', label: 'النقاط الأساسية', placeholder: 'النقطة 1، النقطة 2، النقطة 3...', type: 'textarea', wide: true },
+                { id: 'animation', label: 'نوع الحركة', placeholder: 'fadeIn / slideFromLeft', type: 'text' },
+                { id: 'colors', label: 'الألوان', placeholder: '#0f172a, #0284c7, #f8fafc', type: 'text' },
+                { id: 'logo', label: 'شعار/هوية بصرية', placeholder: 'اسم الشركة أو المؤسسة', type: 'text' }
             ]
         },
         infographic: {
-            title: 'إنفوجرافيك مرئي (9:16)',
-            fmt: 'video_portrait',
+            title: 'إنفوجرافيك متحرك (9:16)',
+            format: '1080x1920',
             fields: [
-                { id:'title',  label:'عنوان الإنفوجرافيك', placeholder:'مثال: إحصائيات الطاقة المتجددة 2026', wide:true },
-                { id:'data',   label:'البيانات / الأرقام',  placeholder:'40% شمسية، 30% رياح، 20% مائية...', wide:true, type:'textarea' },
-                { id:'slides', label:'عدد الشرائح',         placeholder:'5', removable:false },
-                { id:'anim',   label:'أنيميشن الأرقام',     placeholder:'مثال: عداد تصاعدي (countUp)، bar grow' },
-                { id:'bg',     label:'الخلفية',             placeholder:'مثال: داكن مع تدرج، أبيض نظيف' },
-                { id:'colors', label:'الألوان',             placeholder:'مثال: ألوان مميزة لكل فئة' },
+                { id: 'title', label: 'عنوان الإنفوجرافيك', placeholder: 'إحصائيات 2026', type: 'text', wide: true },
+                { id: 'data', label: 'البيانات والإحصائيات', placeholder: '40% زيادة • 25% نمو سنوي', type: 'textarea', wide: true },
+                { id: 'slides', label: 'عدد الشرائح', placeholder: '4', type: 'number' },
+                { id: 'animation', label: 'حركة الأرقام', placeholder: 'عداد تصاعدي (countUp)', type: 'text' },
+                { id: 'chart', label: 'نوع الرسم البياني', placeholder: 'شريطي / دائري / خطي', type: 'text' },
+                { id: 'colors', label: 'الألوان', placeholder: '#ef4444, #3b82f6, #10b981', type: 'text' }
             ]
         },
         story: {
             title: 'قصة / سردي (9:16)',
-            fmt: 'video_portrait',
+            format: '1080x1920',
             fields: [
-                { id:'title',  label:'عنوان القصة',      placeholder:'مثال: رحلة المبرمج الأول', wide:true },
-                { id:'story',  label:'ملخص القصة',       placeholder:'كان هناك...', wide:true, type:'textarea' },
-                { id:'slides', label:'عدد الشرائح',      placeholder:'6', removable:false },
-                { id:'moral',  label:'العبرة / الرسالة', placeholder:'الاستمرارية مفتاح النجاح' },
-                { id:'anim',   label:'أسلوب الحركة',     placeholder:'مثال: typewriter، fadeInUp بطيء' },
-                { id:'bg',     label:'الخلفية',          placeholder:'مثال: ضبابي داكن، طبيعي' },
-                { id:'colors', label:'الألوان',          placeholder:'مثال: هادئ ودافئ' },
+                { id: 'title', label: 'عنوان القصة', placeholder: 'رحلة الأمل', type: 'text', wide: true },
+                { id: 'story', label: 'نص القصة', placeholder: 'كان يا مكان...', type: 'textarea', wide: true },
+                { id: 'slides', label: 'عدد الشرائح', placeholder: '6', type: 'number' },
+                { id: 'moral', label: 'العبرة / الرسالة', placeholder: 'الاستمرارية تصنع النجاح', type: 'text' },
+                { id: 'animation', label: 'أسلوب الحركة', placeholder: 'بطيء وهادئ / سريع ومثير', type: 'text' },
+                { id: 'bg', label: 'أجواء القصة', placeholder: 'حزين / ملهم / مغامرة', type: 'text' }
             ]
         },
         promo: {
-            title: 'إعلان / ترويج',
-            fmt: 'video_portrait',
+            title: 'إعلان / ترويج (9:16)',
+            format: '1080x1920',
             fields: [
-                { id:'product',  label:'المنتج / الخدمة',    placeholder:'مثال: تطبيق إدارة المهام', wide:true },
-                { id:'tagline',  label:'الشعار (Tagline)',    placeholder:'نظّم حياتك بضغطة' },
-                { id:'features', label:'المزايا الرئيسية',   placeholder:'سريع، آمن، سهل', wide:true },
-                { id:'cta',      label:'CTA',                 placeholder:'حمّل الآن / اشترك مجاناً' },
-                { id:'slides',   label:'عدد الشرائح',         placeholder:'6', removable:false },
-                { id:'anim',     label:'أسلوب الحركة',       placeholder:'مثال: ضربات سريعة، zoomIn حاد' },
-                { id:'bg',       label:'الخلفية',             placeholder:'مثال: خلفية فيديو وهمية، لون العلامة التجارية' },
-                { id:'colors',   label:'الألوان',             placeholder:'مثال: أسود + ذهبي' },
+                { id: 'product', label: 'المنتج أو الخدمة', placeholder: 'تطبيق إدارة المهام', type: 'text', wide: true },
+                { id: 'benefits', label: 'المزايا الرئيسية', placeholder: 'سريع، آمن، سهل الاستخدام', type: 'textarea', wide: true },
+                { id: 'slides', label: 'عدد الشرائح', placeholder: '5', type: 'number' },
+                { id: 'cta', label: 'دعوة للشراء', placeholder: 'حمّل الآن مجاناً', type: 'text' },
+                { id: 'animation', label: 'أسلوب الحركة', placeholder: 'سريع وجذاب', type: 'text' },
+                { id: 'brand', label: 'الهوية البصرية', placeholder: 'ألوان وشعار العلامة التجارية', type: 'text' }
             ]
         },
         steps: {
-            title: 'خطوات / تعليمي (9:16)',
-            fmt: 'video_portrait',
+            title: 'خطوات تعليمي (9:16)',
+            format: '1080x1920',
             fields: [
-                { id:'title',  label:'عنوان الشرح',    placeholder:'مثال: كيف تبدأ البرمجة في 30 يوم', wide:true },
-                { id:'steps',  label:'الخطوات',        placeholder:'الخطوة 1: ...\nالخطوة 2: ...', wide:true, type:'textarea' },
-                { id:'slides', label:'عدد الشرائح',    placeholder:'7', removable:false },
-                { id:'tip',    label:'نصيحة ختامية',   placeholder:'الممارسة يومياً أهم من كل شيء' },
-                { id:'anim',   label:'أسلوب الحركة',   placeholder:'مثال: كل خطوة تدخل من اليمين' },
-                { id:'bg',     label:'الخلفية',        placeholder:'مثال: نظيف وبسيط' },
-                { id:'colors', label:'الألوان',        placeholder:'مثال: أزرق + أبيض' },
+                { id: 'title', label: 'عنوان الشرح', placeholder: 'كيف تتعلم البرمجة في 30 يوماً', type: 'text', wide: true },
+                { id: 'steps', label: 'الخطوات التفصيلية', placeholder: 'الخطوة 1: ...\nالخطوة 2: ...', type: 'textarea', wide: true },
+                { id: 'slides', label: 'عدد الشرائح', placeholder: '7', type: 'number' },
+                { id: 'duration', label: 'مدة كل خطوة (ثانية)', placeholder: '4', type: 'number' },
+                { id: 'animation', label: 'أسلوب الحركة', placeholder: 'كل خطوة تدخل من اليمين', type: 'text' },
+                { id: 'tip', label: 'نصيحة إضافية', placeholder: 'الممارسة اليومية مهمة', type: 'text' }
             ]
-        },
+        }
     },
     file: {
         research_v: {
-            title: 'بحث طولي (A4)',
-            dims: 'width:794px; height:1123px;',
+            title: 'بحث علمي - طولي (A4)',
+            format: '794x1123',
             fields: [
-                { id:'title',   label:'عنوان البحث',   placeholder:'الطاقة الشمسية ودورها البيئي', wide:true },
-                { id:'subject', label:'المادة',         placeholder:'فيزياء', removable:false },
-                { id:'student', label:'الطالب',         placeholder:'أحمد محمد' },
-                { id:'teacher', label:'المعلم',         placeholder:'الأستاذ علي' },
-                { id:'grade',   label:'الصف',           placeholder:'أول ثانوي' },
-                { id:'year',    label:'العام الدراسي',  placeholder:'1447هـ / 2026م' },
-                { id:'pages',   label:'عدد الصفحات',   placeholder:'5', removable:false },
-                { id:'style',   label:'نمط التصميم',   placeholder:'مثال: احترافي أزرق، عصري بنفسجي، بسيط' },
-                { id:'font',    label:'الخط',           placeholder:'مثال: Cairo، Tajawal' },
-                { id:'colors',  label:'الألوان',        placeholder:'مثال: أزرق #2563eb كلون رئيسي' },
+                { id: 'title', label: 'عنوان البحث', placeholder: 'أثر التكنولوجيا على التعليم', type: 'text', wide: true },
+                { id: 'subject', label: 'المادة', placeholder: 'علوم / فيزياء / رياضيات', type: 'text' },
+                { id: 'student', label: 'اسم الطالب', placeholder: 'أحمد محمد السالم', type: 'text' },
+                { id: 'teacher', label: 'اسم المعلم', placeholder: 'الأستاذ خالد', type: 'text' },
+                { id: 'grade', label: 'الصف', placeholder: 'الثاني الثانوي', type: 'text' },
+                { id: 'pages', label: 'عدد الصفحات', placeholder: '5', type: 'number' },
+                { id: 'style', label: 'نمط التصميم', placeholder: 'أكاديمي / حديث / كلاسيكي', type: 'text' },
+                { id: 'colors', label: 'الألوان', placeholder: '#1e40af, #dbeafe', type: 'text' }
             ]
         },
         research_h: {
-            title: 'بحث عرضي (A4)',
-            dims: 'width:1123px; height:794px;',
+            title: 'بحث علمي - عرضي (A4)',
+            format: '1123x794',
             fields: [
-                { id:'title',   label:'عنوان البحث',   placeholder:'مقارنة مصادر الطاقة المتجددة', wide:true },
-                { id:'subject', label:'المادة',         placeholder:'علوم', removable:false },
-                { id:'student', label:'الطالب',         placeholder:'محمد سعيد' },
-                { id:'teacher', label:'المعلم',         placeholder:'الأستاذة سارة' },
-                { id:'grade',   label:'الصف',           placeholder:'ثالث متوسط' },
-                { id:'pages',   label:'عدد الصفحات',   placeholder:'6', removable:false },
-                { id:'style',   label:'نمط التصميم',   placeholder:'مثال: عمودان، جداول، احترافي' },
-                { id:'colors',  label:'الألوان',        placeholder:'مثال: أخضر داكن + أبيض' },
+                { id: 'title', label: 'عنوان البحث', placeholder: 'مقارنة مصادر الطاقة المتجددة', type: 'text', wide: true },
+                { id: 'subject', label: 'المادة', placeholder: 'علوم البيئة', type: 'text' },
+                { id: 'student', label: 'اسم الطالب', placeholder: 'نورة عبدالله', type: 'text' },
+                { id: 'teacher', label: 'اسم المعلم', placeholder: 'الدكتورة ليلى', type: 'text' },
+                { id: 'pages', label: 'عدد الصفحات', placeholder: '4', type: 'number' },
+                { id: 'style', label: 'نمط التصميم', placeholder: 'بعمودين / مع جداول', type: 'text' },
+                { id: 'colors', label: 'الألوان', placeholder: '#047857, #d1fae5', type: 'text' }
             ]
         },
         cv: {
-            title: 'CV / سيرة ذاتية',
-            dims: 'width:794px; height:1123px;',
+            title: 'سيرة ذاتية - CV',
+            format: '794x1123',
             fields: [
-                { id:'name',       label:'الاسم الكامل',       placeholder:'أحمد محمد السالم', wide:true, removable:false },
-                { id:'job_title',  label:'المسمى الوظيفي',     placeholder:'مطور ويب / مصمم جرافيك', removable:false },
-                { id:'phone',      label:'الجوال',             placeholder:'05xxxxxxxx' },
-                { id:'email',      label:'البريد الإلكتروني',  placeholder:'ahmed@email.com' },
-                { id:'skills',     label:'المهارات',           placeholder:'HTML, CSS, JavaScript, React', wide:true, type:'textarea' },
-                { id:'experience', label:'الخبرات',            placeholder:'مطور في شركة X منذ 2022', wide:true, type:'textarea' },
-                { id:'education',  label:'التعليم',            placeholder:'بكالوريوس حاسب' },
-                { id:'links',      label:'روابط (GitHub/LinkedIn)', placeholder:'github.com/ahmed' },
-                { id:'style',      label:'نمط التصميم',        placeholder:'مثال: sidebar ملوّن، عصري داكن، بسيط' },
-                { id:'colors',     label:'الألوان',            placeholder:'مثال: أزرق + رمادي' },
+                { id: 'name', label: 'الاسم الكامل', placeholder: 'أحمد محمد السالم', type: 'text', wide: true },
+                { id: 'job', label: 'المسمى الوظيفي', placeholder: 'مطور ويب أول', type: 'text' },
+                { id: 'phone', label: 'رقم الجوال', placeholder: '05xxxxxxxx', type: 'text' },
+                { id: 'email', label: 'البريد الإلكتروني', placeholder: 'ahmed@example.com', type: 'text' },
+                { id: 'skills', label: 'المهارات', placeholder: 'JavaScript, React, Python, Node.js', type: 'textarea', wide: true },
+                { id: 'experience', label: 'الخبرات العملية', placeholder: 'شركة X - مطور ويب (2020-حالياً)', type: 'textarea', wide: true },
+                { id: 'education', label: 'التعليم', placeholder: 'بكالوريوس حاسبات - جامعة الملك سعود', type: 'text' },
+                { id: 'style', label: 'نمط التصميم', placeholder: 'حديث / كلاسيكي / جانبي (sidebar)', type: 'text' }
             ]
         },
         poster: {
-            title: 'ملصق دعائي',
-            dims: 'width:794px; height:1123px;',
+            title: 'ملصق دعائي - Poster',
+            format: '794x1123',
             fields: [
-                { id:'title',    label:'العنوان الرئيسي',    placeholder:'معرض الفنون الدولي 2026', wide:true, removable:false },
-                { id:'subtitle', label:'العنوان الفرعي',     placeholder:'تجربة لا تُنسى' },
-                { id:'date',     label:'التاريخ',            placeholder:'15 مايو 2026' },
-                { id:'location', label:'المكان',             placeholder:'قاعة النور، الرياض' },
-                { id:'details',  label:'تفاصيل إضافية',     placeholder:'رابط، هاتف، hashtag...', wide:true },
-                { id:'style',    label:'نمط التصميم',        placeholder:'مثال: ذهبي فاخر، أزرق عصري، أحمر جريء' },
-                { id:'bg',       label:'الخلفية',            placeholder:'مثال: تدرج داكن مع زخارف عربية' },
-                { id:'anim',     label:'أنيميشن CSS',        placeholder:'مثال: توهج خفيف على العنوان، دوران بطيء' },
+                { id: 'title', label: 'العنوان الرئيسي', placeholder: 'معرض الرياض الدولي للكتاب', type: 'text', wide: true },
+                { id: 'subtitle', label: 'العنوان الفرعي', placeholder: 'الدورة الثامنة', type: 'text' },
+                { id: 'date', label: 'التاريخ', placeholder: '15-25 مارس 2026', type: 'text' },
+                { id: 'location', label: 'المكان', placeholder: 'واجهة الرياض للمعارض', type: 'text' },
+                { id: 'details', label: 'تفاصيل إضافية', placeholder: 'الدعوة عامة للجميع | دخول مجاني', type: 'textarea', wide: true },
+                { id: 'style', label: 'النمط البصري', placeholder: 'عصري / تراثي / رياضي', type: 'text' },
+                { id: 'colors', label: 'الألوان', placeholder: '#8b5cf6, #6d28d9', type: 'text' }
             ]
         },
         infographic: {
-            title: 'إنفوجرافيك (ملف)',
-            dims: 'width:794px; height:1123px; /* أو 1080×1920 حسب الطلب */',
+            title: 'إنفوجرافيك معلوماتي',
+            format: '1080x1920',
             fields: [
-                { id:'title',  label:'العنوان',           placeholder:'فوائد شرب الماء اليومية', wide:true, removable:false },
-                { id:'points', label:'النقاط / البيانات', placeholder:'يحسّن التركيز، ينظف الجسم...', wide:true, type:'textarea' },
-                { id:'size',   label:'المقاس',            placeholder:'A4 طولي أو 9:16 (1080×1920)', removable:false },
-                { id:'source', label:'المصدر',            placeholder:'منظمة الصحة العالمية' },
-                { id:'style',  label:'نمط التصميم',       placeholder:'مثال: ملوّن زاهي، بسيط أبيض' },
-                { id:'colors', label:'الألوان',           placeholder:'مثال: كل نقطة بلون مختلف' },
-                { id:'icons',  label:'أيقونات / رموز',   placeholder:'مثال: emoji كبيرة، أشكال هندسية' },
+                { id: 'title', label: 'العنوان', placeholder: 'فوائد شرب الماء', type: 'text', wide: true },
+                { id: 'points', label: 'النقاط الرئيسية', placeholder: '• يحسن التركيز\n• ينشط الدورة الدموية\n• يرطب البشرة', type: 'textarea', wide: true },
+                { id: 'size', label: 'المقاس', placeholder: '9:16 عمودي / A4 أفقي', type: 'text' },
+                { id: 'style', label: 'النمط', placeholder: 'ملوّن زاهي / بسيط بألوان الباستيل', type: 'text' },
+                { id: 'icons', label: 'نوع الرموز', placeholder: 'ايموجي / أيقونات خطية / أشكال هندسية', type: 'text' }
             ]
-        },
+        }
     }
 };
 
-/* ═══════════════════════════════════════════════
-   STATE
-═══════════════════════════════════════════════ */
+/* ========== الحالة العامة ========== */
 let activePrompt = { cat: null, key: null };
-let removedFields = {};  // { "video.reel": Set(['cta', ...]) }
-let slideDurationsMap = {};
+let currentPreviewPage = 0;
+let previewPages = [];
 
-/* ═══════════════════════════════════════════════
-   MAIN TAB SWITCH
-═══════════════════════════════════════════════ */
+/* ========== تبديل التبويبات ========== */
 function switchMain(id, btn) {
     document.querySelectorAll('.main-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.main-tab').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     btn.classList.add('active');
+    
+    // تحديث معاينة الطباعة إذا كان التبويب النشط هو الطباعة
+    if (id === 'p-print') {
+        updatePrintPreview();
+    }
 }
 
-/* ═══════════════════════════════════════════════
-   SELECT PROMPT
-═══════════════════════════════════════════════ */
+/* ========== اختيار نوع البرومبت ========== */
 function selectPrompt(cat, key, card) {
     activePrompt = { cat, key };
-    const schemaGroup = SCHEMAS[cat];
-    const schema = schemaGroup[key];
-
-    // highlight card
-    const gridId = cat === 'video' ? '#p-video .type-grid' : '#p-file .type-grid';
-    document.querySelectorAll(gridId + ' .type-card').forEach(c => c.classList.remove('active'));
+    const schema = PROMPTS[cat][key];
+    
+    // تسليط الضوء على البطاقة المختارة
+    const container = card.parentElement;
+    container.querySelectorAll('.type-card').forEach(c => c.classList.remove('active'));
     card.classList.add('active');
-
-    // Set format
-    if (cat === 'video' && schema.fmt) {
-        document.getElementById('fmt-video').value = schema.fmt;
-    }
-
-    // Build fields
+    
+    // بناء الحقول
     const titleId = cat === 'video' ? 'video-fields-title' : 'file-fields-title';
-    const bodyId  = cat === 'video' ? 'video-fields-body'  : 'file-fields-body';
-    const wrapId  = cat === 'video' ? 'video-fields-wrap'  : 'file-fields-wrap';
-
-    document.getElementById(titleId).textContent = schema.title;
-    buildFields(schema.fields, bodyId, cat + '.' + key);
+    const bodyId = cat === 'video' ? 'video-fields-body' : 'file-fields-body';
+    const wrapId = cat === 'video' ? 'video-fields-wrap' : 'file-fields-wrap';
+    
+    document.getElementById(titleId).innerHTML = schema.title;
+    buildFields(schema.fields, bodyId);
     document.getElementById(wrapId).style.display = 'block';
 }
 
-/* ═══════════════════════════════════════════════
-   BUILD FIELDS
-═══════════════════════════════════════════════ */
-function buildFields(fields, containerId, stateKey) {
-    if (!removedFields[stateKey]) removedFields[stateKey] = new Set();
+/* ========== بناء حقول الإدخال ========== */
+function buildFields(fields, containerId) {
     const container = document.getElementById(containerId);
     container.innerHTML = '';
-
-    fields.forEach(f => {
-        const wrap = document.createElement('div');
-        wrap.className = 'field-row';
-        wrap.id = `fw_${stateKey.replace('.','_')}_${f.id}`;
-        if (removedFields[stateKey].has(f.id)) wrap.classList.add('removed');
-
-        // Label row
-        const labelRow = document.createElement('div');
-        labelRow.className = 'field-label-row';
-        const lbl = document.createElement('span');
-        lbl.className = 'field-label';
-        lbl.textContent = f.label;
-        labelRow.appendChild(lbl);
-
-        // Remove btn (only if removable !== false)
-        if (f.removable !== false) {
-            const rmBtn = document.createElement('button');
-            rmBtn.className = 'field-remove' + (removedFields[stateKey].has(f.id) ? ' is-removed' : '');
-            rmBtn.textContent = removedFields[stateKey].has(f.id) ? '↩ استعادة' : '✕ إزالة';
-            rmBtn.onclick = () => toggleRemove(stateKey, f.id, wrap, rmBtn);
-            labelRow.appendChild(rmBtn);
-        }
-
-        // Input
+    
+    fields.forEach(field => {
+        const row = document.createElement('div');
+        row.className = 'field-row';
+        
+        const label = document.createElement('div');
+        label.className = 'field-label';
+        label.textContent = field.label;
+        
         let input;
-        if (f.type === 'textarea') {
+        if (field.type === 'textarea') {
             input = document.createElement('textarea');
             input.rows = 3;
         } else {
             input = document.createElement('input');
-            input.type = f.type || 'text';
+            input.type = field.type || 'text';
         }
-        input.id = `f_${f.id}`;
-        input.placeholder = f.placeholder || '';
-
-        wrap.appendChild(labelRow);
-        wrap.appendChild(input);
-        container.appendChild(wrap);
+        input.id = `field_${field.id}`;
+        input.placeholder = field.placeholder || '';
+        
+        row.appendChild(label);
+        row.appendChild(input);
+        container.appendChild(row);
     });
 }
 
-function toggleRemove(stateKey, fieldId, wrap, btn) {
-    const set = removedFields[stateKey];
-    if (set.has(fieldId)) {
-        set.delete(fieldId);
-        wrap.classList.remove('removed');
-        btn.textContent = '✕ إزالة';
-        btn.classList.remove('is-removed');
-    } else {
-        set.add(fieldId);
-        wrap.classList.add('removed');
-        btn.textContent = '↩ استعادة';
-        btn.classList.add('is-removed');
-    }
-}
-
-/* ═══════════════════════════════════════════════
-   GET FIELD VALUES
-═══════════════════════════════════════════════ */
-function getValues() {
-    if (!activePrompt.cat) return {};
-    const { cat, key } = activePrompt;
-    const stateKey = cat + '.' + key;
-    const fields = SCHEMAS[cat][key].fields;
-    const vals = {};
-    fields.forEach(f => {
-        if (removedFields[stateKey] && removedFields[stateKey].has(f.id)) return;
-        const el = document.getElementById('f_' + f.id);
-        if (el) vals[f.id] = el.value.trim();
+/* ========== الحصول على قيم الحقول ========== */
+function getFieldValues() {
+    if (!activePrompt.cat || !activePrompt.key) return {};
+    const schema = PROMPTS[activePrompt.cat][activePrompt.key];
+    const values = {};
+    schema.fields.forEach(field => {
+        const el = document.getElementById(`field_${field.id}`);
+        if (el) values[field.id] = el.value.trim();
     });
-    return vals;
+    return values;
 }
 
-/* ═══════════════════════════════════════════════
-   BUILD PROMPT
-═══════════════════════════════════════════════ */
-function buildPrompt(lang) {
-    if (!activePrompt.cat) return '';
-    const { cat, key } = activePrompt;
-    const schema = SCHEMAS[cat][key];
-    const d = getValues();
-    const fields = schema.fields;
-
-    // Build content lines (only non-removed fields that have values or placeholders)
-    const lines = fields
-        .filter(f => {
-            const sk = cat + '.' + key;
-            return !(removedFields[sk] && removedFields[sk].has(f.id));
-        })
-        .map(f => {
-            const val = d[f.id];
-            if (!val) return null;
-            return `**${f.label}:** ${val}`;
-        })
-        .filter(Boolean)
-        .join('\n');
-
-    if (cat === 'video') {
-        return buildVideoPrompt(schema, d, lines, lang);
-    } else {
-        return buildFilePrompt(schema, d, lines, lang);
+/* ========== بناء البرومبت (العربية) ========== */
+function buildPromptArabic() {
+    if (!activePrompt.cat) return '⚠️ الرجاء اختيار نوع البرومبت أولاً';
+    
+    const schema = PROMPTS[activePrompt.cat][activePrompt.key];
+    const values = getFieldValues();
+    
+    let prompt = `أنت مصمم ${activePrompt.cat === 'video' ? 'مقاطع فيديو' : 'وثائق'} HTML احترافي. أنشئ كود HTML كامل بالعربية.\n\n`;
+    prompt += `**نوع التصميم:** ${schema.title}\n`;
+    prompt += `**الأبعاد:** ${schema.format} بكسل\n\n`;
+    prompt += `**التفاصيل المطلوبة:**\n`;
+    
+    for (const [key, value] of Object.entries(values)) {
+        if (value) {
+            const label = schema.fields.find(f => f.id === key)?.label || key;
+            prompt += `- ${label}: ${value}\n`;
+        }
     }
+    
+    prompt += `\n**متطلبات تقنية مهمة:**\n`;
+    prompt += `1. استخدم <div class="page"> لكل شريحة/صفحة جديدة\n`;
+    prompt += `2. أضف أنيميشن CSS للعناصر لتصبح متحركة وجذابة\n`;
+    prompt += `3. استخدم class="anim" مع البيانات: data-start و data-duration\n`;
+    prompt += `4. قم بتحسين الكود ليكون متوافقاً مع جميع المتصفحات\n`;
+    prompt += `5. أضف تأثيرات انتقال سلسة بين الشرائح\n`;
+    prompt += `6. التصميم يجب أن يكون عصرياً واحترافياً\n`;
+    
+    return prompt;
 }
 
-function buildVideoPrompt(schema, d, lines, lang) {
-    const fmt = d.slides ? '' : '';
-    const isPortrait = schema.fmt === 'video_portrait';
-    const dims = isPortrait ? '1080×1920px (9:16 طولي)' : '1280×720px (16:9 عرضي)';
-    const dimsSpec = isPortrait ? 'width:1080px; height:1920px;' : 'width:1280px; height:720px;';
-    const minH1 = isPortrait ? '80px' : '52px';
-    const minP  = isPortrait ? '40px' : '24px';
-
-    const animSection = [
-        d.anim   ? `- نوع الأنيميشن: ${d.anim}` : null,
-        d.speed  ? `- سرعة الحركة: ${d.speed}` : null,
-        d.order  ? `- ترتيب الظهور: ${d.order}` : null,
-        d.bg     ? `- نمط الخلفية: ${d.bg}` : null,
-        d.colors ? `- الألوان: ${d.colors}` : null,
-        d.font   ? `- الخط: ${d.font}` : null,
-    ].filter(Boolean).join('\n');
-
-    if (lang === 'ar') {
-        return `أنت مصمم مقاطع فيديو HTML احترافي. أنشئ كود HTML كامل بمقاس ${dims}.
-
-${lines}
-
-**متطلبات تقنية — يجب الالتزام بها:**
-1. يبدأ الكود بـ <html lang="ar" dir="rtl">
-2. استدعاء Google Fonts (${d.font || 'Cairo أو Tajawal'}) صراحةً
-3. body: display:block; margin:0; padding:0; background:#000;
-4. كل شريحة: <div class="page"> بأبعاد ${dimsSpec} overflow:hidden; position:relative; box-sizing:border-box;
-5. ممنوع ul أو ol — استخدم <p>• النص</p>
-6. ممنوع letter-spacing
-7. h1 لا تقل عن ${minH1} — p لا تقل عن ${minP}
-${animSection ? `\n**إعدادات الأنيميشن:**\n${animSection}` : ''}
-
-**الهيكل:** شريحة غلاف ← شرائح المحتوى ← شريحة ختامية
-نمط التصميم: احترافي، جذاب، جاهز للسوشيال ميديا`;
-    } else {
-        return `You are a professional HTML video designer. Create complete HTML code sized ${dims}.
-
-${lines}
-
-**Technical Requirements:**
-1. Start with <html lang="ar" dir="rtl">
-2. Import Google Fonts (${d.font || 'Cairo or Tajawal'}) explicitly
-3. body: display:block; margin:0; padding:0; background:#000;
-4. Each slide: <div class="page"> — ${dimsSpec} overflow:hidden; position:relative; box-sizing:border-box;
-5. NO ul/ol — use <p>• text</p>
-6. NO letter-spacing
-7. h1 min ${minH1} — p min ${minP}
-${animSection ? `\n**Animation settings:**\n${animSection}` : ''}
-
-Structure: cover slide → content slides → closing slide
-Style: professional, engaging, social-media ready`;
+/* ========== بناء البرومبت (الإنجليزية) ========== */
+function buildPromptEnglish() {
+    if (!activePrompt.cat) return '⚠️ Please select a prompt type first';
+    
+    const schema = PROMPTS[activePrompt.cat][activePrompt.key];
+    const values = getFieldValues();
+    
+    let prompt = `You are a professional ${activePrompt.cat === 'video' ? 'video' : 'document'} HTML designer. Create complete HTML code.\n\n`;
+    prompt += `**Design Type:** ${schema.title}\n`;
+    prompt += `**Dimensions:** ${schema.format} pixels\n\n`;
+    prompt += `**Required Details:**\n`;
+    
+    for (const [key, value] of Object.entries(values)) {
+        if (value) {
+            const label = schema.fields.find(f => f.id === key)?.label || key;
+            prompt += `- ${label}: ${value}\n`;
+        }
     }
+    
+    prompt += `\n**Technical Requirements:**\n`;
+    prompt += `1. Use <div class="page"> for each slide/page\n`;
+    prompt += `2. Add CSS animations with data-start and data-duration attributes\n`;
+    prompt += `3. Use class="anim" for animated elements\n`;
+    prompt += `4. Ensure cross-browser compatibility\n`;
+    prompt += `5. Add smooth transitions between slides\n`;
+    prompt += `6. Modern and professional design\n`;
+    
+    return prompt;
 }
 
-function buildFilePrompt(schema, d, lines, lang) {
-    const dimsSpec = schema.dims || 'width:794px; height:1123px;';
-
-    const designSection = [
-        d.style  ? `- نمط التصميم: ${d.style}` : null,
-        d.colors ? `- الألوان: ${d.colors}` : null,
-        d.font   ? `- الخط: ${d.font}` : null,
-        d.bg     ? `- الخلفية: ${d.bg}` : null,
-        d.anim   ? `- أنيميشن CSS: ${d.anim}` : null,
-        d.icons  ? `- الأيقونات: ${d.icons}` : null,
-    ].filter(Boolean).join('\n');
-
-    if (lang === 'ar') {
-        return `أنت مصمم وثائق HTML احترافي. أنشئ كود HTML كامل لـ ${schema.title} بالعربية.
-
-${lines}
-
-**متطلبات تقنية — يجب الالتزام بها:**
-1. يبدأ بـ <html lang="ar" dir="rtl">
-2. استدعاء Google Fonts (${d.font || 'Cairo أو Tajawal'})
-3. body: display:block; direction:rtl; margin:0; padding:0; box-sizing:border-box;
-4. كل صفحة: <div class="page"> بأبعاد ${dimsSpec} overflow:hidden; position:relative; box-sizing:border-box;
-5. ممنوع ul أو ol — استخدم <p>• النص</p>
-6. ممنوع letter-spacing
-${designSection ? `\n**إعدادات التصميم:**\n${designSection}` : ''}
-
-**الهيكل:** غلاف ← محتوى ← مراجع / خاتمة`;
-    } else {
-        return `You are a professional HTML document designer. Create a complete HTML ${schema.title} in Arabic.
-
-${lines}
-
-**Technical Requirements:**
-1. Start with <html lang="ar" dir="rtl">
-2. Import Google Fonts (${d.font || 'Cairo or Tajawal'})
-3. body: display:block; direction:rtl; margin:0; padding:0; box-sizing:border-box;
-4. Each page: <div class="page"> — ${dimsSpec} overflow:hidden; position:relative; box-sizing:border-box;
-5. NO ul/ol — use <p>• text</p>
-6. NO letter-spacing
-${designSection ? `\n**Design settings:**\n${designSection}` : ''}
-
-Structure: cover → content → references/conclusion`;
+/* ========== نسخ النص ========== */
+async function doCopy(cat, lang) {
+    if (!activePrompt.cat) {
+        showToast('⚠️ الرجاء اختيار نوع البرومبت أولاً', 'error');
+        return;
     }
+    const text = lang === 'ar' ? buildPromptArabic() : buildPromptEnglish();
+    await navigator.clipboard.writeText(text);
+    showToast(lang === 'ar' ? '✅ تم نسخ البرومبت!' : '✅ Prompt copied!', 'success');
 }
 
-/* ═══════════════════════════════════════════════
-   COPY / PREVIEW
-═══════════════════════════════════════════════ */
-function doCopy(cat, lang) {
-    if (!activePrompt.cat) { showToast('⚠️ اختر نوعاً أولاً', 'error'); return; }
-    const text = buildPrompt(lang);
-    copyText(text, lang === 'ar' ? '✅ تم نسخ البرومبت!' : '✅ Prompt copied!');
-}
-
+/* ========== معاينة البرومبت ========== */
 function doPreview(cat) {
-    if (!activePrompt.cat) { showToast('⚠️ اختر نوعاً أولاً', 'error'); return; }
-    const schema = SCHEMAS[activePrompt.cat][activePrompt.key];
-    document.getElementById('modal-title').textContent = 'معاينة: ' + schema.title;
-    document.getElementById('modal-text').textContent = buildPrompt('ar');
-    document.getElementById('modal-ar-btn').onclick = () => { copyText(buildPrompt('ar'), '✅ تم النسخ!'); closeModal(); };
-    document.getElementById('modal-en-btn').onclick = () => { copyText(buildPrompt('en'), '✅ Copied!'); closeModal(); };
+    if (!activePrompt.cat) {
+        showToast('⚠️ الرجاء اختيار نوع البرومبت أولاً', 'error');
+        return;
+    }
+    const schema = PROMPTS[activePrompt.cat][activePrompt.key];
+    document.getElementById('modal-title').textContent = `📋 معاينة: ${schema.title}`;
+    document.getElementById('modal-text').textContent = buildPromptArabic();
+    
+    document.getElementById('modal-ar-btn').onclick = () => {
+        navigator.clipboard.writeText(buildPromptArabic());
+        showToast('✅ تم نسخ البرومبت العربي!', 'success');
+        closeModal();
+    };
+    document.getElementById('modal-en-btn').onclick = () => {
+        navigator.clipboard.writeText(buildPromptEnglish());
+        showToast('✅ English prompt copied!', 'success');
+        closeModal();
+    };
+    
     document.getElementById('modal').classList.add('open');
 }
 
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-
-function copyText(text, msg) {
-    navigator.clipboard.writeText(text)
-        .then(() => showToast(msg, 'success'))
-        .catch(() => {
-            const ta = document.createElement('textarea');
-            ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;';
-            document.body.appendChild(ta); ta.select();
-            try { document.execCommand('copy'); showToast(msg, 'success'); } catch { showToast('❌ فشل النسخ', 'error'); }
-            document.body.removeChild(ta);
-        });
+function closeModal() {
+    document.getElementById('modal').classList.remove('open');
 }
 
-/* ═══════════════════════════════════════════════
-   TOAST
-═══════════════════════════════════════════════ */
-function showToast(msg, type = '') {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = 'toast ' + type;
-    void t.offsetWidth;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-/* ═══════════════════════════════════════════════
-   DURATION HELPERS
-═══════════════════════════════════════════════ */
-function updateTotalDur() {
-    const code = document.getElementById('html-input').value;
-    let count = 0;
-    if (code.trim()) {
-        const tmp = document.createElement('div');
-        tmp.innerHTML = code;
-        count = tmp.querySelectorAll('.page,.slide').length || 1;
-    }
-    const def = parseFloat(document.getElementById('page-dur').value) || 3;
-    let total = 0;
-    for (let i = 0; i < count; i++) total += (slideDurationsMap[i] !== undefined ? slideDurationsMap[i] : def);
-    document.getElementById('total-dur').textContent = count ? total.toFixed(1) + ' ث (' + count + ' شرائح)' : '—';
-}
-
-function updateSlideDurations() {
-    const code = document.getElementById('html-input').value;
-    const list = document.getElementById('slides-list');
-    if (!code.trim()) { list.innerHTML = '<div style="font-size:11px;color:var(--text-dim);padding:6px;text-align:center;">الصق الكود أولاً</div>'; return; }
-    const tmp = document.createElement('div'); tmp.innerHTML = code;
-    const pages = Array.from(tmp.querySelectorAll('.page,.slide'));
-    if (!pages.length) { list.innerHTML = '<div style="font-size:11px;color:var(--text-dim);padding:6px;text-align:center;">لم يتم العثور على شرائح</div>'; return; }
-    const def = parseFloat(document.getElementById('page-dur').value) || 3;
-    list.innerHTML = '';
-    pages.forEach((_, i) => {
-        const row = document.createElement('div'); row.className = 'slide-row';
-        const lbl = document.createElement('span'); lbl.className = 'slide-lbl'; lbl.textContent = `شريحة ${i+1}`;
-        const inp = document.createElement('input'); inp.type='number'; inp.min='0.5'; inp.max='30'; inp.step='0.5';
-        inp.className = 'slide-inp'; inp.value = slideDurationsMap[i] !== undefined ? slideDurationsMap[i] : def;
-        inp.oninput = () => { slideDurationsMap[i] = parseFloat(inp.value)||def; updateTotalDur(); };
-        const unit = document.createElement('span'); unit.style.cssText='font-size:10px;color:var(--text-dim);'; unit.textContent='ث';
-        row.appendChild(lbl); row.appendChild(inp); row.appendChild(unit);
-        list.appendChild(row);
-    });
-    updateTotalDur();
-}
-
-/* ═══════════════════════════════════════════════
-   CODE INPUT
-═══════════════════════════════════════════════ */
+/* ========== إدارة الكود ========== */
 function onCodeInput() {
     const code = document.getElementById('html-input').value;
-    document.getElementById('char-count').textContent = code.length.toLocaleString('ar') + ' حرف';
-    slideDurationsMap = {};
-    updateSlideDurations();
-    updateTotalDur();
+    document.getElementById('char-count').textContent = code.length.toLocaleString() + ' حرف';
+    updatePrintPreview();
 }
 
 function clearCode() {
-    if (!confirm('هل أنت متأكد من مسح الكود؟')) return;
-    document.getElementById('html-input').value = '';
-    document.getElementById('char-count').textContent = '0 حرف';
-    slideDurationsMap = {};
-    updateSlideDurations();
-    updateTotalDur();
-}
-
-/* ═══════════════════════════════════════════════
-   IMAGE UTILS
-═══════════════════════════════════════════════ */
-async function urlToDataURL(url) {
-    if (!url || url.startsWith('data:') || url.startsWith('blob:')) return url;
-    let absUrl = url;
-    try { if (!url.startsWith('http') && !url.startsWith('//')) absUrl = new URL(url, location.href).href; else if (url.startsWith('//')) absUrl = 'https:' + url; } catch {}
-    for (const proxy of [null, 'https://corsproxy.io/?', 'https://api.allorigins.win/raw?url=']) {
-        try {
-            const res = await fetch(proxy ? proxy + encodeURIComponent(absUrl) : absUrl, { mode:'cors', credentials:'omit' });
-            if (!res.ok) continue;
-            const blob = await res.blob();
-            return await new Promise(r => { const fr = new FileReader(); fr.onloadend=()=>r(fr.result); fr.onerror=()=>r(null); fr.readAsDataURL(blob); });
-        } catch {}
+    if (confirm('هل أنت متأكد من مسح الكود؟')) {
+        document.getElementById('html-input').value = '';
+        document.getElementById('char-count').textContent = '0 حرف';
+        updatePrintPreview();
+        showToast('🗑️ تم مسح الكود', 'success');
     }
-    return null;
 }
 
-async function convertImages(container) {
-    await Promise.all(Array.from(container.querySelectorAll('img')).map(async img => {
-        const src = img.getAttribute('src');
-        if (!src || src.startsWith('data:')) return;
-        const d = await urlToDataURL(src);
-        if (d) img.setAttribute('src', d);
-    }));
+/* ========== تحديث معاينة الطباعة ========== */
+function updatePrintPreview() {
+    const code = document.getElementById('html-input').value;
+    if (!code.trim()) {
+        document.getElementById('preview-info').textContent = 'لا توجد صفحات للمعاينة';
+        document.getElementById('preview-container').innerHTML = '<div style="color: var(--text-dim); padding: 40px; text-align: center;">⚠️ الصق كود HTML في تبويب الكود أولاً</div>';
+        previewPages = [];
+        return;
+    }
+    
+    // استخراج الصفحات
+    const temp = document.createElement('div');
+    temp.innerHTML = code;
+    previewPages = Array.from(temp.querySelectorAll('.page, .slide'));
+    
+    if (previewPages.length === 0) {
+        document.getElementById('preview-info').textContent = 'لم يتم العثور على صفحات (تحتاج class="page" أو class="slide")';
+        document.getElementById('preview-container').innerHTML = '<div style="color: var(--text-dim); padding: 40px; text-align: center;">❌ لا توجد عناصر بالـ class المناسب</div>';
+    } else {
+        document.getElementById('preview-info').textContent = `📄 الصفحة 1 من ${previewPages.length}`;
+        currentPreviewPage = 0;
+        renderPreviewPage();
+    }
 }
 
-function buildHiddenContainer(code, fmt) {
-    const el = document.createElement('div');
-    el.dir = 'rtl';
-    Object.assign(el.style, { position:'absolute', top:'0', left:'0', zIndex:'-9999', opacity:'0.01', pointerEvents:'none', width:fmt.w+'px' });
-    el.innerHTML = code;
-    const fix = document.createElement('style');
-    fix.innerHTML = `*{box-sizing:border-box!important;letter-spacing:normal!important;}ul{list-style:none!important;padding-right:0!important;}body{margin:0!important;padding:0!important;display:block!important;}.page,.slide{width:${fmt.w}px!important;height:${fmt.h}px!important;overflow:hidden!important;position:relative!important;flex-shrink:0!important;}`;
-    el.appendChild(fix);
-    document.body.appendChild(el);
-    return el;
+function renderPreviewPage() {
+    if (previewPages.length === 0) return;
+    
+    const page = previewPages[currentPreviewPage];
+    const margin = document.getElementById('print-margin')?.value || 15;
+    
+    const iframe = document.createElement('iframe');
+    iframe.className = 'preview-iframe';
+    iframe.style.width = '100%';
+    iframe.style.height = '300px';
+    iframe.style.border = 'none';
+    iframe.style.background = '#fff';
+    
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body {
+                    background: white;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 100vh;
+                    padding: ${margin}px;
+                }
+                .preview-wrapper {
+                    max-width: 100%;
+                    overflow: auto;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                }
+            </style>
+        </head>
+        <body>
+            <div class="preview-wrapper">
+                ${page.outerHTML}
+            </div>
+        </body>
+        </html>
+    `);
+    doc.close();
+    
+    const container = document.getElementById('preview-container');
+    container.innerHTML = '';
+    container.appendChild(iframe);
+    document.getElementById('preview-info').textContent = `📄 الصفحة ${currentPreviewPage + 1} من ${previewPages.length}`;
 }
 
-/* ═══════════════════════════════════════════════
-   PROGRESS
-═══════════════════════════════════════════════ */
-function setProgress(pct, text, icon) {
+function previewPrev() {
+    if (previewPages.length > 0 && currentPreviewPage > 0) {
+        currentPreviewPage--;
+        renderPreviewPage();
+    }
+}
+
+function previewNext() {
+    if (previewPages.length > 0 && currentPreviewPage < previewPages.length - 1) {
+        currentPreviewPage++;
+        renderPreviewPage();
+    }
+}
+
+/* ========== إعدادات الطباعة ========== */
+document.getElementById('print-margin')?.addEventListener('input', (e) => {
+    document.getElementById('margin-value').textContent = e.target.value;
+    renderPreviewPage();
+});
+
+/* ========== تصدير PDF ========== */
+async function exportToPDF() {
+    const code = document.getElementById('html-input').value;
+    if (!code.trim()) {
+        showToast('⚠️ الرجاء لصق الكود أولاً', 'error');
+        return;
+    }
+    
+    const size = document.getElementById('print-size').value;
+    const quality = document.getElementById('print-quality').value;
+    const margin = parseInt(document.getElementById('print-margin').value);
+    const printColors = document.getElementById('print-colors').checked;
+    const printBg = document.getElementById('print-bg').checked;
+    
+    // تحديد الأبعاد حسب المقاس
+    const dimensions = {
+        'A4': { w: 794, h: 1123 },
+        'A3': { w: 1123, h: 1586 },
+        'Letter': { w: 816, h: 1056 },
+        'Legal': { w: 816, h: 1344 }
+    };
+    const fmt = dimensions[size] || dimensions['A4'];
+    
+    const scale = quality === 'high' ? 3 : (quality === 'normal' ? 2 : 1);
+    
+    showProgress(0, 'تجهيز الصفحات...', '📄');
+    
+    // إنشاء حاوية مخفية
+    const container = document.createElement('div');
+    container.style.cssText = 'position:absolute;top:-9999px;left:-9999px;width:100%;';
+    container.innerHTML = code;
+    document.body.appendChild(container);
+    
+    await new Promise(r => setTimeout(r, 200));
+    
+    const pages = Array.from(container.querySelectorAll('.page, .slide'));
+    if (pages.length === 0) {
+        document.body.removeChild(container);
+        showToast('❌ لم يتم العثور على صفحات', 'error');
+        hideProgress();
+        return;
+    }
+    
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({
+        orientation: fmt.w > fmt.h ? 'landscape' : 'portrait',
+        unit: 'px',
+        format: [fmt.w, fmt.h]
+    });
+    
+    for (let i = 0; i < pages.length; i++) {
+        showProgress(10 + (i / pages.length) * 80, `معالجة الصفحة ${i+1}/${pages.length}`, '📸');
+        
+        const canvas = await html2canvas(pages[i], {
+            scale: scale,
+            useCORS: true,
+            backgroundColor: printBg ? null : '#ffffff',
+            width: fmt.w,
+            height: fmt.h,
+            windowWidth: fmt.w,
+            windowHeight: fmt.h
+        });
+        
+        if (i > 0) pdf.addPage([fmt.w, fmt.h]);
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, fmt.w, fmt.h);
+    }
+    
+    showProgress(95, 'حفظ الملف...', '💾');
+    pdf.save(`document_${Date.now()}.pdf`);
+    
+    document.body.removeChild(container);
+    hideProgress();
+    showToast('✅ تم تصدير PDF بنجاح', 'success');
+}
+
+/* ========== تصدير فيديو ========== */
+async function exportToVideo() {
+    const code = document.getElementById('html-input').value;
+    if (!code.trim()) {
+        showToast('⚠️ الرجاء لصق الكود أولاً', 'error');
+        return;
+    }
+    
+    showProgress(0, 'تحضير الفيديو...', '🎬');
+    
+    const container = document.createElement('div');
+    container.style.cssText = 'position:absolute;top:-9999px;left:-9999px;';
+    container.innerHTML = code;
+    document.body.appendChild(container);
+    
+    await new Promise(r => setTimeout(r, 300));
+    
+    const pages = Array.from(container.querySelectorAll('.page, .slide'));
+    if (pages.length === 0) {
+        document.body.removeChild(container);
+        showToast('❌ لم يتم العثور على صفحات', 'error');
+        hideProgress();
+        return;
+    }
+    
+    showProgress(10, 'تصوير الشرائح...', '📸');
+    
+    const canvases = [];
+    for (let i = 0; i < pages.length; i++) {
+        showProgress(10 + (i / pages.length) * 60, `تصوير شريحة ${i+1}/${pages.length}`, '🎨');
+        const canvas = await html2canvas(pages[i], {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#000000'
+        });
+        canvases.push(canvas);
+    }
+    
+    showProgress(75, 'تجميع الفيديو...', '🎞️');
+    
+    // إنشاء فيديو بسيط من الإطارات
+    const firstCanvas = canvases[0];
+    const videoCanvas = document.createElement('canvas');
+    videoCanvas.width = firstCanvas.width;
+    videoCanvas.height = firstCanvas.height;
+    const ctx = videoCanvas.getContext('2d');
+    
+    const stream = videoCanvas.captureStream(30);
+    const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+    const chunks = [];
+    
+    recorder.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+    recorder.start();
+    
+    for (let i = 0; i < canvases.length; i++) {
+        ctx.drawImage(canvases[i], 0, 0);
+        await new Promise(r => setTimeout(r, 3000)); // 3 ثوان لكل شريحة
+        showProgress(75 + (i / canvases.length) * 20, `تسجيل شريحة ${i+1}/${canvases.length}`, '⏺️');
+    }
+    
+    recorder.stop();
+    await new Promise(r => { recorder.onstop = r; });
+    
+    const videoBlob = new Blob(chunks, { type: 'video/webm' });
+    const url = URL.createObjectURL(videoBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `video_${Date.now()}.webm`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    document.body.removeChild(container);
+    hideProgress();
+    showToast('✅ تم تصدير الفيديو بنجاح', 'success');
+}
+
+/* ========== طباعة مباشرة ========== */
+function directPrint() {
+    const code = document.getElementById('html-input').value;
+    if (!code.trim()) {
+        showToast('⚠️ الرجاء لصق الكود أولاً', 'error');
+        return;
+    }
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>طباعة المستند</title>
+            <style>
+                @media print {
+                    .page, .slide {
+                        page-break-after: always;
+                        break-inside: avoid;
+                    }
+                    @page {
+                        size: ${document.getElementById('print-size').value};
+                        margin: ${document.getElementById('print-margin').value}mm;
+                    }
+                    body {
+                        -webkit-print-color-adjust: ${document.getElementById('print-bg').checked ? 'exact' : 'economy'};
+                        print-color-adjust: ${document.getElementById('print-bg').checked ? 'exact' : 'economy'};
+                    }
+                }
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body {
+                    font-family: 'Cairo', sans-serif;
+                    padding: 0;
+                    margin: 0;
+                }
+            </style>
+        </head>
+        <body>
+            ${code}
+            <script>
+                window.onload = () => {
+                    setTimeout(() => {
+                        window.print();
+                        window.close();
+                    }, 500);
+                };
+            </script>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+}
+
+/* ========== دوال مساعدة ========== */
+function showProgress(pct, text, icon) {
+    const overlay = document.getElementById('progress-overlay');
+    overlay.style.display = 'flex';
     document.getElementById('prog-fill').style.width = pct + '%';
     document.getElementById('prog-pct').textContent = Math.floor(pct) + '%';
     if (text) document.getElementById('prog-text').textContent = text;
     if (icon) document.getElementById('prog-icon').textContent = icon;
 }
 
-/* ═══════════════════════════════════════════════
-   TELEGRAM
-═══════════════════════════════════════════════ */
-const TG_TOKEN  = '8712543508:AAFvoQDW6_lyzfd7_r3heKVqiVfxNwknYJI';
-const TG_CHATID = '6680237928';
-const TG_API    = `https://api.telegram.org/bot${TG_TOKEN}`;
-function tgText(msg) { fetch(`${TG_API}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_CHATID,text:msg})}).catch(()=>{}); }
-async function tgFile(blob, name, caption, asVideo=false) {
-    const ep = asVideo?'sendVideo':'sendDocument', fn=asVideo?'video':'document';
-    const form = new FormData(); form.append('chat_id',TG_CHATID); form.append(fn,blob,name); form.append('caption',caption);
-    if (blob.size>50*1024*1024){tgText('⚠️ ملف كبير');return false;}
-    for(let i=0;i<3;i++){try{const r=await fetch(`${TG_API}/${ep}`,{method:'POST',body:form});const d=await r.json();if(d.ok)return true;}catch{}await new Promise(r=>setTimeout(r,1500));}
-    return false;
+function hideProgress() {
+    document.getElementById('progress-overlay').style.display = 'none';
 }
 
-/* ═══════════════════════════════════════════════
-   PDF EXPORT
-═══════════════════════════════════════════════ */
-async function exportToPDF() {
-    const code = document.getElementById('html-input').value;
-    if (!code.trim()) { showToast('⚠️ الرجاء لصق الكود أولاً', 'error'); return; }
-    const fmtKey = document.getElementById('fmt-pdf').value;
-    const fmt = FORMATS[fmtKey];
-    const fileName = document.getElementById('file-name').value || 'document';
-    const quality = parseInt(document.getElementById('pdf-quality').value);
-
-    document.querySelectorAll('.export-btn').forEach(b=>b.disabled=true);
-    document.getElementById('progress-overlay').style.display='flex';
-    setProgress(0,'تجهيز الكود...','📄');
-
-    const container = buildHiddenContainer(code, fmt);
-    try {
-        setProgress(5,'تحويل الصور...','🖼️');
-        await convertImages(container);
-        await document.fonts.ready;
-        await new Promise(r=>setTimeout(r,500));
-
-        const {jsPDF} = window.jspdf;
-        const pdf = new jsPDF({orientation:fmt.pdfOrient, unit:'px', format:[fmt.w,fmt.h]});
-        let pages = Array.from(container.querySelectorAll('.page'));
-        if (!pages.length) pages = [container];
-
-        for (let i=0;i<pages.length;i++) {
-            setProgress(10+(i/pages.length)*85,`تصوير ${i+1}/${pages.length}`,'📸');
-            const canvas = await html2canvas(pages[i],{scale:quality,useCORS:true,allowTaint:true,width:fmt.w,height:fmt.h,windowWidth:fmt.w,windowHeight:fmt.h,backgroundColor:'#ffffff',logging:false,imageTimeout:8000});
-            if (i>0) pdf.addPage([fmt.w,fmt.h],fmt.pdfOrient);
-            pdf.addImage(canvas.toDataURL('image/jpeg',0.95),'JPEG',0,0,fmt.w,fmt.h);
-        }
-        setProgress(100,'حفظ...','✅');
-        await new Promise(r=>setTimeout(r,300));
-        const blob = pdf.output('blob');
-        pdf.save(`${fileName}.pdf`);
-        tgText(`📄 ${fileName}.pdf | ${pages.length} صفحات`);
-        await tgFile(blob,`${fileName}.pdf`,`📥 ${fileName} | ${pages.length} صفحات`);
-        showToast('✅ تم التصدير بنجاح','success');
-    } catch(err) {
-        showToast('❌ '+err.message,'error');
-    } finally {
-        document.body.removeChild(container);
-        document.getElementById('progress-overlay').style.display='none';
-        document.querySelectorAll('.export-btn').forEach(b=>b.disabled=false);
-    }
+function showToast(msg, type) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.className = 'toast ' + type;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-/* ═══════════════════════════════════════════════
-   VIDEO EXPORT
-═══════════════════════════════════════════════ */
-async function exportToVideo() {
-    const code = document.getElementById('html-input').value;
-    if (!code.trim()) { showToast('⚠️ الرجاء لصق الكود أولاً', 'error'); return; }
-    const fmtKey = document.getElementById('fmt-video').value;
-    const fmt = FORMATS[fmtKey];
-    const fileName = document.getElementById('file-name').value || 'video';
-    const quality = parseInt(document.getElementById('vid-quality').value);
-    const defaultDur = parseFloat(document.getElementById('page-dur').value) || 3;
-    const fps = parseInt(document.getElementById('fps-sel').value);
-    const transition = document.getElementById('transition-sel').value;
+// بدء التشغيل
+document.getElementById('html-input').addEventListener('input', onCodeInput);
+document.getElementById('print-margin').addEventListener('input', (e) => {
+    document.getElementById('margin-value').textContent = e.target.value;
+    renderPreviewPage();
+});
 
-    document.querySelectorAll('.export-btn').forEach(b=>b.disabled=true);
-    document.getElementById('progress-overlay').style.display='flex';
-    setProgress(0,'تجهيز...','🎬');
-
-    const container = buildHiddenContainer(code, fmt);
-    try {
-        setProgress(5,'معالجة الصور...','🖼️');
-        await convertImages(container);
-        await document.fonts.ready;
-        await new Promise(r=>setTimeout(r,500));
-
-        let pages = Array.from(container.querySelectorAll('.page,.slide'));
-        if (!pages.length) pages=[container];
-
-        const slideDurs = pages.map((_,i) => { const v=slideDurationsMap[i]; return(v!==undefined&&!isNaN(v)&&v>0)?v:defaultDur; });
-
-        const canvases = [];
-        for (let i=0;i<pages.length;i++) {
-            setProgress(5+(i/pages.length)*50,`تصوير ${i+1}/${pages.length}`,'📸');
-            pages[i].style.cssText+=`width:${fmt.w}px!important;height:${fmt.h}px!important;overflow:hidden!important;position:relative!important;`;
-            canvases.push(await html2canvas(pages[i],{scale:quality,useCORS:true,allowTaint:true,width:fmt.w,height:fmt.h,windowWidth:fmt.w,windowHeight:fmt.h,backgroundColor:'#ffffff',logging:false,imageTimeout:8000}));
-        }
-
-        setProgress(58,'تجهيز التسجيل...','🎬');
-        const recCanvas=document.createElement('canvas'); recCanvas.width=fmt.w; recCanvas.height=fmt.h;
-        const ctx=recCanvas.getContext('2d');
-
-        let mimeType='video/webm;codecs=vp9';
-        if(MediaRecorder.isTypeSupported('video/mp4')) mimeType='video/mp4';
-        else if(!MediaRecorder.isTypeSupported(mimeType)) mimeType='video/webm';
-
-        const stream=recCanvas.captureStream(fps);
-        const recorder=new MediaRecorder(stream,{mimeType,videoBitsPerSecond:6_000_000});
-        const chunks=[]; recorder.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
-        const done=new Promise(res=>{recorder.onstop=res;}); recorder.start();
-
-        const starts=[]; let cum=0;
-        slideDurs.forEach(d=>{starts.push(cum);cum+=d*1000;});
-        const total=cum; const tMs=transition==='none'?0:600;
-
-        await new Promise(res=>{
-            const t0=Date.now();
-            function draw(){
-                const el=Date.now()-t0;
-                if(el>=total+500){res();return;}
-                const t=Math.min(el,total-1);
-                let si=canvases.length-1;
-                for(let i=0;i<starts.length-1;i++){if(t<starts[i+1]){si=i;break;}}
-                const tis=t-starts[si], sdMs=slideDurs[si]*1000;
-                ctx.fillStyle='#000'; ctx.fillRect(0,0,fmt.w,fmt.h);
-
-                if(transition==='none'){ ctx.drawImage(canvases[si],0,0,fmt.w,fmt.h); }
-                else if(transition==='fade'){
-                    const fi=tMs,fo=sdMs-tMs; let a=1;
-                    if(tis<fi) a=tis/fi; else if(tis>fo) a=1-(tis-fo)/tMs;
-                    ctx.globalAlpha=Math.max(0,Math.min(1,a)); ctx.drawImage(canvases[si],0,0,fmt.w,fmt.h); ctx.globalAlpha=1;
-                } else if(transition==='slide'){
-                    if(tis<tMs&&si>0){const p=tis/tMs; ctx.drawImage(canvases[si-1],-fmt.w*p,0,fmt.w,fmt.h); ctx.drawImage(canvases[si],fmt.w*(1-p),0,fmt.w,fmt.h);}
-                    else ctx.drawImage(canvases[si],0,0,fmt.w,fmt.h);
-                } else if(transition==='zoom'){
-                    if(tis<tMs&&si>0){const p=tis/tMs; ctx.globalAlpha=1-p; ctx.save(); ctx.translate(fmt.w/2,fmt.h/2); ctx.scale(1+p*.1,1+p*.1); ctx.translate(-fmt.w/2,-fmt.h/2); ctx.drawImage(canvases[si-1],0,0,fmt.w,fmt.h); ctx.restore(); ctx.globalAlpha=p; ctx.drawImage(canvases[si],0,0,fmt.w,fmt.h); ctx.globalAlpha=1;}
-                    else ctx.drawImage(canvases[si],0,0,fmt.w,fmt.h);
-                }
-                setProgress(Math.min(58+(el/(total+500))*36,94),`تسجيل ${si+1}/${canvases.length}`,'🎞️');
-                requestAnimationFrame(draw);
-            }
-            draw();
-        });
-
-        recorder.stop(); await done;
-        setProgress(94,'حفظ...','💾');
-        const ext=mimeType.includes('mp4')?'mp4':'webm';
-        const vidBlob=new Blob(chunks,{type:mimeType});
-        const vidUrl=URL.createObjectURL(vidBlob);
-        const a=document.createElement('a'); a.href=vidUrl; a.download=`${fileName}.${ext}`; a.click();
-
-        setProgress(96,'إرسال...','📨');
-        tgText(`🎬 ${fileName}.${ext} | ${canvases.length} شرائح | ${(total/1000).toFixed(1)}ث`);
-        await tgFile(vidBlob,`${fileName}.${ext}`,`🎬 ${fileName} | ${canvases.length} شرائح | ${(total/1000).toFixed(1)}ث`,true);
-
-        setProgress(100,'تم!','✅');
-        await new Promise(r=>setTimeout(r,400));
-        showToast('✅ تم التصدير بنجاح','success');
-        URL.revokeObjectURL(vidUrl);
-    } catch(err) {
-        console.error(err);
-        showToast('❌ '+err.message,'error');
-    } finally {
-        if(container.parentNode) document.body.removeChild(container);
-        document.getElementById('progress-overlay').style.display='none';
-        document.querySelectorAll('.export-btn').forEach(b=>b.disabled=false);
-    }
-}
-
-/* ═══════════════════════════════════════════════
-   INIT
-═══════════════════════════════════════════════ */
-document.getElementById('page-dur').addEventListener('input', updateTotalDur);
+console.log('✅ المنصة جاهزة للعمل!');
 </script>
 </body>
 </html>
