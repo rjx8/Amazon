@@ -2,86 +2,65 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>أداة قص صفحات PDF</title>
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقدير درجة التحصيلي</title>
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 50px; background-color: #f4f4f9; }
-        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 400px; }
-        input, button { width: 100%; margin-top: 10px; padding: 10px; box-sizing: border-box; }
-        button { background-color: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
-        button:hover { background-color: #0056b3; }
-        h2 { color: #333; }
+        :root { --main: #00796b; --bg: #e0f2f1; }
+        body { font-family: sans-serif; background-color: var(--bg); display: flex; justify-content: center; padding: 20px; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        h2 { color: var(--main); text-align: center; }
+        .info { font-size: 0.85rem; color: #666; margin-bottom: 20px; background: #fff9c4; padding: 10px; border-right: 4px solid #fbc02d; }
+        .input-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        input { width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 5px; text-align: center; }
+        button { width: 100%; padding: 12px; background: var(--main); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1rem; }
+        #resultArea { margin-top: 20px; display: none; text-align: center; border-top: 2px dashed #ddd; padding-top: 20px; }
+        .final-score { font-size: 2.5rem; font-weight: bold; color: var(--main); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>قص صفحات PDF</h2>
+<div class="card">
+    <h2>مُقدّر درجة التحصيلي 📝</h2>
+    <p class="info">أدخل عدد الإجابات التي تعتقد أنك أجبتها بشكل صحيح في كل قسم (كل قسم يحتوي غالباً على 22-25 سؤالاً).</p>
     
-    <label>اختر الملف:</label>
-    <input type="file" id="pdf-input" accept="application/pdf">
-    
-    <label>من صفحة:</label>
-    <input type="number" id="start-page" value="1" min="1">
-    
-    <label>إلى صفحة:</label>
-    <input type="number" id="end-page" value="1" min="1">
-    
-    <button onclick="extractPdf()">قص وتحميل الملف</button>
-    <p id="status"></p>
+    <div id="inputsContainer">
+        <!-- الأقسام -->
+        <div class="input-row"><span>القسم الأول (تقريباً 24 سؤال)</span><input type="number" class="sec" max="24" placeholder="0"></div>
+        <div class="input-row"><span>القسم الثاني (تقريباً 24 سؤال)</span><input type="number" class="sec" max="24" placeholder="0"></div>
+        <div class="input-row"><span>القسم الثالث (تقريباً 24 سؤال)</span><input type="number" class="sec" max="24" placeholder="0"></div>
+        <div class="input-row"><span>القسم الرابع (تقريباً 24 سؤال)</span><input type="number" class="sec" max="24" placeholder="0"></div>
+        <div class="input-row"><span>القسم الخامس (تقريباً 24 سؤال)</span><input type="number" class="sec" max="24" placeholder="0"></div>
+    </div>
+
+    <button onclick="estimateScore()">احسب الدرجة التقديرية</button>
+
+    <div id="resultArea">
+        <div>درجتك المعيارية المتوقعة هي:</div>
+        <div class="final-score" id="scoreDisplay">0</div>
+        <p style="font-size: 0.8rem; color: #888;">* ملاحظة: هذه نتيجة تقريبية، "قياس" يستخدم منحنى الانحراف المعياري لتحديد الدرجة النهائية.</p>
+    </div>
 </div>
 
 <script>
-    async function extractPdf() {
-        const fileInput = document.getElementById('pdf-input');
-        const startPage = parseInt(document.getElementById('start-page').value);
-        const endPage = parseInt(document.getElementById('end-page').value);
-        const status = document.getElementById('status');
+    function estimateScore() {
+        let totalCorrect = 0;
+        const inputs = document.querySelectorAll('.sec');
+        
+        inputs.forEach(input => {
+            totalCorrect += parseFloat(input.value) || 0;
+        });
 
-        if (fileInput.files.length === 0) {
-            alert("يرجى اختيار ملف أولاً");
-            return;
-        }
+        // إجمالي الأسئلة التقريبي هو 120 سؤال
+        // يتم حساب الدرجة كنسبة مئوية من الإجابات الصحيحة
+        let percentage = (totalCorrect / 120) * 100;
+        
+        // محاكاة بسيطة للدرجة المعيارية (التي عادة ما تكون أعلى قليلاً من النسبة الخام في المستويات المتوسطة)
+        let estimatedStandard = percentage; 
 
-        status.innerText = "جاري المعالجة...";
+        if (estimatedStandard > 100) estimatedStandard = 100;
 
-        try {
-            const file = fileInput.files[0];
-            const arrayBuffer = await file.arrayBuffer();
-
-            // تحميل ملف الـ PDF الأصلي
-            const srcPdf = await PDFLib.PDFDocument.load(arrayBuffer);
-            // إنشاء ملف PDF جديد فارغ
-            const newPdf = await PDFLib.PDFDocument.create();
-
-            const totalPages = srcPdf.getPageCount();
-            
-            // التأكد من النطاق المختار
-            if (startPage > endPage || startPage > totalPages || endPage > totalPages) {
-                alert("تأكد من أرقام الصفحات (الملف يحتوي على " + totalPages + " صفحة)");
-                return;
-            }
-
-            // تحديد الصفحات المطلوب نسخها (النظام يبدأ من صفر، لذا نطرح 1)
-            const pagesToCopy = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage - 1 + i);
-            
-            // نسخ الصفحات وإضافتها للملف الجديد
-            const copiedPages = await newPdf.copyPages(srcPdf, pagesToCopy);
-            copiedPages.forEach((page) => newPdf.addPage(page));
-
-            // حفظ الملف وتنزيله
-            const pdfBytes = await newPdf.save();
-            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `extracted_pages_${startPage}_to_${endPage}.pdf`;
-            link.click();
-
-            status.innerText = "تم القص بنجاح!";
-        } catch (error) {
-            console.error(error);
-            status.innerText = "حدث خطأ أثناء المعالجة.";
-        }
+        document.getElementById('scoreDisplay').innerText = Math.round(estimatedStandard);
+        document.getElementById('resultArea').style.display = 'block';
     }
 </script>
 
