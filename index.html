@@ -3,64 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تقدير درجة التحصيلي</title>
+    <title>أداة قص ملفات PDF</title>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <style>
-        :root { --main: #00796b; --bg: #e0f2f1; }
-        body { font-family: sans-serif; background-color: var(--bg); display: flex; justify-content: center; padding: 20px; }
-        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
-        h2 { color: var(--main); text-align: center; }
-        .info { font-size: 0.85rem; color: #666; margin-bottom: 20px; background: #fff9c4; padding: 10px; border-right: 4px solid #fbc02d; }
-        .input-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
-        input { width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 5px; text-align: center; }
-        button { width: 100%; padding: 12px; background: var(--main); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1rem; }
-        #resultArea { margin-top: 20px; display: none; text-align: center; border-top: 2px dashed #ddd; padding-top: 20px; }
-        .final-score { font-size: 2.5rem; font-weight: bold; color: var(--main); }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h2 { color: #333; margin-bottom: 20px; }
+        input[type="file"], input[type="number"], button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .range-container {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        button:hover { background-color: #27ae60; }
+        #status { margin-top: 15px; color: #7f8c8d; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>مُقدّر درجة التحصيلي 📝</h2>
-    <p class="info">أدخل عدد الإجابات التي تعتقد أنك أجبتها بشكل صحيح في كل قسم (كل قسم يحتوي غالباً على 22-25 سؤالاً).</p>
+<div class="container">
+    <h2>قص صفحات PDF</h2>
     
-    <div id="inputsContainer">
-        <!-- الأقسام -->
-        <div class="input-row"><span>القسم الأول (تقريباً 24 سؤال)</span><input type="number" class="sec" max="24" placeholder="0"></div>
-        <div class="input-row"><span>القسم الثاني (تقريباً 24 سؤال)</span><input type="number" class="sec" max="24" placeholder="0"></div>
-        <div class="input-row"><span>القسم الثالث (تقريباً 24 سؤال)</span><input type="number" class="sec" max="24" placeholder="0"></div>
-        <div class="input-row"><span>القسم الرابع (تقريباً 24 سؤال)</span><input type="number" class="sec" max="24" placeholder="0"></div>
-        <div class="input-row"><span>القسم الخامس (تقريباً 24 سؤال)</span><input type="number" class="sec" max="24" placeholder="0"></div>
+    <input type="file" id="pdf-file" accept=".pdf">
+    
+    <div class="range-container">
+        <input type="number" id="start-page" placeholder="من صفحة" min="1">
+        <input type="number" id="end-page" placeholder="إلى صفحة" min="1">
     </div>
-
-    <button onclick="estimateScore()">احسب الدرجة التقديرية</button>
-
-    <div id="resultArea">
-        <div>درجتك المعيارية المتوقعة هي:</div>
-        <div class="final-score" id="scoreDisplay">0</div>
-        <p style="font-size: 0.8rem; color: #888;">* ملاحظة: هذه نتيجة تقريبية، "قياس" يستخدم منحنى الانحراف المعياري لتحديد الدرجة النهائية.</p>
-    </div>
+    
+    <button onclick="splitPdf()">قص وتحميل الملف</button>
+    
+    <div id="status"></div>
 </div>
 
 <script>
-    function estimateScore() {
-        let totalCorrect = 0;
-        const inputs = document.querySelectorAll('.sec');
-        
-        inputs.forEach(input => {
-            totalCorrect += parseFloat(input.value) || 0;
-        });
+    async function splitPdf() {
+        const fileInput = document.getElementById('pdf-file');
+        const startPageInput = document.getElementById('start-page');
+        const endPageInput = document.getElementById('end-page');
+        const status = document.getElementById('status');
 
-        // إجمالي الأسئلة التقريبي هو 120 سؤال
-        // يتم حساب الدرجة كنسبة مئوية من الإجابات الصحيحة
-        let percentage = (totalCorrect / 120) * 100;
-        
-        // محاكاة بسيطة للدرجة المعيارية (التي عادة ما تكون أعلى قليلاً من النسبة الخام في المستويات المتوسطة)
-        let estimatedStandard = percentage; 
+        // التحقق من المدخلات
+        if (fileInput.files.length === 0) {
+            status.innerText = "الرجاء اختيار ملف PDF أولاً.";
+            return;
+        }
+        if (!startPageInput.value || !endPageInput.value) {
+            status.innerText = "الرجاء تحديد نطاق الصفحات.";
+            return;
+        }
 
-        if (estimatedStandard > 100) estimatedStandard = 100;
+        const startPage = parseInt(startPageInput.value);
+        const endPage = parseInt(endPageInput.value);
 
-        document.getElementById('scoreDisplay').innerText = Math.round(estimatedStandard);
-        document.getElementById('resultArea').style.display = 'block';
+        if (startPage > endPage) {
+            status.innerText = "عذراً، صفحة البداية يجب أن تكون أقل من أو تساوي صفحة النهاية.";
+            return;
+        }
+
+        status.innerText = "جاري معالجة الملف...";
+
+        try {
+            // قراءة الملف المرفوع
+            const file = fileInput.files[0];
+            const fileArrayBuffer = await file.arrayBuffer();
+
+            // تحميل ملف PDF الأساسي عبر المكتبة
+            const srcPdfDoc = await PDFLib.PDFDocument.load(fileArrayBuffer);
+            const totalPages = srcPdfDoc.getPageCount();
+
+            // التحقق من صحة أرقام الصفحات بالنسبة للملف
+            if (startPage > totalPages || endPage > totalPages || startPage < 1) {
+                status.innerText = `خطأ: الملف يحتوي على ${totalPages} صفحة فقط.`;
+                return;
+            }
+
+            // إنشاء ملف PDF جديد فارغ
+            const pdfDoc = await PDFLib.PDFDocument.create();
+
+            // تحديد مصفوفة الصفحات المراد نسخها (المكتبة تبدأ العد من الصفر 0)
+            const pagesToCopy = [];
+            for (let i = startPage - 1; i < endPage; i++) {
+                pagesToCopy.push(i);
+            }
+
+            // نسخ الصفحات المحسوبة إلى الملف الجديد
+            const copiedPages = await pdfDoc.copyPages(srcPdfDoc, pagesToCopy);
+            copiedPages.forEach((page) => pdfDoc.addPage(page));
+
+            // حفظ الملف الجديد وتحميله
+            const pdfBytes = await pdfDoc.save();
+            
+            // عملية التحميل التلقائي في المتصفح
+            const blob = new Blob([pdfBytes], { type: "application/pdf" });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `قص_${startPage}_إلى_${endPage}_${file.name}`;
+            link.click();
+
+            status.innerText = "تم القص والتحميل بنجاح! 🎉";
+
+        } catch (error) {
+            console.error(error);
+            status.innerText = "حدث خطأ أثناء معالجة الملف.";
+        }
     }
 </script>
 
