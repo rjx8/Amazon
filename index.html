@@ -2,152 +2,201 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
+  <title>نموذج أسئلة - قمة للقدرات</title>
   <style>
     :root {
-      /* يمكنك التحكم بالألوان من هنا */
-      --pink-bg: #fca5a5;       /* لون الصف العلوي والعمود الجانبي */
-      --dark-red-bg: #7f1d1d;   /* لون الخلايا المائلة */
-      --border-color: #000000;  /* لون الحدود والخط */
+      --primary-color: #1a4d4f; /* اللون الزيتي/الداكن الأساسي */
+      --accent-pink: #fbcfe8;   /* لون الحاوية والخيارات */
+      --bg-color: #f3f4f6;     /* خلفية الصفحة */
+      --border-color: #d1d5db;
     }
 
     body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: transparent;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
       margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .matrix-wrapper {
-      position: relative;
-      display: inline-block;
-    }
-
-    .matrix-table {
-      border-collapse: collapse;
-      border: 2.5px solid var(--border-color);
+    /* كارت السؤال المماثل للصفحة */
+    .page-card {
       background-color: #ffffff;
-    }
-
-    .matrix-table td, .matrix-table th {
-      width: 65px;
-      height: 50px;
-      border: 2px solid var(--border-color);
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    .pink-bg {
-      background-color: var(--pink-bg);
-    }
-
-    .dark-red-bg {
-      background-color: var(--dark-red-bg);
-    }
-
-    /* الخط المائل الممتد من أسفل اليسار إلى أعلى اليمين */
-    .diagonal-line {
-      position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
-      height: 100%;
-      pointer-events: none;
+      max-width: 600px;
+      min-height: 700px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      position: relative;
     }
 
-    .diagonal-line line {
-      stroke: var(--border-color);
-      stroke-width: 3;
+    /* الترويسة العلوية */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 10px;
+    }
+
+    .question-number {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: bold;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .section-title {
+      color: var(--primary-color);
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    /* نص السؤال */
+    .question-body {
+      margin: 20px 0;
+      font-size: 18px;
+      line-height: 1.6;
+      color: #1f2937;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    /* منطقة الخيارات */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .option-item {
+      background-color: #f9fafb;
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px 15px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .option-item:hover {
+      border-color: var(--primary-color);
+      background-color: #f0fdf4;
+    }
+
+    .option-label {
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-left: 10px;
+    }
+
+    /* الشريط السفلي للإجابة والحقوق */
+    .footer {
+      border-top: 2px solid #e5e7eb;
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .branding {
+      color: var(--primary-color);
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .social-handle {
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .answer-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .answer-badge {
+      background-color: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+      padding: 4px 14px;
+      border-radius: 6px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
-  <div class="matrix-wrapper">
-    <table class="matrix-table">
-      <!-- الصف العلوي -->
-      <tr>
-        <th class="pink-bg"></th>
-        <th class="pink-bg"></th>
-        <th class="pink-bg"></th>
-        <th class="pink-bg"></th>
-        <th class="pink-bg"></th>
-        <th class="pink-bg"></th>
-        <th></th>
-      </tr>
+  <div class="page-card">
+    <div class="header">
+      <div class="question-number">١</div>
+      <div class="section-title">القسم ٣</div>
+    </div>
 
-      <!-- الصف 1 -->
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td class="dark-red-bg"></td>
-        <td class="pink-bg"></td>
-      </tr>
+    <div class="question-body">
+      ما الفرق بين أصغر عدد فردي مكون من 3 أرقام وأكبر عدد زوجي مكون من رقمين؟[span_3](end_span)
+    </div>
 
-      <!-- الصف 2 -->
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td class="dark-red-bg"></td>
-        <td></td>
-        <td class="pink-bg"></td>
-      </tr>
+    <div class="options-grid">
+      [span_4](start_span)<div class="option-item"><span class="option-label">أ :</span> ٢</div>[span_4](end_span)
+      [span_5](start_span)<div class="option-item"><span class="option-label">ب :</span> ٣</div>[span_5](end_span)
+      [span_6](start_span)<div class="option-item"><span class="option-label">ج :</span> ٤</div>[span_6](end_span)
+      <div class="option-item"><span class="option-label">د :</span> ٥</div>
+    </div>
 
-      <!-- الصف 3 -->
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td class="dark-red-bg"></td>
-        <td></td>
-        <td></td>
-        <td class="pink-bg"></td>
-      </tr>
+    <div class="footer">
+      <div>
+        [span_7](start_span)<div class="branding">قمة للقدرات</div>[span_7](end_span)
+        [span_8](start_span)<div class="social-handle">@SaQim_mah</div>[span_8](end_span)
+      </div>
+      <div class="answer-box">
+        [span_9](start_span)<span>الإجابة:</span>[span_9](end_span)
+        <span class="answer-badge">ب</span>
+      </div>
+    </div>
+  </div>
 
-      <!-- الصف 4 -->
-      <tr>
-        <td></td>
-        <td></td>
-        <td class="dark-red-bg"></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td class="pink-bg"></td>
-      </tr>
+  <div class="page-card">
+    <div class="header">
+      <div class="question-number">٢</div>
+      <div class="section-title">القسم ٣</div>
+    </div>
 
-      <!-- الصف 5 -->
-      <tr>
-        <td></td>
-        <td class="dark-red-bg"></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td class="pink-bg"></td>
-      </tr>
+    <div class="question-body">
+      [span_10](start_span)عددان مجموعهما ٩ ، والعدد الأكبر ص ، ما العدد الأصغر؟[span_10](end_span)
+    </div>
 
-      <!-- الصف 6 -->
-      <tr>
-        <td class="dark-red-bg"></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td class="pink-bg"></td>
-      </tr>
-    </table>
+    <div class="options-grid">
+      [span_11](start_span)<div class="option-item"><span class="option-label">أ :</span> ٩ - ص</div>[span_11](end_span)
+      [span_12](start_span)<div class="option-item"><span class="option-label">ب :</span> ص - ٩</div>[span_12](end_span)
+      [span_13](start_span)<div class="option-item"><span class="option-label">ج :</span> ٩ + ص</div>[span_13](end_span)
+      [span_14](start_span)<div class="option-item"><span class="option-label">د :</span> ٩ ص</div>[span_14](end_span)
+    </div>
 
-    <!-- رسم الخط القطري المائل فوق الجدول -->
-    <svg class="diagonal-line">
-      <line x1="0" y1="100%" x2="100%" y2="0" />
-    </svg>
+    <div class="footer">
+      <div>
+        [span_15](start_span)<div class="branding">قمة للقدرات</div>[span_15](end_span)
+        [span_16](start_span)<div class="social-handle">@SaQim_mah</div>[span_16](end_span)
+      </div>
+      <div class="answer-box">
+        [span_17](start_span)<span>الإجابة:</span>[span_17](end_span)
+        <span class="answer-badge">أ</span>
+      </div>
+    </div>
   </div>
 
 </body>
