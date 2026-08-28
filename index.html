@@ -57,7 +57,6 @@
       align-items: flex-start;
     }
 
-    /* منطقة العرض والمعاينة */
     .preview-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -71,7 +70,6 @@
       min-width: 320px;
     }
 
-    /* خلفية المربعات الشفافة للمعاينة */
     .canvas-wrapper {
       width: 100%;
       max-width: 380px;
@@ -98,10 +96,9 @@
       filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.2));
     }
 
-    /* أجزاء الشكل التفاعلية */
     .shape-part {
       cursor: pointer;
-      transition: transform 0.2s ease, opacity 0.2s ease, stroke 0.2s ease;
+      transition: opacity 0.2s ease, stroke 0.2s ease;
       stroke: rgba(255, 255, 255, 0.2);
       stroke-width: 2px;
     }
@@ -112,7 +109,6 @@
       stroke-width: 3px;
     }
 
-    /* لوحة التحكم للألوان */
     .controls-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -161,7 +157,6 @@
       gap: 0.5rem;
     }
 
-    /* تخصيص مدخلات الألوان والتكست */
     input[type="color"] {
       -webkit-appearance: none;
       border: none;
@@ -198,7 +193,6 @@
       outline: 1px solid var(--accent-color);
     }
 
-    /* أزرار التنزيل */
     .action-btns {
       display: flex;
       gap: 1rem;
@@ -253,7 +247,7 @@
     <div class="preview-card">
       <div class="canvas-wrapper">
         <svg id="geometric-shape" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-          <polygon class="shape-part" id="part-1" data-name="المثلث العلوي" points="150,20 220,100 80,100" fill="#38bdf8" />
+          <polygon class="shape-part" id="part-1" data-name="الجزء العلوي" points="150,20 220,100 80,100" fill="#38bdf8" />
           <polygon class="shape-part" id="part-2" data-name="الجناح الأيسر" points="80,100 20,170 80,240 120,170" fill="#818cf8" />
           <polygon class="shape-part" id="part-3" data-name="الجناح الأيمن" points="220,100 280,170 220,240 180,170" fill="#c084fc" />
           <polygon class="shape-part" id="part-4" data-name="المعين المركزي" points="150,110 180,170 150,230 120,170" fill="#f472b6" />
@@ -275,88 +269,80 @@
 
     <div class="controls-card">
       <h2>التحكم بالألوان (Hex Tags)</h2>
-      <div class="color-picker-group" id="controls-container">
-        </div>
+      <div class="color-picker-group" id="controls-container"></div>
     </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const shapeParts = document.querySelectorAll('.shape-part');
-      const controlsContainer = document.getElementById('controls-container');
+      const container = document.getElementById('controls-container');
       const svgElement = document.getElementById('geometric-shape');
 
-      // 1. إنشاء عناصر التحكم بالألوان ديناميكياً لكل جزء في الشكل الهندسي
-      shapeParts.forEach((part, index) => {
-        const partId = part.id;
-        const partName = part.getAttribute('data-name') || `الجزء ${index + 1}`;
-        const initialColor = part.getAttribute('fill') || '#ffffff';
+      function initControls() {
+        container.innerHTML = '';
+        const shapeParts = svgElement.querySelectorAll('.shape-part');
 
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'color-item';
-        itemDiv.innerHTML = `
-          <label for="picker-${partId}">${partName}</label>
-          <div class="color-inputs">
-            <input type="text" id="hex-${partId}" value="${initialColor}" maxlength="7">
-            <input type="color" id="picker-${partId}" value="${initialColor}">
-          </div>
-        `;
-        controlsContainer.appendChild(itemDiv);
+        shapeParts.forEach((part, index) => {
+          const partId = part.id || `part-${index + 1}`;
+          part.id = partId;
+          const partName = part.getAttribute('data-name') || `الجزء ${index + 1}`;
+          const initialColor = part.getAttribute('fill') || '#38bdf8';
 
-        const colorPicker = itemDiv.querySelector(`#picker-${partId}`);
-        const hexInput = itemDiv.querySelector(`#hex-${partId}`);
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'color-item';
+          itemDiv.innerHTML = `
+            <label for="picker-${partId}">${partName}</label>
+            <div class="color-inputs">
+              <input type="text" id="hex-${partId}" value="${initialColor}" maxlength="7">
+              <input type="color" id="picker-${partId}" value="${initialColor}">
+            </div>
+          `;
+          container.appendChild(itemDiv);
 
-        // تحديث اللون من أداة اختيار الألوان (Color Picker)
-        colorPicker.addEventListener('input', (e) => {
-          const newColor = e.target.value;
-          part.setAttribute('fill', newColor);
-          hexInput.value = newColor.toUpperCase();
+          const colorPicker = itemDiv.querySelector(`#picker-${partId}`);
+          const hexInput = itemDiv.querySelector(`#hex-${partId}`);
+
+          colorPicker.addEventListener('input', (e) => {
+            const newColor = e.target.value;
+            part.setAttribute('fill', newColor);
+            hexInput.value = newColor.toUpperCase();
+          });
+
+          hexInput.addEventListener('input', (e) => {
+            let val = e.target.value;
+            if (!val.startsWith('#')) val = '#' + val;
+            if (/^#[0-9A-F]{6}$/i.test(val)) {
+              part.setAttribute('fill', val);
+              colorPicker.value = val;
+            }
+          });
+
+          part.addEventListener('click', () => colorPicker.click());
         });
+      }
 
-        // تحديث اللون عند كتابة كود الـ Hex يدويًا
-        hexInput.addEventListener('input', (e) => {
-          let val = e.target.value;
-          if (!val.startsWith('#')) {
-            val = '#' + val;
-          }
-          // التحقق من صحة كود اللون (Hex Code Valid Match)
-          if (/^#[0-9A-F]{6}$/i.test(val)) {
-            part.setAttribute('fill', val);
-            colorPicker.value = val;
-          }
-        });
+      initControls();
 
-        // النقر المباشر على الشكل الهندسي لفتح منتقي الألوان الخاص به
-        part.addEventListener('click', () => {
-          colorPicker.click();
-        });
-      });
-
-      // 2. ميزة تصدير وحفظ الشكل كـ PNG بخلفية شفافة
+      // حفظ PNG شفافة
       document.getElementById('download-png').addEventListener('click', () => {
         const svgData = new XMLSerializer().serializeToString(svgElement);
         const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-        const URL = window.URL || window.webkitURL || window;
-        const blobURL = URL.createObjectURL(svgBlob);
+        const blobURL = (window.URL || window.webkitURL).createObjectURL(svgBlob);
 
         const image = new Image();
         image.onload = () => {
-          // إنشاء Canvas بحجم عالي الدقة للرسم
           const canvas = document.createElement('canvas');
-          const scale = 3; // مضاعفة الدقة للوضوح
+          const scale = 3;
           canvas.width = 300 * scale;
           canvas.height = 300 * scale;
           
           const context = canvas.getContext('2d');
           context.scale(scale, scale);
-          // رسم الصورة على الـ Canvas دون وضع أي خلفية (لتبقى شفافة)
           context.drawImage(image, 0, 0, 300, 300);
 
-          // تحويل الـ Canvas إلى رابط PNG وتنزيله
-          const png = canvas.toDataURL('image/png');
           const downloadLink = document.createElement('a');
-          downloadLink.href = png;
-          downloadLink.download = 'geometric-shape-transparent.png';
+          downloadLink.href = canvas.toDataURL('image/png');
+          downloadLink.download = 'shape-transparent.png';
           document.body.appendChild(downloadLink);
           downloadLink.click();
           document.body.removeChild(downloadLink);
@@ -364,14 +350,13 @@
         image.src = blobURL;
       });
 
-      // 3. ميزة تصدير وحفظ الشكل كـ SVG مباشر
+      // حفظ SVG
       document.getElementById('download-svg').addEventListener('click', () => {
         const svgData = new XMLSerializer().serializeToString(svgElement);
         const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-        const svgUrl = URL.createObjectURL(svgBlob);
         const downloadLink = document.createElement('a');
-        downloadLink.href = svgUrl;
-        downloadLink.download = 'geometric-shape.svg';
+        downloadLink.href = URL.createObjectURL(svgBlob);
+        downloadLink.download = 'shape.svg';
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
