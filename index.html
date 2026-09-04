@@ -1,367 +1,541 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>محرر الأشكال الهندسية التفاعلي</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --accent-color: #38bdf8;
-      --text-color: #f8fafc;
-      --border-color: #334155;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هدية لك</title>
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:
+        radial-gradient(circle at 50% 15%, #7357ff22, transparent 35%),
+        radial-gradient(circle at 20% 80%, #ff5c9d16, transparent 30%),
+        #0c0c10;
+    color: white;
+    overflow-x: hidden;
+}
+.screen {
+    min-height: 100vh;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+}
+.screen.active {
+    display: flex;
+    animation: fadeIn .6s ease;
+}
+.container {
+    width: min(500px, 100%);
+    text-align: center;
+}
+.kicker {
+    color: #9999a5;
+    font-size: 12px;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+}
+h1 {
+    margin: 0;
+    font-size: clamp(36px, 10vw, 60px);
+    line-height: 1.1;
+}
+p {
+    color: #aaaab5;
+    line-height: 1.8;
+    font-size: 16px;
+}
+button {
+    border: none;
+    cursor: pointer;
+    padding: 15px 25px;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    background: white;
+    color: #111;
+    transition: .25s;
+}
+button:active {
+    transform: scale(.96);
+}
+/* البداية */
+.start-button {
+    margin-top: 20px;
+}
+/* الأسئلة */
+.progress {
+    width: 100%;
+    height: 5px;
+    background: #27272e;
+    border-radius: 100px;
+    overflow: hidden;
+    margin-bottom: 35px;
+}
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: white;
+    transition: .4s;
+}
+.question {
+    font-size: 25px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+.answers {
+    display: grid;
+    gap: 12px;
+}
+.answer {
+    width: 100%;
+    background: #18181e;
+    color: white;
+    border: 1px solid #303039;
+    text-align: right;
+}
+.answer:hover {
+    background: #24242c;
+}
+/* الرسالة */
+.gift-image {
+    width: 190px;
+    height: 190px;
+    object-fit: cover;
+    border-radius: 28px;
+    margin-bottom: 25px;
+    box-shadow: 0 25px 70px #0009;
+}
+/* الكوبون */
+.coupon-area {
+    width: 100%;
+    margin: 25px auto;
+}
+.coupon {
+    position: relative;
+    width: 100%;
+    min-height: 290px;
+    padding: 30px;
+    border-radius: 25px;
+    overflow: hidden;
+    background:
+        linear-gradient(
+            135deg,
+            #f5eddc,
+            #d9c49a
+        );
+    color: #17130c;
+    box-shadow:
+        0 30px 80px #0009;
+}
+.coupon-brand {
+    font-size: 12px;
+    letter-spacing: 3px;
+    opacity: .6;
+}
+.coupon h2 {
+    font-size: 40px;
+    margin: 35px 0 5px;
+}
+.coupon-text {
+    color: #514938;
+}
+.coupon-code {
+    margin-top: 25px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #ffffff77;
+    font-family: monospace;
+    letter-spacing: 4px;
+    font-size: 20px;
+}
+#scratchCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+.hint {
+    color: #777783;
+    font-size: 13px;
+}
+/* زر الحفظ */
+.save-button {
+    margin-top: 15px;
+    display: none;
+}
+/* أنيميشن */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Tajawal', sans-serif;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem 1rem;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    header h1 {
-      font-size: 2rem;
-      color: var(--accent-color);
-      margin-bottom: 0.5rem;
-    }
-
-    header p {
-      color: #94a3b8;
-      font-size: 0.95rem;
-    }
-
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      max-width: 1100px;
-      width: 100%;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    .preview-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-      flex: 1;
-      min-width: 320px;
-    }
-
-    .canvas-wrapper {
-      width: 100%;
-      max-width: 380px;
-      height: 380px;
-      border-radius: 12px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-image: 
-        linear-gradient(45deg, #26334d 25%, transparent 25%), 
-        linear-gradient(-45deg, #26334d 25%, transparent 25%), 
-        linear-gradient(45deg, transparent 75%, #26334d 75%), 
-        linear-gradient(-45deg, transparent 75%, #26334d 75%);
-      background-size: 20px 20px;
-      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-      border: 2px dashed var(--border-color);
-      margin-bottom: 1.5rem;
-      padding: 1rem;
-    }
-
-    svg {
-      width: 100%;
-      height: 100%;
-      filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.2));
-    }
-
-    .shape-part {
-      cursor: pointer;
-      transition: opacity 0.2s ease, stroke 0.2s ease;
-      stroke: rgba(255, 255, 255, 0.2);
-      stroke-width: 2px;
-    }
-
-    .shape-part:hover {
-      opacity: 0.85;
-      stroke: #ffffff;
-      stroke-width: 3px;
-    }
-
-    .controls-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 1.5rem;
-      flex: 1;
-      min-width: 300px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-    }
-
-    .controls-card h2 {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
-      border-bottom: 2px solid var(--border-color);
-      padding-bottom: 0.5rem;
-      color: var(--accent-color);
-    }
-
-    .color-picker-group {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      max-height: 340px;
-      overflow-y: auto;
-      padding-left: 0.5rem;
-    }
-
-    .color-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(255, 255, 255, 0.03);
-      padding: 0.75rem 1rem;
-      border-radius: 10px;
-      border: 1px solid var(--border-color);
-    }
-
-    .color-item label {
-      font-weight: 500;
-      font-size: 0.95rem;
-    }
-
-    .color-inputs {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    input[type="color"] {
-      -webkit-appearance: none;
-      border: none;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      cursor: pointer;
-      background: none;
-    }
-
-    input[type="color"]::-webkit-color-swatch-wrapper {
-      padding: 0;
-    }
-
-    input[type="color"]::-webkit-color-swatch {
-      border: 2px solid #ffffff;
-      border-radius: 50%;
-    }
-
-    input[type="text"] {
-      background: #0f172a;
-      border: 1px solid var(--border-color);
-      color: #fff;
-      padding: 0.4rem 0.6rem;
-      border-radius: 6px;
-      width: 90px;
-      text-align: center;
-      font-family: monospace;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-    }
-
-    input[type="text"]:focus {
-      outline: 1px solid var(--accent-color);
-    }
-
-    .action-btns {
-      display: flex;
-      gap: 1rem;
-      width: 100%;
-    }
-
-    .btn {
-      flex: 1;
-      padding: 0.8rem 1rem;
-      border: none;
-      border-radius: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .btn-primary {
-      background-color: var(--accent-color);
-      color: #0f172a;
-    }
-
-    .btn-primary:hover {
-      background-color: #0284c7;
-      color: #fff;
-      transform: translateY(-2px);
-    }
-
-    .btn-secondary {
-      background-color: transparent;
-      border: 1px solid var(--accent-color);
-      color: var(--accent-color);
-    }
-
-    .btn-secondary:hover {
-      background-color: rgba(56, 189, 248, 0.1);
-      transform: translateY(-2px);
-    }
-  </style>
+}
+</style>
 </head>
 <body>
-
-  <header>
-    <h1>محرر ومصمم الأشكال الهندسية</h1>
-    <p>انقر على أجزاء الشكل لتغيير ألوانها، أو استخدم التاقات (Hex Codes)، ثم قم بتحميل الشكل بخلفية شفافة.</p>
-  </header>
-
-  <div class="container">
-    <div class="preview-card">
-      <div class="canvas-wrapper">
-        <svg id="geometric-shape" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-          <polygon class="shape-part" id="part-1" data-name="الجزء العلوي" points="150,20 220,100 80,100" fill="#38bdf8" />
-          <polygon class="shape-part" id="part-2" data-name="الجناح الأيسر" points="80,100 20,170 80,240 120,170" fill="#818cf8" />
-          <polygon class="shape-part" id="part-3" data-name="الجناح الأيمن" points="220,100 280,170 220,240 180,170" fill="#c084fc" />
-          <polygon class="shape-part" id="part-4" data-name="المعين المركزي" points="150,110 180,170 150,230 120,170" fill="#f472b6" />
-          <polygon class="shape-part" id="part-5" data-name="القاعدة السفلية" points="120,240 150,280 180,240 150,230" fill="#fb7185" />
-        </svg>
-      </div>
-
-      <div class="action-btns">
-        <button class="btn btn-primary" id="download-png">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>
-          حفظ PNG (شفاف)
+<!-- =========================
+     البداية
+========================= -->
+<section class="screen active" id="startScreen">
+    <div class="container">
+        <div class="kicker">
+            A LITTLE SURPRISE
+        </div>
+        <h1>
+            عندي لك شيء
+            <br>
+            بس مو الحين 👀
+        </h1>
+        <p>
+            قبل ما أوصلك لهديتك،
+            <br>
+            عندي لك كم سؤال بسيط...
+        </p>
+        <button class="start-button" onclick="startQuiz()">
+            ابدأ التجربة
         </button>
-        <button class="btn btn-secondary" id="download-svg">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .58l2.59-2.59L17 11.41l-5 5-5-5 1.41-1.41L11 12.58V3h2v9.58z"/></svg>
-          حفظ SVG
-        </button>
-      </div>
     </div>
-
-    <div class="controls-card">
-      <h2>التحكم بالألوان (Hex Tags)</h2>
-      <div class="color-picker-group" id="controls-container"></div>
-    </div>
-  </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const container = document.getElementById('controls-container');
-      const svgElement = document.getElementById('geometric-shape');
-
-      function initControls() {
-        container.innerHTML = '';
-        const shapeParts = svgElement.querySelectorAll('.shape-part');
-
-        shapeParts.forEach((part, index) => {
-          const partId = part.id || `part-${index + 1}`;
-          part.id = partId;
-          const partName = part.getAttribute('data-name') || `الجزء ${index + 1}`;
-          const initialColor = part.getAttribute('fill') || '#38bdf8';
-
-          const itemDiv = document.createElement('div');
-          itemDiv.className = 'color-item';
-          itemDiv.innerHTML = `
-            <label for="picker-${partId}">${partName}</label>
-            <div class="color-inputs">
-              <input type="text" id="hex-${partId}" value="${initialColor}" maxlength="7">
-              <input type="color" id="picker-${partId}" value="${initialColor}">
+</section>
+<!-- =========================
+     الأسئلة
+========================= -->
+<section class="screen" id="quizScreen">
+    <div class="container">
+        <div class="progress">
+            <div
+                class="progress-bar"
+                id="progressBar">
             </div>
-          `;
-          container.appendChild(itemDiv);
-
-          const colorPicker = itemDiv.querySelector(`#picker-${partId}`);
-          const hexInput = itemDiv.querySelector(`#hex-${partId}`);
-
-          colorPicker.addEventListener('input', (e) => {
-            const newColor = e.target.value;
-            part.setAttribute('fill', newColor);
-            hexInput.value = newColor.toUpperCase();
-          });
-
-          hexInput.addEventListener('input', (e) => {
-            let val = e.target.value;
-            if (!val.startsWith('#')) val = '#' + val;
-            if (/^#[0-9A-F]{6}$/i.test(val)) {
-              part.setAttribute('fill', val);
-              colorPicker.value = val;
-            }
-          });
-
-          part.addEventListener('click', () => colorPicker.click());
+        </div>
+        <div
+            class="question"
+            id="question">
+        </div>
+        <div
+            class="answers"
+            id="answers">
+        </div>
+        <p
+            id="counter"
+            style="font-size:13px">
+        </p>
+    </div>
+</section>
+<!-- =========================
+     الرسالة
+========================= -->
+<section class="screen" id="messageScreen">
+    <div class="container">
+        <img
+            class="gift-image"
+            src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80"
+        >
+        <div class="kicker">
+            YOU MADE IT
+        </div>
+        <h1 style="font-size:38px">
+            وصلت للنهاية 😌
+        </h1>
+        <p>
+            لكن باقي أهم جزء...
+            <br>
+            هديتك تنتظرك.
+        </p>
+        <button onclick="openCoupon()">
+            شوف هديتك 🎁
+        </button>
+    </div>
+</section>
+<!-- =========================
+     الكوبون
+========================= -->
+<section class="screen" id="couponScreen">
+    <div class="container">
+        <div class="kicker">
+            YOUR GIFT
+        </div>
+        <h1 style="font-size:35px">
+            امسح الكوبون ✨
+        </h1>
+        <p>
+            حرك إصبعك على الكوبون
+            <br>
+            لين تكتشف وش داخله.
+        </p>
+        <div class="coupon-area">
+            <div class="coupon">
+                <div class="coupon-brand">
+                    SPECIAL GIFT
+                </div>
+                <h2>
+                    هدية لك 🎁
+                </h2>
+                <div class="coupon-text">
+                    هذا الكوبون مقدم لك بكل حب.
+                </div>
+                <div class="coupon-code">
+                    GIFT-2026
+                </div>
+            </div>
+            <canvas id="scratchCanvas"></canvas>
+        </div>
+        <div class="hint">
+            اسحب بإصبعك على الكوبون
+        </div>
+        <button
+            class="save-button"
+            id="saveButton"
+            onclick="saveCoupon()">
+            حفظ الكوبون
+        </button>
+    </div>
+</section>
+<script>
+/* ==================================
+   الأسئلة
+================================== */
+const questions = [
+    {
+        question: "وش أكثر شيء يذكرك فيني؟",
+        answers: [
+            "مواقفنا",
+            "السوالف",
+            "الأغاني",
+            "كل شيء 😂"
+        ]
+    },
+    {
+        question: "لو قلت لك عندي مفاجأة، وش تتوقع؟",
+        answers: [
+            "شيء عادي",
+            "هدية 🎁",
+            "مقلب",
+            "ما أثق فيك"
+        ]
+    },
+    {
+        question: "وش تتوقع يكون آخر شيء بالموقع؟",
+        answers: [
+            "رسالة",
+            "صورة",
+            "هدية",
+            "ما أدري 👀"
+        ]
+    }
+];
+let currentQuestion = 0;
+/* ==================================
+   تغيير الشاشة
+================================== */
+function showScreen(id) {
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+            screen.classList.remove("active");
         });
-      }
-
-      initControls();
-
-      // حفظ PNG شفافة
-      document.getElementById('download-png').addEventListener('click', () => {
-        const svgData = new XMLSerializer().serializeToString(svgElement);
-        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-        const blobURL = (window.URL || window.webkitURL).createObjectURL(svgBlob);
-
-        const image = new Image();
-        image.onload = () => {
-          const canvas = document.createElement('canvas');
-          const scale = 3;
-          canvas.width = 300 * scale;
-          canvas.height = 300 * scale;
-          
-          const context = canvas.getContext('2d');
-          context.scale(scale, scale);
-          context.drawImage(image, 0, 0, 300, 300);
-
-          const downloadLink = document.createElement('a');
-          downloadLink.href = canvas.toDataURL('image/png');
-          downloadLink.download = 'shape-transparent.png';
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
+    document
+        .getElementById(id)
+        .classList.add("active");
+}
+/* ==================================
+   بدء الأسئلة
+================================== */
+function startQuiz() {
+    currentQuestion = 0;
+    showScreen("quizScreen");
+    renderQuestion();
+}
+/* ==================================
+   عرض السؤال
+================================== */
+function renderQuestion() {
+    const question =
+        questions[currentQuestion];
+    document
+        .getElementById("question")
+        .textContent =
+        question.question;
+    const answers =
+        document.getElementById("answers");
+    answers.innerHTML = "";
+    question.answers.forEach(answer => {
+        const button =
+            document.createElement("button");
+        button.className = "answer";
+        button.textContent = answer;
+        button.onclick = function() {
+            currentQuestion++;
+            if (
+                currentQuestion
+                >= questions.length
+            ) {
+                showScreen("messageScreen");
+            } else {
+                renderQuestion();
+            }
         };
-        image.src = blobURL;
-      });
-
-      // حفظ SVG
-      document.getElementById('download-svg').addEventListener('click', () => {
-        const svgData = new XMLSerializer().serializeToString(svgElement);
-        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-        const downloadLink = document.createElement('a');
-        downloadLink.href = URL.createObjectURL(svgBlob);
-        downloadLink.download = 'shape.svg';
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-      });
+        answers.appendChild(button);
     });
-  </script>
+    document
+        .getElementById("counter")
+        .textContent =
+        `${currentQuestion + 1} من ${questions.length}`;
+    document
+        .getElementById("progressBar")
+        .style.width =
+        `${((currentQuestion + 1) / questions.length) * 100}%`;
+}
+/* ==================================
+   فتح الكوبون
+================================== */
+function openCoupon() {
+    showScreen("couponScreen");
+    setTimeout(() => {
+        setupScratch();
+    }, 100);
+}
+/* ==================================
+   نظام المسح
+================================== */
+let canvas;
+let ctx;
+let isDrawing = false;
+let scratched = 0;
+function setupScratch() {
+    canvas =
+        document.getElementById("scratchCanvas");
+    const rect =
+        canvas.parentElement
+        .getBoundingClientRect();
+    const dpr =
+        window.devicePixelRatio || 1;
+    canvas.width =
+        rect.width * dpr;
+    canvas.height =
+        rect.height * dpr;
+    canvas.style.width =
+        rect.width + "px";
+    canvas.style.height =
+        rect.height + "px";
+    ctx =
+        canvas.getContext("2d");
+    ctx.scale(dpr, dpr);
+    /* طبقة الكوبون */
+    ctx.fillStyle = "#8d8d95";
+    ctx.fillRect(
+        0,
+        0,
+        rect.width,
+        rect.height
+    );
+    /* النص */
+    ctx.fillStyle = "#ffffff";
+    ctx.font =
+        "bold 22px system-ui";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(
+        "امسح هنا",
+        rect.width / 2,
+        rect.height / 2
+    );
+    scratched = 0;
+}
+function getPosition(event) {
+    const rect =
+        canvas.getBoundingClientRect();
+    return {
+        x:
+            event.clientX - rect.left,
+        y:
+            event.clientY - rect.top
+    };
+}
+function scratch(event) {
+    if (!isDrawing)
+        return;
+    const position =
+        getPosition(event);
+    ctx.globalCompositeOperation =
+        "destination-out";
+    ctx.beginPath();
+    ctx.arc(
+        position.x,
+        position.y,
+        24,
+        0,
+        Math.PI * 2
+    );
+    ctx.fill();
+    scratched++;
+    if (scratched > 70) {
+        canvas.style.transition =
+            "opacity .8s";
+        canvas.style.opacity = "0";
+        document
+            .getElementById("saveButton")
+            .style.display =
+            "inline-block";
+    }
+}
+/* الماوس */
+canvas.addEventListener(
+    "pointerdown",
+    () => {
+        isDrawing = true;
+    }
+);
+canvas.addEventListener(
+    "pointerup",
+    () => {
+        isDrawing = false;
+    }
+);
+canvas.addEventListener(
+    "pointerleave",
+    () => {
+        isDrawing = false;
+    }
+);
+canvas.addEventListener(
+    "pointermove",
+    scratch
+);
+/* ==================================
+   حفظ مؤقت
+================================== */
+function saveCoupon() {
+    alert(
+        "في النسخة النهائية بيكون هنا حفظ الكوبون كصورة و PDF 🎁"
+    );
+}
+/* ==================================
+   إعادة ضبط Canvas عند تغيير الحجم
+================================== */
+window.addEventListener(
+    "resize",
+    () => {
+        if (
+            document
+            .getElementById("couponScreen")
+            .classList.contains("active")
+        ) {
+            setupScratch();
+        }
+    }
+);
+</script>
 </body>
 </html>
