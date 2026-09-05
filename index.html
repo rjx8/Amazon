@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
+
 <head>
+
 <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta
+    name="viewport"
+    content="width=device-width,
+             initial-scale=1.0,
+             maximum-scale=1.0,
+             user-scalable=no"
+>
 
 <title>BlockCraft</title>
 
@@ -22,99 +29,208 @@ body{
     height:100%;
     overflow:hidden;
     background:#87ceeb;
-    font-family:Arial,sans-serif;
+    font-family:
+        Arial,
+        Tahoma,
+        sans-serif;
     touch-action:none;
+}
+
+body{
+    user-select:none;
 }
 
 canvas{
     display:block;
 }
 
-/* Crosshair */
+
+/* =====================================================
+   CROSSHAIR
+===================================================== */
 
 #crosshair{
+
     position:fixed;
+
     left:50%;
     top:50%;
-    width:22px;
-    height:22px;
-    transform:translate(-50%,-50%);
+
+    width:24px;
+    height:24px;
+
+    transform:
+        translate(-50%,-50%);
+
+    z-index:20;
+
     pointer-events:none;
-    z-index:10;
 }
 
 #crosshair::before,
 #crosshair::after{
+
     content:"";
+
     position:absolute;
+
     background:#fff;
-    box-shadow:0 0 3px #000;
+
+    box-shadow:
+        0 0 3px #000;
+
 }
 
 #crosshair::before{
+
     width:2px;
-    height:22px;
-    left:10px;
+    height:24px;
+
+    left:11px;
+    top:0;
+
 }
 
 #crosshair::after{
-    width:22px;
+
+    width:24px;
     height:2px;
+
     left:0;
-    top:10px;
+    top:11px;
+
 }
 
 
-/* HUD */
+/* =====================================================
+   HUD
+===================================================== */
 
 #hud{
+
     position:fixed;
+
     inset:0;
+
+    z-index:10;
+
     pointer-events:none;
-    z-index:5;
+
 }
 
-#stats{
-    position:absolute;
-    top:12px;
-    left:14px;
 
-    color:white;
+/* Stats */
+
+#stats{
+
+    position:absolute;
+
+    top:14px;
+    left:15px;
+
+    color:#fff;
 
     font-size:15px;
 
-    line-height:1.7;
+    line-height:1.8;
 
     text-shadow:
         2px 2px 3px #000;
+
 }
 
+
+/* Help */
+
 #help{
+
     position:absolute;
-    top:12px;
-    right:14px;
+
+    top:14px;
+    right:15px;
 
     color:white;
 
-    text-align:right;
-
     font-size:13px;
 
-    line-height:1.6;
+    line-height:1.7;
+
+    text-align:right;
 
     text-shadow:
         2px 2px 3px #000;
+
 }
 
 
-/* Hotbar */
+/* Time */
 
-#hotbar{
+#timeDisplay{
+
     position:absolute;
 
-    bottom:18px;
+    top:90px;
+    left:50%;
+
+    transform:
+        translateX(-50%);
+
+    color:#fff;
+
+    font-size:13px;
+
+    text-shadow:
+        2px 2px 3px #000;
+
+}
+
+
+/* =====================================================
+   BLOCK INFO
+===================================================== */
+
+#blockInfo{
+
+    position:absolute;
 
     left:50%;
+
+    bottom:92px;
+
+    transform:
+        translateX(-50%);
+
+    color:white;
+
+    font-size:13px;
+
+    background:#0008;
+
+    padding:5px 12px;
+
+    border-radius:5px;
+
+    text-shadow:
+        1px 1px 2px #000;
+
+    opacity:0;
+
+    transition:.15s;
+
+}
+
+
+/* =====================================================
+   HOTBAR
+===================================================== */
+
+#hotbar{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:16px;
 
     transform:
         translateX(-50%);
@@ -124,15 +240,26 @@ canvas{
     gap:4px;
 
     pointer-events:auto;
+
+    direction:ltr;
+
 }
 
 .slot{
-    width:55px;
-    height:55px;
 
-    background:#555c;
+    width:56px;
+    height:56px;
 
-    border:3px solid #222;
+    background:
+        linear-gradient(
+            #666b,
+            #333b
+        );
+
+    border:
+
+        3px solid
+        #222;
 
     display:flex;
 
@@ -141,25 +268,37 @@ canvas{
 
     position:relative;
 
-    font-size:26px;
+    font-size:27px;
 
     cursor:pointer;
 
-    user-select:none;
+    transition:
+        .1s;
+
+}
+
+.slot:hover{
+
+    background:#888b;
+
 }
 
 .slot.selected{
-    border-color:white;
+
+    border-color:#fff;
 
     box-shadow:
-        0 0 0 2px #333;
+        0 0 0 2px #222,
+        0 0 10px #fff8;
+
 }
 
 .slot-number{
+
     position:absolute;
 
-    right:3px;
-    bottom:1px;
+    bottom:2px;
+    right:4px;
 
     color:white;
 
@@ -167,12 +306,16 @@ canvas{
 
     text-shadow:
         1px 1px 2px #000;
+
 }
 
 
-/* Start */
+/* =====================================================
+   START SCREEN
+===================================================== */
 
 #startScreen{
+
     position:fixed;
 
     inset:0;
@@ -181,157 +324,299 @@ canvas{
 
     display:flex;
 
-    justify-content:center;
     align-items:center;
 
+    justify-content:center;
+
     background:
-        linear-gradient(#0007,#000b),
+
+        radial-gradient(
+            circle at 50% 35%,
+            #4e963e55,
+            transparent 40%
+        ),
+
         linear-gradient(
             135deg,
-            #4b8b38,
-            #22608a
+            #163b2a,
+            #163e66
         );
+
+    color:white;
+
 }
 
 .startBox{
-    width:min(420px,90%);
+
+    width:
+        min(460px,90%);
+
+    padding:35px;
+
+    text-align:center;
+
+    background:
+        #0c1019e8;
+
+    border:
+        3px solid
+        #777;
+
+    box-shadow:
+        0 20px 70px #000b;
+
+    border-radius:8px;
+
+}
+
+.logo{
+
+    font-size:52px;
+
+    margin-bottom:5px;
+
+}
+
+.startBox h1{
+
+    margin:
+        0 0 10px;
+
+    font-size:38px;
+
+}
+
+.startBox p{
+
+    color:#ddd;
+
+    line-height:1.8;
+
+}
+
+#playButton{
+
+    margin-top:15px;
+
+    border:
+
+        3px solid
+        #35551e;
+
+    background:
+        linear-gradient(
+            #70a93e,
+            #4c7e2b
+        );
+
+    color:white;
+
+    padding:
+        14px 40px;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    border-radius:5px;
+
+    box-shadow:
+        0 5px 0 #263d19;
+
+}
+
+#playButton:active{
+
+    transform:
+        translateY(4px);
+
+    box-shadow:
+        0 1px 0 #263d19;
+
+}
+
+
+/* =====================================================
+   PAUSE
+===================================================== */
+
+#pauseScreen{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:90;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#0008;
+
+}
+
+.pauseBox{
+
+    background:#111e;
+
+    border:
+        2px solid #777;
+
+    color:white;
 
     padding:30px;
 
     text-align:center;
 
-    color:white;
-
-    background:#111d;
-
-    border:3px solid #777;
-
-    box-shadow:
-        0 10px 40px #0009;
 }
 
-.startBox h1{
-    margin-top:0;
+.pauseBox button{
 
-    font-size:42px;
-}
+    margin-top:15px;
 
-.startBox p{
-    line-height:1.7;
-}
+    padding:10px 25px;
 
-#playButton{
-    border:3px solid #344d20;
-
-    background:#5e9438;
+    background:#5e9138;
 
     color:white;
 
-    padding:13px 35px;
+    border:0;
 
-    font-size:20px;
+    font-size:16px;
 
-    cursor:pointer;
 }
 
 
-/* Mobile */
+/* =====================================================
+   MOBILE
+===================================================== */
 
 #mobileControls{
+
     display:none;
 
     position:fixed;
 
     inset:0;
 
-    z-index:20;
+    z-index:30;
 
     pointer-events:none;
+
 }
 
 .mobileButton{
-    position:absolute;
 
     width:52px;
     height:52px;
 
-    border-radius:12px;
-
-    background:#2229;
-
-    border:2px solid #fff8;
-
-    color:white;
-
-    font-size:22px;
+    position:absolute;
 
     display:flex;
 
     align-items:center;
+
     justify-content:center;
+
+    border-radius:12px;
+
+    border:
+        2px solid
+        #fff8;
+
+    background:#2229;
+
+    color:white;
+
+    font-size:21px;
 
     pointer-events:auto;
 
-    user-select:none;
 }
 
 #movement{
+
     position:absolute;
 
-    bottom:100px;
-    left:20px;
+    left:18px;
+    bottom:105px;
 
     width:160px;
     height:160px;
+
 }
 
 #up{
+
     left:54px;
     top:0;
+
 }
 
 #down{
+
     left:54px;
     bottom:0;
+
 }
 
 #left{
+
     left:0;
     top:54px;
+
 }
 
 #right{
+
     right:0;
     top:54px;
+
 }
 
 #mobileActions{
+
     position:absolute;
 
-    right:18px;
-    bottom:105px;
+    right:16px;
+    bottom:110px;
 
     display:flex;
 
-    gap:9px;
+    gap:8px;
 
     pointer-events:auto;
+
 }
 
 .action{
-    width:60px;
-    height:60px;
+
+    width:58px;
+    height:58px;
 
     border-radius:50%;
 
-    border:2px solid white;
+    border:
+        2px solid
+        #fff;
 
     background:#222b;
 
     color:white;
 
     font-size:12px;
+
 }
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
 
 @media(max-width:700px){
 
@@ -343,36 +628,78 @@ canvas{
         display:block;
     }
 
+    #timeDisplay{
+        top:12px;
+        left:50%;
+    }
+
+    #hotbar{
+        bottom:14px;
+    }
+
     .slot{
+
         width:43px;
         height:43px;
 
         font-size:20px;
+
     }
 
     .slot:nth-child(n+7){
+
         display:none;
+
     }
+
+    #blockInfo{
+
+        bottom:70px;
+
+    }
+
 }
 
 </style>
+
 </head>
+
 
 <body>
 
 
+<!-- =====================================================
+     GAME
+===================================================== -->
+
+<div id="game"></div>
+
+
+<!-- =====================================================
+     CROSSHAIR
+===================================================== -->
+
 <div id="crosshair"></div>
 
 
+<!-- =====================================================
+     HUD
+===================================================== -->
+
 <div id="hud">
+
 
     <div id="stats">
 
-        ❤️ <span id="health">20</span>
+        ❤️
+        <span id="health">
+            20
+        </span>
 
         <br>
 
-        📍 <span id="position">
+        📍
+        <span id="position">
             0, 0, 0
         </span>
 
@@ -381,34 +708,65 @@ canvas{
 
     <div id="help">
 
-        WASD للحركة
+        <b>BlockCraft</b>
+
         <br>
 
-        SPACE للقفز
+        WASD — حركة
+
         <br>
 
-        الزر الأيسر: تكسير
+        SPACE — قفز
+
         <br>
 
-        الزر الأيمن: بناء
+        SHIFT — ركض
+
         <br>
 
-        1 - 8: اختيار البلوك
+        🖱️ يسار — تكسير
+
         <br>
 
-        F: حفظ العالم
+        🖱️ يمين — بناء
+
+        <br>
+
+        1-8 — بلوكات
+
+        <br>
+
+        F — حفظ
+
+        <br>
+
+        ESC — إيقاف
 
     </div>
 
 
+    <div id="timeDisplay">
+
+        ☀️ النهار
+
+    </div>
+
+
+    <div id="blockInfo"></div>
+
+
     <div id="hotbar"></div>
+
 
 </div>
 
 
-<!-- Mobile -->
+<!-- =====================================================
+     MOBILE
+===================================================== -->
 
 <div id="mobileControls">
+
 
     <div id="movement">
 
@@ -456,14 +814,14 @@ canvas{
             class="action"
             id="breakButton"
         >
-            كسر
+            ⛏️
         </button>
 
         <button
             class="action"
             id="placeButton"
         >
-            بناء
+            🧱
         </button>
 
     </div>
@@ -471,27 +829,34 @@ canvas{
 </div>
 
 
-<!-- Start -->
+<!-- =====================================================
+     START
+===================================================== -->
 
 <div id="startScreen">
 
     <div class="startBox">
 
+        <div class="logo">
+            ⛏️
+        </div>
+
         <h1>
-            ⛏️ BlockCraft
+            BlockCraft
         </h1>
 
         <p>
-            عالم ثلاثي الأبعاد مستوحى
-            من ألعاب البناء والبقاء.
+            عالم بلوكات ثلاثي الأبعاد
+            مفتوح للاستكشاف والبناء.
         </p>
 
         <p>
-            ابنِ، اكسر، واستكشف عالمك.
+            اكسر البلوكات، ابنِ عالمك،
+            واستكشف التضاريس.
         </p>
 
         <button id="playButton">
-            ابدأ اللعب
+            ▶ ابدأ اللعب
         </button>
 
     </div>
@@ -499,14 +864,55 @@ canvas{
 </div>
 
 
-<script type="module">
+<!-- =====================================================
+     PAUSE
+===================================================== -->
+
+<div id="pauseScreen">
+
+    <div class="pauseBox">
+
+        <h2>
+            ⏸️ اللعبة متوقفة
+        </h2>
+
+        <p>
+            اضغط متابعة للرجوع للعالم
+        </p>
+
+        <button id="resumeButton">
+            متابعة
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     THREE.JS
+===================================================== -->
+
+<script src="
+https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.min.js
+"></script>
+
+
+<script>
 
 /* =====================================================
-   THREE.JS
+   CHECK THREE
 ===================================================== */
 
-import * as THREE from
-"https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js";
+if(
+    typeof THREE === "undefined"
+){
+
+    alert(
+        "تعذر تحميل محرك اللعبة. تأكد من اتصال الإنترنت."
+    );
+
+}
 
 
 /* =====================================================
@@ -527,7 +933,7 @@ scene.fog =
     new THREE.Fog(
         0x87ceeb,
         35,
-        120
+        115
     );
 
 
@@ -538,7 +944,8 @@ scene.fog =
 const camera =
     new THREE.PerspectiveCamera(
         75,
-        innerWidth / innerHeight,
+        window.innerWidth /
+        window.innerHeight,
         0.05,
         180
     );
@@ -554,20 +961,22 @@ camera.rotation.order =
 
 const renderer =
     new THREE.WebGLRenderer({
+
         antialias:false
+
     });
 
 
 renderer.setSize(
-    innerWidth,
-    innerHeight
+    window.innerWidth,
+    window.innerHeight
 );
 
 
 renderer.setPixelRatio(
     Math.min(
         window.devicePixelRatio,
-        1.6
+        1.5
     )
 );
 
@@ -580,20 +989,22 @@ renderer.shadowMap.type =
     THREE.PCFSoftShadowMap;
 
 
-document.body.appendChild(
-    renderer.domElement
-);
+document
+    .getElementById("game")
+    .appendChild(
+        renderer.domElement
+    );
 
 
 /* =====================================================
-   LIGHTING
+   LIGHTS
 ===================================================== */
 
 const ambient =
     new THREE.HemisphereLight(
         0xbfe8ff,
-        0x665544,
-        1.5
+        0x51402e,
+        1.45
     );
 
 
@@ -605,19 +1016,26 @@ scene.add(
 const sun =
     new THREE.DirectionalLight(
         0xffffff,
-        2
+        1.9
     );
 
 
 sun.position.set(
-    35,
-    60,
+    30,
+    65,
     20
 );
 
 
 sun.castShadow =
     true;
+
+
+sun.shadow.mapSize.width =
+    1024;
+
+sun.shadow.mapSize.height =
+    1024;
 
 
 scene.add(
@@ -631,57 +1049,72 @@ scene.add(
 
 const materials = {
 
+
     grass:
         new THREE.MeshLambertMaterial({
             color:0x55a83b
         }),
+
 
     dirt:
         new THREE.MeshLambertMaterial({
             color:0x8b5a2b
         }),
 
+
     stone:
         new THREE.MeshLambertMaterial({
             color:0x777777
         }),
 
+
     wood:
         new THREE.MeshLambertMaterial({
-            color:0x8a5a2b
+            color:0x8b5a32
         }),
+
 
     leaves:
         new THREE.MeshLambertMaterial({
-            color:0x2e8b3c,
+
+            color:0x2d873b,
 
             transparent:true,
 
-            opacity:.9
+            opacity:.92
+
         }),
+
 
     sand:
         new THREE.MeshLambertMaterial({
-            color:0xd8c179
+            color:0xd9c37a
         }),
+
 
     glass:
         new THREE.MeshLambertMaterial({
-            color:0x8ed6e8,
+
+            color:0x9bd9ed,
 
             transparent:true,
 
             opacity:.45
+
         }),
+
 
     water:
         new THREE.MeshLambertMaterial({
-            color:0x237fd1,
+
+            color:0x257ed0,
 
             transparent:true,
 
-            opacity:.6
+            opacity:.62
+
         }),
+
 
     bedrock:
         new THREE.MeshLambertMaterial({
@@ -692,7 +1125,7 @@ const materials = {
 
 
 /* =====================================================
-   BLOCK TYPES
+   BLOCK DATA
 ===================================================== */
 
 const blockTypes = [
@@ -709,7 +1142,21 @@ const blockTypes = [
 ];
 
 
-const icons = [
+const blockNames = [
+
+    "عشب",
+    "تراب",
+    "حجر",
+    "خشب",
+    "أوراق",
+    "رمل",
+    "زجاج",
+    "ماء"
+
+];
+
+
+const blockIcons = [
 
     "🟩",
     "🟫",
@@ -743,7 +1190,7 @@ const cube =
     );
 
 
-function blockKey(
+function key(
     x,
     y,
     z
@@ -760,6 +1207,23 @@ function blockKey(
 }
 
 
+function getBlock(
+    x,
+    y,
+    z
+){
+
+    return world.get(
+        key(
+            Math.floor(x),
+            Math.floor(y),
+            Math.floor(z)
+        )
+    );
+
+}
+
+
 /* =====================================================
    SET BLOCK
 ===================================================== */
@@ -769,41 +1233,34 @@ function setBlock(
     y,
     z,
     type,
-    save=true
+    markDirty=true
 ){
 
-    const key =
-        blockKey(
-            x,
-            y,
-            z
-        );
+    const k =
+        key(x,y,z);
 
 
-    /* إزالة القديم */
+    const old =
+        meshes.get(k);
 
-    if(
-        meshes.has(key)
-    ){
 
-        scene.remove(
-            meshes.get(key)
-        );
+    if(old){
 
-        meshes.delete(key);
+        scene.remove(old);
+
+        meshes.delete(k);
 
     }
 
-
-    /* حذف */
 
     if(
         type === null
     ){
 
-        world.delete(key);
+        world.delete(k);
 
-        dirty=true;
+        if(markDirty)
+            dirty=true;
 
         return;
 
@@ -811,7 +1268,7 @@ function setBlock(
 
 
     world.set(
-        key,
+        k,
         type
     );
 
@@ -824,9 +1281,9 @@ function setBlock(
 
 
     mesh.position.set(
-        x + .5,
-        y + .5,
-        z + .5
+        x+.5,
+        y+.5,
+        z+.5
     );
 
 
@@ -835,8 +1292,15 @@ function setBlock(
         type !== "glass";
 
 
-    mesh.receiveShadow =
-        true;
+    mesh.receiveShadow=true;
+
+
+    mesh.userData.block={
+        x,
+        y,
+        z,
+        type
+    };
 
 
     scene.add(
@@ -845,12 +1309,12 @@ function setBlock(
 
 
     meshes.set(
-        key,
+        k,
         mesh
     );
 
 
-    if(save)
+    if(markDirty)
         dirty=true;
 
 }
@@ -865,34 +1329,44 @@ function terrainHeight(
     z
 ){
 
-    const noise =
+    const n =
 
         Math.sin(
-            x * .16
-        )
+            x*.13
+        )*2
 
         +
 
         Math.sin(
-            z * .13
-        ) * .8
+            z*.17
+        )*1.7
 
         +
 
         Math.sin(
-            (x+z) * .055
-        ) * 2;
+            (x+z)*.06
+        )*2.2
+
+        +
+
+        Math.cos(
+            (x-z)*.08
+        );
 
 
     return Math.max(
-        2,
+        3,
         Math.floor(
-            7 + noise * 1.7
+            7+n
         )
     );
 
 }
 
+
+/* =====================================================
+   TOP BLOCK
+===================================================== */
 
 function topAt(
     x,
@@ -906,12 +1380,10 @@ function topAt(
     ){
 
         const type =
-            world.get(
-                blockKey(
-                    x,
-                    y,
-                    z
-                )
+            getBlock(
+                x,
+                y,
+                z
             );
 
 
@@ -927,7 +1399,6 @@ function topAt(
 
     }
 
-
     return 0;
 
 }
@@ -939,8 +1410,7 @@ function topAt(
 
 function generateWorld(){
 
-    const radius =
-        24;
+    const radius=24;
 
 
     for(
@@ -955,7 +1425,7 @@ function generateWorld(){
             z++
         ){
 
-            const height =
+            const h =
                 terrainHeight(
                     x,
                     z
@@ -964,35 +1434,34 @@ function generateWorld(){
 
             for(
                 let y=0;
-                y<=height;
+                y<=h;
                 y++
             ){
 
                 let type;
 
 
-                if(y===0){
+                if(
+                    y===0
+                ){
 
                     type="bedrock";
 
                 }
-
                 else if(
-                    y===height
+                    y===h
                 ){
 
                     type="grass";
 
                 }
-
                 else if(
-                    y>height-4
+                    y>=h-3
                 ){
 
                     type="dirt";
 
                 }
-
                 else{
 
                     type="stone";
@@ -1014,15 +1483,20 @@ function generateWorld(){
             /* Trees */
 
             if(
-                Math.random() < .035 &&
-                Math.abs(x)>3 &&
-                Math.abs(z)>3 &&
-                height>5
+
+                Math.random()<.035 &&
+
+                Math.abs(x)>4 &&
+
+                Math.abs(z)>4 &&
+
+                h>5
+
             ){
 
                 for(
-                    let y=height+1;
-                    y<height+4;
+                    let y=h+1;
+                    y<=h+4;
                     y++
                 ){
 
@@ -1051,19 +1525,19 @@ function generateWorld(){
 
                         for(
                             let dy=3;
-                            dy<=4;
+                            dy<=5;
                             dy++
                         ){
 
                             if(
-                                Math.abs(dx) +
+                                Math.abs(dx)+
                                 Math.abs(dz)
-                                < 4
+                                <=4
                             ){
 
                                 setBlock(
                                     x+dx,
-                                    height+dy,
+                                    h+dy,
                                     z+dz,
                                     "leaves",
                                     false
@@ -1072,6 +1546,67 @@ function generateWorld(){
                             }
 
                         }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    /* Water areas */
+
+    for(
+        let x=-radius;
+        x<=radius;
+        x++
+    ){
+
+        for(
+            let z=-radius;
+            z<=radius;
+            z++
+        ){
+
+            const h =
+                topAt(
+                    x,
+                    z
+                );
+
+
+            if(
+                h<=4 &&
+                Math.random()<.45
+            ){
+
+                for(
+                    let y=h+1;
+                    y<=5;
+                    y++
+                ){
+
+                    if(
+                        !world.has(
+                            key(
+                                x,
+                                y,
+                                z
+                            )
+                        )
+                    ){
+
+                        setBlock(
+                            x,
+                            y,
+                            z,
+                            "water",
+                            false
+                        );
 
                     }
 
@@ -1092,29 +1627,45 @@ function generateWorld(){
 
 function saveWorld(){
 
-    const data=[];
+    try{
+
+        const data=[];
 
 
-    for(
-        const [key,type]
-        of world
-    ){
+        for(
+            const [k,type]
+            of world
+        ){
 
-        data.push([
-            key,
-            type
-        ]);
+            data.push([
+                k,
+                type
+            ]);
+
+        }
+
+
+        localStorage.setItem(
+            "blockcraft_world",
+            JSON.stringify(data)
+        );
+
+
+        dirty=false;
+
+        console.log(
+            "World saved."
+        );
 
     }
+    catch(error){
 
+        console.error(
+            "Save failed:",
+            error
+        );
 
-    localStorage.setItem(
-        "blockcraft_world",
-        JSON.stringify(data)
-    );
-
-
-    dirty=false;
+    }
 
 }
 
@@ -1149,18 +1700,27 @@ function loadWorld(){
 
 
         for(
-            const [key,type]
+            const item
             of data
         ){
 
-            const [
-                x,
-                y,
-                z
-            ] =
-            key
-                .split("|")
-                .map(Number);
+            const k=item[0];
+
+            const type=item[1];
+
+
+            const parts =
+                k.split("|");
+
+
+            const x =
+                Number(parts[0]);
+
+            const y =
+                Number(parts[1]);
+
+            const z =
+                Number(parts[2]);
 
 
             setBlock(
@@ -1177,13 +1737,15 @@ function loadWorld(){
     catch(error){
 
         console.error(
-            "World loading error:",
+            "World corrupted:",
             error
         );
+
 
         localStorage.removeItem(
             "blockcraft_world"
         );
+
 
         generateWorld();
 
@@ -1209,13 +1771,15 @@ const player={
         terrainHeight(
             0,
             0
-        ) + 1.1,
+        )+1.1,
 
     z:.5,
 
     velocityY:0,
 
-    grounded:false
+    grounded:false,
+
+    health:20
 
 };
 
@@ -1224,26 +1788,21 @@ let yaw=0;
 
 let pitch=0;
 
-let pointerLocked=false;
+let locked=false;
 
-
-camera.position.set(
-    player.x,
-    player.y+1.55,
-    player.z
-);
+let playing=false;
 
 
 /* =====================================================
-   KEYBOARD
+   INPUT
 ===================================================== */
 
 const keys={};
 
 
-addEventListener(
+window.addEventListener(
     "keydown",
-    event=>{
+    function(event){
 
         keys[event.code]=true;
 
@@ -1277,13 +1836,23 @@ addEventListener(
 
         }
 
+
+        if(
+            event.code==="Escape" &&
+            playing
+        ){
+
+            showPause();
+
+        }
+
     }
 );
 
 
-addEventListener(
+window.addEventListener(
     "keyup",
-    event=>{
+    function(event){
 
         keys[event.code]=false;
 
@@ -1292,22 +1861,25 @@ addEventListener(
 
 
 /* =====================================================
-   POINTER LOCK
+   MOUSE LOCK
 ===================================================== */
 
-renderer.addEventListener(
+renderer.domElement.addEventListener(
     "click",
-    ()=>{
+    function(){
 
-        const mobile =
-            matchMedia(
-                "(max-width:700px)"
-            ).matches;
+        if(
+            playing &&
+            !isMobile()
+        ){
 
+            try{
 
-        if(!mobile){
+                renderer.domElement
+                    .requestPointerLock();
 
-            renderer.requestPointerLock();
+            }
+            catch(e){}
 
         }
 
@@ -1317,9 +1889,9 @@ renderer.addEventListener(
 
 document.addEventListener(
     "pointerlockchange",
-    ()=>{
+    function(){
 
-        pointerLocked =
+        locked =
             document.pointerLockElement ===
             renderer.domElement;
 
@@ -1327,22 +1899,20 @@ document.addEventListener(
 );
 
 
-addEventListener(
+window.addEventListener(
     "mousemove",
-    event=>{
+    function(event){
 
-        if(!pointerLocked)
+        if(!locked)
             return;
 
 
         yaw -=
-            event.movementX *
-            .0022;
+            event.movementX*.0023;
 
 
         pitch -=
-            event.movementY *
-            .0022;
+            event.movementY*.0023;
 
 
         pitch =
@@ -1372,7 +1942,7 @@ let selectedBlock=0;
 
 
 blockTypes.forEach(
-    (type,index)=>{
+    function(type,index){
 
         const slot =
             document.createElement(
@@ -1380,12 +1950,11 @@ blockTypes.forEach(
             );
 
 
-        slot.className =
-            "slot";
+        slot.className="slot";
 
 
         slot.innerHTML =
-            icons[index] +
+            blockIcons[index] +
 
             `<span class="slot-number">
                 ${index+1}
@@ -1401,11 +1970,14 @@ blockTypes.forEach(
         }
 
 
-        slot.onclick=()=>{
+        slot.addEventListener(
+            "click",
+            function(){
 
-            selectBlock(index);
+                selectBlock(index);
 
-        };
+            }
+        );
 
 
         hotbar.appendChild(
@@ -1421,24 +1993,24 @@ function selectBlock(index){
     selectedBlock=index;
 
 
-    [
-        ...hotbar.children
-    ].forEach(
-        (slot,i)=>{
+    Array
+        .from(hotbar.children)
+        .forEach(
+            function(slot,i){
 
-            slot.classList.toggle(
-                "selected",
-                i===index
-            );
+                slot.classList.toggle(
+                    "selected",
+                    i===index
+                );
 
-        }
-    );
+            }
+        );
 
 }
 
 
 /* =====================================================
-   RAYCAST
+   TARGET
 ===================================================== */
 
 const raycaster =
@@ -1448,30 +2020,46 @@ const raycaster =
 function getTarget(){
 
     raycaster.setFromCamera(
-        new THREE.Vector2(0,0),
+        new THREE.Vector2(
+            0,
+            0
+        ),
         camera
     );
 
 
     const hits =
         raycaster.intersectObjects(
-            [
-                ...meshes.values()
-            ],
+            Array.from(
+                meshes.values()
+            ),
             false
         );
 
 
-    return hits.find(
-        hit =>
-            hit.distance < 7
-    );
+    for(
+        const hit
+        of hits
+    ){
+
+        if(
+            hit.distance<=7
+        ){
+
+            return hit;
+
+        }
+
+    }
+
+
+    return null;
 
 }
 
 
 /* =====================================================
-   BREAK BLOCK
+   BREAK
 ===================================================== */
 
 function breakBlock(){
@@ -1484,49 +2072,31 @@ function breakBlock(){
         return;
 
 
-    const position =
-        target.object.position;
+    const data =
+        target.object.userData.block;
 
 
-    const x =
-        Math.floor(
-            position.x
-        );
-
-
-    const y =
-        Math.floor(
-            position.y
-        );
-
-
-    const z =
-        Math.floor(
-            position.z
-        );
-
-
-    const type =
-        world.get(
-            blockKey(
-                x,
-                y,
-                z
-            )
-        );
+    if(!data)
+        return;
 
 
     if(
-        type === "bedrock"
+        data.type==="bedrock"
     )
         return;
 
 
     setBlock(
-        x,
-        y,
-        z,
+        data.x,
+        data.y,
+        data.z,
         null
+    );
+
+
+    playSound(
+        160,
+        .06
     );
 
 
@@ -1536,7 +2106,7 @@ function breakBlock(){
 
 
 /* =====================================================
-   PLACE BLOCK
+   PLACE
 ===================================================== */
 
 function placeBlock(){
@@ -1549,10 +2119,12 @@ function placeBlock(){
         return;
 
 
-    const position =
-        target.object.position
-            .clone()
-            .subScalar(.5);
+    const data =
+        target.object.userData.block;
+
+
+    if(!data)
+        return;
 
 
     const normal =
@@ -1560,22 +2132,22 @@ function placeBlock(){
 
 
     const x =
-        Math.floor(
-            position.x +
+        data.x +
+        Math.round(
             normal.x
         );
 
 
     const y =
-        Math.floor(
-            position.y +
+        data.y +
+        Math.round(
             normal.y
         );
 
 
     const z =
-        Math.floor(
-            position.z +
+        data.z +
+        Math.round(
             normal.z
         );
 
@@ -1589,7 +2161,7 @@ function placeBlock(){
 
     if(
         world.has(
-            blockKey(
+            key(
                 x,
                 y,
                 z
@@ -1599,32 +2171,31 @@ function placeBlock(){
         return;
 
 
-    /* لا تحط البلوك داخل اللاعب */
+    /* Player collision */
+
+    const px =
+        Math.floor(
+            player.x
+        );
+
+    const pz =
+        Math.floor(
+            player.z
+        );
+
+    const py =
+        Math.floor(
+            player.y
+        );
+
 
     if(
 
-        Math.abs(
-            x-player.x
-        ) < .8
-
-        &&
-
-        Math.abs(
-            z-player.z
-        ) < .8
-
-        &&
-
-        y >=
-        Math.floor(
-            player.y-1
-        )
-
-        &&
-
-        y <=
-        Math.floor(
-            player.y+1
+        x===px &&
+        z===pz &&
+        (
+            y===py ||
+            y===py+1
         )
 
     ){
@@ -1644,20 +2215,30 @@ function placeBlock(){
     );
 
 
+    playSound(
+        300,
+        .05
+    );
+
+
     saveWorld();
 
 }
 
 
 /* =====================================================
-   MOUSE
+   MOUSE BUTTONS
 ===================================================== */
 
-addEventListener(
+window.addEventListener(
     "mousedown",
-    event=>{
+    function(event){
 
-        if(!pointerLocked)
+        if(!playing)
+            return;
+
+
+        if(!locked && !isMobile())
             return;
 
 
@@ -1682,9 +2263,9 @@ addEventListener(
 );
 
 
-addEventListener(
+window.addEventListener(
     "contextmenu",
-    event=>{
+    function(event){
 
         event.preventDefault();
 
@@ -1696,25 +2277,23 @@ addEventListener(
    COLLISION
 ===================================================== */
 
-function isSolid(
+function solidAt(
     x,
     y,
     z
 ){
 
     const type =
-        world.get(
-            blockKey(
-                Math.floor(x),
-                Math.floor(y),
-                Math.floor(z)
-            )
+        getBlock(
+            x,
+            y,
+            z
         );
 
 
-    return Boolean(
+    return (
 
-        type &&
+        type !== undefined &&
 
         type !== "water" &&
 
@@ -1737,17 +2316,17 @@ function updatePlayer(dt){
             : 4.8;
 
 
-    let moveX=0;
+    let dx=0;
 
-    let moveZ=0;
+    let dz=0;
 
 
     if(keys.KeyW){
 
-        moveX +=
+        dx +=
             Math.sin(yaw);
 
-        moveZ +=
+        dz +=
             -Math.cos(yaw);
 
     }
@@ -1755,10 +2334,10 @@ function updatePlayer(dt){
 
     if(keys.KeyS){
 
-        moveX -=
+        dx -=
             Math.sin(yaw);
 
-        moveZ -=
+        dz -=
             -Math.cos(yaw);
 
     }
@@ -1766,10 +2345,10 @@ function updatePlayer(dt){
 
     if(keys.KeyA){
 
-        moveX +=
+        dx +=
             -Math.cos(yaw);
 
-        moveZ +=
+        dz +=
             -Math.sin(yaw);
 
     }
@@ -1777,57 +2356,50 @@ function updatePlayer(dt){
 
     if(keys.KeyD){
 
-        moveX +=
+        dx +=
             Math.cos(yaw);
 
-        moveZ +=
+        dz +=
             Math.sin(yaw);
 
     }
 
 
-    const length =
+    const len =
         Math.hypot(
-            moveX,
-            moveZ
+            dx,
+            dz
         );
 
 
-    if(length){
+    if(len){
 
-        moveX =
-            moveX /
-            length *
-            speed *
+        dx =
+            dx/len*
+            speed*
             dt;
 
-
-        moveZ =
-            moveZ /
-            length *
-            speed *
+        dz =
+            dz/len*
+            speed*
             dt;
 
     }
 
 
-    /* Horizontal */
+    /* Horizontal collision */
 
     const nextX =
-        player.x +
-        moveX;
-
+        player.x+dx;
 
     const nextZ =
-        player.z +
-        moveZ;
+        player.z+dz;
 
 
     const feet =
         Math.floor(
             player.y
         );
-
 
     const head =
         Math.floor(
@@ -1837,7 +2409,7 @@ function updatePlayer(dt){
 
     const clear =
 
-        !isSolid(
+        !solidAt(
             nextX+.28,
             feet,
             nextZ+.28
@@ -1845,7 +2417,7 @@ function updatePlayer(dt){
 
         &&
 
-        !isSolid(
+        !solidAt(
             nextX-.28,
             feet,
             nextZ-.28
@@ -1853,7 +2425,7 @@ function updatePlayer(dt){
 
         &&
 
-        !isSolid(
+        !solidAt(
             nextX+.28,
             head,
             nextZ+.28
@@ -1861,7 +2433,7 @@ function updatePlayer(dt){
 
         &&
 
-        !isSolid(
+        !solidAt(
             nextX-.28,
             head,
             nextZ-.28
@@ -1880,17 +2452,16 @@ function updatePlayer(dt){
     /* Gravity */
 
     player.velocityY -=
-        18 * dt;
+        18*dt;
 
 
     let nextY =
-        player.y +
-        player.velocityY *
-        dt;
+        player.y+
+        player.velocityY*dt;
 
 
     if(
-        player.velocityY <= 0
+        player.velocityY<=0
     ){
 
         const ground =
@@ -1901,11 +2472,11 @@ function updatePlayer(dt){
                 Math.floor(
                     player.z
                 )
-            ) + 1;
+            )+1;
 
 
         if(
-            nextY <= ground
+            nextY<=ground
         ){
 
             nextY=ground;
@@ -1931,7 +2502,7 @@ function updatePlayer(dt){
         player.grounded
     ){
 
-        player.velocityY=7.2;
+        player.velocityY=7.3;
 
         player.grounded=false;
 
@@ -1941,10 +2512,10 @@ function updatePlayer(dt){
     player.y=nextY;
 
 
-    /* Falling reset */
+    /* Respawn */
 
     if(
-        player.y < -10
+        player.y<-12
     ){
 
         player.x=.5;
@@ -1952,10 +2523,7 @@ function updatePlayer(dt){
         player.z=.5;
 
         player.y =
-            terrainHeight(
-                0,
-                0
-            ) + 2;
+            topAt(0,0)+2;
 
         player.velocityY=0;
 
@@ -1987,12 +2555,72 @@ function updatePlayer(dt){
 
 
 /* =====================================================
+   BLOCK INFO
+===================================================== */
+
+function updateBlockInfo(){
+
+    const target =
+        getTarget();
+
+
+    const element =
+        document.getElementById(
+            "blockInfo"
+        );
+
+
+    if(!target){
+
+        element.style.opacity=0;
+
+        return;
+
+    }
+
+
+    const data =
+        target.object.userData.block;
+
+
+    if(!data){
+
+        element.style.opacity=0;
+
+        return;
+
+    }
+
+
+    element.textContent =
+        blockNames[
+            blockTypes.indexOf(
+                data.type
+            )
+        ];
+
+
+    element.style.opacity=1;
+
+}
+
+
+/* =====================================================
    MOBILE
 ===================================================== */
 
-function mobileKey(
+function isMobile(){
+
+    return window.matchMedia(
+        "(max-width:700px)"
+    ).matches;
+
+}
+
+
+function mobileControl(
     id,
-    key
+    code
 ){
 
     const button =
@@ -2001,24 +2629,22 @@ function mobileKey(
         );
 
 
-    const start =
-        event=>{
+    function start(event){
 
-            event.preventDefault();
+        event.preventDefault();
 
-            keys[key]=true;
+        keys[code]=true;
 
-        };
+    }
 
 
-    const stop =
-        event=>{
+    function stop(event){
 
-            event.preventDefault();
+        event.preventDefault();
 
-            keys[key]=false;
+        keys[code]=false;
 
-        };
+    }
 
 
     button.addEventListener(
@@ -2050,25 +2676,25 @@ function mobileKey(
 }
 
 
-mobileKey(
+mobileControl(
     "up",
     "KeyW"
 );
 
 
-mobileKey(
+mobileControl(
     "down",
     "KeyS"
 );
 
 
-mobileKey(
+mobileControl(
     "left",
     "KeyA"
 );
 
 
-mobileKey(
+mobileControl(
     "right",
     "KeyD"
 );
@@ -2082,15 +2708,14 @@ document
     )
     .addEventListener(
         "touchstart",
-        event=>{
+        function(event){
 
             event.preventDefault();
 
             keys.Space=true;
 
-
             setTimeout(
-                ()=>{
+                function(){
 
                     keys.Space=false;
 
@@ -2113,7 +2738,7 @@ document
     )
     .addEventListener(
         "touchstart",
-        event=>{
+        function(event){
 
             event.preventDefault();
 
@@ -2134,7 +2759,7 @@ document
     )
     .addEventListener(
         "touchstart",
-        event=>{
+        function(event){
 
             event.preventDefault();
 
@@ -2151,30 +2776,30 @@ document
    TOUCH CAMERA
 ===================================================== */
 
-let lastTouch=null;
+let touchData=null;
 
 
-renderer.addEventListener(
+renderer.domElement.addEventListener(
     "touchstart",
-    event=>{
+    function(event){
 
         if(
-            event.touches.length===1
-        ){
+            event.touches.length!==1
+        )
+            return;
 
-            lastTouch={
 
-                x:
-                    event.touches[0]
-                        .clientX,
+        touchData={
 
-                y:
-                    event.touches[0]
-                        .clientY
+            x:
+                event.touches[0]
+                    .clientX,
 
-            };
+            y:
+                event.touches[0]
+                    .clientY
 
-        }
+        };
 
     },
     {
@@ -2183,12 +2808,12 @@ renderer.addEventListener(
 );
 
 
-renderer.addEventListener(
+renderer.domElement.addEventListener(
     "touchmove",
-    event=>{
+    function(event){
 
         if(
-            !lastTouch ||
+            !touchData ||
             event.touches.length!==1
         )
             return;
@@ -2202,21 +2827,21 @@ renderer.addEventListener(
 
 
         const dx =
-            touch.clientX -
-            lastTouch.x;
+            touch.clientX-
+            touchData.x;
 
 
         const dy =
-            touch.clientY -
-            lastTouch.y;
+            touch.clientY-
+            touchData.y;
 
 
         yaw -=
-            dx * .004;
+            dx*.004;
 
 
         pitch -=
-            dy * .004;
+            dy*.004;
 
 
         pitch =
@@ -2229,7 +2854,7 @@ renderer.addEventListener(
             );
 
 
-        lastTouch={
+        touchData={
 
             x:touch.clientX,
 
@@ -2244,67 +2869,304 @@ renderer.addEventListener(
 );
 
 
-renderer.addEventListener(
+renderer.domElement.addEventListener(
     "touchend",
-    ()=>{
+    function(){
 
-        lastTouch=null;
+        touchData=null;
 
     }
 );
 
 
 /* =====================================================
-   START GAME
+   START BUTTON
 ===================================================== */
 
-document
-    .getElementById(
+const startScreen =
+    document.getElementById(
+        "startScreen"
+    );
+
+
+const playButton =
+    document.getElementById(
         "playButton"
-    )
-    .onclick=()=>{
-
-        document
-            .getElementById(
-                "startScreen"
-            )
-            .style.display="none";
+    );
 
 
-        const mobile =
-            matchMedia(
-                "(max-width:700px)"
-            ).matches;
+playButton.addEventListener(
+    "click",
+    function(event){
+
+        event.preventDefault();
+
+        event.stopPropagation();
 
 
-        if(!mobile){
+        playing=true;
 
-            renderer.requestPointerLock();
+
+        startScreen.style.display=
+            "none";
+
+
+        if(!isMobile()){
+
+            try{
+
+                renderer.domElement
+                    .requestPointerLock();
+
+            }
+            catch(error){
+
+                console.log(
+                    "Pointer lock unavailable"
+                );
+
+            }
 
         }
 
-    };
+    }
+);
+
+
+/* =====================================================
+   PAUSE
+===================================================== */
+
+const pauseScreen =
+    document.getElementById(
+        "pauseScreen"
+    );
+
+
+function showPause(){
+
+    if(!playing)
+        return;
+
+
+    pauseScreen.style.display=
+        "flex";
+
+}
+
+
+document
+    .getElementById(
+        "resumeButton"
+    )
+    .addEventListener(
+        "click",
+        function(){
+
+            pauseScreen.style.display=
+                "none";
+
+
+            if(!isMobile()){
+
+                try{
+
+                    renderer.domElement
+                        .requestPointerLock();
+
+                }
+                catch(e){}
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   FULLSCREEN
+===================================================== */
+
+document.addEventListener(
+    "dblclick",
+    function(){
+
+        if(!playing)
+            return;
+
+
+        if(
+            !document.fullscreenElement
+        ){
+
+            document.documentElement
+                .requestFullscreen?.();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   DAY / NIGHT
+===================================================== */
+
+let worldTime=0;
+
+
+function updateDayNight(dt){
+
+    worldTime +=
+        dt*.035;
+
+
+    const angle =
+        worldTime %
+        (Math.PI*2);
+
+
+    const sunX =
+        Math.cos(angle)*60;
+
+
+    const sunY =
+        Math.sin(angle)*60;
+
+
+    sun.position.set(
+        sunX,
+        sunY,
+        25
+    );
+
+
+    const daylight =
+        Math.max(
+            .15,
+            Math.sin(angle)*.5+.5
+        );
+
+
+    sun.intensity =
+        .35 +
+        daylight*1.65;
+
+
+    ambient.intensity =
+        .55 +
+        daylight*.9;
+
+
+    const night =
+        daylight<.35;
+
+
+    document
+        .getElementById(
+            "timeDisplay"
+        )
+        .textContent =
+        night
+            ? "🌙 الليل"
+            : "☀️ النهار";
+
+}
+
+
+/* =====================================================
+   SOUND
+===================================================== */
+
+let audioContext=null;
+
+
+function playSound(
+    frequency,
+    duration
+){
+
+    try{
+
+        if(!audioContext){
+
+            audioContext =
+                new (
+                    window.AudioContext ||
+                    window.webkitAudioContext
+                )();
+
+        }
+
+
+        const oscillator =
+            audioContext
+                .createOscillator();
+
+
+        const gain =
+            audioContext
+                .createGain();
+
+
+        oscillator.frequency.value=
+            frequency;
+
+
+        gain.gain.value=
+            .04;
+
+
+        oscillator.connect(
+            gain
+        );
+
+
+        gain.connect(
+            audioContext.destination
+        );
+
+
+        oscillator.start();
+
+
+        gain.gain.exponentialRampToValueAtTime(
+            .001,
+            audioContext.currentTime+
+            duration
+        );
+
+
+        oscillator.stop(
+            audioContext.currentTime+
+            duration
+        );
+
+    }
+    catch(e){}
+
+}
 
 
 /* =====================================================
    RESIZE
 ===================================================== */
 
-addEventListener(
+window.addEventListener(
     "resize",
-    ()=>{
+    function(){
 
         camera.aspect =
-            innerWidth /
-            innerHeight;
+            window.innerWidth/
+            window.innerHeight;
 
 
         camera.updateProjectionMatrix();
 
 
         renderer.setSize(
-            innerWidth,
-            innerHeight
+            window.innerWidth,
+            window.innerHeight
         );
 
     }
@@ -2316,9 +3178,11 @@ addEventListener(
 ===================================================== */
 
 setInterval(
-    ()=>{
+    function(){
 
-        if(dirty){
+        if(
+            dirty
+        ){
 
             saveWorld();
 
@@ -2329,9 +3193,9 @@ setInterval(
 );
 
 
-addEventListener(
+window.addEventListener(
     "beforeunload",
-    ()=>{
+    function(){
 
         saveWorld();
 
@@ -2364,9 +3228,15 @@ function gameLoop(time){
     lastTime=time;
 
 
-    updatePlayer(
-        dt
-    );
+    if(playing){
+
+        updatePlayer(dt);
+
+        updateBlockInfo();
+
+        updateDayNight(dt);
+
+    }
 
 
     renderer.render(
