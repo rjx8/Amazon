@@ -1,541 +1,2387 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>هدية لك</title>
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>BlockCraft</title>
+
 <style>
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
-body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+html,
+body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#87ceeb;
+    font-family:Arial,sans-serif;
+    touch-action:none;
+}
+
+canvas{
+    display:block;
+}
+
+/* Crosshair */
+
+#crosshair{
+    position:fixed;
+    left:50%;
+    top:50%;
+    width:22px;
+    height:22px;
+    transform:translate(-50%,-50%);
+    pointer-events:none;
+    z-index:10;
+}
+
+#crosshair::before,
+#crosshair::after{
+    content:"";
+    position:absolute;
+    background:#fff;
+    box-shadow:0 0 3px #000;
+}
+
+#crosshair::before{
+    width:2px;
+    height:22px;
+    left:10px;
+}
+
+#crosshair::after{
+    width:22px;
+    height:2px;
+    left:0;
+    top:10px;
+}
+
+
+/* HUD */
+
+#hud{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:5;
+}
+
+#stats{
+    position:absolute;
+    top:12px;
+    left:14px;
+
+    color:white;
+
+    font-size:15px;
+
+    line-height:1.7;
+
+    text-shadow:
+        2px 2px 3px #000;
+}
+
+#help{
+    position:absolute;
+    top:12px;
+    right:14px;
+
+    color:white;
+
+    text-align:right;
+
+    font-size:13px;
+
+    line-height:1.6;
+
+    text-shadow:
+        2px 2px 3px #000;
+}
+
+
+/* Hotbar */
+
+#hotbar{
+    position:absolute;
+
+    bottom:18px;
+
+    left:50%;
+
+    transform:
+        translateX(-50%);
+
+    display:flex;
+
+    gap:4px;
+
+    pointer-events:auto;
+}
+
+.slot{
+    width:55px;
+    height:55px;
+
+    background:#555c;
+
+    border:3px solid #222;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    position:relative;
+
+    font-size:26px;
+
+    cursor:pointer;
+
+    user-select:none;
+}
+
+.slot.selected{
+    border-color:white;
+
+    box-shadow:
+        0 0 0 2px #333;
+}
+
+.slot-number{
+    position:absolute;
+
+    right:3px;
+    bottom:1px;
+
+    color:white;
+
+    font-size:10px;
+
+    text-shadow:
+        1px 1px 2px #000;
+}
+
+
+/* Start */
+
+#startScreen{
+    position:fixed;
+
+    inset:0;
+
+    z-index:100;
+
+    display:flex;
+
+    justify-content:center;
+    align-items:center;
+
     background:
-        radial-gradient(circle at 50% 15%, #7357ff22, transparent 35%),
-        radial-gradient(circle at 20% 80%, #ff5c9d16, transparent 30%),
-        #0c0c10;
-    color: white;
-    overflow-x: hidden;
-}
-.screen {
-    min-height: 100vh;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 25px;
-}
-.screen.active {
-    display: flex;
-    animation: fadeIn .6s ease;
-}
-.container {
-    width: min(500px, 100%);
-    text-align: center;
-}
-.kicker {
-    color: #9999a5;
-    font-size: 12px;
-    letter-spacing: 3px;
-    margin-bottom: 20px;
-}
-h1 {
-    margin: 0;
-    font-size: clamp(36px, 10vw, 60px);
-    line-height: 1.1;
-}
-p {
-    color: #aaaab5;
-    line-height: 1.8;
-    font-size: 16px;
-}
-button {
-    border: none;
-    cursor: pointer;
-    padding: 15px 25px;
-    border-radius: 16px;
-    font-size: 16px;
-    font-weight: 700;
-    background: white;
-    color: #111;
-    transition: .25s;
-}
-button:active {
-    transform: scale(.96);
-}
-/* البداية */
-.start-button {
-    margin-top: 20px;
-}
-/* الأسئلة */
-.progress {
-    width: 100%;
-    height: 5px;
-    background: #27272e;
-    border-radius: 100px;
-    overflow: hidden;
-    margin-bottom: 35px;
-}
-.progress-bar {
-    height: 100%;
-    width: 0%;
-    background: white;
-    transition: .4s;
-}
-.question {
-    font-size: 25px;
-    font-weight: 700;
-    margin-bottom: 25px;
-}
-.answers {
-    display: grid;
-    gap: 12px;
-}
-.answer {
-    width: 100%;
-    background: #18181e;
-    color: white;
-    border: 1px solid #303039;
-    text-align: right;
-}
-.answer:hover {
-    background: #24242c;
-}
-/* الرسالة */
-.gift-image {
-    width: 190px;
-    height: 190px;
-    object-fit: cover;
-    border-radius: 28px;
-    margin-bottom: 25px;
-    box-shadow: 0 25px 70px #0009;
-}
-/* الكوبون */
-.coupon-area {
-    width: 100%;
-    margin: 25px auto;
-}
-.coupon {
-    position: relative;
-    width: 100%;
-    min-height: 290px;
-    padding: 30px;
-    border-radius: 25px;
-    overflow: hidden;
-    background:
+        linear-gradient(#0007,#000b),
         linear-gradient(
             135deg,
-            #f5eddc,
-            #d9c49a
+            #4b8b38,
+            #22608a
         );
-    color: #17130c;
+}
+
+.startBox{
+    width:min(420px,90%);
+
+    padding:30px;
+
+    text-align:center;
+
+    color:white;
+
+    background:#111d;
+
+    border:3px solid #777;
+
     box-shadow:
-        0 30px 80px #0009;
+        0 10px 40px #0009;
 }
-.coupon-brand {
-    font-size: 12px;
-    letter-spacing: 3px;
-    opacity: .6;
+
+.startBox h1{
+    margin-top:0;
+
+    font-size:42px;
 }
-.coupon h2 {
-    font-size: 40px;
-    margin: 35px 0 5px;
+
+.startBox p{
+    line-height:1.7;
 }
-.coupon-text {
-    color: #514938;
+
+#playButton{
+    border:3px solid #344d20;
+
+    background:#5e9438;
+
+    color:white;
+
+    padding:13px 35px;
+
+    font-size:20px;
+
+    cursor:pointer;
 }
-.coupon-code {
-    margin-top: 25px;
-    padding: 12px;
-    border-radius: 12px;
-    background: #ffffff77;
-    font-family: monospace;
-    letter-spacing: 4px;
-    font-size: 20px;
+
+
+/* Mobile */
+
+#mobileControls{
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:20;
+
+    pointer-events:none;
 }
-#scratchCanvas {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    touch-action: none;
+
+.mobileButton{
+    position:absolute;
+
+    width:52px;
+    height:52px;
+
+    border-radius:12px;
+
+    background:#2229;
+
+    border:2px solid #fff8;
+
+    color:white;
+
+    font-size:22px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    pointer-events:auto;
+
+    user-select:none;
 }
-.hint {
-    color: #777783;
-    font-size: 13px;
+
+#movement{
+    position:absolute;
+
+    bottom:100px;
+    left:20px;
+
+    width:160px;
+    height:160px;
 }
-/* زر الحفظ */
-.save-button {
-    margin-top: 15px;
-    display: none;
+
+#up{
+    left:54px;
+    top:0;
 }
-/* أنيميشن */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
+
+#down{
+    left:54px;
+    bottom:0;
+}
+
+#left{
+    left:0;
+    top:54px;
+}
+
+#right{
+    right:0;
+    top:54px;
+}
+
+#mobileActions{
+    position:absolute;
+
+    right:18px;
+    bottom:105px;
+
+    display:flex;
+
+    gap:9px;
+
+    pointer-events:auto;
+}
+
+.action{
+    width:60px;
+    height:60px;
+
+    border-radius:50%;
+
+    border:2px solid white;
+
+    background:#222b;
+
+    color:white;
+
+    font-size:12px;
+}
+
+@media(max-width:700px){
+
+    #help{
+        display:none;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+
+    #mobileControls{
+        display:block;
+    }
+
+    .slot{
+        width:43px;
+        height:43px;
+
+        font-size:20px;
+    }
+
+    .slot:nth-child(n+7){
+        display:none;
     }
 }
+
 </style>
 </head>
+
 <body>
-<!-- =========================
-     البداية
-========================= -->
-<section class="screen active" id="startScreen">
-    <div class="container">
-        <div class="kicker">
-            A LITTLE SURPRISE
-        </div>
-        <h1>
-            عندي لك شيء
-            <br>
-            بس مو الحين 👀
-        </h1>
-        <p>
-            قبل ما أوصلك لهديتك،
-            <br>
-            عندي لك كم سؤال بسيط...
-        </p>
-        <button class="start-button" onclick="startQuiz()">
-            ابدأ التجربة
-        </button>
+
+
+<div id="crosshair"></div>
+
+
+<div id="hud">
+
+    <div id="stats">
+
+        ❤️ <span id="health">20</span>
+
+        <br>
+
+        📍 <span id="position">
+            0, 0, 0
+        </span>
+
     </div>
-</section>
-<!-- =========================
-     الأسئلة
-========================= -->
-<section class="screen" id="quizScreen">
-    <div class="container">
-        <div class="progress">
-            <div
-                class="progress-bar"
-                id="progressBar">
-            </div>
-        </div>
-        <div
-            class="question"
-            id="question">
-        </div>
-        <div
-            class="answers"
-            id="answers">
-        </div>
-        <p
-            id="counter"
-            style="font-size:13px">
-        </p>
+
+
+    <div id="help">
+
+        WASD للحركة
+        <br>
+
+        SPACE للقفز
+        <br>
+
+        الزر الأيسر: تكسير
+        <br>
+
+        الزر الأيمن: بناء
+        <br>
+
+        1 - 8: اختيار البلوك
+        <br>
+
+        F: حفظ العالم
+
     </div>
-</section>
-<!-- =========================
-     الرسالة
-========================= -->
-<section class="screen" id="messageScreen">
-    <div class="container">
-        <img
-            class="gift-image"
-            src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80"
+
+
+    <div id="hotbar"></div>
+
+</div>
+
+
+<!-- Mobile -->
+
+<div id="mobileControls">
+
+    <div id="movement">
+
+        <div
+            class="mobileButton"
+            id="up"
         >
-        <div class="kicker">
-            YOU MADE IT
+            ▲
         </div>
-        <h1 style="font-size:38px">
-            وصلت للنهاية 😌
-        </h1>
-        <p>
-            لكن باقي أهم جزء...
-            <br>
-            هديتك تنتظرك.
-        </p>
-        <button onclick="openCoupon()">
-            شوف هديتك 🎁
-        </button>
+
+        <div
+            class="mobileButton"
+            id="down"
+        >
+            ▼
+        </div>
+
+        <div
+            class="mobileButton"
+            id="left"
+        >
+            ◀
+        </div>
+
+        <div
+            class="mobileButton"
+            id="right"
+        >
+            ▶
+        </div>
+
     </div>
-</section>
-<!-- =========================
-     الكوبون
-========================= -->
-<section class="screen" id="couponScreen">
-    <div class="container">
-        <div class="kicker">
-            YOUR GIFT
-        </div>
-        <h1 style="font-size:35px">
-            امسح الكوبون ✨
-        </h1>
-        <p>
-            حرك إصبعك على الكوبون
-            <br>
-            لين تكتشف وش داخله.
-        </p>
-        <div class="coupon-area">
-            <div class="coupon">
-                <div class="coupon-brand">
-                    SPECIAL GIFT
-                </div>
-                <h2>
-                    هدية لك 🎁
-                </h2>
-                <div class="coupon-text">
-                    هذا الكوبون مقدم لك بكل حب.
-                </div>
-                <div class="coupon-code">
-                    GIFT-2026
-                </div>
-            </div>
-            <canvas id="scratchCanvas"></canvas>
-        </div>
-        <div class="hint">
-            اسحب بإصبعك على الكوبون
-        </div>
+
+
+    <div id="mobileActions">
+
         <button
-            class="save-button"
-            id="saveButton"
-            onclick="saveCoupon()">
-            حفظ الكوبون
+            class="action"
+            id="jumpButton"
+        >
+            قفز
         </button>
+
+        <button
+            class="action"
+            id="breakButton"
+        >
+            كسر
+        </button>
+
+        <button
+            class="action"
+            id="placeButton"
+        >
+            بناء
+        </button>
+
     </div>
-</section>
-<script>
-/* ==================================
-   الأسئلة
-================================== */
-const questions = [
-    {
-        question: "وش أكثر شيء يذكرك فيني؟",
-        answers: [
-            "مواقفنا",
-            "السوالف",
-            "الأغاني",
-            "كل شيء 😂"
-        ]
-    },
-    {
-        question: "لو قلت لك عندي مفاجأة، وش تتوقع؟",
-        answers: [
-            "شيء عادي",
-            "هدية 🎁",
-            "مقلب",
-            "ما أثق فيك"
-        ]
-    },
-    {
-        question: "وش تتوقع يكون آخر شيء بالموقع؟",
-        answers: [
-            "رسالة",
-            "صورة",
-            "هدية",
-            "ما أدري 👀"
-        ]
-    }
-];
-let currentQuestion = 0;
-/* ==================================
-   تغيير الشاشة
-================================== */
-function showScreen(id) {
-    document
-        .querySelectorAll(".screen")
-        .forEach(screen => {
-            screen.classList.remove("active");
-        });
-    document
-        .getElementById(id)
-        .classList.add("active");
-}
-/* ==================================
-   بدء الأسئلة
-================================== */
-function startQuiz() {
-    currentQuestion = 0;
-    showScreen("quizScreen");
-    renderQuestion();
-}
-/* ==================================
-   عرض السؤال
-================================== */
-function renderQuestion() {
-    const question =
-        questions[currentQuestion];
-    document
-        .getElementById("question")
-        .textContent =
-        question.question;
-    const answers =
-        document.getElementById("answers");
-    answers.innerHTML = "";
-    question.answers.forEach(answer => {
-        const button =
-            document.createElement("button");
-        button.className = "answer";
-        button.textContent = answer;
-        button.onclick = function() {
-            currentQuestion++;
-            if (
-                currentQuestion
-                >= questions.length
-            ) {
-                showScreen("messageScreen");
-            } else {
-                renderQuestion();
-            }
-        };
-        answers.appendChild(button);
+
+</div>
+
+
+<!-- Start -->
+
+<div id="startScreen">
+
+    <div class="startBox">
+
+        <h1>
+            ⛏️ BlockCraft
+        </h1>
+
+        <p>
+            عالم ثلاثي الأبعاد مستوحى
+            من ألعاب البناء والبقاء.
+        </p>
+
+        <p>
+            ابنِ، اكسر، واستكشف عالمك.
+        </p>
+
+        <button id="playButton">
+            ابدأ اللعب
+        </button>
+
+    </div>
+
+</div>
+
+
+<script type="module">
+
+/* =====================================================
+   THREE.JS
+===================================================== */
+
+import * as THREE from
+"https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js";
+
+
+/* =====================================================
+   SCENE
+===================================================== */
+
+const scene =
+    new THREE.Scene();
+
+
+scene.background =
+    new THREE.Color(
+        0x87ceeb
+    );
+
+
+scene.fog =
+    new THREE.Fog(
+        0x87ceeb,
+        35,
+        120
+    );
+
+
+/* =====================================================
+   CAMERA
+===================================================== */
+
+const camera =
+    new THREE.PerspectiveCamera(
+        75,
+        innerWidth / innerHeight,
+        0.05,
+        180
+    );
+
+
+camera.rotation.order =
+    "YXZ";
+
+
+/* =====================================================
+   RENDERER
+===================================================== */
+
+const renderer =
+    new THREE.WebGLRenderer({
+        antialias:false
     });
-    document
-        .getElementById("counter")
-        .textContent =
-        `${currentQuestion + 1} من ${questions.length}`;
-    document
-        .getElementById("progressBar")
-        .style.width =
-        `${((currentQuestion + 1) / questions.length) * 100}%`;
-}
-/* ==================================
-   فتح الكوبون
-================================== */
-function openCoupon() {
-    showScreen("couponScreen");
-    setTimeout(() => {
-        setupScratch();
-    }, 100);
-}
-/* ==================================
-   نظام المسح
-================================== */
-let canvas;
-let ctx;
-let isDrawing = false;
-let scratched = 0;
-function setupScratch() {
-    canvas =
-        document.getElementById("scratchCanvas");
-    const rect =
-        canvas.parentElement
-        .getBoundingClientRect();
-    const dpr =
-        window.devicePixelRatio || 1;
-    canvas.width =
-        rect.width * dpr;
-    canvas.height =
-        rect.height * dpr;
-    canvas.style.width =
-        rect.width + "px";
-    canvas.style.height =
-        rect.height + "px";
-    ctx =
-        canvas.getContext("2d");
-    ctx.scale(dpr, dpr);
-    /* طبقة الكوبون */
-    ctx.fillStyle = "#8d8d95";
-    ctx.fillRect(
-        0,
-        0,
-        rect.width,
-        rect.height
+
+
+renderer.setSize(
+    innerWidth,
+    innerHeight
+);
+
+
+renderer.setPixelRatio(
+    Math.min(
+        window.devicePixelRatio,
+        1.6
+    )
+);
+
+
+renderer.shadowMap.enabled =
+    true;
+
+
+renderer.shadowMap.type =
+    THREE.PCFSoftShadowMap;
+
+
+document.body.appendChild(
+    renderer.domElement
+);
+
+
+/* =====================================================
+   LIGHTING
+===================================================== */
+
+const ambient =
+    new THREE.HemisphereLight(
+        0xbfe8ff,
+        0x665544,
+        1.5
     );
-    /* النص */
-    ctx.fillStyle = "#ffffff";
-    ctx.font =
-        "bold 22px system-ui";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(
-        "امسح هنا",
-        rect.width / 2,
-        rect.height / 2
+
+
+scene.add(
+    ambient
+);
+
+
+const sun =
+    new THREE.DirectionalLight(
+        0xffffff,
+        2
     );
-    scratched = 0;
+
+
+sun.position.set(
+    35,
+    60,
+    20
+);
+
+
+sun.castShadow =
+    true;
+
+
+scene.add(
+    sun
+);
+
+
+/* =====================================================
+   MATERIALS
+===================================================== */
+
+const materials = {
+
+    grass:
+        new THREE.MeshLambertMaterial({
+            color:0x55a83b
+        }),
+
+    dirt:
+        new THREE.MeshLambertMaterial({
+            color:0x8b5a2b
+        }),
+
+    stone:
+        new THREE.MeshLambertMaterial({
+            color:0x777777
+        }),
+
+    wood:
+        new THREE.MeshLambertMaterial({
+            color:0x8a5a2b
+        }),
+
+    leaves:
+        new THREE.MeshLambertMaterial({
+            color:0x2e8b3c,
+
+            transparent:true,
+
+            opacity:.9
+        }),
+
+    sand:
+        new THREE.MeshLambertMaterial({
+            color:0xd8c179
+        }),
+
+    glass:
+        new THREE.MeshLambertMaterial({
+            color:0x8ed6e8,
+
+            transparent:true,
+
+            opacity:.45
+        }),
+
+    water:
+        new THREE.MeshLambertMaterial({
+            color:0x237fd1,
+
+            transparent:true,
+
+            opacity:.6
+        }),
+
+    bedrock:
+        new THREE.MeshLambertMaterial({
+            color:0x303030
+        })
+
+};
+
+
+/* =====================================================
+   BLOCK TYPES
+===================================================== */
+
+const blockTypes = [
+
+    "grass",
+    "dirt",
+    "stone",
+    "wood",
+    "leaves",
+    "sand",
+    "glass",
+    "water"
+
+];
+
+
+const icons = [
+
+    "🟩",
+    "🟫",
+    "⬜",
+    "🪵",
+    "🌿",
+    "🟨",
+    "🔷",
+    "💧"
+
+];
+
+
+/* =====================================================
+   WORLD
+===================================================== */
+
+const world =
+    new Map();
+
+
+const meshes =
+    new Map();
+
+
+const cube =
+    new THREE.BoxGeometry(
+        1,
+        1,
+        1
+    );
+
+
+function blockKey(
+    x,
+    y,
+    z
+){
+
+    return (
+        x +
+        "|" +
+        y +
+        "|" +
+        z
+    );
+
 }
-function getPosition(event) {
-    const rect =
-        canvas.getBoundingClientRect();
-    return {
-        x:
-            event.clientX - rect.left,
-        y:
-            event.clientY - rect.top
-    };
-}
-function scratch(event) {
-    if (!isDrawing)
+
+
+/* =====================================================
+   SET BLOCK
+===================================================== */
+
+function setBlock(
+    x,
+    y,
+    z,
+    type,
+    save=true
+){
+
+    const key =
+        blockKey(
+            x,
+            y,
+            z
+        );
+
+
+    /* إزالة القديم */
+
+    if(
+        meshes.has(key)
+    ){
+
+        scene.remove(
+            meshes.get(key)
+        );
+
+        meshes.delete(key);
+
+    }
+
+
+    /* حذف */
+
+    if(
+        type === null
+    ){
+
+        world.delete(key);
+
+        dirty=true;
+
         return;
-    const position =
-        getPosition(event);
-    ctx.globalCompositeOperation =
-        "destination-out";
-    ctx.beginPath();
-    ctx.arc(
-        position.x,
-        position.y,
-        24,
-        0,
-        Math.PI * 2
+
+    }
+
+
+    world.set(
+        key,
+        type
     );
-    ctx.fill();
-    scratched++;
-    if (scratched > 70) {
-        canvas.style.transition =
-            "opacity .8s";
-        canvas.style.opacity = "0";
-        document
-            .getElementById("saveButton")
-            .style.display =
-            "inline-block";
-    }
-}
-/* الماوس */
-canvas.addEventListener(
-    "pointerdown",
-    () => {
-        isDrawing = true;
-    }
-);
-canvas.addEventListener(
-    "pointerup",
-    () => {
-        isDrawing = false;
-    }
-);
-canvas.addEventListener(
-    "pointerleave",
-    () => {
-        isDrawing = false;
-    }
-);
-canvas.addEventListener(
-    "pointermove",
-    scratch
-);
-/* ==================================
-   حفظ مؤقت
-================================== */
-function saveCoupon() {
-    alert(
-        "في النسخة النهائية بيكون هنا حفظ الكوبون كصورة و PDF 🎁"
+
+
+    const mesh =
+        new THREE.Mesh(
+            cube,
+            materials[type]
+        );
+
+
+    mesh.position.set(
+        x + .5,
+        y + .5,
+        z + .5
     );
+
+
+    mesh.castShadow =
+        type !== "water" &&
+        type !== "glass";
+
+
+    mesh.receiveShadow =
+        true;
+
+
+    scene.add(
+        mesh
+    );
+
+
+    meshes.set(
+        key,
+        mesh
+    );
+
+
+    if(save)
+        dirty=true;
+
 }
-/* ==================================
-   إعادة ضبط Canvas عند تغيير الحجم
-================================== */
-window.addEventListener(
-    "resize",
-    () => {
-        if (
-            document
-            .getElementById("couponScreen")
-            .classList.contains("active")
-        ) {
-            setupScratch();
+
+
+/* =====================================================
+   TERRAIN
+===================================================== */
+
+function terrainHeight(
+    x,
+    z
+){
+
+    const noise =
+
+        Math.sin(
+            x * .16
+        )
+
+        +
+
+        Math.sin(
+            z * .13
+        ) * .8
+
+        +
+
+        Math.sin(
+            (x+z) * .055
+        ) * 2;
+
+
+    return Math.max(
+        2,
+        Math.floor(
+            7 + noise * 1.7
+        )
+    );
+
+}
+
+
+function topAt(
+    x,
+    z
+){
+
+    for(
+        let y=35;
+        y>=0;
+        y--
+    ){
+
+        const type =
+            world.get(
+                blockKey(
+                    x,
+                    y,
+                    z
+                )
+            );
+
+
+        if(
+            type &&
+            type !== "water" &&
+            type !== "leaves"
+        ){
+
+            return y;
+
         }
+
+    }
+
+
+    return 0;
+
+}
+
+
+/* =====================================================
+   GENERATE WORLD
+===================================================== */
+
+function generateWorld(){
+
+    const radius =
+        24;
+
+
+    for(
+        let x=-radius;
+        x<=radius;
+        x++
+    ){
+
+        for(
+            let z=-radius;
+            z<=radius;
+            z++
+        ){
+
+            const height =
+                terrainHeight(
+                    x,
+                    z
+                );
+
+
+            for(
+                let y=0;
+                y<=height;
+                y++
+            ){
+
+                let type;
+
+
+                if(y===0){
+
+                    type="bedrock";
+
+                }
+
+                else if(
+                    y===height
+                ){
+
+                    type="grass";
+
+                }
+
+                else if(
+                    y>height-4
+                ){
+
+                    type="dirt";
+
+                }
+
+                else{
+
+                    type="stone";
+
+                }
+
+
+                setBlock(
+                    x,
+                    y,
+                    z,
+                    type,
+                    false
+                );
+
+            }
+
+
+            /* Trees */
+
+            if(
+                Math.random() < .035 &&
+                Math.abs(x)>3 &&
+                Math.abs(z)>3 &&
+                height>5
+            ){
+
+                for(
+                    let y=height+1;
+                    y<height+4;
+                    y++
+                ){
+
+                    setBlock(
+                        x,
+                        y,
+                        z,
+                        "wood",
+                        false
+                    );
+
+                }
+
+
+                for(
+                    let dx=-2;
+                    dx<=2;
+                    dx++
+                ){
+
+                    for(
+                        let dz=-2;
+                        dz<=2;
+                        dz++
+                    ){
+
+                        for(
+                            let dy=3;
+                            dy<=4;
+                            dy++
+                        ){
+
+                            if(
+                                Math.abs(dx) +
+                                Math.abs(dz)
+                                < 4
+                            ){
+
+                                setBlock(
+                                    x+dx,
+                                    height+dy,
+                                    z+dz,
+                                    "leaves",
+                                    false
+                                );
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   SAVE
+===================================================== */
+
+function saveWorld(){
+
+    const data=[];
+
+
+    for(
+        const [key,type]
+        of world
+    ){
+
+        data.push([
+            key,
+            type
+        ]);
+
+    }
+
+
+    localStorage.setItem(
+        "blockcraft_world",
+        JSON.stringify(data)
+    );
+
+
+    dirty=false;
+
+}
+
+
+/* =====================================================
+   LOAD
+===================================================== */
+
+function loadWorld(){
+
+    const saved =
+        localStorage.getItem(
+            "blockcraft_world"
+        );
+
+
+    if(!saved){
+
+        generateWorld();
+
+        return;
+
+    }
+
+
+    try{
+
+        const data =
+            JSON.parse(
+                saved
+            );
+
+
+        for(
+            const [key,type]
+            of data
+        ){
+
+            const [
+                x,
+                y,
+                z
+            ] =
+            key
+                .split("|")
+                .map(Number);
+
+
+            setBlock(
+                x,
+                y,
+                z,
+                type,
+                false
+            );
+
+        }
+
+    }
+    catch(error){
+
+        console.error(
+            "World loading error:",
+            error
+        );
+
+        localStorage.removeItem(
+            "blockcraft_world"
+        );
+
+        generateWorld();
+
+    }
+
+}
+
+
+let dirty=false;
+
+loadWorld();
+
+
+/* =====================================================
+   PLAYER
+===================================================== */
+
+const player={
+
+    x:.5,
+
+    y:
+        terrainHeight(
+            0,
+            0
+        ) + 1.1,
+
+    z:.5,
+
+    velocityY:0,
+
+    grounded:false
+
+};
+
+
+let yaw=0;
+
+let pitch=0;
+
+let pointerLocked=false;
+
+
+camera.position.set(
+    player.x,
+    player.y+1.55,
+    player.z
+);
+
+
+/* =====================================================
+   KEYBOARD
+===================================================== */
+
+const keys={};
+
+
+addEventListener(
+    "keydown",
+    event=>{
+
+        keys[event.code]=true;
+
+
+        if(
+            event.code==="Space"
+        ){
+
+            event.preventDefault();
+
+        }
+
+
+        if(
+            event.key>="1" &&
+            event.key<="8"
+        ){
+
+            selectBlock(
+                Number(event.key)-1
+            );
+
+        }
+
+
+        if(
+            event.code==="KeyF"
+        ){
+
+            saveWorld();
+
+        }
+
     }
 );
+
+
+addEventListener(
+    "keyup",
+    event=>{
+
+        keys[event.code]=false;
+
+    }
+);
+
+
+/* =====================================================
+   POINTER LOCK
+===================================================== */
+
+renderer.addEventListener(
+    "click",
+    ()=>{
+
+        const mobile =
+            matchMedia(
+                "(max-width:700px)"
+            ).matches;
+
+
+        if(!mobile){
+
+            renderer.requestPointerLock();
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "pointerlockchange",
+    ()=>{
+
+        pointerLocked =
+            document.pointerLockElement ===
+            renderer.domElement;
+
+    }
+);
+
+
+addEventListener(
+    "mousemove",
+    event=>{
+
+        if(!pointerLocked)
+            return;
+
+
+        yaw -=
+            event.movementX *
+            .0022;
+
+
+        pitch -=
+            event.movementY *
+            .0022;
+
+
+        pitch =
+            Math.max(
+                -1.5,
+                Math.min(
+                    1.5,
+                    pitch
+                )
+            );
+
+    }
+);
+
+
+/* =====================================================
+   HOTBAR
+===================================================== */
+
+const hotbar =
+    document.getElementById(
+        "hotbar"
+    );
+
+
+let selectedBlock=0;
+
+
+blockTypes.forEach(
+    (type,index)=>{
+
+        const slot =
+            document.createElement(
+                "div"
+            );
+
+
+        slot.className =
+            "slot";
+
+
+        slot.innerHTML =
+            icons[index] +
+
+            `<span class="slot-number">
+                ${index+1}
+            </span>`;
+
+
+        if(index===0){
+
+            slot.classList.add(
+                "selected"
+            );
+
+        }
+
+
+        slot.onclick=()=>{
+
+            selectBlock(index);
+
+        };
+
+
+        hotbar.appendChild(
+            slot
+        );
+
+    }
+);
+
+
+function selectBlock(index){
+
+    selectedBlock=index;
+
+
+    [
+        ...hotbar.children
+    ].forEach(
+        (slot,i)=>{
+
+            slot.classList.toggle(
+                "selected",
+                i===index
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   RAYCAST
+===================================================== */
+
+const raycaster =
+    new THREE.Raycaster();
+
+
+function getTarget(){
+
+    raycaster.setFromCamera(
+        new THREE.Vector2(0,0),
+        camera
+    );
+
+
+    const hits =
+        raycaster.intersectObjects(
+            [
+                ...meshes.values()
+            ],
+            false
+        );
+
+
+    return hits.find(
+        hit =>
+            hit.distance < 7
+    );
+
+}
+
+
+/* =====================================================
+   BREAK BLOCK
+===================================================== */
+
+function breakBlock(){
+
+    const target =
+        getTarget();
+
+
+    if(!target)
+        return;
+
+
+    const position =
+        target.object.position;
+
+
+    const x =
+        Math.floor(
+            position.x
+        );
+
+
+    const y =
+        Math.floor(
+            position.y
+        );
+
+
+    const z =
+        Math.floor(
+            position.z
+        );
+
+
+    const type =
+        world.get(
+            blockKey(
+                x,
+                y,
+                z
+            )
+        );
+
+
+    if(
+        type === "bedrock"
+    )
+        return;
+
+
+    setBlock(
+        x,
+        y,
+        z,
+        null
+    );
+
+
+    saveWorld();
+
+}
+
+
+/* =====================================================
+   PLACE BLOCK
+===================================================== */
+
+function placeBlock(){
+
+    const target =
+        getTarget();
+
+
+    if(!target)
+        return;
+
+
+    const position =
+        target.object.position
+            .clone()
+            .subScalar(.5);
+
+
+    const normal =
+        target.face.normal;
+
+
+    const x =
+        Math.floor(
+            position.x +
+            normal.x
+        );
+
+
+    const y =
+        Math.floor(
+            position.y +
+            normal.y
+        );
+
+
+    const z =
+        Math.floor(
+            position.z +
+            normal.z
+        );
+
+
+    if(
+        y<1 ||
+        y>40
+    )
+        return;
+
+
+    if(
+        world.has(
+            blockKey(
+                x,
+                y,
+                z
+            )
+        )
+    )
+        return;
+
+
+    /* لا تحط البلوك داخل اللاعب */
+
+    if(
+
+        Math.abs(
+            x-player.x
+        ) < .8
+
+        &&
+
+        Math.abs(
+            z-player.z
+        ) < .8
+
+        &&
+
+        y >=
+        Math.floor(
+            player.y-1
+        )
+
+        &&
+
+        y <=
+        Math.floor(
+            player.y+1
+        )
+
+    ){
+
+        return;
+
+    }
+
+
+    setBlock(
+        x,
+        y,
+        z,
+        blockTypes[
+            selectedBlock
+        ]
+    );
+
+
+    saveWorld();
+
+}
+
+
+/* =====================================================
+   MOUSE
+===================================================== */
+
+addEventListener(
+    "mousedown",
+    event=>{
+
+        if(!pointerLocked)
+            return;
+
+
+        if(
+            event.button===0
+        ){
+
+            breakBlock();
+
+        }
+
+
+        if(
+            event.button===2
+        ){
+
+            placeBlock();
+
+        }
+
+    }
+);
+
+
+addEventListener(
+    "contextmenu",
+    event=>{
+
+        event.preventDefault();
+
+    }
+);
+
+
+/* =====================================================
+   COLLISION
+===================================================== */
+
+function isSolid(
+    x,
+    y,
+    z
+){
+
+    const type =
+        world.get(
+            blockKey(
+                Math.floor(x),
+                Math.floor(y),
+                Math.floor(z)
+            )
+        );
+
+
+    return Boolean(
+
+        type &&
+
+        type !== "water" &&
+
+        type !== "leaves"
+
+    );
+
+}
+
+
+/* =====================================================
+   PLAYER UPDATE
+===================================================== */
+
+function updatePlayer(dt){
+
+    const speed =
+        keys.ShiftLeft
+            ? 7
+            : 4.8;
+
+
+    let moveX=0;
+
+    let moveZ=0;
+
+
+    if(keys.KeyW){
+
+        moveX +=
+            Math.sin(yaw);
+
+        moveZ +=
+            -Math.cos(yaw);
+
+    }
+
+
+    if(keys.KeyS){
+
+        moveX -=
+            Math.sin(yaw);
+
+        moveZ -=
+            -Math.cos(yaw);
+
+    }
+
+
+    if(keys.KeyA){
+
+        moveX +=
+            -Math.cos(yaw);
+
+        moveZ +=
+            -Math.sin(yaw);
+
+    }
+
+
+    if(keys.KeyD){
+
+        moveX +=
+            Math.cos(yaw);
+
+        moveZ +=
+            Math.sin(yaw);
+
+    }
+
+
+    const length =
+        Math.hypot(
+            moveX,
+            moveZ
+        );
+
+
+    if(length){
+
+        moveX =
+            moveX /
+            length *
+            speed *
+            dt;
+
+
+        moveZ =
+            moveZ /
+            length *
+            speed *
+            dt;
+
+    }
+
+
+    /* Horizontal */
+
+    const nextX =
+        player.x +
+        moveX;
+
+
+    const nextZ =
+        player.z +
+        moveZ;
+
+
+    const feet =
+        Math.floor(
+            player.y
+        );
+
+
+    const head =
+        Math.floor(
+            player.y+1.7
+        );
+
+
+    const clear =
+
+        !isSolid(
+            nextX+.28,
+            feet,
+            nextZ+.28
+        )
+
+        &&
+
+        !isSolid(
+            nextX-.28,
+            feet,
+            nextZ-.28
+        )
+
+        &&
+
+        !isSolid(
+            nextX+.28,
+            head,
+            nextZ+.28
+        )
+
+        &&
+
+        !isSolid(
+            nextX-.28,
+            head,
+            nextZ-.28
+        );
+
+
+    if(clear){
+
+        player.x=nextX;
+
+        player.z=nextZ;
+
+    }
+
+
+    /* Gravity */
+
+    player.velocityY -=
+        18 * dt;
+
+
+    let nextY =
+        player.y +
+        player.velocityY *
+        dt;
+
+
+    if(
+        player.velocityY <= 0
+    ){
+
+        const ground =
+            topAt(
+                Math.floor(
+                    player.x
+                ),
+                Math.floor(
+                    player.z
+                )
+            ) + 1;
+
+
+        if(
+            nextY <= ground
+        ){
+
+            nextY=ground;
+
+            player.velocityY=0;
+
+            player.grounded=true;
+
+        }
+
+    }
+    else{
+
+        player.grounded=false;
+
+    }
+
+
+    /* Jump */
+
+    if(
+        keys.Space &&
+        player.grounded
+    ){
+
+        player.velocityY=7.2;
+
+        player.grounded=false;
+
+    }
+
+
+    player.y=nextY;
+
+
+    /* Falling reset */
+
+    if(
+        player.y < -10
+    ){
+
+        player.x=.5;
+
+        player.z=.5;
+
+        player.y =
+            terrainHeight(
+                0,
+                0
+            ) + 2;
+
+        player.velocityY=0;
+
+    }
+
+
+    camera.position.set(
+        player.x,
+        player.y+1.55,
+        player.z
+    );
+
+
+    camera.rotation.set(
+        pitch,
+        yaw,
+        0
+    );
+
+
+    document
+        .getElementById(
+            "position"
+        )
+        .textContent =
+        `${Math.floor(player.x)}, ${Math.floor(player.y)}, ${Math.floor(player.z)}`;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+function mobileKey(
+    id,
+    key
+){
+
+    const button =
+        document.getElementById(
+            id
+        );
+
+
+    const start =
+        event=>{
+
+            event.preventDefault();
+
+            keys[key]=true;
+
+        };
+
+
+    const stop =
+        event=>{
+
+            event.preventDefault();
+
+            keys[key]=false;
+
+        };
+
+
+    button.addEventListener(
+        "touchstart",
+        start,
+        {
+            passive:false
+        }
+    );
+
+
+    button.addEventListener(
+        "touchend",
+        stop,
+        {
+            passive:false
+        }
+    );
+
+
+    button.addEventListener(
+        "touchcancel",
+        stop,
+        {
+            passive:false
+        }
+    );
+
+}
+
+
+mobileKey(
+    "up",
+    "KeyW"
+);
+
+
+mobileKey(
+    "down",
+    "KeyS"
+);
+
+
+mobileKey(
+    "left",
+    "KeyA"
+);
+
+
+mobileKey(
+    "right",
+    "KeyD"
+);
+
+
+/* Jump */
+
+document
+    .getElementById(
+        "jumpButton"
+    )
+    .addEventListener(
+        "touchstart",
+        event=>{
+
+            event.preventDefault();
+
+            keys.Space=true;
+
+
+            setTimeout(
+                ()=>{
+
+                    keys.Space=false;
+
+                },
+                180
+            );
+
+        },
+        {
+            passive:false
+        }
+    );
+
+
+/* Break */
+
+document
+    .getElementById(
+        "breakButton"
+    )
+    .addEventListener(
+        "touchstart",
+        event=>{
+
+            event.preventDefault();
+
+            breakBlock();
+
+        },
+        {
+            passive:false
+        }
+    );
+
+
+/* Place */
+
+document
+    .getElementById(
+        "placeButton"
+    )
+    .addEventListener(
+        "touchstart",
+        event=>{
+
+            event.preventDefault();
+
+            placeBlock();
+
+        },
+        {
+            passive:false
+        }
+    );
+
+
+/* =====================================================
+   TOUCH CAMERA
+===================================================== */
+
+let lastTouch=null;
+
+
+renderer.addEventListener(
+    "touchstart",
+    event=>{
+
+        if(
+            event.touches.length===1
+        ){
+
+            lastTouch={
+
+                x:
+                    event.touches[0]
+                        .clientX,
+
+                y:
+                    event.touches[0]
+                        .clientY
+
+            };
+
+        }
+
+    },
+    {
+        passive:false
+    }
+);
+
+
+renderer.addEventListener(
+    "touchmove",
+    event=>{
+
+        if(
+            !lastTouch ||
+            event.touches.length!==1
+        )
+            return;
+
+
+        event.preventDefault();
+
+
+        const touch =
+            event.touches[0];
+
+
+        const dx =
+            touch.clientX -
+            lastTouch.x;
+
+
+        const dy =
+            touch.clientY -
+            lastTouch.y;
+
+
+        yaw -=
+            dx * .004;
+
+
+        pitch -=
+            dy * .004;
+
+
+        pitch =
+            Math.max(
+                -1.45,
+                Math.min(
+                    1.45,
+                    pitch
+                )
+            );
+
+
+        lastTouch={
+
+            x:touch.clientX,
+
+            y:touch.clientY
+
+        };
+
+    },
+    {
+        passive:false
+    }
+);
+
+
+renderer.addEventListener(
+    "touchend",
+    ()=>{
+
+        lastTouch=null;
+
+    }
+);
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+document
+    .getElementById(
+        "playButton"
+    )
+    .onclick=()=>{
+
+        document
+            .getElementById(
+                "startScreen"
+            )
+            .style.display="none";
+
+
+        const mobile =
+            matchMedia(
+                "(max-width:700px)"
+            ).matches;
+
+
+        if(!mobile){
+
+            renderer.requestPointerLock();
+
+        }
+
+    };
+
+
+/* =====================================================
+   RESIZE
+===================================================== */
+
+addEventListener(
+    "resize",
+    ()=>{
+
+        camera.aspect =
+            innerWidth /
+            innerHeight;
+
+
+        camera.updateProjectionMatrix();
+
+
+        renderer.setSize(
+            innerWidth,
+            innerHeight
+        );
+
+    }
+);
+
+
+/* =====================================================
+   AUTO SAVE
+===================================================== */
+
+setInterval(
+    ()=>{
+
+        if(dirty){
+
+            saveWorld();
+
+        }
+
+    },
+    15000
+);
+
+
+addEventListener(
+    "beforeunload",
+    ()=>{
+
+        saveWorld();
+
+    }
+);
+
+
+/* =====================================================
+   GAME LOOP
+===================================================== */
+
+let lastTime =
+    performance.now();
+
+
+function gameLoop(time){
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
+
+    const dt =
+        Math.min(
+            (time-lastTime)/1000,
+            .05
+        );
+
+
+    lastTime=time;
+
+
+    updatePlayer(
+        dt
+    );
+
+
+    renderer.render(
+        scene,
+        camera
+    );
+
+}
+
+
+requestAnimationFrame(
+    gameLoop
+);
+
 </script>
+
 </body>
 </html>
