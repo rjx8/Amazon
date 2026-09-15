@@ -1,8 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <title>منصة تحويل الأكواد الذكية (PDF / PPTX / MP4)</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -10,7 +11,9 @@
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif;
@@ -363,7 +366,223 @@
             color: #f8fafc;
         }
 
+
+        /* =====================================================
+           مدير الصور - الإضافة الجديدة
+           ===================================================== */
+
+        .html-image-manager {
+            display: none;
+            margin-top: 15px;
+            padding: 14px;
+            background: #0b1220;
+            border: 1px solid #334155;
+            border-radius: 10px;
+        }
+
+        .html-image-manager.visible {
+            display: block;
+        }
+
+        .image-manager-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .image-manager-title {
+            color: #f8fafc;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .image-manager-count {
+            background: #2563eb;
+            color: #fff;
+            padding: 4px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .image-manager-description {
+            color: #94a3b8;
+            font-size: 11px;
+            line-height: 1.7;
+            margin: 0 0 12px;
+        }
+
+        .image-manager-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .html-image-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .html-image-card.replaced {
+            border-color: #059669;
+            background: #0f2923;
+        }
+
+        .html-image-card-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .html-image-thumb {
+            width: 82px;
+            height: 70px;
+            flex: 0 0 82px;
+            border-radius: 7px;
+            background: #020617;
+            border: 1px solid #475569;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .html-image-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .html-image-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .html-image-name {
+            color: #f8fafc;
+            font-size: 13px;
+            font-weight: bold;
+            margin: 0 0 6px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .html-image-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 8px;
+        }
+
+        .html-image-meta-item {
+            color: #94a3b8;
+            font-size: 10px;
+            line-height: 1.5;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .html-image-meta-item strong {
+            color: #cbd5e1;
+        }
+
+        .html-image-url {
+            margin-top: 8px;
+            padding: 7px 8px;
+            border-radius: 6px;
+            background: #020617;
+            color: #64748b;
+            direction: ltr;
+            text-align: left;
+            font-size: 9px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .html-image-actions {
+            display: flex;
+            gap: 7px;
+            margin-top: 9px;
+        }
+
+        .html-image-action {
+            flex: 1;
+            border: none;
+            border-radius: 7px;
+            padding: 9px 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            transition: .2s;
+        }
+
+        .html-image-action.keep {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .html-image-action.keep:hover {
+            background: #475569;
+        }
+
+        .html-image-action.replace {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        .html-image-action.replace:hover {
+            background: #1d4ed8;
+        }
+
+        .html-image-status {
+            margin-top: 7px;
+            min-height: 16px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #64748b;
+        }
+
+        .html-image-card.replaced .html-image-status {
+            color: #34d399;
+        }
+
+        .image-manager-refresh {
+            width: 100%;
+            margin-top: 10px;
+            background: transparent;
+            border: 1px solid #475569;
+            color: #94a3b8;
+            padding: 8px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .image-manager-refresh:hover {
+            background: #1e293b;
+            color: #f8fafc;
+        }
+
+        .image-empty {
+            text-align: center;
+            color: #64748b;
+            font-size: 12px;
+            padding: 12px;
+        }
+
+
         @media (max-width: 600px) {
+
             .row {
                 flex-direction: column;
                 gap: 0;
@@ -381,6 +600,16 @@
             .action-btns button {
                 padding: 10px;
             }
+
+            .html-image-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .html-image-thumb {
+                width: 72px;
+                flex-basis: 72px;
+                height: 65px;
+            }
         }
     </style>
 </head>
@@ -392,273 +621,676 @@
 
     <div style="background:#1e293b;padding:30px;border-radius:12px;box-shadow:0 10px 25px -5px rgba(0,0,0,.5);border:1px solid #334155;text-align:center;width:100%;max-width:350px;">
 
-        <h3 style="margin-top:0;color:#f8fafc;font-size:22px;">🔒 حماية المنصة</h3>
+        <h3 style="margin-top:0;color:#f8fafc;font-size:22px;">
+            🔒 حماية المنصة
+        </h3>
 
         <p style="font-size:13px;color:#94a3b8;margin-bottom:25px;">
             الرجاء إدخال كلمة المرور للوصول.
         </p>
 
         <div class="form-group" style="margin-bottom:20px;">
+
             <input
                 type="password"
                 id="pass-input"
                 placeholder="كلمة المرور..."
                 style="text-align:center;letter-spacing:3px;font-size:16px;"
                 onkeypress="if(event.key==='Enter')checkPassword()">
+
         </div>
 
-        <button onclick="checkPassword()" class="export-btn" style="margin-top:0;">
+        <button
+            onclick="checkPassword()"
+            class="export-btn"
+            style="margin-top:0;">
             تسجيل الدخول
         </button>
 
-        <p id="pass-error"
-           style="color:#ef4444;font-size:13px;display:none;margin-top:15px;font-weight:bold;margin-bottom:0;">
+        <p
+            id="pass-error"
+            style="color:#ef4444;font-size:13px;display:none;margin-top:15px;font-weight:bold;margin-bottom:0;">
             ❌ كلمة المرور غير صحيحة!
         </p>
+
     </div>
 </div>
+
 
 <div class="header">
     <h2>🛠️ منصة تحويل الأكواد</h2>
 </div>
 
+
 <div class="top-nav">
-    <button class="nav-btn active" id="btn-converter" onclick="switchTab('converter')">
+
+    <button
+        class="nav-btn active"
+        id="btn-converter"
+        onclick="switchTab('converter')">
         ⚙️ منصة التحويل
     </button>
 
-    <button class="nav-btn" id="btn-prompts" onclick="switchTab('prompts')">
+    <button
+        class="nav-btn"
+        id="btn-prompts"
+        onclick="switchTab('prompts')">
         🧠 المولد الذكي
     </button>
+
 </div>
 
-<div id="converter-tab" class="main-container tab-content active-tab">
+
+<div
+    id="converter-tab"
+    class="main-container tab-content active-tab">
 
     <div class="box-panel">
 
         <div class="ai-prompts">
+
             <p>🤖 أوامر جاهزة للذكاء الاصطناعي:</p>
 
             <div class="prompt-btns">
-                <button class="prompt-btn" onclick="copyQuickPrompt('a4',this)">📄 بحث أكاديمي</button>
-                <button class="prompt-btn" onclick="copyQuickPrompt('169',this)">🖥️ عرض شاشات</button>
-                <button class="prompt-btn" onclick="copyQuickPrompt('mobile',this)">📱 عرض جوال</button>
-                <button class="prompt-btn" onclick="copyQuickPrompt('project',this)">🎨 مشروع 16:9</button>
-                <button class="prompt-btn" onclick="copyQuickPrompt('mindmap',this)">🧠 خريطة مفاهيم</button>
-                <button class="prompt-btn" onclick="copyQuickPrompt('project-a4',this)">📋 مشروع A4</button>
+
+                <button
+                    class="prompt-btn"
+                    onclick="copyQuickPrompt('a4',this)">
+                    📄 بحث أكاديمي
+                </button>
+
+                <button
+                    class="prompt-btn"
+                    onclick="copyQuickPrompt('169',this)">
+                    🖥️ عرض شاشات
+                </button>
+
+                <button
+                    class="prompt-btn"
+                    onclick="copyQuickPrompt('mobile',this)">
+                    📱 عرض جوال
+                </button>
+
+                <button
+                    class="prompt-btn"
+                    onclick="copyQuickPrompt('project',this)">
+                    🎨 مشروع 16:9
+                </button>
+
+                <button
+                    class="prompt-btn"
+                    onclick="copyQuickPrompt('mindmap',this)">
+                    🧠 خريطة مفاهيم
+                </button>
+
+                <button
+                    class="prompt-btn"
+                    onclick="copyQuickPrompt('project-a4',this)">
+                    📋 مشروع A4
+                </button>
+
             </div>
         </div>
 
+
         <div class="form-group">
+
             <label>اسم الملف المستخرج:</label>
-            <input type="text" id="file-name" value="مستند_جديد" placeholder="اكتب اسم الملف هنا...">
+
+            <input
+                type="text"
+                id="file-name"
+                value="مستند_جديد"
+                placeholder="اكتب اسم الملف هنا...">
+
         </div>
+
 
         <div class="row">
 
             <div class="form-group">
+
                 <label>نوع الاستخراج:</label>
 
-                <select id="format-select" onchange="updateUI()">
+                <select
+                    id="format-select"
+                    onchange="updateUI()">
+
                     <optgroup label="مستندات (جاهزة للطباعة والعرض)">
-                        <option value="pdf-a4">ملف PDF (مقاس A4)</option>
-                        <option value="pdf-169">ملف PDF (مقاس 16:9)</option>
-                        <option value="pptx">بوربوينت PPTX (مقاس 16:9)</option>
+
+                        <option value="pdf-a4">
+                            ملف PDF (مقاس A4)
+                        </option>
+
+                        <option value="pdf-169">
+                            ملف PDF (مقاس 16:9)
+                        </option>
+
+                        <option value="pptx">
+                            بوربوينت PPTX (مقاس 16:9)
+                        </option>
+
                     </optgroup>
 
                     <optgroup label="مقاطع فيديو (تلقائية العرض)">
-                        <option value="vid-169">فيديو شاشات (16:9)</option>
-                        <option value="vid-916">فيديو جوال (9:16)</option>
+
+                        <option value="vid-169">
+                            فيديو شاشات (16:9)
+                        </option>
+
+                        <option value="vid-916">
+                            فيديو جوال (9:16)
+                        </option>
+
                     </optgroup>
+
                 </select>
+
             </div>
 
+
             <div class="form-group">
+
                 <label>الجودة:</label>
 
                 <select id="quality-select">
-                    <option value="1">عادية (سريعة جداً)</option>
-                    <option value="2" selected>عالية (متوازنة)</option>
-                    <option value="3">ممتازة (للصور الدقيقة)</option>
+
+                    <option value="1">
+                        عادية (سريعة جداً)
+                    </option>
+
+                    <option value="2" selected>
+                        عالية (متوازنة)
+                    </option>
+
+                    <option value="3">
+                        ممتازة (للصور الدقيقة)
+                    </option>
+
                 </select>
+
             </div>
 
         </div>
 
-        <div class="row" id="video-options" style="display:none;">
+
+        <div
+            class="row"
+            id="video-options"
+            style="display:none;">
 
             <div class="form-group">
+
                 <label>مدة كل شريحة (فيديو):</label>
 
                 <select id="slide-duration">
-                    <option value="3">3 ثواني</option>
-                    <option value="5" selected>5 ثواني</option>
-                    <option value="8">8 ثواني</option>
+
+                    <option value="3">
+                        3 ثواني
+                    </option>
+
+                    <option value="5" selected>
+                        5 ثواني
+                    </option>
+
+                    <option value="8">
+                        8 ثواني
+                    </option>
+
                 </select>
+
             </div>
 
+
             <div class="form-group">
+
                 <label>التحركات (الأنيميشن):</label>
 
                 <select id="animation-style">
-                    <option value="zoom" selected>تكبير سينمائي</option>
-                    <option value="slide">سحب جانبي</option>
-                    <option value="fade">تلاشي ناعم</option>
-                    <option value="none">بدون تحركات</option>
+
+                    <option value="zoom" selected>
+                        تكبير سينمائي
+                    </option>
+
+                    <option value="slide">
+                        سحب جانبي
+                    </option>
+
+                    <option value="fade">
+                        تلاشي ناعم
+                    </option>
+
+                    <option value="none">
+                        بدون تحركات
+                    </option>
+
                 </select>
+
             </div>
 
         </div>
+
 
         <div class="form-group">
 
             <div class="textarea-header">
-                <label style="margin:0;">كود الـ HTML:</label>
+
+                <label style="margin:0;">
+                    كود الـ HTML:
+                </label>
 
                 <div class="action-btns">
-                    <button class="clear-btn" onclick="clearCode()">🗑️ مسح</button>
-                    <button onclick="previewCode()">👁️ معاينة</button>
-                    <button onclick="saveToHistory()">💾 حفظ</button>
+
+                    <button
+                        class="clear-btn"
+                        onclick="clearCode()">
+                        🗑️ مسح
+                    </button>
+
+                    <button onclick="previewCode()">
+                        👁️ معاينة
+                    </button>
+
+                    <button onclick="saveToHistory()">
+                        💾 حفظ
+                    </button>
+
                 </div>
+
             </div>
 
-            <textarea id="html-input" placeholder="الصق الكود هنا..."></textarea>
+
+            <textarea
+                id="html-input"
+                placeholder="الصق الكود هنا..."></textarea>
+
+
+            <!-- =================================================
+                 مدير الصور
+                 ================================================= -->
+
+            <div
+                id="image-manager"
+                class="html-image-manager">
+
+                <div class="image-manager-header">
+
+                    <h3 class="image-manager-title">
+                        🖼️ الصور الموجودة في الكود
+                    </h3>
+
+                    <span
+                        id="image-manager-count"
+                        class="image-manager-count">
+                        0 صورة
+                    </span>
+
+                </div>
+
+
+                <p class="image-manager-description">
+                    يتم تحديد الصفحة الفعلية لكل صورة تلقائيًا.
+                    يمكنك الاحتفاظ بالصورة أو استبدالها من الاستوديو.
+                    الاستبدال لا يغيّر كود HTML الأصلي.
+                </p>
+
+
+                <div
+                    id="image-manager-list"
+                    class="image-manager-list">
+                </div>
+
+
+                <button
+                    class="image-manager-refresh"
+                    onclick="analyzeHTMLImages()">
+                    🔄 تحديث قائمة الصور
+                </button>
+
+            </div>
+
 
             <div class="sample-row">
-                <button class="sample-btn" onclick="loadSample('a4')">📄 تجربة بحث</button>
-                <button class="sample-btn" onclick="loadSample('169')">🖥️ تجربة عرض</button>
-                <button class="sample-btn" onclick="loadSample('mindmap')">🧠 خريطة مفاهيم</button>
-                <button class="sample-btn" onclick="loadSample('project-a4')">📋 مشروع A4</button>
+
+                <button
+                    class="sample-btn"
+                    onclick="loadSample('a4')">
+                    📄 تجربة بحث
+                </button>
+
+                <button
+                    class="sample-btn"
+                    onclick="loadSample('169')">
+                    🖥️ تجربة عرض
+                </button>
+
+                <button
+                    class="sample-btn"
+                    onclick="loadSample('mindmap')">
+                    🧠 خريطة مفاهيم
+                </button>
+
+                <button
+                    class="sample-btn"
+                    onclick="loadSample('project-a4')">
+                    📋 مشروع A4
+                </button>
+
             </div>
 
-            <div id="history-container" style="margin-top:15px;">
-                <label style="font-size:12px;color:#94a3b8;">
+
+            <div
+                id="history-container"
+                style="margin-top:15px;">
+
+                <label
+                    style="font-size:12px;color:#94a3b8;">
                     📂 آخر الأكواد المحفوظة:
                 </label>
 
-                <div id="history-list" class="history-box"></div>
+                <div
+                    id="history-list"
+                    class="history-box">
+                </div>
+
             </div>
 
         </div>
 
-        <button id="capture-btn" class="export-btn" onclick="exportFile()">
+
+        <button
+            id="capture-btn"
+            class="export-btn"
+            onclick="exportFile()">
             بدء الاستخراج 📥
         </button>
 
     </div>
 </div>
 
-<div id="prompts-tab" class="main-container tab-content">
+
+<div
+    id="prompts-tab"
+    class="main-container tab-content">
 
     <div class="box-panel">
 
         <div class="form-group">
 
-            <label>نوع الملف المطلوب تصميم كوده:</label>
+            <label>
+                نوع الملف المطلوب تصميم كوده:
+            </label>
 
-            <select id="prompt-type" onchange="generatePromptText()">
-                <option value="a4">📄 بحث / تقرير (مقاس A4)</option>
-                <option value="169">🖥️ عرض تقديم (مقاس 16:9)</option>
-                <option value="916">📱 عرض جوال / تيك توك (مقاس 9:16)</option>
-                <option value="project">🎨 مشروع (صفحة واحدة 16:9)</option>
-                <option value="mindmap">🧠 خريطة مفاهيم (A4)</option>
-                <option value="project-a4">📋 مشروع A4 (صفحة واحدة)</option>
+            <select
+                id="prompt-type"
+                onchange="generatePromptText()">
+
+                <option value="a4">
+                    📄 بحث / تقرير (مقاس A4)
+                </option>
+
+                <option value="169">
+                    🖥️ عرض تقديم (مقاس 16:9)
+                </option>
+
+                <option value="916">
+                    📱 عرض جوال / تيك توك (مقاس 9:16)
+                </option>
+
+                <option value="project">
+                    🎨 مشروع (صفحة واحدة 16:9)
+                </option>
+
+                <option value="mindmap">
+                    🧠 خريطة مفاهيم (A4)
+                </option>
+
+                <option value="project-a4">
+                    📋 مشروع A4 (صفحة واحدة)
+                </option>
+
             </select>
 
         </div>
 
+
         <div class="row">
 
             <div class="form-group">
+
                 <label>نظام الألوان:</label>
 
-                <select id="color-scheme" onchange="generatePromptText()">
-                    <option value="">دَع الذكاء يختار</option>
-                    <option value="blue">أزرق محترف</option>
-                    <option value="green">أخضر طبيعي</option>
-                    <option value="purple">بنفسجي إبداعي</option>
-                    <option value="warm">ألوان دافئة</option>
+                <select
+                    id="color-scheme"
+                    onchange="generatePromptText()">
+
+                    <option value="">
+                        دَع الذكاء يختار
+                    </option>
+
+                    <option value="blue">
+                        أزرق محترف
+                    </option>
+
+                    <option value="green">
+                        أخضر طبيعي
+                    </option>
+
+                    <option value="purple">
+                        بنفسجي إبداعي
+                    </option>
+
+                    <option value="warm">
+                        ألوان دافئة
+                    </option>
+
                 </select>
+
             </div>
 
+
             <div class="form-group">
+
                 <label>النمط:</label>
 
-                <select id="design-style" onchange="generatePromptText()">
-                    <option value="">كلاسيكي حديث</option>
-                    <option value="glassmorphism">زجاجي شفّاف</option>
-                    <option value="minimalist">بسيط وأنيق</option>
-                    <option value="bold">جريء وملون</option>
+                <select
+                    id="design-style"
+                    onchange="generatePromptText()">
+
+                    <option value="">
+                        كلاسيكي حديث
+                    </option>
+
+                    <option value="glassmorphism">
+                        زجاجي شفّاف
+                    </option>
+
+                    <option value="minimalist">
+                        بسيط وأنيق
+                    </option>
+
+                    <option value="bold">
+                        جريء وملون
+                    </option>
+
                 </select>
+
             </div>
 
+
             <div class="form-group">
+
                 <label>حجم الخط:</label>
 
-                <select id="base-font-size" onchange="generatePromptText()">
-                    <option value="">افتراضي</option>
-                    <option value="large">كبير (للعروض)</option>
-                    <option value="small">صغير (للتفاصيل)</option>
+                <select
+                    id="base-font-size"
+                    onchange="generatePromptText()">
+
+                    <option value="">
+                        افتراضي
+                    </option>
+
+                    <option value="large">
+                        كبير (للعروض)
+                    </option>
+
+                    <option value="small">
+                        صغير (للتفاصيل)
+                    </option>
+
                 </select>
+
             </div>
 
         </div>
+
 
         <label style="margin-top:10px;">
             المتطلبات (اضغط 👁️ لشطب المتطلب):
         </label>
 
-        <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-title')">👁️</button>
-            <input type="text" id="req-title" placeholder="عنوان البحث أو العرض" oninput="generatePromptText()">
-        </div>
 
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-subject')">👁️</button>
-            <input type="text" id="req-subject" placeholder="المادة" oninput="generatePromptText()">
+
+            <button
+                class="toggle-req"
+                onclick="toggleInput(this,'req-title')">
+                👁️
+            </button>
+
+            <input
+                type="text"
+                id="req-title"
+                placeholder="عنوان البحث أو العرض"
+                oninput="generatePromptText()">
+
         </div>
 
-        <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-name')">👁️</button>
-            <input type="text" id="req-name" placeholder="اسم الطالب / المقدِّم" oninput="generatePromptText()">
-        </div>
 
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-teacher')">👁️</button>
-            <input type="text" id="req-teacher" placeholder="اسم المعلم" oninput="generatePromptText()">
+
+            <button
+                class="toggle-req"
+                onclick="toggleInput(this,'req-subject')">
+                👁️
+            </button>
+
+            <input
+                type="text"
+                id="req-subject"
+                placeholder="المادة"
+                oninput="generatePromptText()">
+
         </div>
 
-        <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-grade')">👁️</button>
-            <input type="text" id="req-grade" placeholder="الصف" oninput="generatePromptText()">
-        </div>
 
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-year')">👁️</button>
-            <input type="text" id="req-year" placeholder="العام الدراسي" oninput="generatePromptText()">
+
+            <button
+                class="toggle-req"
+                onclick="toggleInput(this,'req-name')">
+                👁️
+            </button>
+
+            <input
+                type="text"
+                id="req-name"
+                placeholder="اسم الطالب / المقدِّم"
+                oninput="generatePromptText()">
+
         </div>
 
+
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-pages')">👁️</button>
-            <input type="text" id="req-pages" placeholder="عدد الصفحات / الشرائح" oninput="generatePromptText()">
+
+            <button
+                class="toggle-req"
+                onclick="toggleInput(this,'req-teacher')">
+                👁️
+            </button>
+
+            <input
+                type="text"
+                id="req-teacher"
+                placeholder="اسم المعلم"
+                oninput="generatePromptText()">
+
         </div>
+
+
+        <div class="req-row">
+
+            <button
+                class="toggle-req"
+                onclick="toggleInput(this,'req-grade')">
+                👁️
+            </button>
+
+            <input
+                type="text"
+                id="req-grade"
+                placeholder="الصف"
+                oninput="generatePromptText()">
+
+        </div>
+
+
+        <div class="req-row">
+
+            <button
+                class="toggle-req"
+                onclick="toggleInput(this,'req-year')">
+                👁️
+            </button>
+
+            <input
+                type="text"
+                id="req-year"
+                placeholder="العام الدراسي"
+                oninput="generatePromptText()">
+
+        </div>
+
+
+        <div class="req-row">
+
+            <button
+                class="toggle-req"
+                onclick="toggleInput(this,'req-pages')">
+                👁️
+            </button>
+
+            <input
+                type="text"
+                id="req-pages"
+                placeholder="عدد الصفحات / الشرائح"
+                oninput="generatePromptText()">
+
+        </div>
+
 
         <label style="margin-top:15px;">
             ✨ الأمر النهائي للذكاء الاصطناعي:
         </label>
 
-        <textarea id="final-prompt-output"
-                  readonly
-                  style="min-height:180px;margin-bottom:10px;"></textarea>
 
-        <button class="export-btn"
-                style="background:#059669;"
-                onclick="copyGeneratedPrompt()">
+        <textarea
+            id="final-prompt-output"
+            readonly
+            style="min-height:180px;margin-bottom:10px;">
+        </textarea>
+
+
+        <button
+            class="export-btn"
+            style="background:#059669;"
+            onclick="copyGeneratedPrompt()">
             نسخ الأمر 📋
         </button>
 
     </div>
 </div>
+
 
 <script>
 
@@ -666,44 +1298,23 @@
    الإعدادات
    ========================================================= */
 
-/*
-   مهم:
-   لا تضع Bot Token داخل JavaScript.
-   إذا عندك Backend:
-   ضع هنا رابط الـ endpoint الذي يتولى إرسال تيليجرام.
-
-   مثال:
-   const TELEGRAM_ENDPOINT = "/api/telegram";
-
-   اتركه فارغًا إذا ما تحتاج إرسال الملفات لتيليجرام.
-*/
 const TELEGRAM_ENDPOINT = "";
 
-/*
-   ملاحظة:
-   هذه الحماية ما زالت حماية واجهة فقط وليست حماية أمنية حقيقية.
-*/
 const secretHash = "U2ExMjM0NTY3OEA=";
 
 
 /* =========================================================
-   إعدادات محرك التصيير
+   إعدادات التصيير
    ========================================================= */
 
 const RENDER_CONFIG = {
 
-    // أقصى عدد بكسلات تقريبًا للـ canvas
-    // لتقليل احتمال انهيار الذاكرة على الآيفون.
     maxCanvasPixels: 6500000,
 
-    // أقصى وقت انتظار للخطوط
     fontTimeout: 4500,
 
-    // أقصى وقت انتظار للصورة
     imageTimeout: 5000,
 
-    // الفيديو لا يحتاج جودة ضخمة لأن الناتج النهائي
-    // أصلاً 720p / 1280p.
     videoMaxScale: 1.5,
 
     jpegQuality: 0.88
@@ -711,19 +1322,1084 @@ const RENDER_CONFIG = {
 
 
 /* =========================================================
+   مدير الصور
+   ========================================================= */
+
+/*
+   جميع الاستبدالات محفوظة في الذاكرة فقط.
+
+   الكود الأصلي داخل textarea لا يتغير.
+*/
+let imageReplacements = new Map();
+
+/*
+   قائمة الصور المكتشفة حاليًا.
+*/
+let detectedImages = [];
+
+/*
+   مؤقت تحليل الكود أثناء الكتابة/اللصق.
+*/
+let imageAnalysisTimer = null;
+
+
+/*
+   استخراج اسم الصورة من:
+   data-image-name
+   alt
+   title
+   اسم الملف من الرابط
+*/
+function getImageDisplayName(img, index) {
+
+    const customName =
+        img.getAttribute("data-image-name");
+
+    if (customName && customName.trim()) {
+        return customName.trim();
+    }
+
+
+    const alt =
+        img.getAttribute("alt");
+
+    if (alt && alt.trim()) {
+        return alt.trim();
+    }
+
+
+    const title =
+        img.getAttribute("title");
+
+    if (title && title.trim()) {
+        return title.trim();
+    }
+
+
+    const src =
+        img.getAttribute("src") || "";
+
+
+    try {
+
+        const clean =
+            src.split("?")[0]
+               .split("#")[0];
+
+
+        const parts =
+            clean.split("/");
+
+
+        const file =
+            parts[parts.length - 1];
+
+
+        if (file) {
+
+            return decodeURIComponent(file);
+        }
+
+    } catch {}
+
+
+    return `الصورة ${index + 1}`;
+}
+
+
+/*
+   إنشاء مفتاح ثابت نسبيًا للصورة.
+*/
+function createImageKey(index, img) {
+
+    const src =
+        img.getAttribute("src") || "";
+
+    const alt =
+        img.getAttribute("alt") || "";
+
+    const name =
+        img.getAttribute("data-image-name") || "";
+
+    return [
+        index,
+        src,
+        alt,
+        name
+    ].join("|");
+}
+
+
+/*
+   الحصول على اسم الصفحة.
+*/
+function getImagePageNumber(img) {
+
+    /*
+       نبحث عن أقرب .page.
+    */
+    const page =
+        img.closest(".page");
+
+
+    if (!page) {
+
+        /*
+           إذا لم يوجد .page،
+           نعتبرها صفحة واحدة.
+        */
+        return 1;
+    }
+
+
+    const allPages =
+        Array.from(
+            document.querySelectorAll(".page")
+        );
+
+
+    const index =
+        allPages.indexOf(page);
+
+
+    return index >= 0
+        ? index + 1
+        : 1;
+}
+
+
+/*
+   تحديد رقم الصفحة من DOMParser.
+*/
+function getParsedPageNumber(img, doc) {
+
+    const page =
+        img.closest(".page");
+
+
+    if (!page) {
+        return 1;
+    }
+
+
+    const allPages =
+        Array.from(
+            doc.querySelectorAll(".page")
+        );
+
+
+    const index =
+        allPages.indexOf(page);
+
+
+    return index >= 0
+        ? index + 1
+        : 1;
+}
+
+
+/*
+   استخراج أبعاد الصورة من الكود.
+
+   الأولوية:
+   width/height attributes
+   ثم style
+   ثم القيم الافتراضية.
+*/
+function getImageDefinedDimensions(img) {
+
+    let width =
+        img.getAttribute("width");
+
+    let height =
+        img.getAttribute("height");
+
+
+    if (
+        width &&
+        height
+    ) {
+
+        return {
+            width,
+            height,
+            source: "HTML"
+        };
+    }
+
+
+    const style =
+        img.getAttribute("style") || "";
+
+
+    const widthMatch =
+        style.match(
+            /(?:^|;)\s*width\s*:\s*([^;]+)/i
+        );
+
+
+    const heightMatch =
+        style.match(
+            /(?:^|;)\s*height\s*:\s*([^;]+)/i
+        );
+
+
+    if (
+        widthMatch &&
+        heightMatch
+    ) {
+
+        return {
+            width: widthMatch[1].trim(),
+            height: heightMatch[1].trim(),
+            source: "CSS"
+        };
+    }
+
+
+    return {
+        width: "حسب CSS",
+        height: "حسب CSS",
+        source: "CSS"
+    };
+}
+
+
+/*
+   قراءة أبعاد الصورة الأصلية إذا كانت قابلة للتحميل.
+*/
+function getNaturalImageSize(src) {
+
+    return new Promise(resolve => {
+
+        if (!src) {
+
+            resolve({
+                width: null,
+                height: null
+            });
+
+            return;
+        }
+
+
+        const img =
+            new Image();
+
+
+        let finished = false;
+
+
+        const done = () => {
+
+            if (finished) return;
+
+            finished = true;
+
+            resolve({
+                width:
+                    img.naturalWidth || null,
+
+                height:
+                    img.naturalHeight || null
+            });
+        };
+
+
+        img.onload = done;
+
+        img.onerror = done;
+
+
+        setTimeout(
+            done,
+            2500
+        );
+
+
+        img.src = src;
+    });
+}
+
+
+/*
+   تحليل HTML واكتشاف الصور.
+*/
+async function analyzeHTMLImages() {
+
+    const textarea =
+        document.getElementById("html-input");
+
+    const manager =
+        document.getElementById("image-manager");
+
+    const list =
+        document.getElementById("image-manager-list");
+
+    const count =
+        document.getElementById("image-manager-count");
+
+
+    if (!textarea || !manager || !list) {
+        return;
+    }
+
+
+    const code =
+        textarea.value;
+
+
+    if (!code.trim()) {
+
+        detectedImages = [];
+
+        imageReplacements.clear();
+
+        manager.classList.remove("visible");
+
+        list.innerHTML = "";
+
+        return;
+    }
+
+
+    let doc;
+
+
+    try {
+
+        doc =
+            new DOMParser().parseFromString(
+                code,
+                "text/html"
+            );
+
+    } catch {
+
+        detectedImages = [];
+
+        manager.classList.remove("visible");
+
+        return;
+    }
+
+
+    const images =
+        Array.from(
+            doc.querySelectorAll("img")
+        );
+
+
+    if (!images.length) {
+
+        detectedImages = [];
+
+        manager.classList.remove("visible");
+
+        list.innerHTML = "";
+
+        return;
+    }
+
+
+    /*
+       الاحتفاظ بالاستبدالات التي ما زالت مطابقة.
+    */
+    const oldReplacements =
+        imageReplacements;
+
+    const newReplacements =
+        new Map();
+
+
+    detectedImages =
+        images.map((img, index) => {
+
+            const key =
+                createImageKey(
+                    index,
+                    img
+                );
+
+
+            if (oldReplacements.has(key)) {
+
+                newReplacements.set(
+                    key,
+                    oldReplacements.get(key)
+                );
+            }
+
+
+            const dimensions =
+                getImageDefinedDimensions(img);
+
+
+            return {
+
+                index,
+
+                key,
+
+                page:
+                    getParsedPageNumber(
+                        img,
+                        doc
+                    ),
+
+                name:
+                    getImageDisplayName(
+                        img,
+                        index
+                    ),
+
+                src:
+                    img.getAttribute("src") || "",
+
+                alt:
+                    img.getAttribute("alt") || "",
+
+                width:
+                    dimensions.width,
+
+                height:
+                    dimensions.height,
+
+                dimensionSource:
+                    dimensions.source
+            };
+
+        });
+
+
+    imageReplacements =
+        newReplacements;
+
+
+    count.textContent =
+        `${detectedImages.length} صورة`;
+
+
+    manager.classList.add("visible");
+
+
+    /*
+       رسم البطاقات مباشرة.
+    */
+    renderImageManager();
+
+
+    /*
+       تحديث الأبعاد الطبيعية في الخلفية.
+    */
+    detectedImages.forEach(
+        async item => {
+
+            if (!item.src) return;
+
+
+            const natural =
+                await getNaturalImageSize(
+                    item.src
+                );
+
+
+            item.naturalWidth =
+                natural.width;
+
+            item.naturalHeight =
+                natural.height;
+
+
+            renderImageManager();
+        }
+    );
+}
+
+
+/*
+   عرض مدير الصور.
+*/
+function renderImageManager() {
+
+    const list =
+        document.getElementById(
+            "image-manager-list"
+        );
+
+
+    if (!list) return;
+
+
+    if (!detectedImages.length) {
+
+        list.innerHTML = `
+            <div class="image-empty">
+                لا توجد صور في الكود الحالي.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    list.innerHTML =
+        detectedImages.map(
+            item => {
+
+                const replacement =
+                    imageReplacements.get(
+                        item.key
+                    );
+
+
+                const isReplaced =
+                    !!replacement;
+
+
+                const previewSrc =
+                    replacement
+                        ? replacement.dataUrl
+                        : item.src;
+
+
+                const displayName =
+                    replacement
+                        ? replacement.fileName
+                        : item.name;
+
+
+                const naturalDimensions =
+                    item.naturalWidth &&
+                    item.naturalHeight
+                        ? `${item.naturalWidth} × ${item.naturalHeight}px`
+                        : "غير معروف";
+
+
+                const definedDimensions =
+                    `${item.width} × ${item.height}`;
+
+
+                return `
+
+                    <div
+                        class="html-image-card ${isReplaced ? "replaced" : ""}"
+                        data-image-card="${item.index}">
+
+                        <div class="html-image-card-top">
+
+                            <div class="html-image-thumb">
+
+                                ${
+                                    previewSrc
+                                    ? `
+                                        <img
+                                            src="${escapeAttribute(previewSrc)}"
+                                            alt="">
+                                      `
+                                    : `
+                                        <span style="color:#475569;font-size:20px;">
+                                            🖼️
+                                        </span>
+                                      `
+                                }
+
+                            </div>
+
+
+                            <div class="html-image-info">
+
+                                <p class="html-image-name"
+                                   title="${escapeAttribute(displayName)}">
+                                    ${escapeHTML(displayName)}
+                                </p>
+
+
+                                <div class="html-image-meta">
+
+                                    <div class="html-image-meta-item">
+                                        <strong>الصفحة:</strong>
+                                        ${item.page}
+                                    </div>
+
+                                    <div class="html-image-meta-item">
+                                        <strong>الصورة:</strong>
+                                        ${item.index + 1}
+                                    </div>
+
+                                    <div class="html-image-meta-item">
+                                        <strong>أبعاد الكود:</strong>
+                                        ${escapeHTML(definedDimensions)}
+                                    </div>
+
+                                    <div class="html-image-meta-item">
+                                        <strong>الأبعاد الأصلية:</strong>
+                                        ${naturalDimensions}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="html-image-url"
+                            title="${escapeAttribute(item.src)}">
+                            ${escapeHTML(
+                                isReplaced
+                                    ? "تم اختيار صورة جديدة من الاستوديو"
+                                    : (item.src || "لا يوجد رابط src")
+                            )}
+                        </div>
+
+
+                        <div class="html-image-actions">
+
+                            <button
+                                class="html-image-action keep"
+                                onclick="keepOriginalImage(${item.index})">
+                                ↩️ الاحتفاظ بالحالية
+                            </button>
+
+
+                            <button
+                                class="html-image-action replace"
+                                onclick="chooseReplacementImage(${item.index})">
+                                🖼️ اختيار من الاستوديو
+                            </button>
+
+                        </div>
+
+
+                        <div class="html-image-status">
+
+                            ${
+                                isReplaced
+                                    ? `✅ سيتم استخدام: ${escapeHTML(replacement.fileName)}`
+                                    : "الصورة الحالية مستخدمة"
+                            }
+
+                        </div>
+
+                    </div>
+                `;
+            }
+        ).join("");
+}
+
+
+/*
+   فتح الاستوديو للصورة المطلوبة.
+*/
+function chooseReplacementImage(index) {
+
+    const item =
+        detectedImages[index];
+
+
+    if (!item) return;
+
+
+    const input =
+        document.createElement("input");
+
+
+    input.type =
+        "file";
+
+    input.accept =
+        "image/*";
+
+
+    input.style.display =
+        "none";
+
+
+    document.body.appendChild(input);
+
+
+    input.addEventListener(
+        "change",
+        async () => {
+
+            const file =
+                input.files &&
+                input.files[0];
+
+
+            if (!file) {
+
+                input.remove();
+
+                return;
+            }
+
+
+            if (
+                !file.type ||
+                !file.type.startsWith("image/")
+            ) {
+
+                alert(
+                    "الملف المحدد ليس صورة."
+                );
+
+                input.remove();
+
+                return;
+            }
+
+
+            try {
+
+                const dataUrl =
+                    await readFileAsDataURL(
+                        file
+                    );
+
+
+                imageReplacements.set(
+                    item.key,
+                    {
+                        dataUrl,
+                        fileName:
+                            file.name,
+                        mimeType:
+                            file.type
+                    }
+                );
+
+
+                renderImageManager();
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "تعذر قراءة الصورة."
+                );
+
+            } finally {
+
+                input.remove();
+            }
+
+        },
+        { once: true }
+    );
+
+
+    input.click();
+}
+
+
+/*
+   الاحتفاظ بالصورة الأصلية.
+*/
+function keepOriginalImage(index) {
+
+    const item =
+        detectedImages[index];
+
+
+    if (!item) return;
+
+
+    imageReplacements.delete(
+        item.key
+    );
+
+
+    renderImageManager();
+}
+
+
+/*
+   قراءة File كـ Data URL.
+*/
+function readFileAsDataURL(file) {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                () => resolve(
+                    reader.result
+                );
+
+
+            reader.onerror =
+                () => reject(
+                    reader.error ||
+                    new Error(
+                        "FileReader failed"
+                    )
+                );
+
+
+            reader.readAsDataURL(file);
+        }
+    );
+}
+
+
+/*
+   Escape للنص.
+*/
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/*
+   Escape للـ attribute.
+*/
+function escapeAttribute(value) {
+
+    return escapeHTML(value);
+}
+
+
+/*
+   تطبيق استبدالات الصور على حاوية التصيير.
+
+   مهم:
+   لا يتم تعديل textarea.
+
+   فقط نسخة التصدير.
+*/
+function applyImageReplacements(container) {
+
+    if (!container || !detectedImages.length) {
+        return;
+    }
+
+
+    const images =
+        Array.from(
+            container.querySelectorAll("img")
+        );
+
+
+    detectedImages.forEach(
+        item => {
+
+            const replacement =
+                imageReplacements.get(
+                    item.key
+                );
+
+
+            if (!replacement) {
+                return;
+            }
+
+
+            const img =
+                images[item.index];
+
+
+            if (!img) {
+                return;
+            }
+
+
+            /*
+               استبدال الصورة.
+            */
+            img.setAttribute(
+                "src",
+                replacement.dataUrl
+            );
+
+
+            img.src =
+                replacement.dataUrl;
+
+
+            /*
+               منع srcset القديم من اختيار
+               الصورة القديمة.
+            */
+            img.removeAttribute(
+                "srcset"
+            );
+
+            img.removeAttribute(
+                "sizes"
+            );
+
+
+            /*
+               نحافظ على جميع خصائص التصميم
+               الموجودة أصلًا.
+
+               إذا كان للصورة أبعاد HTML
+               نتركها كما هي.
+            */
+        }
+    );
+}
+
+
+/*
+   تطبيق الاستبدالات على نافذة المعاينة.
+*/
+function applyImageReplacementsToDocument(doc) {
+
+    if (!doc || !detectedImages.length) {
+        return;
+    }
+
+
+    const images =
+        Array.from(
+            doc.querySelectorAll("img")
+        );
+
+
+    detectedImages.forEach(
+        item => {
+
+            const replacement =
+                imageReplacements.get(
+                    item.key
+                );
+
+
+            if (!replacement) {
+                return;
+            }
+
+
+            const img =
+                images[item.index];
+
+
+            if (!img) return;
+
+
+            img.setAttribute(
+                "src",
+                replacement.dataUrl
+            );
+
+
+            img.src =
+                replacement.dataUrl;
+
+
+            img.removeAttribute(
+                "srcset"
+            );
+
+            img.removeAttribute(
+                "sizes"
+            );
+        }
+    );
+}
+
+
+/*
+   إعادة تحليل الصور بعد تغيير HTML.
+*/
+function scheduleImageAnalysis() {
+
+    clearTimeout(
+        imageAnalysisTimer
+    );
+
+
+    imageAnalysisTimer =
+        setTimeout(
+            () => {
+                analyzeHTMLImages();
+            },
+            250
+        );
+}
+
+
+/* =========================================================
    بدء المنصة
    ========================================================= */
 
-window.addEventListener("load", () => {
+window.addEventListener(
+    "load",
+    () => {
 
-    if (localStorage.getItem("auth_token") === secretHash) {
-        document.getElementById("password-overlay").style.display = "none";
+        if (
+            localStorage.getItem(
+                "auth_token"
+            ) === secretHash
+        ) {
+
+            document.getElementById(
+                "password-overlay"
+            ).style.display = "none";
+        }
+
+
+        updateUI();
+
+        generatePromptText();
+
+        renderHistory();
+
+        analyzeHTMLImages();
     }
+);
 
-    updateUI();
-    generatePromptText();
-    renderHistory();
-});
+
+/*
+   مراقبة لصق/كتابة HTML.
+*/
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const textarea =
+            document.getElementById(
+                "html-input"
+            );
+
+
+        if (!textarea) return;
+
+
+        textarea.addEventListener(
+            "input",
+            scheduleImageAnalysis
+        );
+
+
+        textarea.addEventListener(
+            "paste",
+            () => {
+
+                setTimeout(
+                    analyzeHTMLImages,
+                    50
+                );
+
+            }
+        );
+    }
+);
 
 
 /* =========================================================
@@ -734,44 +2410,85 @@ async function sendTextToTelegram(message) {
 
     if (!TELEGRAM_ENDPOINT) return;
 
+
     try {
 
-        await fetch(TELEGRAM_ENDPOINT, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                type: "message",
-                message
-            })
-        });
+        await fetch(
+            TELEGRAM_ENDPOINT,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+                    type: "message",
+                    message
+                })
+            }
+        );
 
     } catch (error) {
-        console.warn("Telegram notification failed:", error);
+
+        console.warn(
+            "Telegram notification failed:",
+            error
+        );
     }
 }
 
 
-async function sendFileToTelegram(blob, name, caption, type = "document") {
+async function sendFileToTelegram(
+    blob,
+    name,
+    caption,
+    type = "document"
+) {
 
     if (!TELEGRAM_ENDPOINT) return;
 
+
     try {
 
-        const formData = new FormData();
+        const formData =
+            new FormData();
 
-        formData.append("type", type);
-        formData.append("file", blob, name);
-        formData.append("caption", caption);
 
-        await fetch(TELEGRAM_ENDPOINT, {
-            method: "POST",
-            body: formData
-        });
+        formData.append(
+            "type",
+            type
+        );
+
+
+        formData.append(
+            "file",
+            blob,
+            name
+        );
+
+
+        formData.append(
+            "caption",
+            caption
+        );
+
+
+        await fetch(
+            TELEGRAM_ENDPOINT,
+            {
+                method: "POST",
+                body: formData
+            }
+        );
 
     } catch (error) {
-        console.warn("Telegram upload failed:", error);
+
+        console.warn(
+            "Telegram upload failed:",
+            error
+        );
     }
 }
 
@@ -782,25 +2499,39 @@ async function sendFileToTelegram(blob, name, caption, type = "document") {
 
 function checkPassword() {
 
-    const input = document.getElementById("pass-input").value;
+    const input =
+        document.getElementById(
+            "pass-input"
+        ).value;
+
 
     if (btoa(input) === secretHash) {
 
-        document.getElementById("password-overlay").style.display = "none";
+        document.getElementById(
+            "password-overlay"
+        ).style.display = "none";
 
-        localStorage.setItem("auth_token", secretHash);
 
-        sendTextToTelegram("✅ دخول ناجح للمنصة.");
+        localStorage.setItem(
+            "auth_token",
+            secretHash
+        );
+
+
+        sendTextToTelegram(
+            "✅ دخول ناجح للمنصة."
+        );
 
     } else {
 
-        document.getElementById("pass-error").style.display = "block";
+        document.getElementById(
+            "pass-error"
+        ).style.display = "block";
 
-        /*
-           لا يتم إرسال كلمة المرور إلى أي جهة.
-        */
-        sendTextToTelegram("❌ محاولة دخول فاشلة.");
 
+        sendTextToTelegram(
+            "❌ محاولة دخول فاشلة."
+        );
     }
 }
 
@@ -811,17 +2542,38 @@ function checkPassword() {
 
 function switchTab(tab) {
 
-    document.querySelectorAll(".tab-content")
-        .forEach(el => el.classList.remove("active-tab"));
+    document.querySelectorAll(
+        ".tab-content"
+    ).forEach(
+        el =>
+            el.classList.remove(
+                "active-tab"
+            )
+    );
 
-    document.querySelectorAll(".nav-btn")
-        .forEach(el => el.classList.remove("active"));
 
-    document.getElementById(tab + "-tab")
-        .classList.add("active-tab");
+    document.querySelectorAll(
+        ".nav-btn"
+    ).forEach(
+        el =>
+            el.classList.remove(
+                "active"
+            )
+    );
 
-    document.getElementById("btn-" + tab)
-        .classList.add("active");
+
+    document.getElementById(
+        tab + "-tab"
+    ).classList.add(
+        "active-tab"
+    );
+
+
+    document.getElementById(
+        "btn-" + tab
+    ).classList.add(
+        "active"
+    );
 }
 
 
@@ -831,13 +2583,25 @@ function switchTab(tab) {
 
 function toggleInput(button, id) {
 
-    const input = document.getElementById(id);
+    const input =
+        document.getElementById(id);
 
-    input.disabled = !input.disabled;
 
-    button.innerText = input.disabled ? "🚫" : "👁️";
+    input.disabled =
+        !input.disabled;
 
-    button.classList.toggle("disabled", input.disabled);
+
+    button.innerText =
+        input.disabled
+            ? "🚫"
+            : "👁️";
+
+
+    button.classList.toggle(
+        "disabled",
+        input.disabled
+    );
+
 
     generatePromptText();
 }
@@ -849,1988 +2613,44 @@ function toggleInput(button, id) {
 
 function generatePromptText() {
 
-    const type = document.getElementById("prompt-type").value;
-    const colorScheme = document.getElementById("color-scheme").value;
-    const designStyle = document.getElementById("design-style").value;
-    const baseFontSize = document.getElementById("base-font-size").value;
+    const type =
+        document.getElementById(
+            "prompt-type"
+        ).value;
 
-    let p = "أنت مطور واجهات أمامية خبير (HTML/CSS). ";
+
+    const colorScheme =
+        document.getElementById(
+            "color-scheme"
+        ).value;
+
+
+    const designStyle =
+        document.getElementById(
+            "design-style"
+        ).value;
+
+
+    const baseFontSize =
+        document.getElementById(
+            "base-font-size"
+        ).value;
+
+
+    let p =
+        "أنت مطور واجهات أمامية خبير (HTML/CSS). ";
+
 
     if (type === "a4")
-        p += "قم بإنشاء كود HTML لبحث أكاديمي باللغة العربية (A4).\n\n";
+        p +=
+            "قم بإنشاء كود HTML لبحث أكاديمي باللغة العربية (A4).\n\n";
+
 
     else if (type === "169")
-        p += "قم بإنشاء كود HTML لعرض تقديمي (16:9) بالعربية.\n\n";
+        p +=
+            "قم بإنشاء كود HTML لعرض تقديمي (16:9) بالعربية.\n\n";
+
 
     else if (type === "916")
-        p += "قم بإنشاء كود HTML لعرض جوال (9:16) بالعربية.\n\n";
-
-    else if (type === "project")
-        p += "قم بإنشاء كود HTML لصفحة مشروع (بوستر) مقاس 16:9.\n\n";
-
-    else if (type === "mindmap")
-        p += "قم بإنشاء كود HTML لخريطة مفاهيم مقاس A4.\n\n";
-
-    else if (type === "project-a4")
-        p += "قم بإنشاء كود HTML لصفحة مشروع مقاس A4.\n\n";
-
-
-    const fields = [
-        { id: "req-title", label: "العنوان" },
-        { id: "req-subject", label: "المادة" },
-        { id: "req-name", label: "الاسم" },
-        { id: "req-teacher", label: "المعلم" },
-        { id: "req-grade", label: "الصف" },
-        { id: "req-year", label: "العام الدراسي" },
-        { id: "req-pages", label: "العدد المطلوب" }
-    ];
-
-
-    fields.forEach(field => {
-
-        const el = document.getElementById(field.id);
-
-        if (!el.disabled && el.value) {
-            p += `**${field.label}:** ${el.value}\n`;
-        }
-
-    });
-
-
-    if (colorScheme)
-        p += `**الألوان:** ${colorScheme}\n`;
-
-    if (designStyle)
-        p += `**النمط:** ${designStyle}\n`;
-
-    if (baseFontSize)
-        p += `**الخط:** ${baseFontSize}\n`;
-
-
-    p += "\n**الشروط الصارمة:**\n";
-
-    p += "1. `<html lang=\"ar\" dir=\"rtl\">` مع استدعاء خطوط Google Fonts.\n";
-
-    p += "2. `body` بخصائص `margin:0; padding:0; box-sizing:border-box;`.\n";
-
-
-    if (type.includes("a4") || type === "mindmap") {
-
-        p += "3. كل صفحة `<div class=\"page\">` أبعادها 794x1123px بخصائص `overflow:hidden; position:relative;`.\n";
-
-    } else if (type === "169" || type === "project") {
-
-        p += "3. كل شريحة `<div class=\"page\">` أبعادها 1280x720px `overflow:hidden; position:relative;`.\n";
-
-    } else {
-
-        p += "3. كل شريحة `<div class=\"page\">` أبعادها 720x1280px `overflow:hidden; position:relative;`.\n";
-    }
-
-
-    p += "4. ممنوع استخدام `ul` أو `ol`، استخدم `<p>` للنقاط.\n";
-
-    p += "5. ممنوع استخدام `letter-spacing`.\n";
-
-
-    if (type === "mindmap") {
-
-        p += "6. استخدم `div` للخطوط الرابطة ولا تستخدم SVG.\n";
-    }
-
-
-    document.getElementById("final-prompt-output").value = p;
-}
-
-
-async function copyGeneratedPrompt() {
-
-    const text = document.getElementById("final-prompt-output").value;
-
-    try {
-
-        await navigator.clipboard.writeText(text);
-
-        alert("✅ تم نسخ الأمر!");
-
-    } catch {
-
-        alert("تعذر النسخ تلقائيًا.");
-    }
-}
-
-
-async function copyQuickPrompt(type, button) {
-
-    const prompts = {
-
-        a4:
-            "أنت مطور واجهات خبير. أنشئ كود HTML لبحث أكاديمي عربي A4. .page 794x1123px overflow:hidden. لا تستخدم ul/ol.",
-
-        169:
-            "أنت مطور واجهات خبير. أنشئ كود HTML لعرض تقديمي عربي 16:9. .page 1280x720px overflow:hidden. لا تستخدم ul/ol.",
-
-        mobile:
-            "أنت مطور واجهات خبير. أنشئ كود HTML لعرض جوال 9:16 عربي. .page 720x1280px overflow:hidden. لا تستخدم ul/ol.",
-
-        project:
-            "أنت مطور ومصمم جرافيك. أنشئ كود HTML لبوستر مشروع عربي 16:9. .page 1280x720px. لا تستخدم ul/ol.",
-
-        mindmap:
-            "أنت مطور خبير. أنشئ كود HTML لخريطة مفاهيم عربية A4. .page 794x1123px, بدون SVG.",
-
-        "project-a4":
-            "أنت مطور خبير. أنشئ كود HTML لصفحة مشروع عربي A4. .page 794x1123px. لا تستخدم ul/ol."
-    };
-
-
-    try {
-
-        await navigator.clipboard.writeText(prompts[type] || "");
-
-        const oldText = button.innerText;
-
-        button.innerText = "✅ تم!";
-
-        setTimeout(() => {
-            button.innerText = oldText;
-        }, 2000);
-
-    } catch {
-
-        alert("تعذر النسخ.");
-    }
-}
-
-
-/* =========================================================
-   العينات
-   ========================================================= */
-
-function loadSample(type) {
-
-    const samples = {
-
-        a4:
-`<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<style>
-body{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:sans-serif
-}
-.page{
-width:794px;
-height:1123px;
-overflow:hidden;
-position:relative;
-padding:50px;
-background:linear-gradient(to bottom,#1e3a8a,#1e40af);
-color:white
-}
-</style>
-</head>
-<body>
-<div class="page">
-<h1>عنوان البحث</h1>
-<p>• نقطة أولى</p>
-</div>
-</body>
-</html>`,
-
-        169:
-`<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<style>
-body{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:sans-serif
-}
-.page{
-width:1280px;
-height:720px;
-overflow:hidden;
-position:relative;
-background:linear-gradient(135deg,#7c3aed,#a855f7);
-color:white;
-display:flex;
-align-items:center;
-justify-content:center
-}
-</style>
-</head>
-<body>
-<div class="page">
-<h1>عرض تقديمي</h1>
-</div>
-</body>
-</html>`,
-
-        mindmap:
-`<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<style>
-body{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:sans-serif
-}
-.page{
-width:794px;
-height:1123px;
-overflow:hidden;
-position:relative;
-background:#f8fafc
-}
-.central{
-background:#2563eb;
-color:white;
-border-radius:50%;
-width:150px;
-height:150px;
-display:flex;
-align-items:center;
-justify-content:center;
-position:absolute;
-top:450px;
-right:320px
-}
-</style>
-</head>
-<body>
-<div class="page">
-<div class="central">المركز</div>
-</div>
-</body>
-</html>`,
-
-        "project-a4":
-`<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<style>
-body{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:sans-serif
-}
-.page{
-width:794px;
-height:1123px;
-overflow:hidden;
-position:relative;
-background:#db2777;
-color:white;
-display:flex;
-align-items:center;
-justify-content:center
-}
-</style>
-</head>
-<body>
-<div class="page">
-<h1>مشروعي</h1>
-</div>
-</body>
-</html>`
-    };
-
-
-    document.getElementById("html-input").value =
-        samples[type] || "";
-}
-
-
-/* =========================================================
-   التاريخ
-   ========================================================= */
-
-/*
-   النسخة الجديدة تحفظ الكود كاملًا بدل أول 150 حرف.
-*/
-
-function saveToHistory() {
-
-    const code = document.getElementById("html-input").value;
-
-    if (!code.trim()) return;
-
-
-    let history;
-
-    try {
-        history = JSON.parse(
-            localStorage.getItem("code_history") || "[]"
-        );
-
-        if (!Array.isArray(history))
-            history = [];
-
-    } catch {
-        history = [];
-    }
-
-
-    history.unshift({
-        code,
-        date: new Date().toLocaleString("ar-SA")
-    });
-
-
-    /*
-       الحد الأقصى 5 أكواد.
-    */
-    history = history.slice(0, 5);
-
-
-    try {
-
-        localStorage.setItem(
-            "code_history",
-            JSON.stringify(history)
-        );
-
-    } catch {
-
-        /*
-           إذا امتلأت ذاكرة localStorage
-           نحذف أقدم عنصر.
-        */
-
-        history = history.slice(0, 3);
-
-        localStorage.setItem(
-            "code_history",
-            JSON.stringify(history)
-        );
-    }
-
-
-    renderHistory();
-
-    alert("✅ تم حفظ الكود كاملًا");
-}
-
-
-function renderHistory() {
-
-    let history;
-
-    try {
-
-        history = JSON.parse(
-            localStorage.getItem("code_history") || "[]"
-        );
-
-        if (!Array.isArray(history))
-            history = [];
-
-    } catch {
-
-        history = [];
-    }
-
-
-    const container =
-        document.getElementById("history-list");
-
-
-    container.innerHTML = history.map((item, index) => {
-
-        const code =
-            typeof item === "string"
-                ? item
-                : item.code || "";
-
-        const preview =
-            code.substring(0, 100)
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;");
-
-
-        return `
-            <div
-                class="history-item"
-                onclick="loadFromHistory(${index})"
-                title="اضغط لاستعادة الكود">
-                ${preview}
-            </div>
-        `;
-
-    }).join("");
-}
-
-
-function loadFromHistory(index) {
-
-    let history;
-
-    try {
-
-        history = JSON.parse(
-            localStorage.getItem("code_history") || "[]"
-        );
-
-    } catch {
-
-        return;
-    }
-
-
-    if (!history[index]) return;
-
-
-    const code =
-        typeof history[index] === "string"
-            ? history[index].replace(/\.\.\.$/, "")
-            : history[index].code;
-
-
-    document.getElementById("html-input").value =
-        code || "";
-}
-
-
-/* =========================================================
-   المعاينة
-   ========================================================= */
-
-function previewCode() {
-
-    const code =
-        document.getElementById("html-input").value;
-
-    if (!code.trim()) return;
-
-
-    const win =
-        window.open("", "_blank");
-
-
-    if (!win) {
-
-        alert("المتصفح منع فتح نافذة المعاينة.");
-
-        return;
-    }
-
-
-    win.document.open();
-
-    win.document.write(code);
-
-    win.document.close();
-}
-
-
-function clearCode() {
-
-    if (confirm("مسح الكود الحالي؟")) {
-
-        document.getElementById("html-input").value = "";
-    }
-}
-
-
-/* =========================================================
-   الواجهة
-   ========================================================= */
-
-function updateUI() {
-
-    const format =
-        document.getElementById("format-select").value;
-
-
-    document.getElementById("video-options")
-        .style.display =
-            format.startsWith("vid")
-                ? "flex"
-                : "none";
-}
-
-
-/* =========================================================
-   أدوات التصيير
-   ========================================================= */
-
-/*
-   انتظار محدود للخطوط.
-   لن يعلق البرنامج إلى الأبد.
-*/
-
-async function waitForFonts() {
-
-    if (!document.fonts) return;
-
-    try {
-
-        await Promise.race([
-
-            document.fonts.ready,
-
-            new Promise(resolve =>
-                setTimeout(
-                    resolve,
-                    RENDER_CONFIG.fontTimeout
-                )
-            )
-
-        ]);
-
-    } catch {}
-}
-
-
-/*
-   حساب جودة آمنة حسب حجم الصفحة.
-*/
-
-function getSafeScale(width, height, requested, isVideo = false) {
-
-    let scale = Number(requested) || 1;
-
-
-    if (isVideo) {
-
-        scale = Math.min(
-            scale,
-            RENDER_CONFIG.videoMaxScale
-        );
-    }
-
-
-    const pixels =
-        width *
-        height *
-        scale *
-        scale;
-
-
-    if (pixels > RENDER_CONFIG.maxCanvasPixels) {
-
-        scale =
-            Math.sqrt(
-                RENDER_CONFIG.maxCanvasPixels /
-                (width * height)
-            );
-    }
-
-
-    return Math.max(
-        1,
-        Math.min(scale, 3)
-    );
-}
-
-
-/*
-   إنشاء حاوية تصيير خارج الشاشة.
-
-   سابقًا كانت opacity:0.
-   الآن تبقى مرئية لمحرك html2canvas
-   لكنها خارج الشاشة.
-*/
-
-function createRenderContainer(code, width) {
-
-    const container =
-        document.createElement("div");
-
-
-    container.style.position = "fixed";
-
-    container.style.left = "-100000px";
-
-    container.style.top = "0";
-
-    container.style.width =
-        width + "px";
-
-    container.style.margin = "0";
-
-    container.style.padding = "0";
-
-    container.style.opacity = "1";
-
-    container.style.visibility = "visible";
-
-    container.style.pointerEvents = "none";
-
-    container.style.zIndex = "-1";
-
-    container.style.background = "#fff";
-
-    container.style.overflow = "visible";
-
-    container.setAttribute(
-        "data-render-container",
-        "true"
-    );
-
-
-    container.dir = "rtl";
-
-    container.innerHTML = code;
-
-
-    /*
-       يمنع body داخل الكود من إضافة
-       margin أو خلفية تؤثر على التصيير.
-    */
-
-    const fix =
-        document.createElement("style");
-
-
-    fix.textContent = `
-
-        html, body {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        .page {
-            box-sizing: border-box !important;
-        }
-
-    `;
-
-
-    container.appendChild(fix);
-
-    document.body.appendChild(container);
-
-
-    return container;
-}
-
-
-/*
-   تحميل الصور بشكل متوازٍ بدل صورة وراء صورة.
-*/
-
-async function prepareImages(container) {
-
-    const images =
-        Array.from(
-            container.querySelectorAll("img")
-        );
-
-
-    if (!images.length) return;
-
-
-    await Promise.all(
-
-        images.map(async img => {
-
-            try {
-
-                img.setAttribute(
-                    "crossorigin",
-                    "anonymous"
-                );
-
-                img.crossOrigin = "anonymous";
-
-
-                /*
-                   إذا كانت الصورة Data URL
-                   لا نحتاج أي شيء إضافي.
-                */
-
-                if (
-                    img.src &&
-                    img.src.startsWith("data:")
-                ) {
-
-                    await waitImage(img);
-
-                    return;
-                }
-
-
-                /*
-                   نحاول التحميل المباشر أولًا.
-                   هذا أسرع بكثير من البروكسيات.
-                */
-
-                await waitImage(
-                    img,
-                    RENDER_CONFIG.imageTimeout
-                );
-
-
-            } catch {
-
-                /*
-                   إذا فشلت الصورة، لا نجعل
-                   الملف كله يعلق.
-
-                   نخفي الصورة فقط.
-                */
-
-                img.style.visibility = "hidden";
-            }
-
-        })
-    );
-}
-
-
-/*
-   انتظار الصورة مع Timeout.
-*/
-
-function waitImage(img, timeout = 4000) {
-
-    return new Promise(resolve => {
-
-        if (img.complete) {
-
-            if (img.naturalWidth > 0) {
-
-                resolve(true);
-
-                return;
-            }
-        }
-
-
-        let finished = false;
-
-
-        const finish = result => {
-
-            if (finished) return;
-
-            finished = true;
-
-            clearTimeout(timer);
-
-            img.removeEventListener(
-                "load",
-                onLoad
-            );
-
-            img.removeEventListener(
-                "error",
-                onError
-            );
-
-            resolve(result);
-        };
-
-
-        const onLoad = () => finish(true);
-
-        const onError = () => finish(false);
-
-
-        const timer =
-            setTimeout(
-                () => finish(false),
-                timeout
-            );
-
-
-        img.addEventListener(
-            "load",
-            onLoad,
-            { once: true }
-        );
-
-
-        img.addEventListener(
-            "error",
-            onError,
-            { once: true }
-        );
-
-
-        /*
-           محاولة إضافية للتأكد من تحديث المصدر.
-        */
-
-        try {
-            img.decode?.().then(
-                () => finish(true)
-            ).catch(() => {});
-        } catch {}
-    });
-}
-
-
-/*
-   تصوير صفحة واحدة.
-*/
-
-async function renderPage(
-    page,
-    width,
-    height,
-    quality,
-    isVideo = false
-) {
-
-    const scale =
-        getSafeScale(
-            width,
-            height,
-            quality,
-            isVideo
-        );
-
-
-    /*
-       إجبار الصفحة على المقاس المطلوب.
-    */
-
-    const oldWidth =
-        page.style.width;
-
-    const oldHeight =
-        page.style.height;
-
-
-    page.style.width =
-        width + "px";
-
-    page.style.height =
-        height + "px";
-
-
-    try {
-
-        return await html2canvas(
-            page,
-            {
-                scale,
-
-                width,
-
-                height,
-
-                windowWidth: width,
-
-                windowHeight: height,
-
-                useCORS: true,
-
-                allowTaint: false,
-
-                backgroundColor: "#ffffff",
-
-                imageTimeout:
-                    RENDER_CONFIG.imageTimeout,
-
-                logging: false,
-
-                removeContainer: true,
-
-                foreignObjectRendering: false,
-
-                scrollX: 0,
-
-                scrollY: 0
-            }
-        );
-
-    } finally {
-
-        page.style.width =
-            oldWidth;
-
-        page.style.height =
-            oldHeight;
-    }
-}
-
-
-/*
-   تحويل Canvas إلى JPEG.
-*/
-
-function canvasToJPEG(canvas) {
-
-    return canvas.toDataURL(
-        "image/jpeg",
-        RENDER_CONFIG.jpegQuality
-    );
-}
-
-
-/*
-   تنظيف Canvas لتحرير الذاكرة.
-*/
-
-function releaseCanvas(canvas) {
-
-    if (!canvas) return;
-
-    try {
-
-        canvas.width = 1;
-
-        canvas.height = 1;
-
-    } catch {}
-}
-
-
-/*
-   الحصول على الشرائح.
-*/
-
-function getPages(container) {
-
-    const pages =
-        Array.from(
-            container.querySelectorAll(".page")
-        );
-
-
-    if (pages.length)
-        return pages;
-
-
-    return [container];
-}
-
-
-/* =========================================================
-   بدء التصدير
-   ========================================================= */
-
-async function exportFile() {
-
-    const code =
-        document.getElementById("html-input").value;
-
-
-    const format =
-        document.getElementById("format-select").value;
-
-
-    if (!code.trim()) {
-
-        alert("الرجاء لصق الكود أولاً!");
-
-        return;
-    }
-
-
-    const button =
-        document.getElementById("capture-btn");
-
-
-    button.disabled = true;
-
-
-    try {
-
-        if (format === "pptx") {
-
-            await generatePPTX();
-
-        } else if (format.startsWith("pdf")) {
-
-            await generatePDF();
-
-        } else {
-
-            await generateCinematicVideo();
-        }
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "حدث خطأ أثناء التحويل.\n\n" +
-            "جرّب خفض الجودة إلى «عادية» إذا كان الكود يحتوي على صور كثيرة."
-        );
-
-    } finally {
-
-        button.disabled = false;
-
-        button.innerText =
-            "بدء الاستخراج 📥";
-    }
-}
-
-
-/* =========================================================
-   PPTX
-   ========================================================= */
-
-async function generatePPTX() {
-
-    const button =
-        document.getElementById("capture-btn");
-
-
-    const code =
-        document.getElementById("html-input").value;
-
-
-    const name =
-        sanitizeFileName(
-            document.getElementById("file-name").value ||
-            "presentation"
-        );
-
-
-    const quality =
-        Number(
-            document.getElementById("quality-select").value
-        );
-
-
-    const width = 1280;
-
-    const height = 720;
-
-
-    button.innerText =
-        "⏳ جاري تحضير البوربوينت...";
-
-
-    const container =
-        createRenderContainer(
-            code,
-            width
-        );
-
-
-    try {
-
-        await waitForFonts();
-
-        await prepareImages(container);
-
-
-        const pages =
-            getPages(container);
-
-
-        const pptx =
-            new PptxGenJS();
-
-
-        pptx.layout =
-            "LAYOUT_WIDE";
-
-
-        pptx.author =
-            "منصة تحويل الأكواد";
-
-
-        pptx.subject =
-            "HTML to PPTX";
-
-
-        pptx.title =
-            name;
-
-
-        for (
-            let i = 0;
-            i < pages.length;
-            i++
-        ) {
-
-            button.innerText =
-                `📸 تصوير شريحة ${i + 1} من ${pages.length}...`;
-
-
-            const canvas =
-                await renderPage(
-                    pages[i],
-                    width,
-                    height,
-                    quality,
-                    false
-                );
-
-
-            const image =
-                canvasToJPEG(canvas);
-
-
-            const slide =
-                pptx.addSlide();
-
-
-            slide.background = {
-                color: "FFFFFF"
-            };
-
-
-            slide.addImage({
-
-                data: image,
-
-                x: 0,
-
-                y: 0,
-
-                w: 13.333333,
-
-                h: 7.5
-            });
-
-
-            /*
-               تحرير الـCanvas فورًا.
-            */
-
-            releaseCanvas(canvas);
-
-
-            /*
-               إعطاء المتصفح فرصة لتنظيف الذاكرة.
-            */
-
-            await yieldToBrowser();
-        }
-
-
-        button.innerText =
-            "🚀 بناء ملف البوربوينت...";
-
-
-        await pptx.writeFile({
-            fileName: `${name}.pptx`
-        });
-
-
-        /*
-           إرسال اختياري إذا كان Backend موجودًا.
-        */
-
-        if (TELEGRAM_ENDPOINT) {
-
-            try {
-
-                const blob =
-                    await pptx.write({
-                        outputType: "blob"
-                    });
-
-
-                await sendFileToTelegram(
-                    blob,
-                    `${name}.pptx`,
-                    "📥 عرض بوربوينت PPTX جاهز!"
-                );
-
-            } catch (error) {
-
-                console.warn(
-                    "تعذر إرسال PPTX",
-                    error
-                );
-            }
-        }
-
-
-    } finally {
-
-        container.remove();
-    }
-}
-
-
-/* =========================================================
-   PDF
-   ========================================================= */
-
-async function generatePDF() {
-
-    const button =
-        document.getElementById("capture-btn");
-
-
-    const code =
-        document.getElementById("html-input").value;
-
-
-    const name =
-        sanitizeFileName(
-            document.getElementById("file-name").value ||
-            "document"
-        );
-
-
-    const quality =
-        Number(
-            document.getElementById("quality-select").value
-        );
-
-
-    const format =
-        document.getElementById("format-select").value;
-
-
-    const isA4 =
-        format === "pdf-a4";
-
-
-    const width =
-        isA4 ? 794 : 1280;
-
-
-    const height =
-        isA4 ? 1123 : 720;
-
-
-    button.innerText =
-        "⏳ جاري تجهيز PDF...";
-
-
-    const container =
-        createRenderContainer(
-            code,
-            width
-        );
-
-
-    try {
-
-        await waitForFonts();
-
-        await prepareImages(container);
-
-
-        const pages =
-            getPages(container);
-
-
-        const { jsPDF } =
-            window.jspdf;
-
-
-        /*
-           نحافظ على المقاس الأصلي
-           مع PDF مخصص.
-        */
-
-        const pdf =
-            new jsPDF({
-
-                orientation:
-                    isA4 ? "p" : "l",
-
-                unit: "px",
-
-                format: [
-                    width,
-                    height
-                ],
-
-                compress: true
-            });
-
-
-        for (
-            let i = 0;
-            i < pages.length;
-            i++
-        ) {
-
-            button.innerText =
-                `📸 تصوير صفحة ${i + 1} من ${pages.length}...`;
-
-
-            const canvas =
-                await renderPage(
-                    pages[i],
-                    width,
-                    height,
-                    quality,
-                    false
-                );
-
-
-            const image =
-                canvasToJPEG(canvas);
-
-
-            if (i > 0) {
-
-                pdf.addPage(
-                    [width, height],
-                    isA4 ? "p" : "l"
-                );
-            }
-
-
-            pdf.addImage(
-                image,
-                "JPEG",
-                0,
-                0,
-                width,
-                height,
-                undefined,
-                "FAST"
-            );
-
-
-            /*
-               أهم شيء هنا:
-               لا نخزن كل الـ canvases.
-            */
-
-            releaseCanvas(canvas);
-
-            await yieldToBrowser();
-        }
-
-
-        button.innerText =
-            "✅ اكتمل! جاري إنشاء الملف...";
-
-
-        const blob =
-            pdf.output("blob");
-
-
-        /*
-           التحميل.
-        */
-
-        downloadBlob(
-            blob,
-            `${name}.pdf`
-        );
-
-
-        if (TELEGRAM_ENDPOINT) {
-
-            await sendFileToTelegram(
-                blob,
-                `${name}.pdf`,
-                "📥 ملف PDF جاهز!"
-            );
-        }
-
-
-    } finally {
-
-        container.remove();
-    }
-}
-
-
-/* =========================================================
-   الفيديو
-   ========================================================= */
-
-async function generateCinematicVideo() {
-
-    const button =
-        document.getElementById("capture-btn");
-
-
-    const code =
-        document.getElementById("html-input").value;
-
-
-    const name =
-        sanitizeFileName(
-            document.getElementById("file-name").value ||
-            "video"
-        );
-
-
-    const duration =
-        Number(
-            document.getElementById("slide-duration").value
-        );
-
-
-    const animation =
-        document.getElementById("animation-style").value;
-
-
-    const quality =
-        Number(
-            document.getElementById("quality-select").value
-        );
-
-
-    const type =
-        document.getElementById("format-select").value;
-
-
-    const width =
-        type === "vid-916"
-            ? 720
-            : 1280;
-
-
-    const height =
-        type === "vid-916"
-            ? 1280
-            : 720;
-
-
-    button.innerText =
-        "⏳ جاري تجهيز الفيديو...";
-
-
-    const container =
-        createRenderContainer(
-            code,
-            width
-        );
-
-
-    try {
-
-        await waitForFonts();
-
-        await prepareImages(container);
-
-
-        const pages =
-            getPages(container);
-
-
-        /*
-           بدل الاحتفاظ بـCanvas ضخم لكل صفحة،
-           نصور الشرائح بحجم آمن.
-        */
-
-        const canvases = [];
-
-
-        for (
-            let i = 0;
-            i < pages.length;
-            i++
-        ) {
-
-            button.innerText =
-                `📸 تجهيز شريحة ${i + 1} من ${pages.length}...`;
-
-
-            const canvas =
-                await renderPage(
-                    pages[i],
-                    width,
-                    height,
-                    quality,
-                    true
-                );
-
-
-            canvases.push(canvas);
-
-            await yieldToBrowser();
-        }
-
-
-        /*
-           Canvas الفيديو النهائي.
-        */
-
-        const recordCanvas =
-            document.createElement("canvas");
-
-
-        recordCanvas.width =
-            width;
-
-        recordCanvas.height =
-            height;
-
-
-        const ctx =
-            recordCanvas.getContext(
-                "2d",
-                {
-                    alpha: false
-                }
-            );
-
-
-        if (!recordCanvas.captureStream) {
-
-            throw new Error(
-                "captureStream غير مدعوم في هذا المتصفح."
-            );
-        }
-
-
-        const stream =
-            recordCanvas.captureStream(30);
-
-
-        /*
-           اختيار الصيغة المدعومة.
-        */
-
-        let mimeType = "";
-
-
-        const supportedTypes = [
-
-            "video/mp4",
-
-            "video/webm;codecs=vp9",
-
-            "video/webm;codecs=vp8",
-
-            "video/webm"
-        ];
-
-
-        for (
-            const type of supportedTypes
-        ) {
-
-            if (
-                MediaRecorder.isTypeSupported(
-                    type
-                )
-            ) {
-
-                mimeType = type;
-
-                break;
-            }
-        }
-
-
-        if (!mimeType) {
-
-            throw new Error(
-                "المتصفح لا يدعم تسجيل الفيديو."
-            );
-        }
-
-
-        const recorder =
-            new MediaRecorder(
-                stream,
-                {
-                    mimeType,
-                    videoBitsPerSecond:
-                        width >= 1000
-                            ? 5000000
-                            : 3500000
-                }
-            );
-
-
-        const chunks = [];
-
-
-        recorder.ondataavailable =
-            event => {
-
-                if (
-                    event.data &&
-                    event.data.size > 0
-                ) {
-
-                    chunks.push(
-                        event.data
-                    );
-                }
-            };
-
-
-        const recordPromise =
-            new Promise(
-                (resolve, reject) => {
-
-                    recorder.onstop =
-                        async () => {
-
-                            try {
-
-                                const extension =
-                                    mimeType.includes("mp4")
-                                        ? "mp4"
-                                        : "webm";
-
-
-                                const blob =
-                                    new Blob(
-                                        chunks,
-                                        {
-                                            type: mimeType
-                                        }
-                                    );
-
-
-                                button.innerText =
-                                    "✅ اكتمل! جاري التحميل...";
-
-
-                                downloadBlob(
-                                    blob,
-                                    `${name}.${extension}`
-                                );
-
-
-                                if (
-                                    TELEGRAM_ENDPOINT
-                                ) {
-
-                                    await sendFileToTelegram(
-                                        blob,
-                                        `${name}.${extension}`,
-                                        "🎬 فيديو جاهز!",
-                                        "video"
-                                    );
-                                }
-
-
-                                resolve();
-
-                            } catch (error) {
-
-                                reject(error);
-                            }
-                        };
-
-
-                    recorder.onerror =
-                        event => {
-
-                            reject(
-                                event.error ||
-                                new Error(
-                                    "فشل تسجيل الفيديو"
-                                )
-                            );
-                        };
-                }
-            );
-
-
-        recorder.start(250);
-
-
-        const slideTime =
-            duration * 1000;
-
-
-        const transition =
-            Math.min(
-                800,
-                Math.max(
-                    300,
-                    slideTime * 0.2
-                )
-            );
-
-
-        const totalTime =
-            slideTime *
-            canvases.length;
-
-
-        const start =
-            performance.now();
-
-
-        function drawFrame(now) {
-
-            const elapsed =
-                now - start;
-
-
-            if (
-                elapsed >= totalTime
-            ) {
-
-                setTimeout(
-                    () => recorder.stop(),
-                    150
-                );
-
-                return;
-            }
-
-
-            const slideIndex =
-                Math.min(
-                    Math.floor(
-                        elapsed / slideTime
-                    ),
-                    canvases.length - 1
-                );
-
-
-            const localTime =
-                elapsed %
-                slideTime;
-
-
-            const current =
-                canvases[slideIndex];
-
-
-            const next =
-                canvases[
-                    slideIndex + 1
-                ];
-
-
-            ctx.fillStyle =
-                "#ffffff";
-
-            ctx.fillRect(
-                0,
-                0,
-                width,
-                height
-            );
-
-
-            if (
-                animation === "zoom"
-            ) {
-
-                const progress =
-                    localTime /
-                    slideTime;
-
-
-                const zoom =
-                    1 +
-                    progress * 0.045;
-
-
-                const drawWidth =
-                    width * zoom;
-
-
-                const drawHeight =
-                    height * zoom;
-
-
-                ctx.drawImage(
-                    current,
-                    (width - drawWidth) / 2,
-                    (height - drawHeight) / 2,
-                    drawWidth,
-                    drawHeight
-                );
-
-
-            } else if (
-                animation === "slide" &&
-                next &&
-                localTime >
-                    slideTime - transition
-            ) {
-
-                const progress =
-                    (
-                        localTime -
-                        (slideTime - transition)
-                    ) / transition;
-
-
-                ctx.drawImage(
-                    current,
-                    -progress * width,
-                    0,
-                    width,
-                    height
-                );
-
-
-                ctx.drawImage(
-                    next,
-                    width -
-                        progress * width,
-                    0,
-                    width,
-                    height
-                );
-
-
-            } else if (
-                animation === "fade" &&
-                next &&
-                localTime >
-                    slideTime - transition
-            ) {
-
-                const progress =
-                    (
-                        localTime -
-                        (slideTime - transition)
-                    ) / transition;
-
-
-                ctx.globalAlpha = 1;
-
-                ctx.drawImage(
-                    current,
-                    0,
-                    0,
-                    width,
-                    height
-                );
-
-
-                ctx.globalAlpha =
-                    Math.min(
-                        1,
-                        Math.max(
-                            0,
-                            progress
-                        )
-                    );
-
-
-                ctx.drawImage(
-                    next,
-                    0,
-                    0,
-                    width,
-                    height
-                );
-
-
-                ctx.globalAlpha = 1;
-
-
-            } else {
-
-                ctx.drawImage(
-                    current,
-                    0,
-                    0,
-                    width,
-                    height
-                );
-            }
-
-
-            requestAnimationFrame(
-                drawFrame
-            );
-        }
-
-
-        requestAnimationFrame(
-            drawFrame
-        );
-
-
-        await recordPromise;
-
-
-        /*
-           تحرير ذاكرة الشرائح.
-        */
-
-        canvases.forEach(
-            releaseCanvas
-        );
-
-
-        recordCanvas.width = 1;
-
-        recordCanvas.height = 1;
-
-
-        stream
-            .getTracks()
-            .forEach(track =>
-                track.stop()
-            );
-
-    } finally {
-
-        container.remove();
-    }
-}
-
-
-/* =========================================================
-   أدوات عامة
-   ========================================================= */
-
-function sanitizeFileName(name) {
-
-    return String(name)
-        .trim()
-        .replace(/[\\/:*?"<>|]/g, "_")
-        .replace(/\s+/g, "_")
-        .substring(0, 100) ||
-        "file";
-}
-
-
-function downloadBlob(blob, filename) {
-
-    const url =
-        URL.createObjectURL(blob);
-
-
-    const link =
-        document.createElement("a");
-
-
-    link.href = url;
-
-    link.download = filename;
-
-    link.style.display = "none";
-
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    link.remove();
-
-
-    setTimeout(
-        () => URL.revokeObjectURL(url),
-        10000
-    );
-}
-
-
-function yieldToBrowser() {
-
-    return new Promise(
-        resolve =>
-            setTimeout(
-                resolve,
-                20
-            )
-    );
-}
-
-</script>
-
-</body>
-</html>
+        p +=
+            "قم بإنشاء كود HTML لعرض جوال (9:16) بالعربية.\n
