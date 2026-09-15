@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>منصة تحويل الأكواد الذكية (PDF / PPTX / MP4)</title>
+    <title>منصة تحويل الأكواد الذكية (PDF / PPTX)</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -580,7 +580,7 @@
         }
 
         /* =====================================================
-           إضافات شاشة كلمة المرور
+           شاشة كلمة المرور
            ===================================================== */
 
         .password-reset-btn {
@@ -782,11 +782,9 @@
 
                 <label>نوع الاستخراج:</label>
 
-                <select
-                    id="format-select"
-                    onchange="updateUI()">
+                <select id="format-select">
 
-                    <optgroup label="مستندات (جاهزة للطباعة والعرض)">
+                    <optgroup label="مستندات">
 
                         <option value="pdf-a4">
                             ملف PDF (مقاس A4)
@@ -798,18 +796,6 @@
 
                         <option value="pptx">
                             بوربوينت PPTX (مقاس 16:9)
-                        </option>
-
-                    </optgroup>
-
-                    <optgroup label="مقاطع فيديو (تلقائية العرض)">
-
-                        <option value="vid-169">
-                            فيديو شاشات (16:9)
-                        </option>
-
-                        <option value="vid-916">
-                            فيديو جوال (9:16)
                         </option>
 
                     </optgroup>
@@ -834,61 +820,6 @@
 
                     <option value="3">
                         ممتازة (للصور الدقيقة)
-                    </option>
-
-                </select>
-
-            </div>
-
-        </div>
-
-        <div
-            class="row"
-            id="video-options"
-            style="display:none;">
-
-            <div class="form-group">
-
-                <label>مدة كل شريحة (فيديو):</label>
-
-                <select id="slide-duration">
-
-                    <option value="3">
-                        3 ثواني
-                    </option>
-
-                    <option value="5" selected>
-                        5 ثواني
-                    </option>
-
-                    <option value="8">
-                        8 ثواني
-                    </option>
-
-                </select>
-
-            </div>
-
-            <div class="form-group">
-
-                <label>التحركات (الأنيميشن):</label>
-
-                <select id="animation-style">
-
-                    <option value="zoom" selected>
-                        تكبير سينمائي
-                    </option>
-
-                    <option value="slide">
-                        سحب جانبي
-                    </option>
-
-                    <option value="fade">
-                        تلاشي ناعم
-                    </option>
-
-                    <option value="none">
-                        بدون تحركات
                     </option>
 
                 </select>
@@ -952,7 +883,8 @@
                 </div>
 
                 <p class="image-manager-description">
-                    يتم تحديد الصفحة الفعلية لكل صورة تلقائيًا.
+                    يتم التعرف على صور img وصور CSS الخلفية تلقائيًا،
+                    سواء كانت داخل style أو داخل قواعد CSS.
                     يمكنك الاحتفاظ بالصورة أو استبدالها من الاستوديو.
                     الاستبدال لا يغيّر كود HTML الأصلي.
                 </p>
@@ -1174,7 +1106,7 @@
                 type="text"
                 id="req-title"
                 placeholder="عنوان البحث أو العرض"
-                oninput="generatePromptText">
+                oninput="generatePromptText()">
 
         </div>
 
@@ -1300,25 +1232,12 @@
    الإعدادات
    ========================================================= */
 
-/*
-   كلمة المرور الفعلية للمنصة.
-*/
 const SECRET_PASSWORD = "Sa12345678@";
 
-/*
-   استخدمنا مفتاحًا جديدًا حتى لا تتعارض
-   الجلسة القديمة مع النظام الجديد.
-*/
 const AUTH_KEY = "auth_token_v2";
 
-/*
-   قيمة الجلسة المحفوظة.
-*/
 const AUTH_VALUE = "authenticated";
 
-/*
-   رابط تيليجرام - اختياري.
-*/
 const TELEGRAM_ENDPOINT = "";
 
 
@@ -1332,9 +1251,7 @@ const RENDER_CONFIG = {
 
     fontTimeout: 4500,
 
-    imageTimeout: 5000,
-
-    videoMaxScale: 1.5,
+    imageTimeout: 7000,
 
     jpegQuality: 0.88
 };
@@ -1351,37 +1268,64 @@ let detectedImages = [];
 let imageAnalysisTimer = null;
 
 
-function getImageDisplayName(img, index) {
+/* =========================================================
+   استخراج URL من CSS
+   ========================================================= */
 
-    const customName =
-        img.getAttribute("data-image-name");
+function extractImageUrls(value) {
 
-    if (customName && customName.trim()) {
-        return customName.trim();
+    if (!value) {
+        return [];
     }
 
-    const alt =
-        img.getAttribute("alt");
+    const urls = [];
 
-    if (alt && alt.trim()) {
-        return alt.trim();
+    const regex =
+        /url\(\s*(['"]?)(.*?)\1\s*\)/gi;
+
+    let match;
+
+    while (
+        (match = regex.exec(value)) !== null
+    ) {
+
+        const url =
+            String(match[2] || "").trim();
+
+        if (!url) {
+            continue;
+        }
+
+        if (
+            url.startsWith("#") ||
+            url.startsWith("data:image/svg")
+        ) {
+            continue;
+        }
+
+        urls.push(url);
     }
 
-    const title =
-        img.getAttribute("title");
+    return urls;
+}
 
-    if (title && title.trim()) {
-        return title.trim();
+
+/* =========================================================
+   أسماء الصور
+   ========================================================= */
+
+function getFileNameFromURL(src) {
+
+    if (!src) {
+        return "";
     }
-
-    const src =
-        img.getAttribute("src") || "";
 
     try {
 
         const clean =
-            src.split("?")[0]
-               .split("#")[0];
+            src
+                .split("?")[0]
+                .split("#")[0];
 
         const parts =
             clean.split("/");
@@ -1391,62 +1335,90 @@ function getImageDisplayName(img, index) {
 
         if (file) {
 
-            return decodeURIComponent(file);
+            return decodeURIComponent(
+                file
+            );
         }
 
     } catch {}
 
-    return `الصورة ${index + 1}`;
+    return "";
 }
 
 
-function createImageKey(index, img) {
+function getImageDisplayName(
+    element,
+    index,
+    type = "img",
+    src = ""
+) {
 
-    const src =
-        img.getAttribute("src") || "";
+    if (element) {
 
-    const alt =
-        img.getAttribute("alt") || "";
+        const customName =
+            element.getAttribute(
+                "data-image-name"
+            );
 
-    const name =
-        img.getAttribute("data-image-name") || "";
+        if (
+            customName &&
+            customName.trim()
+        ) {
 
-    return [
-        index,
-        src,
-        alt,
-        name
-    ].join("|");
+            return customName.trim();
+        }
+
+        const alt =
+            element.getAttribute("alt");
+
+        if (
+            alt &&
+            alt.trim()
+        ) {
+
+            return alt.trim();
+        }
+
+        const title =
+            element.getAttribute("title");
+
+        if (
+            title &&
+            title.trim()
+        ) {
+
+            return title.trim();
+        }
+    }
+
+    const file =
+        getFileNameFromURL(src);
+
+    if (file) {
+        return file;
+    }
+
+    return type === "background"
+        ? `خلفية ${index + 1}`
+        : `الصورة ${index + 1}`;
 }
 
 
-function getImagePageNumber(img) {
+/* =========================================================
+   تحديد رقم الصفحة
+   ========================================================= */
 
-    const page =
-        img.closest(".page");
+function getParsedPageNumber(
+    element,
+    doc
+) {
 
-    if (!page) {
+    if (!element) {
         return 1;
     }
 
-    const allPages =
-        Array.from(
-            document.querySelectorAll(".page")
-        );
-
-    const index =
-        allPages.indexOf(page);
-
-    return index >= 0
-        ? index + 1
-        : 1;
-}
-
-
-function getParsedPageNumber(img, doc) {
-
     const page =
-        img.closest(".page");
+        element.closest(".page");
 
     if (!page) {
         return 1;
@@ -1466,7 +1438,128 @@ function getParsedPageNumber(img, doc) {
 }
 
 
+/* =========================================================
+   تحديد selector ثابت للعنصر
+   ========================================================= */
+
+function getStableSelector(
+    element,
+    doc
+) {
+
+    if (!element) {
+        return "";
+    }
+
+    if (element.id) {
+        return `#${CSS.escape(element.id)}`;
+    }
+
+    const classes =
+        Array.from(
+            element.classList || []
+        ).filter(Boolean);
+
+    if (classes.length) {
+
+        const selector =
+            element.tagName.toLowerCase() +
+            classes
+                .slice(0, 3)
+                .map(
+                    cls =>
+                        `.${CSS.escape(cls)}`
+                )
+                .join("");
+
+        try {
+
+            if (
+                doc.querySelectorAll(
+                    selector
+                ).length === 1
+            ) {
+
+                return selector;
+            }
+
+        } catch {}
+    }
+
+    const path = [];
+
+    let current =
+        element;
+
+    while (
+        current &&
+        current.nodeType === 1 &&
+        current !== doc.body
+    ) {
+
+        let part =
+            current.tagName.toLowerCase();
+
+        if (current.id) {
+
+            part +=
+                `#${CSS.escape(current.id)}`;
+
+            path.unshift(part);
+
+            break;
+        }
+
+        const parent =
+            current.parentElement;
+
+        if (parent) {
+
+            const siblings =
+                Array.from(
+                    parent.children
+                ).filter(
+                    child =>
+                        child.tagName ===
+                        current.tagName
+                );
+
+            if (siblings.length > 1) {
+
+                const index =
+                    siblings.indexOf(
+                        current
+                    ) + 1;
+
+                part +=
+                    `:nth-of-type(${index})`;
+            }
+        }
+
+        path.unshift(part);
+
+        current =
+            parent;
+    }
+
+    return path.join(" > ");
+}
+
+
+/* =========================================================
+   أبعاد IMG
+   ========================================================= */
+
 function getImageDefinedDimensions(img) {
+
+    if (!img) {
+
+        return {
+            width: "حسب CSS",
+            height: "حسب CSS",
+            source: "CSS"
+        };
+    }
 
     let width =
         img.getAttribute("width");
@@ -1505,8 +1598,12 @@ function getImageDefinedDimensions(img) {
     ) {
 
         return {
-            width: widthMatch[1].trim(),
-            height: heightMatch[1].trim(),
+            width:
+                widthMatch[1].trim(),
+
+            height:
+                heightMatch[1].trim(),
+
             source: "CSS"
         };
     }
@@ -1518,6 +1615,10 @@ function getImageDefinedDimensions(img) {
     };
 }
 
+
+/* =========================================================
+   الأبعاد الطبيعية
+   ========================================================= */
 
 function getNaturalImageSize(src) {
 
@@ -1536,7 +1637,8 @@ function getNaturalImageSize(src) {
         const img =
             new Image();
 
-        let finished = false;
+        let finished =
+            false;
 
         const done = () => {
 
@@ -1545,43 +1647,107 @@ function getNaturalImageSize(src) {
             finished = true;
 
             resolve({
+
                 width:
-                    img.naturalWidth || null,
+                    img.naturalWidth ||
+                    null,
 
                 height:
-                    img.naturalHeight || null
+                    img.naturalHeight ||
+                    null
+
             });
         };
 
-        img.onload = done;
+        img.onload =
+            done;
 
-        img.onerror = done;
+        img.onerror =
+            done;
 
         setTimeout(
             done,
-            2500
+            3000
         );
 
-        img.src = src;
+        img.src =
+            src;
     });
 }
 
 
+/* =========================================================
+   إضافة صورة مكتشفة
+   ========================================================= */
+
+function addDetectedImage(
+    list,
+    data
+) {
+
+    const normalized =
+        String(
+            data.src || ""
+        ).trim();
+
+    if (!normalized) {
+        return;
+    }
+
+    const duplicate =
+        list.some(
+            item =>
+                item.type === data.type &&
+                item.src === normalized &&
+                item.target === data.target
+        );
+
+    if (duplicate) {
+        return;
+    }
+
+    list.push({
+
+        ...data,
+
+        src:
+            normalized
+
+    });
+}
+
+
+/* =========================================================
+   تحليل الصور
+   ========================================================= */
+
 async function analyzeHTMLImages() {
 
     const textarea =
-        document.getElementById("html-input");
+        document.getElementById(
+            "html-input"
+        );
 
     const manager =
-        document.getElementById("image-manager");
+        document.getElementById(
+            "image-manager"
+        );
 
     const list =
-        document.getElementById("image-manager-list");
+        document.getElementById(
+            "image-manager-list"
+        );
 
     const count =
-        document.getElementById("image-manager-count");
+        document.getElementById(
+            "image-manager-count"
+        );
 
-    if (!textarea || !manager || !list) {
+    if (
+        !textarea ||
+        !manager ||
+        !list
+    ) {
         return;
     }
 
@@ -1594,7 +1760,9 @@ async function analyzeHTMLImages() {
 
         imageReplacements.clear();
 
-        manager.classList.remove("visible");
+        manager.classList.remove(
+            "visible"
+        );
 
         list.innerHTML = "";
 
@@ -1606,35 +1774,432 @@ async function analyzeHTMLImages() {
     try {
 
         doc =
-            new DOMParser().parseFromString(
-                code,
-                "text/html"
-            );
+            new DOMParser()
+                .parseFromString(
+                    code,
+                    "text/html"
+                );
 
     } catch {
 
         detectedImages = [];
 
-        manager.classList.remove("visible");
+        manager.classList.remove(
+            "visible"
+        );
 
         return;
     }
+
+    const found = [];
+
+    /* =====================================================
+       1 — صور IMG
+       ===================================================== */
 
     const images =
         Array.from(
-            doc.querySelectorAll("img")
+            doc.querySelectorAll(
+                "img"
+            )
         );
 
-    if (!images.length) {
+    images.forEach(
+        (img, index) => {
 
-        detectedImages = [];
+            const src =
+                img.getAttribute(
+                    "src"
+                ) || "";
 
-        manager.classList.remove("visible");
+            if (!src) {
+                return;
+            }
 
-        list.innerHTML = "";
+            const dimensions =
+                getImageDefinedDimensions(
+                    img
+                );
 
-        return;
-    }
+            addDetectedImage(
+                found,
+                {
+
+                    type:
+                        "img",
+
+                    index,
+
+                    target:
+                        getStableSelector(
+                            img,
+                            doc
+                        ),
+
+                    page:
+                        getParsedPageNumber(
+                            img,
+                            doc
+                        ),
+
+                    name:
+                        getImageDisplayName(
+                            img,
+                            index,
+                            "img",
+                            src
+                        ),
+
+                    src,
+
+                    alt:
+                        img.getAttribute(
+                            "alt"
+                        ) || "",
+
+                    width:
+                        dimensions.width,
+
+                    height:
+                        dimensions.height,
+
+                    dimensionSource:
+                        dimensions.source
+
+                }
+            );
+        }
+    );
+
+
+    /* =====================================================
+       2 — صور background داخل inline style
+       ===================================================== */
+
+    const allElements =
+        Array.from(
+            doc.querySelectorAll(
+                "*"
+            )
+        );
+
+    allElements.forEach(
+        (element, elementIndex) => {
+
+            const style =
+                element.getAttribute(
+                    "style"
+                ) || "";
+
+            if (!style) {
+                return;
+            }
+
+            const urls =
+                extractImageUrls(
+                    style
+                );
+
+            urls.forEach(
+                (src, bgIndex) => {
+
+                    addDetectedImage(
+                        found,
+                        {
+
+                            type:
+                                "background",
+
+                            subtype:
+                                "inline",
+
+                            index:
+                                found.length,
+
+                            target:
+                                getStableSelector(
+                                    element,
+                                    doc
+                                ),
+
+                            elementIndex,
+
+                            backgroundIndex:
+                                bgIndex,
+
+                            page:
+                                getParsedPageNumber(
+                                    element,
+                                    doc
+                                ),
+
+                            name:
+                                getImageDisplayName(
+                                    element,
+                                    found.length,
+                                    "background",
+                                    src
+                                ),
+
+                            src,
+
+                            alt:
+                                "",
+
+                            width:
+                                "حسب CSS",
+
+                            height:
+                                "حسب CSS",
+
+                            dimensionSource:
+                                "CSS"
+
+                        }
+                    );
+                }
+            );
+        }
+    );
+
+
+    /* =====================================================
+       3 — صور background داخل <style>
+       ===================================================== */
+
+    const styleTags =
+        Array.from(
+            doc.querySelectorAll(
+                "style"
+            )
+        );
+
+    styleTags.forEach(
+        (styleTag, styleIndex) => {
+
+            const cssText =
+                styleTag.textContent ||
+                "";
+
+            if (!cssText.trim()) {
+                return;
+            }
+
+            let cssRules = [];
+
+            try {
+
+                const tempStyle =
+                    document.createElement(
+                        "style"
+                    );
+
+                tempStyle.textContent =
+                    cssText;
+
+                document.head.appendChild(
+                    tempStyle
+                );
+
+                cssRules =
+                    Array.from(
+                        tempStyle.sheet?.cssRules ||
+                        []
+                    );
+
+                cssRules.forEach(
+                    (rule, ruleIndex) => {
+
+                        if (
+                            !rule.selectorText ||
+                            !rule.style
+                        ) {
+                            return;
+                        }
+
+                        const cssValue =
+                            [
+                                rule.style.backgroundImage,
+                                rule.style.background
+                            ]
+                                .filter(Boolean)
+                                .join(";");
+
+                        const urls =
+                            extractImageUrls(
+                                cssValue
+                            );
+
+                        if (!urls.length) {
+                            return;
+                        }
+
+                        let matchedElements = [];
+
+                        try {
+
+                            matchedElements =
+                                Array.from(
+                                    doc.querySelectorAll(
+                                        rule.selectorText
+                                    )
+                                );
+
+                        } catch {
+
+                            matchedElements = [];
+                        }
+
+                        urls.forEach(
+                            (src, bgIndex) => {
+
+                                if (
+                                    matchedElements.length
+                                ) {
+
+                                    matchedElements.forEach(
+                                        element => {
+
+                                            addDetectedImage(
+                                                found,
+                                                {
+
+                                                    type:
+                                                        "background",
+
+                                                    subtype:
+                                                        "css-rule",
+
+                                                    index:
+                                                        found.length,
+
+                                                    target:
+                                                        getStableSelector(
+                                                            element,
+                                                            doc
+                                                        ),
+
+                                                    selector:
+                                                        rule.selectorText,
+
+                                                    styleIndex,
+
+                                                    ruleIndex,
+
+                                                    backgroundIndex:
+                                                        bgIndex,
+
+                                                    page:
+                                                        getParsedPageNumber(
+                                                            element,
+                                                            doc
+                                                        ),
+
+                                                    name:
+                                                        getImageDisplayName(
+                                                            element,
+                                                            found.length,
+                                                            "background",
+                                                            src
+                                                        ),
+
+                                                    src,
+
+                                                    alt:
+                                                        "",
+
+                                                    width:
+                                                        "حسب CSS",
+
+                                                    height:
+                                                        "حسب CSS",
+
+                                                    dimensionSource:
+                                                        "CSS"
+
+                                                }
+                                            );
+
+                                        }
+                                    );
+
+                                } else {
+
+                                    addDetectedImage(
+                                        found,
+                                        {
+
+                                            type:
+                                                "background",
+
+                                            subtype:
+                                                "css-rule",
+
+                                            index:
+                                                found.length,
+
+                                            target:
+                                                "",
+
+                                            selector:
+                                                rule.selectorText,
+
+                                            styleIndex,
+
+                                            ruleIndex,
+
+                                            backgroundIndex:
+                                                bgIndex,
+
+                                            page:
+                                                1,
+
+                                            name:
+                                                getImageDisplayName(
+                                                    null,
+                                                    found.length,
+                                                    "background",
+                                                    src
+                                                ),
+
+                                            src,
+
+                                            alt:
+                                                "",
+
+                                            width:
+                                                "حسب CSS",
+
+                                            height:
+                                                "حسب CSS",
+
+                                            dimensionSource:
+                                                "CSS"
+
+                                        }
+                                    );
+                                }
+                            }
+                        );
+                    }
+                );
+
+                tempStyle.remove();
+
+            } catch (error) {
+
+                console.warn(
+                    "تعذر تحليل CSS:",
+                    error
+                );
+            }
+        }
+    );
+
+
+    /* =====================================================
+       الحفاظ على الاستبدالات القديمة
+       ===================================================== */
 
     const oldReplacements =
         imageReplacements;
@@ -1642,76 +2207,72 @@ async function analyzeHTMLImages() {
     const newReplacements =
         new Map();
 
-    detectedImages =
-        images.map((img, index) => {
+    found.forEach(
+        (item, index) => {
 
-            const key =
+            item.index =
+                index;
+
+            item.key =
                 createImageKey(
-                    index,
-                    img
+                    item
                 );
 
-            if (oldReplacements.has(key)) {
+            if (
+                oldReplacements.has(
+                    item.key
+                )
+            ) {
 
                 newReplacements.set(
-                    key,
-                    oldReplacements.get(key)
+                    item.key,
+                    oldReplacements.get(
+                        item.key
+                    )
                 );
             }
-
-            const dimensions =
-                getImageDefinedDimensions(img);
-
-            return {
-
-                index,
-
-                key,
-
-                page:
-                    getParsedPageNumber(
-                        img,
-                        doc
-                    ),
-
-                name:
-                    getImageDisplayName(
-                        img,
-                        index
-                    ),
-
-                src:
-                    img.getAttribute("src") || "",
-
-                alt:
-                    img.getAttribute("alt") || "",
-
-                width:
-                    dimensions.width,
-
-                height:
-                    dimensions.height,
-
-                dimensionSource:
-                    dimensions.source
-            };
-
-        });
+        }
+    );
 
     imageReplacements =
         newReplacements;
 
+    detectedImages =
+        found;
+
     count.textContent =
         `${detectedImages.length} صورة`;
 
-    manager.classList.add("visible");
+    if (
+        !detectedImages.length
+    ) {
+
+        manager.classList.remove(
+            "visible"
+        );
+
+        list.innerHTML = `
+            <div class="image-empty">
+                لا توجد صور في الكود الحالي.
+            </div>
+        `;
+
+        return;
+    }
+
+    manager.classList.add(
+        "visible"
+    );
 
     renderImageManager();
 
+
+    /* =====================================================
+       جلب الأبعاد الأصلية
+       ===================================================== */
+
     detectedImages.forEach(
         async item => {
-
-            if (!item.src) return;
 
             const natural =
                 await getNaturalImageSize(
@@ -1730,6 +2291,31 @@ async function analyzeHTMLImages() {
 }
 
 
+/* =========================================================
+   مفتاح الصورة
+   ========================================================= */
+
+function createImageKey(
+    item
+) {
+
+    return [
+        item.type,
+        item.subtype || "",
+        item.src || "",
+        item.target || "",
+        item.selector || "",
+        item.styleIndex ?? "",
+        item.ruleIndex ?? "",
+        item.backgroundIndex ?? ""
+    ].join("|");
+}
+
+
+/* =========================================================
+   عرض مدير الصور
+   ========================================================= */
+
 function renderImageManager() {
 
     const list =
@@ -1739,7 +2325,9 @@ function renderImageManager() {
 
     if (!list) return;
 
-    if (!detectedImages.length) {
+    if (
+        !detectedImages.length
+    ) {
 
         list.innerHTML = `
             <div class="image-empty">
@@ -1781,6 +2369,18 @@ function renderImageManager() {
                 const definedDimensions =
                     `${item.width} × ${item.height}`;
 
+                const typeLabel =
+                    item.type === "img"
+                        ? "IMG"
+                        : "خلفية CSS";
+
+                const sourceLabel =
+                    item.type === "img"
+                        ? "src"
+                        : item.subtype === "inline"
+                            ? "style"
+                            : "CSS rule";
+
                 return `
 
                     <div
@@ -1809,12 +2409,23 @@ function renderImageManager() {
 
                             <div class="html-image-info">
 
-                                <p class="html-image-name"
-                                   title="${escapeAttribute(displayName)}">
+                                <p
+                                    class="html-image-name"
+                                    title="${escapeAttribute(displayName)}">
                                     ${escapeHTML(displayName)}
                                 </p>
 
                                 <div class="html-image-meta">
+
+                                    <div class="html-image-meta-item">
+                                        <strong>النوع:</strong>
+                                        ${typeLabel}
+                                    </div>
+
+                                    <div class="html-image-meta-item">
+                                        <strong>المصدر:</strong>
+                                        ${sourceLabel}
+                                    </div>
 
                                     <div class="html-image-meta-item">
                                         <strong>الصفحة:</strong>
@@ -1848,9 +2459,21 @@ function renderImageManager() {
                             ${escapeHTML(
                                 isReplaced
                                     ? "تم اختيار صورة جديدة من الاستوديو"
-                                    : (item.src || "لا يوجد رابط src")
+                                    : item.src
                             )}
                         </div>
+
+                        ${
+                            item.selector
+                            ? `
+                                <div
+                                    class="html-image-url"
+                                    title="${escapeAttribute(item.selector)}">
+                                    CSS: ${escapeHTML(item.selector)}
+                                </div>
+                              `
+                            : ""
+                        }
 
                         <div class="html-image-actions">
 
@@ -1885,7 +2508,13 @@ function renderImageManager() {
 }
 
 
-function chooseReplacementImage(index) {
+/* =========================================================
+   اختيار صورة بديلة
+   ========================================================= */
+
+function chooseReplacementImage(
+    index
+) {
 
     const item =
         detectedImages[index];
@@ -1893,7 +2522,9 @@ function chooseReplacementImage(index) {
     if (!item) return;
 
     const input =
-        document.createElement("input");
+        document.createElement(
+            "input"
+        );
 
     input.type =
         "file";
@@ -1904,7 +2535,9 @@ function chooseReplacementImage(index) {
     input.style.display =
         "none";
 
-    document.body.appendChild(input);
+    document.body.appendChild(
+        input
+    );
 
     input.addEventListener(
         "change",
@@ -1923,7 +2556,9 @@ function chooseReplacementImage(index) {
 
             if (
                 !file.type ||
-                !file.type.startsWith("image/")
+                !file.type.startsWith(
+                    "image/"
+                )
             ) {
 
                 alert(
@@ -1945,11 +2580,15 @@ function chooseReplacementImage(index) {
                 imageReplacements.set(
                     item.key,
                     {
+
                         dataUrl,
+
                         fileName:
                             file.name,
+
                         mimeType:
                             file.type
+
                     }
                 );
 
@@ -1957,7 +2596,9 @@ function chooseReplacementImage(index) {
 
             } catch (error) {
 
-                console.error(error);
+                console.error(
+                    error
+                );
 
                 alert(
                     "تعذر قراءة الصورة."
@@ -1969,14 +2610,22 @@ function chooseReplacementImage(index) {
             }
 
         },
-        { once: true }
+        {
+            once: true
+        }
     );
 
     input.click();
 }
 
 
-function keepOriginalImage(index) {
+/* =========================================================
+   الاحتفاظ بالصورة
+   ========================================================= */
+
+function keepOriginalImage(
+    index
+) {
 
     const item =
         detectedImages[index];
@@ -1991,147 +2640,491 @@ function keepOriginalImage(index) {
 }
 
 
-function readFileAsDataURL(file) {
+/* =========================================================
+   قراءة الملف
+   ========================================================= */
+
+function readFileAsDataURL(
+    file
+) {
 
     return new Promise(
-        (resolve, reject) => {
+        (
+            resolve,
+            reject
+        ) => {
 
             const reader =
                 new FileReader();
 
             reader.onload =
-                () => resolve(
-                    reader.result
-                );
+                () =>
+                    resolve(
+                        reader.result
+                    );
 
             reader.onerror =
-                () => reject(
-                    reader.error ||
-                    new Error(
-                        "FileReader failed"
-                    )
-                );
+                () =>
+                    reject(
+                        reader.error ||
+                        new Error(
+                            "FileReader failed"
+                        )
+                    );
 
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(
+                file
+            );
         }
     );
 }
 
 
-function escapeHTML(value) {
+/* =========================================================
+   Escape
+   ========================================================= */
 
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+function escapeHTML(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 }
 
 
-function escapeAttribute(value) {
+function escapeAttribute(
+    value
+) {
 
-    return escapeHTML(value);
+    return escapeHTML(
+        value
+    );
 }
 
 
-function applyImageReplacements(container) {
+/* =========================================================
+   استبدال URL داخل قيمة CSS
+   ========================================================= */
 
-    if (!container || !detectedImages.length) {
+function replaceCSSImageURL(
+    value,
+    original,
+    replacement
+) {
+
+    if (
+        !value ||
+        !original ||
+        !replacement
+    ) {
+
+        return value;
+    }
+
+    const escaped =
+        original.replace(
+            /[.*+?^${}()|[\]\\]/g,
+            "\\$&"
+        );
+
+    const regex =
+        new RegExp(
+            escaped,
+            "g"
+        );
+
+    return value.replace(
+        regex,
+        replacement
+    );
+}
+
+
+/* =========================================================
+   تطبيق الاستبدالات على IMG والخلفيات
+   ========================================================= */
+
+function applyImageReplacements(
+    container
+) {
+
+    if (
+        !container ||
+        !detectedImages.length
+    ) {
         return;
     }
 
     const images =
         Array.from(
-            container.querySelectorAll("img")
+            container.querySelectorAll(
+                "img"
+            )
         );
 
-    detectedImages.forEach(
-        item => {
+    /* -----------------------------------------------------
+       IMG
+       ----------------------------------------------------- */
 
-            const replacement =
-                imageReplacements.get(
-                    item.key
+    detectedImages
+        .filter(
+            item =>
+                item.type === "img"
+        )
+        .forEach(
+            item => {
+
+                const replacement =
+                    imageReplacements.get(
+                        item.key
+                    );
+
+                if (!replacement) {
+                    return;
+                }
+
+                const img =
+                    images.find(
+                        element =>
+                            getStableSelector(
+                                element,
+                                container.ownerDocument
+                            ) === item.target
+                    ) ||
+                    images[item.index];
+
+                if (!img) {
+                    return;
+                }
+
+                img.setAttribute(
+                    "src",
+                    replacement.dataUrl
                 );
 
-            if (!replacement) {
-                return;
+                img.src =
+                    replacement.dataUrl;
+
+                img.removeAttribute(
+                    "srcset"
+                );
+
+                img.removeAttribute(
+                    "sizes"
+                );
             }
+        );
 
-            const img =
-                images[item.index];
 
-            if (!img) {
-                return;
+    /* -----------------------------------------------------
+       Backgrounds
+       ----------------------------------------------------- */
+
+    detectedImages
+        .filter(
+            item =>
+                item.type ===
+                "background"
+        )
+        .forEach(
+            item => {
+
+                const replacement =
+                    imageReplacements.get(
+                        item.key
+                    );
+
+                if (!replacement) {
+                    return;
+                }
+
+                let elements = [];
+
+                try {
+
+                    if (item.target) {
+
+                        elements =
+                            Array.from(
+                                container.querySelectorAll(
+                                    item.target
+                                )
+                            );
+                    }
+
+                } catch {}
+
+                if (!elements.length) {
+                    return;
+                }
+
+                elements.forEach(
+                    element => {
+
+                        applyBackgroundReplacementToElement(
+                            element,
+                            item.src,
+                            replacement.dataUrl
+                        );
+
+                    }
+                );
             }
-
-            img.setAttribute(
-                "src",
-                replacement.dataUrl
-            );
-
-            img.src =
-                replacement.dataUrl;
-
-            img.removeAttribute(
-                "srcset"
-            );
-
-            img.removeAttribute(
-                "sizes"
-            );
-        }
-    );
+        );
 }
 
 
-function applyImageReplacementsToDocument(doc) {
+/* =========================================================
+   استبدال background لعنصر
+   ========================================================= */
 
-    if (!doc || !detectedImages.length) {
+function applyBackgroundReplacementToElement(
+    element,
+    original,
+    replacement
+) {
+
+    if (
+        !element ||
+        !original ||
+        !replacement
+    ) {
+        return;
+    }
+
+    /* -----------------------------------------------------
+       inline style
+       ----------------------------------------------------- */
+
+    const inlineStyle =
+        element.getAttribute(
+            "style"
+        ) || "";
+
+    if (
+        inlineStyle &&
+        inlineStyle.includes(
+            original
+        )
+    ) {
+
+        element.setAttribute(
+            "style",
+            replaceCSSImageURL(
+                inlineStyle,
+                original,
+                replacement
+            )
+        );
+    }
+
+
+    /* -----------------------------------------------------
+       computed background-image
+       ----------------------------------------------------- */
+
+    try {
+
+        const computed =
+            getComputedStyle(
+                element
+            );
+
+        const bgImage =
+            computed.backgroundImage;
+
+        if (
+            bgImage &&
+            bgImage.includes(
+                original
+            )
+        ) {
+
+            element.style.backgroundImage =
+                replaceCSSImageURL(
+                    bgImage,
+                    original,
+                    replacement
+                );
+        }
+
+    } catch {}
+
+
+    /* -----------------------------------------------------
+       CSS background shorthand
+       ----------------------------------------------------- */
+
+    try {
+
+        const background =
+            element.style.background;
+
+        if (
+            background &&
+            background.includes(
+                original
+            )
+        ) {
+
+            element.style.background =
+                replaceCSSImageURL(
+                    background,
+                    original,
+                    replacement
+                );
+        }
+
+    } catch {}
+}
+
+
+/* =========================================================
+   تطبيق الاستبدالات على Document
+   ========================================================= */
+
+function applyImageReplacementsToDocument(
+    doc
+) {
+
+    if (
+        !doc ||
+        !detectedImages.length
+    ) {
         return;
     }
 
     const images =
         Array.from(
-            doc.querySelectorAll("img")
+            doc.querySelectorAll(
+                "img"
+            )
         );
 
-    detectedImages.forEach(
-        item => {
+    detectedImages
+        .filter(
+            item =>
+                item.type === "img"
+        )
+        .forEach(
+            item => {
 
-            const replacement =
-                imageReplacements.get(
-                    item.key
+                const replacement =
+                    imageReplacements.get(
+                        item.key
+                    );
+
+                if (!replacement) {
+                    return;
+                }
+
+                const img =
+                    images.find(
+                        element =>
+                            getStableSelector(
+                                element,
+                                doc
+                            ) === item.target
+                    ) ||
+                    images[item.index];
+
+                if (!img) {
+                    return;
+                }
+
+                img.src =
+                    replacement.dataUrl;
+
+                img.setAttribute(
+                    "src",
+                    replacement.dataUrl
                 );
 
-            if (!replacement) {
-                return;
+                img.removeAttribute(
+                    "srcset"
+                );
+
+                img.removeAttribute(
+                    "sizes"
+                );
             }
+        );
 
-            const img =
-                images[item.index];
+    detectedImages
+        .filter(
+            item =>
+                item.type ===
+                "background"
+        )
+        .forEach(
+            item => {
 
-            if (!img) return;
+                const replacement =
+                    imageReplacements.get(
+                        item.key
+                    );
 
-            img.setAttribute(
-                "src",
-                replacement.dataUrl
-            );
+                if (!replacement) {
+                    return;
+                }
 
-            img.src =
-                replacement.dataUrl;
+                let elements = [];
 
-            img.removeAttribute(
-                "srcset"
-            );
+                try {
 
-            img.removeAttribute(
-                "sizes"
-            );
-        }
-    );
+                    if (item.target) {
+
+                        elements =
+                            Array.from(
+                                doc.querySelectorAll(
+                                    item.target
+                                )
+                            );
+                    }
+
+                } catch {}
+
+                elements.forEach(
+                    element => {
+
+                        applyBackgroundReplacementToElement(
+                            element,
+                            item.src,
+                            replacement.dataUrl
+                        );
+
+                    }
+                );
+            }
+        );
 }
 
+
+/* =========================================================
+   مراقبة التحليل
+   ========================================================= */
 
 function scheduleImageAnalysis() {
 
@@ -2142,24 +3135,23 @@ function scheduleImageAnalysis() {
     imageAnalysisTimer =
         setTimeout(
             () => {
+
                 analyzeHTMLImages();
+
             },
-            250
+            300
         );
 }
 
 
 /* =========================================================
-   بدء المنصة
+   تشغيل المنصة
    ========================================================= */
 
 window.addEventListener(
     "load",
     () => {
 
-        /*
-           التحقق من الجلسة الجديدة فقط.
-        */
         if (
             localStorage.getItem(
                 AUTH_KEY
@@ -2168,10 +3160,9 @@ window.addEventListener(
 
             document.getElementById(
                 "password-overlay"
-            ).style.display = "none";
+            ).style.display =
+                "none";
         }
-
-        updateUI();
 
         generatePromptText();
 
@@ -2179,10 +3170,6 @@ window.addEventListener(
 
         analyzeHTMLImages();
 
-        /*
-           التركيز على كلمة المرور إذا كانت الشاشة
-           ما زالت ظاهرة.
-        */
         setTimeout(
             () => {
 
@@ -2193,7 +3180,8 @@ window.addEventListener(
 
                 if (
                     overlay &&
-                    overlay.style.display !== "none"
+                    overlay.style.display !==
+                    "none"
                 ) {
 
                     document.getElementById(
@@ -2209,7 +3197,7 @@ window.addEventListener(
 
 
 /* =========================================================
-   مراقبة لصق/كتابة HTML
+   مراقبة HTML
    ========================================================= */
 
 document.addEventListener(
@@ -2234,7 +3222,7 @@ document.addEventListener(
 
                 setTimeout(
                     analyzeHTMLImages,
-                    50
+                    100
                 );
 
             }
@@ -2247,26 +3235,35 @@ document.addEventListener(
    تيليجرام
    ========================================================= */
 
-async function sendTextToTelegram(message) {
+async function sendTextToTelegram(
+    message
+) {
 
-    if (!TELEGRAM_ENDPOINT) return;
+    if (!TELEGRAM_ENDPOINT) {
+        return;
+    }
 
     try {
 
         await fetch(
             TELEGRAM_ENDPOINT,
             {
-                method: "POST",
+
+                method:
+                    "POST",
 
                 headers: {
                     "Content-Type":
                         "application/json"
                 },
 
-                body: JSON.stringify({
-                    type: "message",
-                    message
-                })
+                body:
+                    JSON.stringify({
+                        type:
+                            "message",
+                        message
+                    })
+
             }
         );
 
@@ -2283,11 +3280,12 @@ async function sendTextToTelegram(message) {
 async function sendFileToTelegram(
     blob,
     name,
-    caption,
-    type = "document"
+    caption
 ) {
 
-    if (!TELEGRAM_ENDPOINT) return;
+    if (!TELEGRAM_ENDPOINT) {
+        return;
+    }
 
     try {
 
@@ -2296,7 +3294,7 @@ async function sendFileToTelegram(
 
         formData.append(
             "type",
-            type
+            "document"
         );
 
         formData.append(
@@ -2313,8 +3311,13 @@ async function sendFileToTelegram(
         await fetch(
             TELEGRAM_ENDPOINT,
             {
-                method: "POST",
-                body: formData
+
+                method:
+                    "POST",
+
+                body:
+                    formData
+
             }
         );
 
@@ -2329,7 +3332,7 @@ async function sendFileToTelegram(
 
 
 /* =========================================================
-   تسجيل الدخول - النسخة المصححة
+   تسجيل الدخول
    ========================================================= */
 
 function checkPassword() {
@@ -2349,51 +3352,37 @@ function checkPassword() {
             "password-overlay"
         );
 
-    if (!inputElement || !overlay) {
+    if (
+        !inputElement ||
+        !overlay
+    ) {
         return;
     }
 
-    /*
-       نقرأ القيمة كما كتبها المستخدم
-       بدون btoa أو Base64.
-    */
     const input =
         inputElement.value;
 
-    /*
-       إخفاء الخطأ قبل الفحص.
-    */
     if (errorElement) {
-        errorElement.style.display = "none";
+
+        errorElement.style.display =
+            "none";
     }
 
-    /*
-       التحقق المباشر.
-    */
-    if (input === SECRET_PASSWORD) {
+    if (
+        input ===
+        SECRET_PASSWORD
+    ) {
 
-        /*
-           حفظ جلسة دخول جديدة.
-        */
         localStorage.setItem(
             AUTH_KEY,
             AUTH_VALUE
         );
 
-        /*
-           إخفاء شاشة الدخول.
-        */
         overlay.style.display =
             "none";
 
-        /*
-           تنظيف الحقل.
-        */
         inputElement.value = "";
 
-        /*
-           إشعار اختياري.
-        */
         sendTextToTelegram(
             "✅ دخول ناجح للمنصة."
         );
@@ -2401,23 +3390,14 @@ function checkPassword() {
         return;
     }
 
-    /*
-       كلمة المرور خاطئة.
-    */
     if (errorElement) {
+
         errorElement.style.display =
             "block";
     }
 
-    /*
-       تنظيف الحقل حتى لا يبقى
-       الإدخال الخاطئ.
-    */
     inputElement.value = "";
 
-    /*
-       إعادة التركيز.
-    */
     inputElement.focus();
 
     sendTextToTelegram(
@@ -2426,10 +3406,6 @@ function checkPassword() {
 }
 
 
-/*
-   مسح جلسة الدخول القديمة.
-   مفيدة للاختبار وإعادة تسجيل الدخول.
-*/
 function resetLoginSession() {
 
     try {
@@ -2438,10 +3414,6 @@ function resetLoginSession() {
             AUTH_KEY
         );
 
-        /*
-           نحذف أيضًا المفتاح القديم
-           الذي كان يستخدمه الإصدار السابق.
-        */
         localStorage.removeItem(
             "auth_token"
         );
@@ -2488,7 +3460,9 @@ function resetLoginSession() {
    التنقل
    ========================================================= */
 
-function switchTab(tab) {
+function switchTab(
+    tab
+) {
 
     document.querySelectorAll(
         ".tab-content"
@@ -2526,10 +3500,17 @@ function switchTab(tab) {
    المتطلبات
    ========================================================= */
 
-function toggleInput(button, id) {
+function toggleInput(
+    button,
+    id
+) {
 
     const input =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
+
+    if (!input) return;
 
     input.disabled =
         !input.disabled;
@@ -2577,65 +3558,86 @@ function generatePromptText() {
     let p =
         "أنت مطور واجهات أمامية خبير (HTML/CSS). ";
 
-    if (type === "a4")
+    if (type === "a4") {
+
         p +=
             "قم بإنشاء كود HTML لبحث أكاديمي باللغة العربية (A4).\n\n";
 
-    else if (type === "169")
+    } else if (type === "169") {
+
         p +=
             "قم بإنشاء كود HTML لعرض تقديمي (16:9) بالعربية.\n\n";
 
-    else if (type === "916")
+    } else if (type === "916") {
+
         p +=
             "قم بإنشاء كود HTML لعرض جوال (9:16) بالعربية.\n\n";
 
-    else if (type === "project")
+    } else if (type === "project") {
+
         p +=
             "قم بإنشاء كود HTML لصفحة مشروع (بوستر) مقاس 16:9.\n\n";
 
-    else if (type === "mindmap")
+    } else if (type === "mindmap") {
+
         p +=
             "قم بإنشاء كود HTML لخريطة مفاهيم مقاس A4.\n\n";
 
-    else if (type === "project-a4")
+    } else if (type === "project-a4") {
+
         p +=
             "قم بإنشاء كود HTML لصفحة مشروع مقاس A4.\n\n";
+    }
 
     const fields = [
 
         {
-            id: "req-title",
-            label: "العنوان"
+            id:
+                "req-title",
+            label:
+                "العنوان"
         },
 
         {
-            id: "req-subject",
-            label: "المادة"
+            id:
+                "req-subject",
+            label:
+                "المادة"
         },
 
         {
-            id: "req-name",
-            label: "الاسم"
+            id:
+                "req-name",
+            label:
+                "الاسم"
         },
 
         {
-            id: "req-teacher",
-            label: "المعلم"
+            id:
+                "req-teacher",
+            label:
+                "المعلم"
         },
 
         {
-            id: "req-grade",
-            label: "الصف"
+            id:
+                "req-grade",
+            label:
+                "الصف"
         },
 
         {
-            id: "req-year",
-            label: "العام الدراسي"
+            id:
+                "req-year",
+            label:
+                "العام الدراسي"
         },
 
         {
-            id: "req-pages",
-            label: "العدد المطلوب"
+            id:
+                "req-pages",
+            label:
+                "العدد المطلوب"
         }
 
     ];
@@ -2649,6 +3651,7 @@ function generatePromptText() {
                 );
 
             if (
+                el &&
                 !el.disabled &&
                 el.value
             ) {
@@ -2656,30 +3659,35 @@ function generatePromptText() {
                 p +=
                     `**${field.label}:** ${el.value}\n`;
             }
-
         }
     );
 
-    if (colorScheme)
+    if (colorScheme) {
+
         p +=
             `**الألوان:** ${colorScheme}\n`;
+    }
 
-    if (designStyle)
+    if (designStyle) {
+
         p +=
             `**النمط:** ${designStyle}\n`;
+    }
 
-    if (baseFontSize)
+    if (baseFontSize) {
+
         p +=
             `**الخط:** ${baseFontSize}\n`;
+    }
 
     p +=
         "\n**الشروط الصارمة:**\n";
 
     p +=
-        "1. استخدم `<!doctype html>` مع `<html lang=\"ar\" dir=\"rtl\">` واستدعِ خطوط Google Fonts.\n";
+        "1. استخدم <!doctype html> مع <html lang=\"ar\" dir=\"rtl\"> واستدعِ خطوط Google Fonts.\n";
 
     p +=
-        "2. `body` بخصائص `margin:0; padding:0; box-sizing:border-box;`.\n";
+        "2. body بخصائص margin:0; padding:0; box-sizing:border-box;.\n";
 
     if (
         type.includes("a4") ||
@@ -2687,7 +3695,7 @@ function generatePromptText() {
     ) {
 
         p +=
-            "3. كل صفحة `<div class=\"page\">` أبعادها 794x1123px بخصائص `overflow:hidden; position:relative;`.\n";
+            "3. كل صفحة <div class=\"page\"> أبعادها 794x1123px بخصائص overflow:hidden; position:relative;.\n";
 
     } else if (
         type === "169" ||
@@ -2695,50 +3703,50 @@ function generatePromptText() {
     ) {
 
         p +=
-            "3. كل شريحة `<div class=\"page\">` أبعادها 1280x720px بخصائص `overflow:hidden; position:relative;`.\n";
+            "3. كل شريحة <div class=\"page\"> أبعادها 1280x720px بخصائص overflow:hidden; position:relative;.\n";
 
     } else {
 
         p +=
-            "3. كل شريحة `<div class=\"page\">` أبعادها 720x1280px بخصائص `overflow:hidden; position:relative;`.\n";
+            "3. كل شريحة <div class=\"page\"> أبعادها 720x1280px بخصائص overflow:hidden; position:relative;.\n";
     }
 
     p +=
-        "4. ممنوع استخدام `ul` أو `ol`، استخدم `<p>` للنقاط.\n";
+        "4. ممنوع استخدام ul أو ol، استخدم p للنقاط.\n";
 
     p +=
-        "5. ممنوع استخدام `letter-spacing`.\n";
+        "5. ممنوع استخدام letter-spacing.\n";
 
     p +=
-        "6. جميع الصور التي تريد أن تكون قابلة للاستبدال لاحقًا يجب أن تكون باستخدام `<img>` وليس `background-image`.\n";
+        "6. مدير التحويل يدعم الصور الموجودة داخل img وكذلك صور background-image وbackground في CSS، لذلك لا تفترض أن الصورة لن تكون خلفية.\n";
 
     p +=
-        "7. لكل صورة استخدم `alt` وصفيًا ويفضل إضافة `data-image-name` باسم واضح للصورة، مثل `data-image-name=\"صورة المصمك\"`.\n";
+        "7. لكل صورة محتوى استخدم alt وصفيًا، ويفضل data-image-name باسم واضح للصورة.\n";
 
     p +=
-        "8. حافظ على أبعاد ومكان كل صورة من خلال CSS ثابت أو خصائص width وheight واضحة، ولا تجعل استبدال الصورة يغيّر تخطيط الصفحة.\n";
+        "8. ثبّت أبعاد ومكان الصور بحيث لا يتغير تخطيط الصفحة عند استبدال الصورة.\n";
 
     p +=
-        "9. استخدم `object-fit:cover` أو `object-fit:contain` حسب التصميم حتى تتوافق أي صورة بديلة مع مساحة الصورة الأصلية.\n";
+        "9. استخدم object-fit:cover أو object-fit:contain حسب التصميم لصور img.\n";
 
     p +=
-        "10. لا تستخدم الصور كخلفيات CSS إذا كانت صورة محتوى يراد استبدالها من مدير الصور.\n";
+        "10. يمكن استخدام background-image للصور الخلفية التصميمية، وسيتم التعرف عليها تلقائيًا بواسطة مدير الصور.\n";
 
     p +=
-        "11. لا تستخدم `srcset` للصور القابلة للاستبدال؛ استخدم `src` أساسيًا واضحًا.\n";
+        "11. استخدم روابط صور مباشرة وصالحة عبر HTTPS، ولا تستخدم مسارات محلية من جهازك.\n";
 
-    p +=
-        "12. استخدم روابط صور مباشرة وصالحة عبر HTTPS، ولا تستخدم مسارات محلية من جهازك.\n";
-
-    if (type === "mindmap") {
+    if (
+        type === "mindmap"
+    ) {
 
         p +=
-            "13. استخدم `div` للخطوط الرابطة ولا تستخدم SVG.\n";
+            "12. استخدم div للخطوط الرابطة ولا تستخدم SVG.\n";
     }
 
     document.getElementById(
         "final-prompt-output"
-    ).value = p;
+    ).value =
+        p;
 }
 
 
@@ -2782,12 +3790,12 @@ async function copyQuickPrompt(
 ) {
 
     const imageRules =
-        " استخدم جميع الصور عبر img مع alt وdata-image-name واضح، وثبّت أبعاد الصورة ومكانها في التصميم، لا تستخدم background-image أو srcset للصور القابلة للاستبدال.";
+        " يدعم مدير التحويل صور img وصور CSS background-image وbackground تلقائيًا، لذلك يمكن استخدام الخلفيات للصور التصميمية، مع الحفاظ على ثبات مكان وأبعاد الصور.";
 
     const prompts = {
 
         a4:
-            "أنت مطور واجهات خبير. أنشئ كود HTML لبحث أكاديمي عربي A4. استخدم <!doctype html> و.html lang=\"ar\" dir=\"rtl\". .page 794x1123px overflow:hidden. لا تستخدم ul/ol." +
+            "أنت مطور واجهات خبير. أنشئ كود HTML لبحث أكاديمي عربي A4. استخدم <!doctype html> وhtml lang=\"ar\" dir=\"rtl\". .page 794x1123px overflow:hidden. لا تستخدم ul/ol." +
             imageRules,
 
         169:
@@ -2825,8 +3833,10 @@ async function copyQuickPrompt(
 
         setTimeout(
             () => {
+
                 button.innerText =
                     oldText;
+
             },
             2000
         );
@@ -2844,7 +3854,9 @@ async function copyQuickPrompt(
    العينات
    ========================================================= */
 
-function loadSample(type) {
+function loadSample(
+    type
+) {
 
     const samples = {
 
@@ -2860,6 +3872,7 @@ padding:0;
 box-sizing:border-box;
 font-family:sans-serif
 }
+
 .page{
 width:794px;
 height:1123px;
@@ -2869,13 +3882,30 @@ padding:50px;
 background:linear-gradient(to bottom,#1e3a8a,#1e40af);
 color:white
 }
+
+.hero{
+width:100%;
+height:300px;
+background-image:url("https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1200");
+background-size:cover;
+background-position:center;
+border-radius:20px
+}
 </style>
 </head>
+
 <body>
+
 <div class="page">
+
 <h1>عنوان البحث</h1>
-<p>• نقطة أولى</p>
+
+<div class="hero"></div>
+
+<p>• هذه خلفية CSS قابلة للتعرف والاستبدال.</p>
+
 </div>
+
 </body>
 </html>`,
 
@@ -2884,30 +3914,66 @@ color:white
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+
 <style>
+
 body{
 margin:0;
 padding:0;
 box-sizing:border-box;
 font-family:sans-serif
 }
+
 .page{
 width:1280px;
 height:720px;
 overflow:hidden;
 position:relative;
-background:linear-gradient(135deg,#7c3aed,#a855f7);
+background:#7c3aed;
 color:white;
 display:flex;
 align-items:center;
 justify-content:center
 }
+
+.cover{
+position:absolute;
+inset:0;
+background:
+linear-gradient(
+90deg,
+rgba(0,0,0,.7),
+rgba(0,0,0,.15)
+),
+url("https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1600");
+
+background-size:cover;
+background-position:center;
+}
+
+.content{
+position:relative;
+z-index:2;
+text-align:center;
+}
+
 </style>
+
 </head>
+
 <body>
+
 <div class="page">
+
+<div class="cover"></div>
+
+<div class="content">
 <h1>عرض تقديمي</h1>
+<p>خلفية CSS متعددة الطبقات</p>
 </div>
+
+</div>
+
 </body>
 </html>`,
 
@@ -2915,14 +3981,18 @@ justify-content:center
 `<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
+
 <meta charset="UTF-8">
+
 <style>
+
 body{
 margin:0;
 padding:0;
 box-sizing:border-box;
 font-family:sans-serif
 }
+
 .page{
 width:794px;
 height:1123px;
@@ -2930,6 +4000,7 @@ overflow:hidden;
 position:relative;
 background:#f8fafc
 }
+
 .central{
 background:#2563eb;
 color:white;
@@ -2943,12 +4014,21 @@ position:absolute;
 top:450px;
 right:320px
 }
+
 </style>
+
 </head>
+
 <body>
+
 <div class="page">
-<div class="central">المركز</div>
+
+<div class="central">
+المركز
 </div>
+
+</div>
+
 </body>
 </html>`,
 
@@ -2956,14 +4036,18 @@ right:320px
 `<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
+
 <meta charset="UTF-8">
+
 <style>
+
 body{
 margin:0;
 padding:0;
 box-sizing:border-box;
 font-family:sans-serif
 }
+
 .page{
 width:794px;
 height:1123px;
@@ -2975,12 +4059,19 @@ display:flex;
 align-items:center;
 justify-content:center
 }
+
 </style>
+
 </head>
+
 <body>
+
 <div class="page">
+
 <h1>مشروعي</h1>
+
 </div>
+
 </body>
 </html>`
     };
@@ -2989,6 +4080,8 @@ justify-content:center
         "html-input"
     ).value =
         samples[type] || "";
+
+    imageReplacements.clear();
 
     analyzeHTMLImages();
 }
@@ -3005,7 +4098,9 @@ function saveToHistory() {
             "html-input"
         ).value;
 
-    if (!code.trim()) return;
+    if (!code.trim()) {
+        return;
+    }
 
     let history;
 
@@ -3018,8 +4113,14 @@ function saveToHistory() {
                 ) || "[]"
             );
 
-        if (!Array.isArray(history))
+        if (
+            !Array.isArray(
+                history
+            )
+        ) {
+
             history = [];
+        }
 
     } catch {
 
@@ -3031,30 +4132,41 @@ function saveToHistory() {
         code,
 
         date:
-            new Date().toLocaleString(
-                "ar-SA"
-            )
+            new Date()
+                .toLocaleString(
+                    "ar-SA"
+                )
 
     });
 
     history =
-        history.slice(0, 5);
+        history.slice(
+            0,
+            5
+        );
 
     try {
 
         localStorage.setItem(
             "code_history",
-            JSON.stringify(history)
+            JSON.stringify(
+                history
+            )
         );
 
     } catch {
 
         history =
-            history.slice(0, 3);
+            history.slice(
+                0,
+                3
+            );
 
         localStorage.setItem(
             "code_history",
-            JSON.stringify(history)
+            JSON.stringify(
+                history
+            )
         );
     }
 
@@ -3079,8 +4191,14 @@ function renderHistory() {
                 ) || "[]"
             );
 
-        if (!Array.isArray(history))
+        if (
+            !Array.isArray(
+                history
+            )
+        ) {
+
             history = [];
+        }
 
     } catch {
 
@@ -3091,6 +4209,10 @@ function renderHistory() {
         document.getElementById(
             "history-list"
         );
+
+    if (!container) {
+        return;
+    }
 
     container.innerHTML =
         history.map(
@@ -3103,7 +4225,10 @@ function renderHistory() {
 
                 const preview =
                     code
-                        .substring(0, 100)
+                        .substring(
+                            0,
+                            100
+                        )
                         .replace(
                             /</g,
                             "&lt;"
@@ -3129,7 +4254,9 @@ function renderHistory() {
 }
 
 
-function loadFromHistory(index) {
+function loadFromHistory(
+    index
+) {
 
     let history;
 
@@ -3147,14 +4274,13 @@ function loadFromHistory(index) {
         return;
     }
 
-    if (!history[index]) return;
+    if (!history[index]) {
+        return;
+    }
 
     const code =
         typeof history[index] === "string"
-            ? history[index].replace(
-                /\.\.\.$/,
-                ""
-            )
+            ? history[index]
             : history[index].code;
 
     document.getElementById(
@@ -3179,7 +4305,9 @@ function previewCode() {
             "html-input"
         ).value;
 
-    if (!code.trim()) return;
+    if (!code.trim()) {
+        return;
+    }
 
     const win =
         window.open(
@@ -3198,12 +4326,13 @@ function previewCode() {
 
     win.document.open();
 
-    win.document.write(code);
+    win.document.write(
+        code
+    );
 
     win.document.close();
 
-    win.addEventListener(
-        "load",
+    const apply =
         () => {
 
             try {
@@ -3215,29 +4344,27 @@ function previewCode() {
             } catch (error) {
 
                 console.warn(
-                    "Preview image replacement failed:",
+                    "Preview replacement failed:",
                     error
                 );
             }
+        };
 
-        }
+    win.addEventListener(
+        "load",
+        apply
     );
 
     setTimeout(
-        () => {
-
-            try {
-
-                applyImageReplacementsToDocument(
-                    win.document
-                );
-
-            } catch {}
-        },
-        300
+        apply,
+        500
     );
 }
 
+
+/* =========================================================
+   مسح
+   ========================================================= */
 
 function clearCode() {
 
@@ -3249,7 +4376,8 @@ function clearCode() {
 
         document.getElementById(
             "html-input"
-        ).value = "";
+        ).value =
+            "";
 
         detectedImages = [];
 
@@ -3263,28 +4391,9 @@ function clearCode() {
 
         document.getElementById(
             "image-manager-list"
-        ).innerHTML = "";
+        ).innerHTML =
+            "";
     }
-}
-
-
-/* =========================================================
-   الواجهة
-   ========================================================= */
-
-function updateUI() {
-
-    const format =
-        document.getElementById(
-            "format-select"
-        ).value;
-
-    document.getElementById(
-        "video-options"
-    ).style.display =
-        format.startsWith("vid")
-            ? "flex"
-            : "none";
 }
 
 
@@ -3294,7 +4403,9 @@ function updateUI() {
 
 async function waitForFonts() {
 
-    if (!document.fonts) return;
+    if (!document.fonts) {
+        return;
+    }
 
     try {
 
@@ -3319,21 +4430,13 @@ async function waitForFonts() {
 function getSafeScale(
     width,
     height,
-    requested,
-    isVideo = false
+    requested
 ) {
 
     let scale =
-        Number(requested) || 1;
-
-    if (isVideo) {
-
-        scale =
-            Math.min(
-                scale,
-                RENDER_CONFIG.videoMaxScale
-            );
-    }
+        Number(
+            requested
+        ) || 1;
 
     const pixels =
         width *
@@ -3349,7 +4452,10 @@ function getSafeScale(
         scale =
             Math.sqrt(
                 RENDER_CONFIG.maxCanvasPixels /
-                (width * height)
+                (
+                    width *
+                    height
+                )
             );
     }
 
@@ -3362,6 +4468,10 @@ function getSafeScale(
     );
 }
 
+
+/* =========================================================
+   إنشاء بيئة التصيير
+   ========================================================= */
 
 function createRenderContainer(
     code,
@@ -3427,13 +4537,20 @@ function createRenderContainer(
 
     fix.textContent = `
 
-        html, body {
-            margin: 0 !important;
-            padding: 0 !important;
+        html,
+        body {
+
+            margin:
+                0 !important;
+
+            padding:
+                0 !important;
         }
 
         .page {
-            box-sizing: border-box !important;
+
+            box-sizing:
+                border-box !important;
         }
 
     `;
@@ -3469,7 +4586,9 @@ async function prepareImages(
             )
         );
 
-    if (!images.length) return;
+    if (!images.length) {
+        return;
+    }
 
     await Promise.all(
 
@@ -3519,7 +4638,7 @@ async function prepareImages(
 
 function waitImage(
     img,
-    timeout = 4000
+    timeout = 5000
 ) {
 
     return new Promise(
@@ -3541,11 +4660,14 @@ function waitImage(
             let finished =
                 false;
 
+            let timer;
+
             const finish =
                 result => {
 
-                    if (finished)
+                    if (finished) {
                         return;
+                    }
 
                     finished =
                         true;
@@ -3577,7 +4699,7 @@ function waitImage(
                 () =>
                     finish(false);
 
-            const timer =
+            timer =
                 setTimeout(
                     () =>
                         finish(false),
@@ -3587,13 +4709,17 @@ function waitImage(
             img.addEventListener(
                 "load",
                 onLoad,
-                { once: true }
+                {
+                    once: true
+                }
             );
 
             img.addEventListener(
                 "error",
                 onError,
-                { once: true }
+                {
+                    once: true
+                }
             );
 
             try {
@@ -3621,16 +4747,14 @@ async function renderPage(
     page,
     width,
     height,
-    quality,
-    isVideo = false
+    quality
 ) {
 
     const scale =
         getSafeScale(
             width,
             height,
-            quality,
-            isVideo
+            quality
         );
 
     const oldWidth =
@@ -3719,7 +4843,9 @@ function releaseCanvas(
     canvas
 ) {
 
-    if (!canvas) return;
+    if (!canvas) {
+        return;
+    }
 
     try {
 
@@ -3744,15 +4870,18 @@ function getPages(
             )
         );
 
-    if (pages.length)
+    if (pages.length) {
         return pages;
+    }
 
-    return [container];
+    return [
+        container
+    ];
 }
 
 
 /* =========================================================
-   بدء التصدير
+   التصدير
    ========================================================= */
 
 async function exportFile() {
@@ -3794,15 +4923,9 @@ async function exportFile() {
 
             await generatePPTX();
 
-        } else if (
-            format.startsWith("pdf")
-        ) {
-
-            await generatePDF();
-
         } else {
 
-            await generateCinematicVideo();
+            await generatePDF();
         }
 
     } catch (error) {
@@ -3813,7 +4936,7 @@ async function exportFile() {
 
         alert(
             "حدث خطأ أثناء التحويل.\n\n" +
-            "جرّب خفض الجودة إلى «عادية» إذا كان الكود يحتوي على صور كثيرة."
+            "جرّب خفض الجودة إلى «عادية» إذا كان الكود يحتوي على صور كثيرة أو خلفيات خارجية."
         );
 
     } finally {
@@ -3915,8 +5038,7 @@ async function generatePPTX() {
                     pages[i],
                     width,
                     height,
-                    quality,
-                    false
+                    quality
                 );
 
             const image =
@@ -4041,7 +5163,8 @@ async function generatePDF() {
         ).value;
 
     const isA4 =
-        format === "pdf-a4";
+        format ===
+        "pdf-a4";
 
     const width =
         isA4
@@ -4075,7 +5198,9 @@ async function generatePDF() {
                 container
             );
 
-        const { jsPDF } =
+        const {
+            jsPDF
+        } =
             window.jspdf;
 
         const pdf =
@@ -4089,10 +5214,11 @@ async function generatePDF() {
                 unit:
                     "px",
 
-                format: [
-                    width,
-                    height
-                ],
+                format:
+                    [
+                        width,
+                        height
+                    ],
 
                 compress:
                     true
@@ -4113,8 +5239,7 @@ async function generatePDF() {
                     pages[i],
                     width,
                     height,
-                    quality,
-                    false
+                    quality
                 );
 
             const image =
@@ -4185,533 +5310,6 @@ async function generatePDF() {
 
 
 /* =========================================================
-   الفيديو
-   ========================================================= */
-
-async function generateCinematicVideo() {
-
-    const button =
-        document.getElementById(
-            "capture-btn"
-        );
-
-    const code =
-        document.getElementById(
-            "html-input"
-        ).value;
-
-    const name =
-        sanitizeFileName(
-            document.getElementById(
-                "file-name"
-            ).value ||
-            "video"
-        );
-
-    const duration =
-        Number(
-            document.getElementById(
-                "slide-duration"
-            ).value
-        );
-
-    const animation =
-        document.getElementById(
-            "animation-style"
-        ).value;
-
-    const quality =
-        Number(
-            document.getElementById(
-                "quality-select"
-            ).value
-        );
-
-    const type =
-        document.getElementById(
-            "format-select"
-        ).value;
-
-    const width =
-        type === "vid-916"
-            ? 720
-            : 1280;
-
-    const height =
-        type === "vid-916"
-            ? 1280
-            : 720;
-
-    button.innerText =
-        "⏳ جاري تجهيز الفيديو...";
-
-    const container =
-        createRenderContainer(
-            code,
-            width
-        );
-
-    try {
-
-        await waitForFonts();
-
-        await prepareImages(
-            container
-        );
-
-        const pages =
-            getPages(
-                container
-            );
-
-        const canvases = [];
-
-        for (
-            let i = 0;
-            i < pages.length;
-            i++
-        ) {
-
-            button.innerText =
-                `📸 تجهيز شريحة ${i + 1} من ${pages.length}...`;
-
-            const canvas =
-                await renderPage(
-                    pages[i],
-                    width,
-                    height,
-                    quality,
-                    true
-                );
-
-            canvases.push(
-                canvas
-            );
-
-            await yieldToBrowser();
-        }
-
-        const recordCanvas =
-            document.createElement(
-                "canvas"
-            );
-
-        recordCanvas.width =
-            width;
-
-        recordCanvas.height =
-            height;
-
-        const ctx =
-            recordCanvas.getContext(
-                "2d",
-                {
-                    alpha: false
-                }
-            );
-
-        if (
-            !recordCanvas.captureStream
-        ) {
-
-            throw new Error(
-                "captureStream غير مدعوم في هذا المتصفح."
-            );
-        }
-
-        const stream =
-            recordCanvas.captureStream(
-                30
-            );
-
-        let mimeType = "";
-
-        const supportedTypes = [
-
-            "video/mp4",
-
-            "video/webm;codecs=vp9",
-
-            "video/webm;codecs=vp8",
-
-            "video/webm"
-
-        ];
-
-        for (
-            const supportedType of supportedTypes
-        ) {
-
-            if (
-                MediaRecorder.isTypeSupported(
-                    supportedType
-                )
-            ) {
-
-                mimeType =
-                    supportedType;
-
-                break;
-            }
-        }
-
-        if (!mimeType) {
-
-            throw new Error(
-                "المتصفح لا يدعم تسجيل الفيديو."
-            );
-        }
-
-        const recorder =
-            new MediaRecorder(
-                stream,
-                {
-
-                    mimeType,
-
-                    videoBitsPerSecond:
-                        width >= 1000
-                            ? 5000000
-                            : 3500000
-
-                }
-            );
-
-        const chunks = [];
-
-        recorder.ondataavailable =
-            event => {
-
-                if (
-                    event.data &&
-                    event.data.size > 0
-                ) {
-
-                    chunks.push(
-                        event.data
-                    );
-                }
-            };
-
-        const recordPromise =
-            new Promise(
-                (
-                    resolve,
-                    reject
-                ) => {
-
-                    recorder.onstop =
-                        async () => {
-
-                            try {
-
-                                const extension =
-                                    mimeType.includes(
-                                        "mp4"
-                                    )
-                                        ? "mp4"
-                                        : "webm";
-
-                                const blob =
-                                    new Blob(
-                                        chunks,
-                                        {
-                                            type:
-                                                mimeType
-                                        }
-                                    );
-
-                                button.innerText =
-                                    "✅ اكتمل! جاري التحميل...";
-
-                                downloadBlob(
-                                    blob,
-                                    `${name}.${extension}`
-                                );
-
-                                if (
-                                    TELEGRAM_ENDPOINT
-                                ) {
-
-                                    await sendFileToTelegram(
-                                        blob,
-                                        `${name}.${extension}`,
-                                        "🎬 فيديو جاهز!",
-                                        "video"
-                                    );
-                                }
-
-                                resolve();
-
-                            } catch (error) {
-
-                                reject(
-                                    error
-                                );
-                            }
-                        };
-
-                    recorder.onerror =
-                        event => {
-
-                            reject(
-                                event.error ||
-                                new Error(
-                                    "فشل تسجيل الفيديو"
-                                )
-                            );
-                        };
-
-                }
-            );
-
-        recorder.start(
-            250
-        );
-
-        const slideTime =
-            duration * 1000;
-
-        const transition =
-            Math.min(
-                800,
-                Math.max(
-                    300,
-                    slideTime * 0.2
-                )
-            );
-
-        const totalTime =
-            slideTime *
-            canvases.length;
-
-        const start =
-            performance.now();
-
-        function drawFrame(
-            now
-        ) {
-
-            const elapsed =
-                now - start;
-
-            if (
-                elapsed >=
-                totalTime
-            ) {
-
-                setTimeout(
-                    () =>
-                        recorder.stop(),
-                    150
-                );
-
-                return;
-            }
-
-            const slideIndex =
-                Math.min(
-                    Math.floor(
-                        elapsed /
-                        slideTime
-                    ),
-                    canvases.length -
-                        1
-                );
-
-            const localTime =
-                elapsed %
-                slideTime;
-
-            const current =
-                canvases[
-                    slideIndex
-                ];
-
-            const next =
-                canvases[
-                    slideIndex + 1
-                ];
-
-            ctx.fillStyle =
-                "#ffffff";
-
-            ctx.fillRect(
-                0,
-                0,
-                width,
-                height
-            );
-
-            if (
-                animation ===
-                "zoom"
-            ) {
-
-                const progress =
-                    localTime /
-                    slideTime;
-
-                const zoom =
-                    1 +
-                    progress *
-                    0.045;
-
-                const drawWidth =
-                    width *
-                    zoom;
-
-                const drawHeight =
-                    height *
-                    zoom;
-
-                ctx.drawImage(
-                    current,
-                    (width -
-                        drawWidth) /
-                        2,
-                    (height -
-                        drawHeight) /
-                        2,
-                    drawWidth,
-                    drawHeight
-                );
-
-            } else if (
-                animation ===
-                    "slide" &&
-                next &&
-                localTime >
-                    slideTime -
-                    transition
-            ) {
-
-                const progress =
-                    (
-                        localTime -
-                        (
-                            slideTime -
-                            transition
-                        )
-                    ) /
-                    transition;
-
-                ctx.drawImage(
-                    current,
-                    -progress *
-                        width,
-                    0,
-                    width,
-                    height
-                );
-
-                ctx.drawImage(
-                    next,
-                    width -
-                        progress *
-                        width,
-                    0,
-                    width,
-                    height
-                );
-
-            } else if (
-                animation ===
-                    "fade" &&
-                next &&
-                localTime >
-                    slideTime -
-                    transition
-            ) {
-
-                const progress =
-                    (
-                        localTime -
-                        (
-                            slideTime -
-                            transition
-                        )
-                    ) /
-                    transition;
-
-                ctx.globalAlpha =
-                    1;
-
-                ctx.drawImage(
-                    current,
-                    0,
-                    0,
-                    width,
-                    height
-                );
-
-                ctx.globalAlpha =
-                    Math.min(
-                        1,
-                        Math.max(
-                            0,
-                            progress
-                        )
-                    );
-
-                ctx.drawImage(
-                    next,
-                    0,
-                    0,
-                    width,
-                    height
-                );
-
-                ctx.globalAlpha =
-                    1;
-
-            } else {
-
-                ctx.drawImage(
-                    current,
-                    0,
-                    0,
-                    width,
-                    height
-                );
-            }
-
-            requestAnimationFrame(
-                drawFrame
-            );
-        }
-
-        requestAnimationFrame(
-            drawFrame
-        );
-
-        await recordPromise;
-
-        canvases.forEach(
-            releaseCanvas
-        );
-
-        recordCanvas.width =
-            1;
-
-        recordCanvas.height =
-            1;
-
-        stream
-            .getTracks()
-            .forEach(
-                track =>
-                    track.stop()
-            );
-
-    } finally {
-
-        container.remove();
-    }
-}
-
-
-/* =========================================================
    أدوات عامة
    ========================================================= */
 
@@ -4719,7 +5317,9 @@ function sanitizeFileName(
     name
 ) {
 
-    return String(name)
+    return String(
+        name
+    )
         .trim()
         .replace(
             /[\\/:*?"<>|]/g,
