@@ -794,8 +794,8 @@
             }
 
             .crop-stage {
-                height: 52vh;
-                min-height: 260px;
+                height: min(50vh, 400px);
+                min-height: 220px;
             }
 
             .crop-controls,
@@ -2914,7 +2914,7 @@ function chooseReplacementImage(
                         file
                     );
 
-                openCropEditor({
+                await openCropEditor({
 
                     item,
 
@@ -2960,7 +2960,7 @@ function chooseReplacementImage(
    تعديل قص صورة موجودة
    ========================================================= */
 
-function editReplacementCrop(
+async function editReplacementCrop(
     index
 ) {
 
@@ -2979,7 +2979,7 @@ function editReplacementCrop(
         return;
     }
 
-    openCropEditor({
+    await openCropEditor({
 
         item,
 
@@ -3505,12 +3505,10 @@ function scheduleImageAnalysis() {
 }
 
 /* =========================================================
-   الحصول على حجم الإطار الحقيقي للصورة
+   الحصول على حجم الإطار الحقيقي للصورة (نسخة محسّنة async)
    ========================================================= */
 
-function getCropTargetRatio(
-    item
-) {
+async function getCropTargetRatio(item) {
 
     const fallback =
         item &&
@@ -3536,190 +3534,160 @@ function getCropTargetRatio(
         return fallback;
     }
 
-    let container = null;
+    /* تحديد العرض الافتراضي حسب النوع */
+    let width = 794;
 
-    try {
+    const type =
+        document.getElementById(
+            "prompt-type"
+        )?.value;
 
-        let width =
-            794;
-
-        if (
-            item &&
-            (
-                item.page ||
-                item.target
-            )
-        ) {
-
-            const type =
-                document.getElementById(
-                    "prompt-type"
-                )?.value;
-
-            if (
-                type === "169"
-            ) {
-
-                width = 1280;
-            }
-        }
-
-        container =
-            document.createElement(
-                "div"
-            );
-
-        container.style.position =
-            "fixed";
-
-        container.style.left =
-            "-100000px";
-
-        container.style.top =
-            "0";
-
-        container.style.width =
-            width + "px";
-
-        container.style.visibility =
-            "hidden";
-
-        container.style.pointerEvents =
-            "none";
-
-        container.style.overflow =
-            "visible";
-
-        container.innerHTML =
-            code;
-
-        const fix =
-            document.createElement(
-                "style"
-            );
-
-        fix.textContent = `
-            html,body{
-                margin:0 !important;
-                padding:0 !important;
-            }
-            .page{
-                box-sizing:border-box !important;
-            }
-        `;
-
-        container.appendChild(
-            fix
-        );
-
-        document.body.appendChild(
-            container
-        );
-
-        let target = null;
-
-        if (item.target) {
-
-            try {
-
-                const matches =
-                    Array.from(
-                        container.querySelectorAll(
-                            item.target
-                        )
-                    );
-
-                if (matches.length) {
-
-                    target =
-                        matches.find(
-                            element =>
-                                getParsedPageNumber(
-                                    element,
-                                    container.ownerDocument
-                                ) === item.page
-                        ) ||
-                        matches[0];
-                }
-
-            } catch {}
-        }
-
-        if (!target && item.selector) {
-
-            try {
-
-                target =
-                    container.querySelector(
-                        item.selector
-                    );
-
-            } catch {}
-        }
-
-        if (target) {
-
-            const rect =
-                target.getBoundingClientRect();
-
-            if (
-                rect.width > 1 &&
-                rect.height > 1
-            ) {
-
-                const ratio =
-                    rect.width /
-                    rect.height;
-
-                if (
-                    Number.isFinite(
-                        ratio
-                    ) &&
-                    ratio > 0
-                ) {
-
-                    container.remove();
-
-                    return ratio;
-                }
-            }
-        }
-
-    } catch (error) {
-
-        console.warn(
-            "تعذر تحديد نسبة إطار الصورة:",
-            error
-        );
-
-    } finally {
-
-        if (container) {
-
-            try {
-                container.remove();
-            } catch {}
-        }
+    if (type === "169") {
+        width = 1280;
     }
 
-    return fallback;
+    /* حاوية معزولة بأبعاد صحيحة */
+    const container =
+        document.createElement("div");
+
+    container.style.position = "absolute";
+    container.style.left = "-99999px";
+    container.style.top = "0";
+    container.style.width = width + "px";
+    container.style.height = "auto";
+    container.style.minHeight = "100vh";
+    container.style.visibility = "hidden";
+    container.style.pointerEvents = "none";
+    container.style.fontFamily = "inherit";
+    container.style.overflow = "visible";
+    container.style.contain = "layout";
+
+    container.innerHTML = code;
+
+    const fix =
+        document.createElement("style");
+
+    fix.textContent = `
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .page {
+            box-sizing: border-box !important;
+        }
+    `;
+
+    container.appendChild(fix);
+
+    document.body.appendChild(container);
+
+    return await new Promise(resolve => {
+
+        /* انتظار إطار واحد قبل القياس */
+        requestAnimationFrame(() => {
+
+            try {
+
+                let target = null;
+
+                if (item.target) {
+
+                    try {
+
+                        const matches =
+                            Array.from(
+                                container.querySelectorAll(
+                                    item.target
+                                )
+                            );
+
+                        if (matches.length) {
+
+                            target =
+                                matches.find(
+                                    el =>
+                                        getParsedPageNumber(
+                                            el,
+                                            container.ownerDocument
+                                        ) ===
+                                        item.page
+                                ) ||
+                                matches[0];
+                        }
+
+                    } catch {}
+                }
+
+                if (!target && item.selector) {
+
+                    try {
+
+                        target =
+                            container.querySelector(
+                                item.selector
+                            );
+
+                    } catch {}
+                }
+
+                if (target) {
+
+                    const rect =
+                        target.getBoundingClientRect();
+
+                    if (
+                        rect.width >= 1 &&
+                        rect.height >= 1
+                    ) {
+
+                        const ratio =
+                            rect.width /
+                            rect.height;
+
+                        if (
+                            Number.isFinite(ratio) &&
+                            ratio > 0
+                        ) {
+
+                            container.remove();
+
+                            resolve(ratio);
+
+                            return;
+                        }
+                    }
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "تعذر تحديد نسبة إطار الصورة:",
+                    error
+                );
+
+            } finally {
+
+                try {
+                    container.remove();
+                } catch {}
+            }
+
+            resolve(fallback);
+        });
+    });
 }
 
 /* =========================================================
-   تحديد أبعاد إطار القص داخل مساحة العرض
+   حساب أبعاد إطار القص (نسخة محسّنة)
    ========================================================= */
 
 function calculateCropFrame() {
 
     const stage =
-        document.getElementById(
-            "crop-stage"
-        );
+        document.getElementById("crop-stage");
 
     const frame =
-        document.getElementById(
-            "crop-frame"
-        );
+        document.getElementById("crop-frame");
 
     if (!stage || !frame) {
         return;
@@ -3731,88 +3699,91 @@ function calculateCropFrame() {
     const stageHeight =
         stage.clientHeight;
 
+    if (
+        stageWidth < 1 ||
+        stageHeight < 1
+    ) {
+        return;
+    }
+
+    /* 90% كحد أقصى من كل بُعد */
+    const maxWidth =
+        stageWidth * 0.9;
+
+    const maxHeight =
+        stageHeight * 0.9;
+
     let frameWidth =
-        stageWidth - 40;
+        maxWidth;
 
     let frameHeight =
-        frameWidth /
-        cropState.targetRatio;
+        frameWidth / cropState.targetRatio;
 
-    if (
-        frameHeight >
-        stageHeight - 40
-    ) {
+    if (frameHeight > maxHeight) {
 
         frameHeight =
-            stageHeight - 40;
+            maxHeight;
 
         frameWidth =
-            frameHeight *
-            cropState.targetRatio;
+            frameHeight * cropState.targetRatio;
     }
 
     frameWidth =
         Math.max(
             80,
-            Math.min(
-                frameWidth,
-                stageWidth - 20
-            )
+            Math.min(frameWidth, maxWidth)
         );
 
     frameHeight =
-        frameWidth /
-        cropState.targetRatio;
-
-    if (
-        frameHeight >
-        stageHeight - 20
-    ) {
-
-        frameHeight =
-            stageHeight - 20;
-
-        frameWidth =
-            frameHeight *
-            cropState.targetRatio;
-    }
+        Math.max(
+            80,
+            Math.min(frameHeight, maxHeight)
+        );
 
     const left =
-        (stageWidth - frameWidth) /
-        2;
+        (stageWidth - frameWidth) / 2;
 
     const top =
-        (stageHeight - frameHeight) /
-        2;
+        (stageHeight - frameHeight) / 2;
 
     cropState.frame = {
-
         left,
-
         top,
-
-        width:
-            frameWidth,
-
-        height:
-            frameHeight
+        width: frameWidth,
+        height: frameHeight
     };
 
-    frame.style.left =
-        left + "px";
+    frame.style.left = left + "px";
+    frame.style.top = top + "px";
+    frame.style.width = frameWidth + "px";
+    frame.style.height = frameHeight + "px";
 
-    frame.style.top =
-        top + "px";
+    /* إعادة حساب baseScale إذا كانت الصورة محمّلة */
+    if (
+        cropState.image &&
+        cropState.naturalWidth &&
+        cropState.naturalHeight
+    ) {
 
-    frame.style.width =
-        frameWidth + "px";
+        const scaleX =
+            frameWidth /
+            cropState.naturalWidth;
 
-    frame.style.height =
-        frameHeight + "px";
+        const scaleY =
+            frameHeight /
+            cropState.naturalHeight;
+
+        cropState.baseScale =
+            Math.max(scaleX, scaleY);
+
+        cropState.displayScale =
+            cropState.baseScale *
+            cropState.zoom;
+    }
 }
 
 /* =========================================================
-   فتح محرر القص
+   فتح محرر القص (نسخة محسّنة)
    ========================================================= */
 
 async function openCropEditor(
@@ -3852,6 +3823,10 @@ async function openCropEditor(
     const item =
         options.item;
 
+    /* نحسب النسبة أولًا (async الآن) */
+    const targetRatio =
+        await getCropTargetRatio(item);
+
     cropState =
         {
 
@@ -3879,9 +3854,7 @@ async function openCropEditor(
             naturalHeight: 0,
 
             targetRatio:
-                getCropTargetRatio(
-                    item
-                ),
+                targetRatio,
 
             frame: {
 
@@ -3972,18 +3945,22 @@ async function openCropEditor(
         cropState.naturalHeight =
             loadedImage.naturalHeight;
 
+        /* انتظار إطارين لضمان أن crop-modal أخذ أبعاده النهائية من CSS */
         await new Promise(
             resolve =>
                 requestAnimationFrame(
-                    () => {
+                    () =>
+                        requestAnimationFrame(
+                            () => {
 
-                        calculateCropFrame();
+                                calculateCropFrame();
 
-                        cropReset();
+                                cropReset();
 
-                        resolve();
+                                resolve();
 
-                    }
+                            }
+                        )
                 )
         );
 
@@ -4443,7 +4420,7 @@ function endCropDrag(
 }
 
 /* =========================================================
-   حساب القص من الصورة الأصلية
+   حساب القص من الصورة الأصلية (نسخة محسّنة بـ clamp صارم)
    ========================================================= */
 
 function getCropSourceRectangle() {
@@ -4462,72 +4439,69 @@ function getCropSourceRectangle() {
     }
 
     let sx =
-        (
-            frame.left -
-            cropState.imageLeft
-        ) / scale;
+        (frame.left -
+            cropState.imageLeft) / scale;
 
     let sy =
-        (
-            frame.top -
-            cropState.imageTop
-        ) / scale;
+        (frame.top -
+            cropState.imageTop) / scale;
 
     let sw =
-        frame.width /
-        scale;
+        frame.width / scale;
 
     let sh =
-        frame.height /
-        scale;
+        frame.height / scale;
 
-    sx =
-        Math.max(
-            0,
-            Math.min(
-                cropState.naturalWidth,
-                sx
-            )
-        );
+    /* حماية من القيم السالبة أو NaN */
+    if (!Number.isFinite(sx) || sx < 0) {
+        sx = 0;
+    }
 
-    sy =
-        Math.max(
-            0,
-            Math.min(
-                cropState.naturalHeight,
-                sy
-            )
-        );
+    if (!Number.isFinite(sy) || sy < 0) {
+        sy = 0;
+    }
 
-    sw =
-        Math.min(
-            sw,
-            cropState.naturalWidth -
-            sx
-        );
+    if (sx > cropState.naturalWidth) {
+        sx = cropState.naturalWidth;
+    }
 
-    sh =
-        Math.min(
-            sh,
-            cropState.naturalHeight -
-            sy
-        );
+    if (sy > cropState.naturalHeight) {
+        sy = cropState.naturalHeight;
+    }
 
-    if (
-        sw <= 0 ||
-        sh <= 0
-    ) {
+    if (!Number.isFinite(sw) || sw <= 0) {
+        sw = cropState.naturalWidth - sx;
+    }
+
+    if (!Number.isFinite(sh) || sh <= 0) {
+        sh = cropState.naturalHeight - sy;
+    }
+
+    /* clamp أقصى */
+    sw = Math.min(
+        sw,
+        cropState.naturalWidth - sx
+    );
+
+    sh = Math.min(
+        sh,
+        cropState.naturalHeight - sy
+    );
+
+    /* clamp أدنى */
+    sx = Math.max(0, sx);
+    sy = Math.max(0, sy);
+    sw = Math.max(1, sw);
+    sh = Math.max(1, sh);
+
+    if (sw <= 0 || sh <= 0) {
         return null;
     }
 
     return {
-
         sx,
-
         sy,
-
         sw,
-
         sh
     };
 }
@@ -4978,57 +4952,43 @@ document.addEventListener(
             }
         );
 
+        /* debounce 150ms + reset كامل عند تغيّر حجم النافذة */
+        let cropResizeTimer = null;
+
         window.addEventListener(
             "resize",
             () => {
 
                 if (
                     !document
-                        .getElementById(
-                            "crop-modal"
-                        )
-                        ?.classList.contains(
-                            "visible"
-                        )
+                        .getElementById("crop-modal")
+                        ?.classList.contains("visible")
                 ) {
                     return;
                 }
 
-                const oldFrame =
-                    {
-                        ...cropState.frame
-                    };
+                clearTimeout(cropResizeTimer);
 
-                const oldCenterX =
-                    oldFrame.left +
-                    oldFrame.width / 2;
+                cropResizeTimer =
+                    setTimeout(
+                        () => {
 
-                const oldCenterY =
-                    oldFrame.top +
-                    oldFrame.height / 2;
+                            if (
+                                !document
+                                    .getElementById("crop-modal")
+                                    ?.classList.contains("visible")
+                            ) {
+                                return;
+                            }
 
-                calculateCropFrame();
+                            requestAnimationFrame(() => {
+                                calculateCropFrame();
+                                cropReset();
+                            });
 
-                const newCenterX =
-                    cropState.frame.left +
-                    cropState.frame.width / 2;
-
-                const newCenterY =
-                    cropState.frame.top +
-                    cropState.frame.height / 2;
-
-                cropState.imageLeft +=
-                    newCenterX -
-                    oldCenterX;
-
-                cropState.imageTop +=
-                    newCenterY -
-                    oldCenterY;
-
-                constrainCropImage();
-
-                updateCropImageElement();
-
+                        },
+                        150
+                    );
             }
         );
     }
@@ -5871,32 +5831,106 @@ function clearCode() {
    أدوات التصيير
    ========================================================= */
 
+/* =========================================================
+   انتظار تحميل الخطوط (نسخة محسّنة)
+   ========================================================= */
 async function waitForFonts(win) {
 
     const doc =
         win?.document;
 
-    if (!doc || !doc.fonts) {
+    if (!doc) {
         return;
     }
 
-    try {
+    /* الأوزان المستخدمة فعليًا في الكود */
+    const fontSpecs = [
+        "400 16px Cairo",
+        "500 16px Cairo",
+        "600 16px Cairo",
+        "700 16px Cairo",
+        "800 16px Cairo",
+        "400 16px Tajawal",
+        "500 16px Tajawal",
+        "700 16px Tajawal",
+        "800 16px Tajawal"
+    ];
 
-        await Promise.race([
+    /* سقف زمني كلي 6 ثوانٍ */
+    const hardTimeout =
+        new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    6000
+                )
+        );
 
-            doc.fonts.ready,
+    const work =
+        (async () => {
 
-            new Promise(
-                resolve =>
-                    setTimeout(
-                        resolve,
-                        RENDER_CONFIG.fontTimeout
-                    )
-            )
+            try {
 
-        ]);
+                if (
+                    doc.fonts &&
+                    typeof doc.fonts.load ===
+                    "function"
+                ) {
 
-    } catch {}
+                    /* 1) نطلب كل وزن على حدة */
+                    await Promise.all(
+                        fontSpecs.map(
+                            spec => {
+                                try {
+                                    return doc.fonts
+                                        .load(spec)
+                                        .catch(
+                                            () => null
+                                        );
+                                } catch {
+                                    return Promise.resolve(
+                                        null
+                                    );
+                                }
+                            }
+                        )
+                    );
+
+                    /* 2) تأكيد نهائي */
+                    try {
+                        await doc.fonts.ready;
+                    } catch {}
+
+                }
+
+                /* 3) مهلة صغيرة لضمان إعادة حساب التخطيط */
+                await new Promise(
+                    resolve =>
+                        setTimeout(
+                            resolve,
+                            200
+                        )
+                );
+
+                /* 4) إجبار reflow */
+                try {
+                    if (doc.body) {
+                        doc.body.getBoundingClientRect();
+                    }
+                } catch {}
+
+            } catch (error) {
+
+                console.warn(
+                    "waitForFonts error:",
+                    error
+                );
+            }
+        })();
+
+    await Promise.race(
+        [work, hardTimeout]
+    );
 }
 
 function getSafeScale(
@@ -6457,6 +6491,12 @@ async function generatePPTX() {
             win
         );
 
+        /* إجبار reflow إضافي قبل html2canvas */
+        try { doc.body?.getBoundingClientRect(); } catch {}
+
+        /* تأخير احتياطي ثابت (600ms) لإنهاء الـ compositor */
+        await new Promise(r => setTimeout(r, 600));
+
         await prepareImages(
             doc
         );
@@ -6657,6 +6697,12 @@ async function generatePDF() {
         await waitForFonts(
             win
         );
+
+        /* إجبار reflow إضافي قبل html2canvas */
+        try { doc.body?.getBoundingClientRect(); } catch {}
+
+        /* تأخير احتياطي ثابت (600ms) لإنهاء الـ compositor */
+        await new Promise(r => setTimeout(r, 600));
 
         await prepareImages(
             doc
@@ -6859,4 +6905,4 @@ function yieldToBrowser() {
 </script>
 
 </body>
-</html>
+</html>ء
