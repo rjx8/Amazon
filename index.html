@@ -3184,15 +3184,30 @@ function applyImageReplacements(
                     return;
                 }
 
-                const img =
-                    images.find(
-                        element =>
-                            getStableSelector(
-                                element,
-                                container.ownerDocument
-                            ) === item.target
-                    ) ||
-                    images[item.index];
+                let img = null;
+
+                try {
+
+                    const ownerDoc =
+                        container.ownerDocument ||
+                        document;
+
+                    img =
+                        images.find(
+                            element =>
+                                getStableSelector(
+                                    element,
+                                    ownerDoc
+                                ) === item.target
+                        ) || null;
+
+                } catch {}
+
+                if (!img) {
+                    img =
+                        images[item.index] ||
+                        null;
+                }
 
                 if (!img) {
                     return;
@@ -3253,6 +3268,20 @@ function applyImageReplacements(
                     }
 
                 } catch {}
+
+                if (!elements.length && item.selector) {
+
+                    try {
+
+                        elements =
+                            Array.from(
+                                container.querySelectorAll(
+                                    item.selector
+                                )
+                            );
+
+                    } catch {}
+                }
 
                 if (!elements.length) {
                     return;
@@ -3364,7 +3393,7 @@ function applyBackgroundReplacementToElement(
 }
 
 /* =========================================================
-   تطبيق الاستبدالات على Document
+   تطبيق الاستبدالات على Document (للمعاينة فقط)
    ========================================================= */
 
 function applyImageReplacementsToDocument(
@@ -3546,7 +3575,7 @@ async function getCropTargetRatio(item) {
         width = 1280;
     }
 
-    /* حاوية معزولة بأبعاد صحيحة */
+    /* حاوية معزولة بأبعاد صحيحة (لا تؤثر على تخطيط المنصة) */
     const container =
         document.createElement("div");
 
@@ -3568,14 +3597,20 @@ async function getCropTargetRatio(item) {
         document.createElement("style");
 
     fix.textContent = `
-        html, body {
+        [data-crop-measure] html,
+        [data-crop-measure] body {
             margin: 0 !important;
             padding: 0 !important;
         }
-        .page {
+        [data-crop-measure] .page {
             box-sizing: border-box !important;
         }
     `;
+
+    container.setAttribute(
+        "data-crop-measure",
+        "true"
+    );
 
     container.appendChild(fix);
 
@@ -3626,6 +3661,22 @@ async function getCropTargetRatio(item) {
                             container.querySelector(
                                 item.selector
                             );
+
+                    } catch {}
+                }
+
+                if (!target) {
+
+                    try {
+
+                        const firstImg =
+                            container.querySelector(
+                                "img"
+                            );
+
+                        if (firstImg) {
+                            target = firstImg;
+                        }
 
                     } catch {}
                 }
@@ -5832,14 +5883,14 @@ function clearCode() {
    ========================================================= */
 
 /* =========================================================
-   انتظار تحميل الخطوط (نسخة محسّنة)
+   انتظار تحميل الخطوط (يعمل على المستند الأب)
    ========================================================= */
-async function waitForFonts(win) {
+async function waitForFonts() {
 
-    const doc =
-        win?.document;
+    if (!document.fonts) {
 
-    if (!doc) {
+        await new Promise(r => setTimeout(r, 800));
+
         return;
     }
 
@@ -5871,52 +5922,42 @@ async function waitForFonts(win) {
 
             try {
 
-                if (
-                    doc.fonts &&
-                    typeof doc.fonts.load ===
-                    "function"
-                ) {
-
-                    /* 1) نطلب كل وزن على حدة */
-                    await Promise.all(
-                        fontSpecs.map(
-                            spec => {
-                                try {
-                                    return doc.fonts
-                                        .load(spec)
-                                        .catch(
-                                            () => null
-                                        );
-                                } catch {
-                                    return Promise.resolve(
-                                        null
+                /* 1) حمّل كل وزن على حدة */
+                await Promise.all(
+                    fontSpecs.map(
+                        spec => {
+                            try {
+                                return document.fonts
+                                    .load(spec)
+                                    .catch(
+                                        () => null
                                     );
-                                }
+                            } catch {
+                                return Promise.resolve(
+                                    null
+                                );
                             }
-                        )
-                    );
+                        }
+                    )
+                );
 
-                    /* 2) تأكيد نهائي */
-                    try {
-                        await doc.fonts.ready;
-                    } catch {}
-
-                }
+                /* 2) تأكيد نهائي */
+                try {
+                    await document.fonts.ready;
+                } catch {}
 
                 /* 3) مهلة صغيرة لضمان إعادة حساب التخطيط */
                 await new Promise(
                     resolve =>
                         setTimeout(
                             resolve,
-                            200
+                            250
                         )
                 );
 
                 /* 4) إجبار reflow */
                 try {
-                    if (doc.body) {
-                        doc.body.getBoundingClientRect();
-                    }
+                    document.body.getBoundingClientRect();
                 } catch {}
 
             } catch (error) {
@@ -5975,120 +6016,102 @@ function getSafeScale(
 }
 
 /* =========================================================
-   إنشاء بيئة التصيير المعزولة (iframe)
+   إنشاء بيئة التصيير (div مباشر — يضمن تطبيق الخطوط)
    ========================================================= */
 
-function createRenderIframe(
+function createRenderContainer(
     code,
     width,
     height
 ) {
 
-    const iframe =
-        document.createElement(
-            "iframe"
+    /* تأكد من وجود رابط خطوط Google Fonts في المستند الأب */
+    if (
+        !document.querySelector(
+            'link[data-render-fonts]'
+        )
+    ) {
+
+        const link =
+            document.createElement("link");
+
+        link.rel = "stylesheet";
+
+        link.setAttribute(
+            "data-render-fonts",
+            "true"
         );
 
-    iframe.style.position =
-        "fixed";
+        link.href =
+            "https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap";
 
-    iframe.style.left =
-        "-100000px";
-
-    iframe.style.top =
-        "0";
-
-    iframe.style.width =
-        width + "px";
-
-    iframe.style.height =
-        height + "px";
-
-    iframe.style.border =
-        "0";
-
-    iframe.style.visibility =
-        "hidden";
-
-    iframe.style.pointerEvents =
-        "none";
-
-    iframe.style.zIndex =
-        "-1";
-
-    iframe.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-    iframe.setAttribute(
-        "data-render-iframe",
-        "true"
-    );
-
-    document.body.appendChild(
-        iframe
-    );
-
-    const doc =
-        iframe.contentDocument ||
-        iframe.contentWindow?.document;
-
-    if (!doc) {
-
-        throw new Error(
-            "Cannot access iframe document."
-        );
+        document.head.appendChild(link);
     }
 
-    /* كتابة الكود كاملًا داخل الإطار المعزول */
+    const container =
+        document.createElement("div");
 
-    doc.open();
+    /* مهم جدًا: نضعه بعيدًا عن الشاشة مع visibility:visible
+       حتى يرسمه المتصفح فعليًا وتُطبَّق الخطوط عليه */
+    container.style.position = "fixed";
+    container.style.left = "-100000px";
+    container.style.top = "0";
+    container.style.width = width + "px";
+    container.style.minHeight = height + "px";
+    container.style.margin = "0";
+    container.style.padding = "0";
+    container.style.opacity = "1";
+    container.style.visibility = "visible";
+    container.style.pointerEvents = "none";
+    container.style.zIndex = "-1";
+    container.style.background = "#ffffff";
+    container.style.overflow = "visible";
 
-    doc.write(
-        code
+    container.dir = "rtl";
+
+    container.setAttribute(
+        "data-render-container",
+        "true"
     );
 
-    doc.close();
-
-    /* إضافة تنسيق أساسي لعنصر html/body داخل الإطار فقط */
+    container.innerHTML = code;
 
     const fix =
-        doc.createElement(
-            "style"
-        );
+        document.createElement("style");
 
+    /* هذا الـ style يُطبَّق عالميًا لكنه مؤقت ويُزال مع الحاوية */
     fix.textContent = `
-        html, body {
-            margin: 0 !important;
-            padding: 0 !important;
+        [data-render-container] {
+            box-sizing: border-box !important;
         }
-        .page {
+        [data-render-container] *,
+        [data-render-container] *::before,
+        [data-render-container] *::after {
+            box-sizing: border-box;
+        }
+        [data-render-container] .page {
             box-sizing: border-box !important;
         }
     `;
 
-    if (doc.head) {
+    container.appendChild(fix);
 
-        doc.head.appendChild(
-            fix
-        );
-    }
+    document.body.appendChild(container);
 
-    return iframe;
+    return container;
 }
 
 /* =========================================================
-   تحميل الصور
+   تحميل الصور (يقبل container أو doc)
    ========================================================= */
 
 async function prepareImages(
-    doc
+    containerOrDoc
 ) {
 
     const images =
         Array.from(
-            doc.querySelectorAll(
+            containerOrDoc.querySelectorAll(
                 "img"
             )
         );
@@ -6245,7 +6268,7 @@ function waitImage(
 }
 
 /* =========================================================
-   تصوير صفحة
+   تصوير صفحة (يفرض الأبعاد مؤقتًا — مهم لضمان الخطوط والتخطيط)
    ========================================================= */
 
 async function renderPage(
@@ -6262,51 +6285,71 @@ async function renderPage(
             quality
         );
 
-    return await html2canvas(
-        page,
-        {
+    /* حفظ الأبعاد الحالية */
+    const oldWidth = page.style.width;
+    const oldHeight = page.style.height;
+    const oldMinHeight = page.style.minHeight;
 
-            scale,
+    /* فرض الأبعاد الفعلية مؤقتًا */
+    page.style.width = width + "px";
+    page.style.height = height + "px";
+    page.style.minHeight = height + "px";
 
-            width,
+    try {
 
-            height,
+        return await html2canvas(
+            page,
+            {
 
-            windowWidth:
+                scale,
+
                 width,
 
-            windowHeight:
                 height,
 
-            useCORS:
-                true,
+                windowWidth:
+                    width,
 
-            allowTaint:
-                false,
+                windowHeight:
+                    height,
 
-            backgroundColor:
-                "#ffffff",
+                useCORS:
+                    true,
 
-            imageTimeout:
-                RENDER_CONFIG.imageTimeout,
+                allowTaint:
+                    false,
 
-            logging:
-                false,
+                backgroundColor:
+                    "#ffffff",
 
-            removeContainer:
-                true,
+                imageTimeout:
+                    RENDER_CONFIG.imageTimeout,
 
-            foreignObjectRendering:
-                false,
+                logging:
+                    false,
 
-            scrollX:
-                0,
+                removeContainer:
+                    true,
 
-            scrollY:
-                0
+                foreignObjectRendering:
+                    false,
 
-        }
-    );
+                scrollX:
+                    0,
+
+                scrollY:
+                    0
+
+            }
+        );
+
+    } finally {
+
+        /* إعادة الأبعاد الأصلية */
+        page.style.width = oldWidth;
+        page.style.height = oldHeight;
+        page.style.minHeight = oldMinHeight;
+    }
 }
 
 function canvasToJPEG(
@@ -6339,12 +6382,12 @@ function releaseCanvas(
 }
 
 function getPages(
-    doc
+    containerOrDoc
 ) {
 
     const pages =
         Array.from(
-            doc.querySelectorAll(
+            containerOrDoc.querySelectorAll(
                 ".page"
             )
         );
@@ -6353,9 +6396,8 @@ function getPages(
         return pages;
     }
 
-    return [
-        doc.body
-    ];
+    /* إذا لم توجد صفحات، استخدم الحاوية نفسها */
+    return [containerOrDoc];
 }
 
 /* =========================================================
@@ -6468,8 +6510,9 @@ async function generatePPTX() {
     button.innerText =
         "⏳ جاري تحضير البوربوينت...";
 
-    const iframe =
-        createRenderIframe(
+    /* بيئة التصيير: div مباشر (يضمن تطبيق الخطوط) */
+    const container =
+        createRenderContainer(
             code,
             width,
             height
@@ -6477,33 +6520,29 @@ async function generatePPTX() {
 
     try {
 
-        const doc =
-            iframe.contentDocument;
-
-        const win =
-            iframe.contentWindow;
-
-        applyImageReplacementsToDocument(
-            doc
+        /* استبدال الصور داخل الحاوية */
+        applyImageReplacements(
+            container
         );
 
-        await waitForFonts(
-            win
-        );
+        /* انتظار الخطوط في المستند الأب */
+        await waitForFonts();
 
         /* إجبار reflow إضافي قبل html2canvas */
-        try { doc.body?.getBoundingClientRect(); } catch {}
+        try {
+            document.body.getBoundingClientRect();
+        } catch {}
 
         /* تأخير احتياطي ثابت (600ms) لإنهاء الـ compositor */
         await new Promise(r => setTimeout(r, 600));
 
         await prepareImages(
-            doc
+            container
         );
 
         const pages =
             getPages(
-                doc
+                container
             );
 
         const pptx =
@@ -6618,7 +6657,7 @@ async function generatePPTX() {
 
     } finally {
 
-        iframe.remove();
+        container.remove();
     }
 }
 
@@ -6675,8 +6714,9 @@ async function generatePDF() {
     button.innerText =
         "⏳ جاري تجهيز PDF...";
 
-    const iframe =
-        createRenderIframe(
+    /* بيئة التصيير: div مباشر (يضمن تطبيق الخطوط) */
+    const container =
+        createRenderContainer(
             code,
             width,
             height
@@ -6684,33 +6724,25 @@ async function generatePDF() {
 
     try {
 
-        const doc =
-            iframe.contentDocument;
-
-        const win =
-            iframe.contentWindow;
-
-        applyImageReplacementsToDocument(
-            doc
+        applyImageReplacements(
+            container
         );
 
-        await waitForFonts(
-            win
-        );
+        await waitForFonts();
 
-        /* إجبار reflow إضافي قبل html2canvas */
-        try { doc.body?.getBoundingClientRect(); } catch {}
+        try {
+            document.body.getBoundingClientRect();
+        } catch {}
 
-        /* تأخير احتياطي ثابت (600ms) لإنهاء الـ compositor */
         await new Promise(r => setTimeout(r, 600));
 
         await prepareImages(
-            doc
+            container
         );
 
         const pages =
             getPages(
-                doc
+                container
             );
 
         const {
@@ -6819,7 +6851,7 @@ async function generatePDF() {
 
     } finally {
 
-        iframe.remove();
+        container.remove();
     }
 }
 
