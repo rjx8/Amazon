@@ -542,6 +542,15 @@
             background: #1d4ed8;
         }
 
+        .html-image-action.crop-edit {
+            background: #7c3aed;
+            color: #fff;
+        }
+
+        .html-image-action.crop-edit:hover {
+            background: #6d28d9;
+        }
+
         .html-image-status {
             margin-top: 7px;
             min-height: 16px;
@@ -577,6 +586,231 @@
             color: #64748b;
             font-size: 12px;
             padding: 12px;
+        }
+
+        /* =====================================================
+           محرر قص الصور
+           ===================================================== */
+
+        .crop-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: rgba(2, 6, 23, .90);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        .crop-modal-overlay.visible {
+            display: flex;
+        }
+
+        .crop-modal {
+            width: min(760px, 100%);
+            max-height: calc(100vh - 24px);
+            overflow-y: auto;
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 14px;
+            box-shadow: 0 25px 60px rgba(0,0,0,.65);
+            padding: 15px;
+        }
+
+        .crop-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .crop-modal-header h3 {
+            margin: 0;
+            color: #f8fafc;
+            font-size: 18px;
+        }
+
+        .crop-close {
+            width: 38px;
+            height: 38px;
+            border: none;
+            border-radius: 8px;
+            background: #334155;
+            color: #f8fafc;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .crop-close:hover {
+            background: #475569;
+        }
+
+        .crop-target-info {
+            color: #94a3b8;
+            font-size: 11px;
+            line-height: 1.7;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .crop-stage {
+            position: relative;
+            width: 100%;
+            height: min(58vh, 480px);
+            min-height: 280px;
+            background:
+                repeating-conic-gradient(
+                    #111827 0% 25%,
+                    #0b1220 0% 50%
+                ) 50% / 20px 20px;
+            border: 1px solid #475569;
+            border-radius: 10px;
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+        }
+
+        .crop-image {
+            position: absolute;
+            max-width: none;
+            max-height: none;
+            width: auto;
+            height: auto;
+            display: block;
+            transform-origin: center center;
+            user-select: none;
+            -webkit-user-drag: none;
+            pointer-events: none;
+        }
+
+        .crop-frame {
+            position: absolute;
+            z-index: 3;
+            border: 2px solid #fff;
+            box-shadow:
+                0 0 0 9999px rgba(0,0,0,.58),
+                0 0 0 1px rgba(255,255,255,.25);
+            pointer-events: none;
+        }
+
+        .crop-grid {
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(
+                    to right,
+                    transparent 33.333%,
+                    rgba(255,255,255,.35) 33.333%,
+                    rgba(255,255,255,.35) calc(33.333% + 1px),
+                    transparent calc(33.333% + 1px),
+                    transparent 66.666%,
+                    rgba(255,255,255,.35) 66.666%,
+                    rgba(255,255,255,.35) calc(66.666% + 1px),
+                    transparent calc(66.666% + 1px)
+                ),
+                linear-gradient(
+                    to bottom,
+                    transparent 33.333%,
+                    rgba(255,255,255,.35) 33.333%,
+                    rgba(255,255,255,.35) calc(33.333% + 1px),
+                    transparent calc(33.333% + 1px),
+                    transparent 66.666%,
+                    rgba(255,255,255,.35) 66.666%,
+                    rgba(255,255,255,.35) calc(66.666% + 1px),
+                    transparent calc(66.666% + 1px)
+                );
+        }
+
+        .crop-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .crop-control {
+            flex: 1;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            background: #334155;
+            color: #f8fafc;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .crop-control:hover {
+            background: #475569;
+        }
+
+        .crop-preview-wrap {
+            display: none;
+            margin-top: 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .crop-preview-wrap.visible {
+            display: block;
+        }
+
+        .crop-preview-title {
+            color: #94a3b8;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .crop-preview {
+            display: block;
+            max-width: 100%;
+            max-height: 250px;
+            width: auto;
+            height: auto;
+            margin: auto;
+            object-fit: contain;
+            border-radius: 7px;
+            background: #020617;
+        }
+
+        .crop-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .crop-action {
+            flex: 1;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .crop-action.cancel {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .crop-action.preview {
+            background: #0f766e;
+            color: #fff;
+        }
+
+        .crop-action.apply {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        .crop-action:hover {
+            filter: brightness(1.1);
         }
 
         /* =====================================================
@@ -630,6 +864,35 @@
                 width: 72px;
                 flex-basis: 72px;
                 height: 65px;
+            }
+
+            .html-image-actions {
+                flex-wrap: wrap;
+            }
+
+            .html-image-action {
+                min-width: calc(50% - 4px);
+            }
+
+            .crop-modal {
+                padding: 10px;
+                border-radius: 12px;
+            }
+
+            .crop-stage {
+                height: 52vh;
+                min-height: 260px;
+            }
+
+            .crop-controls,
+            .crop-actions {
+                gap: 6px;
+            }
+
+            .crop-control,
+            .crop-action {
+                padding: 11px 5px;
+                font-size: 11px;
             }
         }
     </style>
@@ -885,8 +1148,8 @@
                 <p class="image-manager-description">
                     يتم التعرف على صور img وصور CSS الخلفية تلقائيًا،
                     سواء كانت داخل style أو داخل قواعد CSS.
-                    يمكنك الاحتفاظ بالصورة أو استبدالها من الاستوديو.
-                    الاستبدال لا يغيّر كود HTML الأصلي.
+                    يمكنك الاحتفاظ بالصورة أو اختيار صورة جديدة ثم قصها يدويًا
+                    حسب إطار الصورة الحالية. لن يتم تمديد الصورة أو ضغطها أو تغيير نسبتها.
                 </p>
 
                 <div
@@ -1090,6 +1353,93 @@
 
         </div>
 
+        <!-- =====================================================
+             إعدادات الصور للمولد
+             ===================================================== -->
+
+        <div class="row">
+
+            <div class="form-group">
+
+                <label>
+                    الصور:
+                </label>
+
+                <select
+                    id="prompt-images"
+                    onchange="togglePromptImageOptions(); generatePromptText();">
+
+                    <option value="none">
+                        بدون صور
+                    </option>
+
+                    <option value="yes">
+                        إضافة صور
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div
+                class="form-group"
+                id="prompt-image-count-group"
+                style="display:none;">
+
+                <label>
+                    عدد الصور:
+                </label>
+
+                <select
+                    id="prompt-image-count"
+                    onchange="generatePromptText()">
+
+                    <option value="1">
+                        1 صورة
+                    </option>
+
+                    <option value="2">
+                        2 صور
+                    </option>
+
+                    <option value="3">
+                        3 صور
+                    </option>
+
+                    <option value="4">
+                        4 صور
+                    </option>
+
+                    <option value="5" selected>
+                        5 صور
+                    </option>
+
+                    <option value="6">
+                        6 صور
+                    </option>
+
+                    <option value="7">
+                        7 صور
+                    </option>
+
+                    <option value="8">
+                        8 صور
+                    </option>
+
+                    <option value="9">
+                        9 صور
+                    </option>
+
+                    <option value="10">
+                        10 صور
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
         <label style="margin-top:10px;">
             المتطلبات (اضغط 👁️ لشطب المتطلب):
         </label>
@@ -1226,6 +1576,126 @@
     </div>
 </div>
 
+<!-- =========================================================
+     نافذة قص الصور
+     ========================================================= -->
+
+<div
+    id="crop-modal"
+    class="crop-modal-overlay"
+    aria-hidden="true">
+
+    <div class="crop-modal">
+
+        <div class="crop-modal-header">
+
+            <h3>
+                قص الصورة
+            </h3>
+
+            <button
+                type="button"
+                class="crop-close"
+                onclick="closeCropModal()">
+                ×
+            </button>
+
+        </div>
+
+        <div
+            id="crop-target-info"
+            class="crop-target-info">
+            اسحب الصورة داخل الإطار واضبط موضعها.
+        </div>
+
+        <div
+            id="crop-stage"
+            class="crop-stage">
+
+            <img
+                id="crop-image"
+                class="crop-image"
+                draggable="false"
+                alt="">
+
+            <div
+                id="crop-frame"
+                class="crop-frame">
+
+                <div class="crop-grid"></div>
+
+            </div>
+
+        </div>
+
+        <div class="crop-controls">
+
+            <button
+                type="button"
+                class="crop-control"
+                onclick="cropZoom(-0.1)">
+                تصغير
+            </button>
+
+            <button
+                type="button"
+                class="crop-control"
+                onclick="cropReset()">
+                إعادة ضبط
+            </button>
+
+            <button
+                type="button"
+                class="crop-control"
+                onclick="cropZoom(0.1)">
+                تكبير
+            </button>
+
+        </div>
+
+        <div
+            id="crop-preview-wrap"
+            class="crop-preview-wrap">
+
+            <div class="crop-preview-title">
+                معاينة القص
+            </div>
+
+            <img
+                id="crop-preview"
+                class="crop-preview"
+                alt="معاينة القص">
+
+        </div>
+
+        <div class="crop-actions">
+
+            <button
+                type="button"
+                class="crop-action cancel"
+                onclick="closeCropModal()">
+                إلغاء
+            </button>
+
+            <button
+                type="button"
+                class="crop-action preview"
+                onclick="previewCrop()">
+                معاينة القص
+            </button>
+
+            <button
+                type="button"
+                class="crop-action apply"
+                onclick="applyCrop()">
+                اعتماد القص
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
 <script>
 
 /* =========================================================
@@ -1239,7 +1709,6 @@ const AUTH_KEY = "auth_token_v2";
 const AUTH_VALUE = "authenticated";
 
 const TELEGRAM_ENDPOINT = "";
-
 
 /* =========================================================
    إعدادات التصيير
@@ -1256,7 +1725,6 @@ const RENDER_CONFIG = {
     jpegQuality: 0.88
 };
 
-
 /* =========================================================
    مدير الصور
    ========================================================= */
@@ -1267,6 +1735,69 @@ let detectedImages = [];
 
 let imageAnalysisTimer = null;
 
+/* =========================================================
+   حالة محرر القص
+   ========================================================= */
+
+let cropState = {
+
+    item: null,
+
+    sourceDataUrl: "",
+
+    sourceFileName: "",
+
+    sourceMimeType: "",
+
+    originalDataUrl: "",
+
+    image: null,
+
+    naturalWidth: 0,
+
+    naturalHeight: 0,
+
+    targetRatio: 1,
+
+    frame: {
+
+        left: 0,
+
+        top: 0,
+
+        width: 0,
+
+        height: 0
+
+    },
+
+    imageLeft: 0,
+
+    imageTop: 0,
+
+    baseScale: 1,
+
+    zoom: 1,
+
+    minZoom: 1,
+
+    maxZoom: 4,
+
+    displayScale: 1,
+
+    dragging: false,
+
+    pointerId: null,
+
+    startPointerX: 0,
+
+    startPointerY: 0,
+
+    startImageLeft: 0,
+
+    startImageTop: 0
+
+};
 
 /* =========================================================
    استخراج URL من CSS
@@ -1309,7 +1840,6 @@ function extractImageUrls(value) {
     return urls;
 }
 
-
 /* =========================================================
    أسماء الصور
    ========================================================= */
@@ -1344,7 +1874,6 @@ function getFileNameFromURL(src) {
 
     return "";
 }
-
 
 function getImageDisplayName(
     element,
@@ -1403,7 +1932,6 @@ function getImageDisplayName(
         : `الصورة ${index + 1}`;
 }
 
-
 /* =========================================================
    تحديد رقم الصفحة
    ========================================================= */
@@ -1436,7 +1964,6 @@ function getParsedPageNumber(
         ? index + 1
         : 1;
 }
-
 
 /* =========================================================
    تحديد selector ثابت للعنصر
@@ -1545,7 +2072,6 @@ function getStableSelector(
     return path.join(" > ");
 }
 
-
 /* =========================================================
    أبعاد IMG
    ========================================================= */
@@ -1615,7 +2141,6 @@ function getImageDefinedDimensions(img) {
     };
 }
 
-
 /* =========================================================
    الأبعاد الطبيعية
    ========================================================= */
@@ -1675,7 +2200,6 @@ function getNaturalImageSize(src) {
     });
 }
 
-
 /* =========================================================
    إضافة صورة مكتشفة
    ========================================================= */
@@ -1715,7 +2239,6 @@ function addDetectedImage(
 
     });
 }
-
 
 /* =========================================================
    تحليل الصور
@@ -1871,7 +2394,6 @@ async function analyzeHTMLImages() {
         }
     );
 
-
     /* =====================================================
        2 — صور background داخل inline style
        ===================================================== */
@@ -1961,7 +2483,6 @@ async function analyzeHTMLImages() {
             );
         }
     );
-
 
     /* =====================================================
        3 — صور background داخل <style>
@@ -2196,7 +2717,6 @@ async function analyzeHTMLImages() {
         }
     );
 
-
     /* =====================================================
        الحفاظ على الاستبدالات القديمة
        ===================================================== */
@@ -2266,7 +2786,6 @@ async function analyzeHTMLImages() {
 
     renderImageManager();
 
-
     /* =====================================================
        جلب الأبعاد الأصلية
        ===================================================== */
@@ -2290,7 +2809,6 @@ async function analyzeHTMLImages() {
     );
 }
 
-
 /* =========================================================
    مفتاح الصورة
    ========================================================= */
@@ -2310,7 +2828,6 @@ function createImageKey(
         item.backgroundIndex ?? ""
     ].join("|");
 }
-
 
 /* =========================================================
    عرض مدير الصور
@@ -2458,7 +2975,7 @@ function renderImageManager() {
                             title="${escapeAttribute(item.src)}">
                             ${escapeHTML(
                                 isReplaced
-                                    ? "تم اختيار صورة جديدة من الاستوديو"
+                                    ? "تم اختيار صورة جديدة وقصها"
                                     : item.src
                             )}
                         </div>
@@ -2489,6 +3006,18 @@ function renderImageManager() {
                                 🖼️ اختيار من الاستوديو
                             </button>
 
+                            ${
+                                isReplaced
+                                ? `
+                                    <button
+                                        class="html-image-action crop-edit"
+                                        onclick="editReplacementCrop(${item.index})">
+                                        ✂️ تعديل القص
+                                    </button>
+                                  `
+                                : ""
+                            }
+
                         </div>
 
                         <div class="html-image-status">
@@ -2506,7 +3035,6 @@ function renderImageManager() {
             }
         ).join("");
 }
-
 
 /* =========================================================
    اختيار صورة بديلة
@@ -2577,22 +3105,23 @@ function chooseReplacementImage(
                         file
                     );
 
-                imageReplacements.set(
-                    item.key,
-                    {
+                openCropEditor({
 
+                    item,
+
+                    sourceDataUrl:
                         dataUrl,
 
-                        fileName:
-                            file.name,
+                    sourceFileName:
+                        file.name,
 
-                        mimeType:
-                            file.type
+                    sourceMimeType:
+                        file.type,
 
-                    }
-                );
+                    originalDataUrl:
+                        dataUrl
 
-                renderImageManager();
+                });
 
             } catch (error) {
 
@@ -2618,6 +3147,52 @@ function chooseReplacementImage(
     input.click();
 }
 
+/* =========================================================
+   تعديل قص صورة موجودة
+   ========================================================= */
+
+function editReplacementCrop(
+    index
+) {
+
+    const item =
+        detectedImages[index];
+
+    if (!item) return;
+
+    const replacement =
+        imageReplacements.get(
+            item.key
+        );
+
+    if (!replacement) {
+        chooseReplacementImage(index);
+        return;
+    }
+
+    openCropEditor({
+
+        item,
+
+        sourceDataUrl:
+            replacement.originalDataUrl ||
+            replacement.dataUrl,
+
+        sourceFileName:
+            replacement.originalFileName ||
+            replacement.fileName,
+
+        sourceMimeType:
+            replacement.originalMimeType ||
+            replacement.mimeType ||
+            "image/png",
+
+        originalDataUrl:
+            replacement.originalDataUrl ||
+            replacement.dataUrl
+
+    });
+}
 
 /* =========================================================
    الاحتفاظ بالصورة
@@ -2638,7 +3213,6 @@ function keepOriginalImage(
 
     renderImageManager();
 }
-
 
 /* =========================================================
    قراءة الملف
@@ -2679,7 +3253,6 @@ function readFileAsDataURL(
     );
 }
 
-
 /* =========================================================
    Escape
    ========================================================= */
@@ -2713,7 +3286,6 @@ function escapeHTML(
         );
 }
 
-
 function escapeAttribute(
     value
 ) {
@@ -2722,7 +3294,6 @@ function escapeAttribute(
         value
     );
 }
-
 
 /* =========================================================
    استبدال URL داخل قيمة CSS
@@ -2760,7 +3331,6 @@ function replaceCSSImageURL(
         replacement
     );
 }
-
 
 /* =========================================================
    تطبيق الاستبدالات على IMG والخلفيات
@@ -2837,7 +3407,6 @@ function applyImageReplacements(
             }
         );
 
-
     /* -----------------------------------------------------
        Backgrounds
        ----------------------------------------------------- */
@@ -2895,7 +3464,6 @@ function applyImageReplacements(
         );
 }
 
-
 /* =========================================================
    استبدال background لعنصر
    ========================================================= */
@@ -2913,10 +3481,6 @@ function applyBackgroundReplacementToElement(
     ) {
         return;
     }
-
-    /* -----------------------------------------------------
-       inline style
-       ----------------------------------------------------- */
 
     const inlineStyle =
         element.getAttribute(
@@ -2939,11 +3503,6 @@ function applyBackgroundReplacementToElement(
             )
         );
     }
-
-
-    /* -----------------------------------------------------
-       computed background-image
-       ----------------------------------------------------- */
 
     try {
 
@@ -2972,11 +3531,6 @@ function applyBackgroundReplacementToElement(
 
     } catch {}
 
-
-    /* -----------------------------------------------------
-       CSS background shorthand
-       ----------------------------------------------------- */
-
     try {
 
         const background =
@@ -2999,7 +3553,6 @@ function applyBackgroundReplacementToElement(
 
     } catch {}
 }
-
 
 /* =========================================================
    تطبيق الاستبدالات على Document
@@ -3121,7 +3674,6 @@ function applyImageReplacementsToDocument(
         );
 }
 
-
 /* =========================================================
    مراقبة التحليل
    ========================================================= */
@@ -3143,6 +3695,1543 @@ function scheduleImageAnalysis() {
         );
 }
 
+/* =========================================================
+   الحصول على حجم الإطار الحقيقي للصورة
+   ========================================================= */
+
+function getCropTargetRatio(
+    item
+) {
+
+    const fallback =
+        item &&
+        item.naturalWidth &&
+        item.naturalHeight
+            ? item.naturalWidth /
+              item.naturalHeight
+            : 1;
+
+    const textarea =
+        document.getElementById(
+            "html-input"
+        );
+
+    if (!textarea) {
+        return fallback;
+    }
+
+    const code =
+        textarea.value;
+
+    if (!code.trim()) {
+        return fallback;
+    }
+
+    let container = null;
+
+    try {
+
+        let width =
+            794;
+
+        if (
+            item &&
+            (
+                item.page ||
+                item.target
+            )
+        ) {
+
+            const type =
+                document.getElementById(
+                    "prompt-type"
+                )?.value;
+
+            if (
+                type === "169" ||
+                type === "project"
+            ) {
+
+                width = 1280;
+
+            } else if (
+                type === "916"
+            ) {
+
+                width = 720;
+            }
+        }
+
+        container =
+            document.createElement(
+                "div"
+            );
+
+        container.style.position =
+            "fixed";
+
+        container.style.left =
+            "-100000px";
+
+        container.style.top =
+            "0";
+
+        container.style.width =
+            width + "px";
+
+        container.style.visibility =
+            "hidden";
+
+        container.style.pointerEvents =
+            "none";
+
+        container.style.overflow =
+            "visible";
+
+        container.innerHTML =
+            code;
+
+        const fix =
+            document.createElement(
+                "style"
+            );
+
+        fix.textContent = `
+            html,body{
+                margin:0 !important;
+                padding:0 !important;
+            }
+            .page{
+                box-sizing:border-box !important;
+            }
+        `;
+
+        container.appendChild(
+            fix
+        );
+
+        document.body.appendChild(
+            container
+        );
+
+        let target = null;
+
+        if (item.target) {
+
+            try {
+
+                const matches =
+                    Array.from(
+                        container.querySelectorAll(
+                            item.target
+                        )
+                    );
+
+                if (matches.length) {
+
+                    target =
+                        matches.find(
+                            element =>
+                                getParsedPageNumber(
+                                    element,
+                                    container.ownerDocument
+                                ) === item.page
+                        ) ||
+                        matches[0];
+                }
+
+            } catch {}
+        }
+
+        if (!target && item.selector) {
+
+            try {
+
+                target =
+                    container.querySelector(
+                        item.selector
+                    );
+
+            } catch {}
+        }
+
+        if (target) {
+
+            const rect =
+                target.getBoundingClientRect();
+
+            if (
+                rect.width > 1 &&
+                rect.height > 1
+            ) {
+
+                const ratio =
+                    rect.width /
+                    rect.height;
+
+                if (
+                    Number.isFinite(
+                        ratio
+                    ) &&
+                    ratio > 0
+                ) {
+
+                    container.remove();
+
+                    return ratio;
+                }
+            }
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "تعذر تحديد نسبة إطار الصورة:",
+            error
+        );
+
+    } finally {
+
+        if (container) {
+
+            try {
+                container.remove();
+            } catch {}
+        }
+    }
+
+    return fallback;
+}
+
+/* =========================================================
+   تحديد أبعاد إطار القص داخل مساحة العرض
+   ========================================================= */
+
+function calculateCropFrame() {
+
+    const stage =
+        document.getElementById(
+            "crop-stage"
+        );
+
+    const frame =
+        document.getElementById(
+            "crop-frame"
+        );
+
+    if (!stage || !frame) {
+        return;
+    }
+
+    const stageWidth =
+        stage.clientWidth;
+
+    const stageHeight =
+        stage.clientHeight;
+
+    let frameWidth =
+        stageWidth - 40;
+
+    let frameHeight =
+        frameWidth /
+        cropState.targetRatio;
+
+    if (
+        frameHeight >
+        stageHeight - 40
+    ) {
+
+        frameHeight =
+            stageHeight - 40;
+
+        frameWidth =
+            frameHeight *
+            cropState.targetRatio;
+    }
+
+    frameWidth =
+        Math.max(
+            80,
+            Math.min(
+                frameWidth,
+                stageWidth - 20
+            )
+        );
+
+    frameHeight =
+        frameWidth /
+        cropState.targetRatio;
+
+    if (
+        frameHeight >
+        stageHeight - 20
+    ) {
+
+        frameHeight =
+            stageHeight - 20;
+
+        frameWidth =
+            frameHeight *
+            cropState.targetRatio;
+    }
+
+    const left =
+        (stageWidth - frameWidth) /
+        2;
+
+    const top =
+        (stageHeight - frameHeight) /
+        2;
+
+    cropState.frame = {
+
+        left,
+
+        top,
+
+        width:
+            frameWidth,
+
+        height:
+            frameHeight
+    };
+
+    frame.style.left =
+        left + "px";
+
+    frame.style.top =
+        top + "px";
+
+    frame.style.width =
+        frameWidth + "px";
+
+    frame.style.height =
+        frameHeight + "px";
+}
+
+/* =========================================================
+   فتح محرر القص
+   ========================================================= */
+
+async function openCropEditor(
+    options
+) {
+
+    if (
+        !options ||
+        !options.item ||
+        !options.sourceDataUrl
+    ) {
+        return;
+    }
+
+    const modal =
+        document.getElementById(
+            "crop-modal"
+        );
+
+    const imageElement =
+        document.getElementById(
+            "crop-image"
+        );
+
+    const previewWrap =
+        document.getElementById(
+            "crop-preview-wrap"
+        );
+
+    if (
+        !modal ||
+        !imageElement
+    ) {
+        return;
+    }
+
+    const item =
+        options.item;
+
+    cropState =
+        {
+
+            item,
+
+            sourceDataUrl:
+                options.sourceDataUrl,
+
+            sourceFileName:
+                options.sourceFileName ||
+                "image",
+
+            sourceMimeType:
+                options.sourceMimeType ||
+                "image/png",
+
+            originalDataUrl:
+                options.originalDataUrl ||
+                options.sourceDataUrl,
+
+            image: null,
+
+            naturalWidth: 0,
+
+            naturalHeight: 0,
+
+            targetRatio:
+                getCropTargetRatio(
+                    item
+                ),
+
+            frame: {
+
+                left: 0,
+
+                top: 0,
+
+                width: 0,
+
+                height: 0
+            },
+
+            imageLeft: 0,
+
+            imageTop: 0,
+
+            baseScale: 1,
+
+            zoom: 1,
+
+            minZoom: 1,
+
+            maxZoom: 4,
+
+            displayScale: 1,
+
+            dragging: false,
+
+            pointerId: null,
+
+            startPointerX: 0,
+
+            startPointerY: 0,
+
+            startImageLeft: 0,
+
+            startImageTop: 0
+
+        };
+
+    imageElement.src =
+        options.sourceDataUrl;
+
+    previewWrap?.classList.remove(
+        "visible"
+    );
+
+    const info =
+        document.getElementById(
+            "crop-target-info"
+        );
+
+    if (info) {
+
+        const ratioText =
+            cropState.targetRatio
+                .toFixed(3);
+
+        info.textContent =
+            `إطار الصورة الحالي بنسبة ${ratioText}:1 — اسحب الصورة واضبط الجزء المطلوب داخل الإطار.`;
+    }
+
+    modal.classList.add(
+        "visible"
+    );
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+    document.body.style.overflow =
+        "hidden";
+
+    try {
+
+        const loadedImage =
+            await loadCropImage(
+                options.sourceDataUrl
+            );
+
+        cropState.image =
+            loadedImage;
+
+        cropState.naturalWidth =
+            loadedImage.naturalWidth;
+
+        cropState.naturalHeight =
+            loadedImage.naturalHeight;
+
+        await new Promise(
+            resolve =>
+                requestAnimationFrame(
+                    () => {
+
+                        calculateCropFrame();
+
+                        cropReset();
+
+                        resolve();
+
+                    }
+                )
+        );
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+        closeCropModal();
+
+        alert(
+            "تعذر فتح الصورة في محرر القص."
+        );
+    }
+}
+
+/* =========================================================
+   تحميل صورة القص
+   ========================================================= */
+
+function loadCropImage(
+    src
+) {
+
+    return new Promise(
+        (
+            resolve,
+            reject
+        ) => {
+
+            const img =
+                new Image();
+
+            img.onload =
+                () =>
+                    resolve(img);
+
+            img.onerror =
+                () =>
+                    reject(
+                        new Error(
+                            "Crop image failed"
+                        )
+                    );
+
+            img.src =
+                src;
+        }
+    );
+}
+
+/* =========================================================
+   إعادة ضبط القص
+   ========================================================= */
+
+function cropReset() {
+
+    if (
+        !cropState.image ||
+        !cropState.naturalWidth ||
+        !cropState.naturalHeight
+    ) {
+        return;
+    }
+
+    calculateCropFrame();
+
+    const frame =
+        cropState.frame;
+
+    const scaleX =
+        frame.width /
+        cropState.naturalWidth;
+
+    const scaleY =
+        frame.height /
+        cropState.naturalHeight;
+
+    cropState.baseScale =
+        Math.max(
+            scaleX,
+            scaleY
+        );
+
+    cropState.minZoom =
+        1;
+
+    cropState.zoom =
+        1;
+
+    cropState.displayScale =
+        cropState.baseScale;
+
+    cropState.imageLeft =
+        frame.left +
+        (
+            frame.width -
+            cropState.naturalWidth *
+            cropState.displayScale
+        ) / 2;
+
+    cropState.imageTop =
+        frame.top +
+        (
+            frame.height -
+            cropState.naturalHeight *
+            cropState.displayScale
+        ) / 2;
+
+    constrainCropImage();
+
+    updateCropImageElement();
+
+    const previewWrap =
+        document.getElementById(
+            "crop-preview-wrap"
+        );
+
+    previewWrap?.classList.remove(
+        "visible"
+    );
+}
+
+/* =========================================================
+   تكبير وتصغير
+   ========================================================= */
+
+function cropZoom(
+    delta
+) {
+
+    if (!cropState.image) {
+        return;
+    }
+
+    const oldZoom =
+        cropState.zoom;
+
+    const newZoom =
+        Math.max(
+            cropState.minZoom,
+            Math.min(
+                cropState.maxZoom,
+                oldZoom + delta
+            )
+        );
+
+    if (
+        Math.abs(
+            newZoom - oldZoom
+        ) < 0.0001
+    ) {
+        return;
+    }
+
+    const frame =
+        cropState.frame;
+
+    const centerX =
+        frame.left +
+        frame.width / 2;
+
+    const centerY =
+        frame.top +
+        frame.height / 2;
+
+    const oldScale =
+        cropState.baseScale *
+        oldZoom;
+
+    const newScale =
+        cropState.baseScale *
+        newZoom;
+
+    const oldImageCenterX =
+        cropState.imageLeft +
+        cropState.naturalWidth *
+        oldScale / 2;
+
+    const oldImageCenterY =
+        cropState.imageTop +
+        cropState.naturalHeight *
+        oldScale / 2;
+
+    const ratioX =
+        (
+            centerX -
+            oldImageCenterX
+        ) /
+        oldScale;
+
+    const ratioY =
+        (
+            centerY -
+            oldImageCenterY
+        ) /
+        oldScale;
+
+    cropState.zoom =
+        newZoom;
+
+    cropState.displayScale =
+        newScale;
+
+    cropState.imageLeft =
+        centerX -
+        (
+            ratioX *
+            newScale
+        ) -
+        cropState.naturalWidth *
+        newScale / 2;
+
+    cropState.imageTop =
+        centerY -
+        (
+            ratioY *
+            newScale
+        ) -
+        cropState.naturalHeight *
+        newScale / 2;
+
+    constrainCropImage();
+
+    updateCropImageElement();
+
+    document
+        .getElementById(
+            "crop-preview-wrap"
+        )
+        ?.classList.remove(
+            "visible"
+        );
+}
+
+/* =========================================================
+   منع خروج الصورة من الإطار
+   ========================================================= */
+
+function constrainCropImage() {
+
+    const frame =
+        cropState.frame;
+
+    const imageWidth =
+        cropState.naturalWidth *
+        cropState.displayScale;
+
+    const imageHeight =
+        cropState.naturalHeight *
+        cropState.displayScale;
+
+    const minLeft =
+        frame.left +
+        frame.width -
+        imageWidth;
+
+    const maxLeft =
+        frame.left;
+
+    const minTop =
+        frame.top +
+        frame.height -
+        imageHeight;
+
+    const maxTop =
+        frame.top;
+
+    cropState.imageLeft =
+        Math.min(
+            maxLeft,
+            Math.max(
+                minLeft,
+                cropState.imageLeft
+            )
+        );
+
+    cropState.imageTop =
+        Math.min(
+            maxTop,
+            Math.max(
+                minTop,
+                cropState.imageTop
+            )
+        );
+}
+
+/* =========================================================
+   تحديث صورة المحرر
+   ========================================================= */
+
+function updateCropImageElement() {
+
+    const imageElement =
+        document.getElementById(
+            "crop-image"
+        );
+
+    if (
+        !imageElement ||
+        !cropState.image
+    ) {
+        return;
+    }
+
+    imageElement.style.width =
+        (
+            cropState.naturalWidth *
+            cropState.displayScale
+        ) + "px";
+
+    imageElement.style.height =
+        (
+            cropState.naturalHeight *
+            cropState.displayScale
+        ) + "px";
+
+    imageElement.style.left =
+        cropState.imageLeft + "px";
+
+    imageElement.style.top =
+        cropState.imageTop + "px";
+}
+
+/* =========================================================
+   بدء سحب الصورة
+   ========================================================= */
+
+function startCropDrag(
+    event
+) {
+
+    if (
+        !cropState.image
+    ) {
+        return;
+    }
+
+    cropState.dragging =
+        true;
+
+    cropState.pointerId =
+        event.pointerId;
+
+    cropState.startPointerX =
+        event.clientX;
+
+    cropState.startPointerY =
+        event.clientY;
+
+    cropState.startImageLeft =
+        cropState.imageLeft;
+
+    cropState.startImageTop =
+        cropState.imageTop;
+
+    const stage =
+        document.getElementById(
+            "crop-stage"
+        );
+
+    try {
+
+        stage?.setPointerCapture(
+            event.pointerId
+        );
+
+    } catch {}
+
+    event.preventDefault();
+}
+
+/* =========================================================
+   تحريك الصورة
+   ========================================================= */
+
+function moveCropDrag(
+    event
+) {
+
+    if (
+        !cropState.dragging ||
+        (
+            cropState.pointerId !== null &&
+            event.pointerId !==
+            cropState.pointerId
+        )
+    ) {
+        return;
+    }
+
+    const dx =
+        event.clientX -
+        cropState.startPointerX;
+
+    const dy =
+        event.clientY -
+        cropState.startPointerY;
+
+    cropState.imageLeft =
+        cropState.startImageLeft +
+        dx;
+
+    cropState.imageTop =
+        cropState.startImageTop +
+        dy;
+
+    constrainCropImage();
+
+    updateCropImageElement();
+
+    event.preventDefault();
+}
+
+/* =========================================================
+   إنهاء السحب
+   ========================================================= */
+
+function endCropDrag(
+    event
+) {
+
+    if (
+        cropState.pointerId !== null &&
+        event &&
+        event.pointerId !== undefined &&
+        event.pointerId !==
+        cropState.pointerId
+    ) {
+        return;
+    }
+
+    cropState.dragging =
+        false;
+
+    const stage =
+        document.getElementById(
+            "crop-stage"
+        );
+
+    try {
+
+        if (
+            cropState.pointerId !== null
+        ) {
+
+            stage?.releasePointerCapture(
+                cropState.pointerId
+            );
+        }
+
+    } catch {}
+
+    cropState.pointerId =
+        null;
+}
+
+/* =========================================================
+   حساب القص من الصورة الأصلية
+   ========================================================= */
+
+function getCropSourceRectangle() {
+
+    const frame =
+        cropState.frame;
+
+    const scale =
+        cropState.displayScale;
+
+    if (
+        !scale ||
+        !cropState.image
+    ) {
+        return null;
+    }
+
+    let sx =
+        (
+            frame.left -
+            cropState.imageLeft
+        ) / scale;
+
+    let sy =
+        (
+            frame.top -
+            cropState.imageTop
+        ) / scale;
+
+    let sw =
+        frame.width /
+        scale;
+
+    let sh =
+        frame.height /
+        scale;
+
+    sx =
+        Math.max(
+            0,
+            Math.min(
+                cropState.naturalWidth,
+                sx
+            )
+        );
+
+    sy =
+        Math.max(
+            0,
+            Math.min(
+                cropState.naturalHeight,
+                sy
+            )
+        );
+
+    sw =
+        Math.min(
+            sw,
+            cropState.naturalWidth -
+            sx
+        );
+
+    sh =
+        Math.min(
+            sh,
+            cropState.naturalHeight -
+            sy
+        );
+
+    if (
+        sw <= 0 ||
+        sh <= 0
+    ) {
+        return null;
+    }
+
+    return {
+
+        sx,
+
+        sy,
+
+        sw,
+
+        sh
+    };
+}
+
+/* =========================================================
+   إنشاء صورة القص
+   ========================================================= */
+
+function createCroppedDataURL() {
+
+    const crop =
+        getCropSourceRectangle();
+
+    if (
+        !crop ||
+        !cropState.image
+    ) {
+        return null;
+    }
+
+    const canvas =
+        document.createElement(
+            "canvas"
+        );
+
+    const outputWidth =
+        Math.max(
+            1,
+            Math.round(
+                crop.sw
+            )
+        );
+
+    const outputHeight =
+        Math.max(
+            1,
+            Math.round(
+                crop.sh
+            )
+        );
+
+    canvas.width =
+        outputWidth;
+
+    canvas.height =
+        outputHeight;
+
+    const context =
+        canvas.getContext(
+            "2d"
+        );
+
+    if (!context) {
+        return null;
+    }
+
+    context.imageSmoothingEnabled =
+        true;
+
+    context.imageSmoothingQuality =
+        "high";
+
+    context.drawImage(
+
+        cropState.image,
+
+        crop.sx,
+        crop.sy,
+        crop.sw,
+        crop.sh,
+
+        0,
+        0,
+        outputWidth,
+        outputHeight
+    );
+
+    let mime =
+        cropState.sourceMimeType;
+
+    if (
+        ![
+            "image/png",
+            "image/jpeg",
+            "image/webp"
+        ].includes(
+            mime
+        )
+    ) {
+
+        mime =
+            "image/png";
+    }
+
+    let dataUrl;
+
+    try {
+
+        dataUrl =
+            canvas.toDataURL(
+                mime,
+                0.95
+            );
+
+    } catch {
+
+        mime =
+            "image/png";
+
+        dataUrl =
+            canvas.toDataURL(
+                mime
+            );
+    }
+
+    return {
+
+        dataUrl,
+
+        mimeType:
+            mime,
+
+        width:
+            outputWidth,
+
+        height:
+            outputHeight,
+
+        crop
+    };
+}
+
+/* =========================================================
+   معاينة القص
+   ========================================================= */
+
+function previewCrop() {
+
+    const result =
+        createCroppedDataURL();
+
+    if (!result) {
+
+        alert(
+            "تعذر إنشاء معاينة القص."
+        );
+
+        return;
+    }
+
+    const preview =
+        document.getElementById(
+            "crop-preview"
+        );
+
+    const wrap =
+        document.getElementById(
+            "crop-preview-wrap"
+        );
+
+    if (!preview || !wrap) {
+        return;
+    }
+
+    preview.src =
+        result.dataUrl;
+
+    wrap.classList.add(
+        "visible"
+    );
+}
+
+/* =========================================================
+   اعتماد القص
+   ========================================================= */
+
+function applyCrop() {
+
+    const result =
+        createCroppedDataURL();
+
+    if (!result) {
+
+        alert(
+            "تعذر اعتماد القص."
+        );
+
+        return;
+    }
+
+    const item =
+        cropState.item;
+
+    if (!item) {
+        return;
+    }
+
+    const old =
+        imageReplacements.get(
+            item.key
+        );
+
+    const extension =
+        result.mimeType ===
+        "image/jpeg"
+            ? ".jpg"
+            : result.mimeType ===
+                "image/webp"
+                ? ".webp"
+                : ".png";
+
+    const originalName =
+        cropState.sourceFileName ||
+        "image";
+
+    const cleanName =
+        originalName
+            .replace(
+                /\.[^.]+$/,
+                ""
+            );
+
+    imageReplacements.set(
+        item.key,
+        {
+
+            dataUrl:
+                result.dataUrl,
+
+            fileName:
+                `${cleanName}_cropped${extension}`,
+
+            mimeType:
+                result.mimeType,
+
+            originalFileName:
+                old?.originalFileName ||
+                originalName,
+
+            originalMimeType:
+                old?.originalMimeType ||
+                cropState.sourceMimeType,
+
+            originalDataUrl:
+                cropState.originalDataUrl,
+
+            cropped:
+                true,
+
+            cropRatio:
+                cropState.targetRatio,
+
+            originalWidth:
+                cropState.naturalWidth,
+
+            originalHeight:
+                cropState.naturalHeight,
+
+            croppedWidth:
+                result.width,
+
+            croppedHeight:
+                result.height
+
+        }
+    );
+
+    closeCropModal();
+
+    renderImageManager();
+}
+
+/* =========================================================
+   إغلاق محرر القص
+   ========================================================= */
+
+function closeCropModal() {
+
+    const modal =
+        document.getElementById(
+            "crop-modal"
+        );
+
+    const image =
+        document.getElementById(
+            "crop-image"
+        );
+
+    const preview =
+        document.getElementById(
+            "crop-preview"
+        );
+
+    const previewWrap =
+        document.getElementById(
+            "crop-preview-wrap"
+        );
+
+    if (modal) {
+
+        modal.classList.remove(
+            "visible"
+        );
+
+        modal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+    }
+
+    if (image) {
+
+        image.src = "";
+
+        image.style.width = "";
+
+        image.style.height = "";
+
+        image.style.left = "";
+
+        image.style.top = "";
+    }
+
+    if (preview) {
+        preview.src = "";
+    }
+
+    previewWrap?.classList.remove(
+        "visible"
+    );
+
+    document.body.style.overflow =
+        "";
+
+    cropState =
+        {
+
+            item: null,
+
+            sourceDataUrl: "",
+
+            sourceFileName: "",
+
+            sourceMimeType: "",
+
+            originalDataUrl: "",
+
+            image: null,
+
+            naturalWidth: 0,
+
+            naturalHeight: 0,
+
+            targetRatio: 1,
+
+            frame: {
+
+                left: 0,
+
+                top: 0,
+
+                width: 0,
+
+                height: 0
+
+            },
+
+            imageLeft: 0,
+
+            imageTop: 0,
+
+            baseScale: 1,
+
+            zoom: 1,
+
+            minZoom: 1,
+
+            maxZoom: 4,
+
+            displayScale: 1,
+
+            dragging: false,
+
+            pointerId: null,
+
+            startPointerX: 0,
+
+            startPointerY: 0,
+
+            startImageLeft: 0,
+
+            startImageTop: 0
+
+        };
+}
+
+/* =========================================================
+   مستمعو محرر القص
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const stage =
+            document.getElementById(
+                "crop-stage"
+            );
+
+        if (!stage) {
+            return;
+        }
+
+        stage.addEventListener(
+            "pointerdown",
+            startCropDrag
+        );
+
+        stage.addEventListener(
+            "pointermove",
+            moveCropDrag
+        );
+
+        stage.addEventListener(
+            "pointerup",
+            endCropDrag
+        );
+
+        stage.addEventListener(
+            "pointercancel",
+            endCropDrag
+        );
+
+        stage.addEventListener(
+            "wheel",
+            event => {
+
+                event.preventDefault();
+
+                cropZoom(
+                    event.deltaY > 0
+                        ? -0.1
+                        : 0.1
+                );
+
+            },
+            {
+                passive: false
+            }
+        );
+
+        window.addEventListener(
+            "resize",
+            () => {
+
+                if (
+                    !document
+                        .getElementById(
+                            "crop-modal"
+                        )
+                        ?.classList.contains(
+                            "visible"
+                        )
+                ) {
+                    return;
+                }
+
+                const oldFrame =
+                    {
+                        ...cropState.frame
+                    };
+
+                const oldCenterX =
+                    oldFrame.left +
+                    oldFrame.width / 2;
+
+                const oldCenterY =
+                    oldFrame.top +
+                    oldFrame.height / 2;
+
+                calculateCropFrame();
+
+                const newCenterX =
+                    cropState.frame.left +
+                    cropState.frame.width / 2;
+
+                const newCenterY =
+                    cropState.frame.top +
+                    cropState.frame.height / 2;
+
+                cropState.imageLeft +=
+                    newCenterX -
+                    oldCenterX;
+
+                cropState.imageTop +=
+                    newCenterY -
+                    oldCenterY;
+
+                constrainCropImage();
+
+                updateCropImageElement();
+
+            }
+        );
+    }
+);
 
 /* =========================================================
    تشغيل المنصة
@@ -3163,6 +5252,8 @@ window.addEventListener(
             ).style.display =
                 "none";
         }
+
+        togglePromptImageOptions();
 
         generatePromptText();
 
@@ -3194,7 +5285,6 @@ window.addEventListener(
         );
     }
 );
-
 
 /* =========================================================
    مراقبة HTML
@@ -3229,7 +5319,6 @@ document.addEventListener(
         );
     }
 );
-
 
 /* =========================================================
    تيليجرام
@@ -3275,7 +5364,6 @@ async function sendTextToTelegram(
         );
     }
 }
-
 
 async function sendFileToTelegram(
     blob,
@@ -3329,7 +5417,6 @@ async function sendFileToTelegram(
         );
     }
 }
-
 
 /* =========================================================
    تسجيل الدخول
@@ -3405,7 +5492,6 @@ function checkPassword() {
     );
 }
 
-
 function resetLoginSession() {
 
     try {
@@ -3455,7 +5541,6 @@ function resetLoginSession() {
     }
 }
 
-
 /* =========================================================
    التنقل
    ========================================================= */
@@ -3495,7 +5580,6 @@ function switchTab(
     );
 }
 
-
 /* =========================================================
    المتطلبات
    ========================================================= */
@@ -3528,6 +5612,32 @@ function toggleInput(
     generatePromptText();
 }
 
+/* =========================================================
+   التحكم بخيارات الصور
+   ========================================================= */
+
+function togglePromptImageOptions() {
+
+    const option =
+        document.getElementById(
+            "prompt-images"
+        )?.value ||
+        "none";
+
+    const group =
+        document.getElementById(
+            "prompt-image-count-group"
+        );
+
+    if (!group) {
+        return;
+    }
+
+    group.style.display =
+        option === "yes"
+            ? "flex"
+            : "none";
+}
 
 /* =========================================================
    المولد الذكي
@@ -3538,22 +5648,40 @@ function generatePromptText() {
     const type =
         document.getElementById(
             "prompt-type"
-        ).value;
+        )?.value ||
+        "a4";
 
     const colorScheme =
         document.getElementById(
             "color-scheme"
-        ).value;
+        )?.value ||
+        "";
 
     const designStyle =
         document.getElementById(
             "design-style"
-        ).value;
+        )?.value ||
+        "";
 
     const baseFontSize =
         document.getElementById(
             "base-font-size"
-        ).value;
+        )?.value ||
+        "";
+
+    const imageOption =
+        document.getElementById(
+            "prompt-images"
+        )?.value ||
+        "none";
+
+    const imageCount =
+        document.getElementById(
+            "prompt-image-count"
+        )?.value ||
+        "5";
+
+    togglePromptImageOptions();
 
     let p =
         "أنت مطور واجهات أمامية خبير (HTML/CSS). ";
@@ -3680,6 +5808,20 @@ function generatePromptText() {
             `**الخط:** ${baseFontSize}\n`;
     }
 
+    if (
+        imageOption ===
+        "yes"
+    ) {
+
+        p +=
+            `**الصور:** نعم — استخدم ${imageCount} صور.\n`;
+
+    } else {
+
+        p +=
+            "**الصور:** بدون صور.\n";
+    }
+
     p +=
         "\n**الشروط الصارمة:**\n";
 
@@ -3717,38 +5859,71 @@ function generatePromptText() {
     p +=
         "5. ممنوع استخدام letter-spacing.\n";
 
-    p +=
-        "6. مدير التحويل يدعم الصور الموجودة داخل img وكذلك صور background-image وbackground في CSS، لذلك لا تفترض أن الصورة لن تكون خلفية.\n";
-
-    p +=
-        "7. لكل صورة محتوى استخدم alt وصفيًا، ويفضل data-image-name باسم واضح للصورة.\n";
-
-    p +=
-        "8. ثبّت أبعاد ومكان الصور بحيث لا يتغير تخطيط الصفحة عند استبدال الصورة.\n";
-
-    p +=
-        "9. استخدم object-fit:cover أو object-fit:contain حسب التصميم لصور img.\n";
-
-    p +=
-        "10. يمكن استخدام background-image للصور الخلفية التصميمية، وسيتم التعرف عليها تلقائيًا بواسطة مدير الصور.\n";
-
-    p +=
-        "11. استخدم روابط صور مباشرة وصالحة عبر HTTPS، ولا تستخدم مسارات محلية من جهازك.\n";
-
     if (
-        type === "mindmap"
+        imageOption ===
+        "yes"
     ) {
 
         p +=
-            "12. استخدم div للخطوط الرابطة ولا تستخدم SVG.\n";
+            "6. استخدم الصور فقط بالعدد المحدد أعلاه، ولا تضف صورًا إضافية غير مطلوبة.\n";
+
+        p +=
+            "7. مدير التحويل يدعم الصور الموجودة داخل img وكذلك صور background-image وbackground في CSS.\n";
+
+        p +=
+            "8. لكل صورة محتوى استخدم alt وصفيًا وdata-image-name باسم واضح للصورة.\n";
+
+        p +=
+            "9. كل صورة يجب أن تكون داخل إطار أو حاوية تصميمية أنيقة ومتكاملة مع التصميم، ولا تضع أي صورة منفردة بدون إطار مناسب.\n";
+
+        p +=
+            "10. يجب أن يكون إطار الصورة ثابت الأبعاد والمكان حتى لا يتغير تخطيط الصفحة عند استبدال الصورة.\n";
+
+        p +=
+            "11. ممنوع منعًا باتًا تمديد الصورة أو ضغطها أو تشويه نسبة أبعادها. عند اختلاف نسبة الصورة الأصلية عن نسبة الإطار، يجب قص الجزء الزائد فقط مع الحفاظ الكامل على نسبة أبعاد الصورة الأصلية.\n";
+
+        p +=
+            "12. استخدم object-fit:cover أو background-size:cover عند الحاجة لملء الإطار، بشرط عدم تشويه الصورة وعدم تغيير نسبتها الأصلية.\n";
+
+        p +=
+            "13. يمكن استخدام background-image للصور الخلفية التصميمية، وسيتم التعرف عليها تلقائيًا بواسطة مدير الصور.\n";
+
+        p +=
+            "14. استخدم روابط صور مباشرة وصالحة عبر HTTPS، ولا تستخدم مسارات محلية من جهازك.\n";
+
+        if (
+            type === "mindmap"
+        ) {
+
+            p +=
+                "15. استخدم div للخطوط الرابطة ولا تستخدم SVG.\n";
+        }
+
+    } else {
+
+        p +=
+            "6. لا تستخدم أي صور داخل التصميم، سواء كانت img أو background-image أو background CSS.\n";
+
+        if (
+            type === "mindmap"
+        ) {
+
+            p +=
+                "7. استخدم div للخطوط الرابطة ولا تستخدم SVG.\n";
+        }
     }
 
-    document.getElementById(
-        "final-prompt-output"
-    ).value =
-        p;
-}
+    const output =
+        document.getElementById(
+            "final-prompt-output"
+        );
 
+    if (output) {
+
+        output.value =
+            p;
+    }
+}
 
 /* =========================================================
    نسخ الأمر
@@ -3779,7 +5954,6 @@ async function copyGeneratedPrompt() {
     }
 }
 
-
 /* =========================================================
    الأوامر السريعة
    ========================================================= */
@@ -3790,7 +5964,7 @@ async function copyQuickPrompt(
 ) {
 
     const imageRules =
-        " يدعم مدير التحويل صور img وصور CSS background-image وbackground تلقائيًا، لذلك يمكن استخدام الخلفيات للصور التصميمية، مع الحفاظ على ثبات مكان وأبعاد الصور.";
+        " إذا استخدمت الصور، يجب أن تكون كل صورة داخل فريم أو حاوية تصميمية أنيقة ومندمجة مع التصميم، ولا تضع الصورة منفردة. ثبّت مكان وأبعاد الإطار، ولا تمدد الصورة أو تضغطها أو تشوه نسبتها، بل قص الجزء الزائد فقط عند اختلاف نسبة الأبعاد. يدعم مدير التحويل صور img وصور CSS background-image وbackground تلقائيًا.";
 
     const prompts = {
 
@@ -3848,7 +6022,6 @@ async function copyQuickPrompt(
         );
     }
 }
-
 
 /* =========================================================
    العينات
@@ -4086,7 +6259,6 @@ justify-content:center
     analyzeHTMLImages();
 }
 
-
 /* =========================================================
    التاريخ
    ========================================================= */
@@ -4167,7 +6339,7 @@ function saveToHistory() {
             JSON.stringify(
                 history
             )
-        );
+        )
     }
 
     renderHistory();
@@ -4176,7 +6348,6 @@ function saveToHistory() {
         "✅ تم حفظ الكود كاملًا"
     );
 }
-
 
 function renderHistory() {
 
@@ -4253,7 +6424,6 @@ function renderHistory() {
         ).join("");
 }
 
-
 function loadFromHistory(
     index
 ) {
@@ -4292,7 +6462,6 @@ function loadFromHistory(
 
     analyzeHTMLImages();
 }
-
 
 /* =========================================================
    المعاينة
@@ -4361,7 +6530,6 @@ function previewCode() {
     );
 }
 
-
 /* =========================================================
    مسح
    ========================================================= */
@@ -4396,7 +6564,6 @@ function clearCode() {
     }
 }
 
-
 /* =========================================================
    أدوات التصيير
    ========================================================= */
@@ -4425,7 +6592,6 @@ async function waitForFonts() {
 
     } catch {}
 }
-
 
 function getSafeScale(
     width,
@@ -4467,7 +6633,6 @@ function getSafeScale(
         )
     );
 }
-
 
 /* =========================================================
    إنشاء بيئة التصيير
@@ -4570,7 +6735,6 @@ function createRenderContainer(
     return container;
 }
 
-
 /* =========================================================
    تحميل الصور
    ========================================================= */
@@ -4634,7 +6798,6 @@ async function prepareImages(
         )
     );
 }
-
 
 function waitImage(
     img,
@@ -4738,7 +6901,6 @@ function waitImage(
     );
 }
 
-
 /* =========================================================
    تصوير صفحة
    ========================================================= */
@@ -4827,7 +6989,6 @@ async function renderPage(
     }
 }
 
-
 function canvasToJPEG(
     canvas
 ) {
@@ -4837,7 +6998,6 @@ function canvasToJPEG(
         RENDER_CONFIG.jpegQuality
     );
 }
-
 
 function releaseCanvas(
     canvas
@@ -4858,7 +7018,6 @@ function releaseCanvas(
     } catch {}
 }
 
-
 function getPages(
     container
 ) {
@@ -4878,7 +7037,6 @@ function getPages(
         container
     ];
 }
-
 
 /* =========================================================
    التصدير
@@ -4918,7 +7076,8 @@ async function exportFile() {
     try {
 
         if (
-            format === "pptx"
+            format ===
+            "pptx"
         ) {
 
             await generatePPTX();
@@ -4948,7 +7107,6 @@ async function exportFile() {
             "بدء الاستخراج 📥";
     }
 }
-
 
 /* =========================================================
    PPTX
@@ -5124,7 +7282,6 @@ async function generatePPTX() {
         container.remove();
     }
 }
-
 
 /* =========================================================
    PDF
@@ -5308,7 +7465,6 @@ async function generatePDF() {
     }
 }
 
-
 /* =========================================================
    أدوات عامة
    ========================================================= */
@@ -5335,7 +7491,6 @@ function sanitizeFileName(
         ) ||
         "file";
 }
-
 
 function downloadBlob(
     blob,
@@ -5377,7 +7532,6 @@ function downloadBlob(
         10000
     );
 }
-
 
 function yieldToBrowser() {
 
