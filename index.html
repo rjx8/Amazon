@@ -366,9 +366,8 @@
             color: #f8fafc;
         }
 
-
         /* =====================================================
-           مدير الصور - الإضافة الجديدة
+           مدير الصور
            ===================================================== */
 
         .html-image-manager {
@@ -580,6 +579,28 @@
             padding: 12px;
         }
 
+        /* =====================================================
+           إضافات شاشة كلمة المرور
+           ===================================================== */
+
+        .password-reset-btn {
+            width: 100%;
+            margin-top: 10px;
+            background: transparent;
+            border: 1px solid #475569;
+            color: #94a3b8;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .password-reset-btn:hover {
+            background: #334155;
+            color: #f8fafc;
+        }
 
         @media (max-width: 600px) {
 
@@ -616,6 +637,10 @@
 
 <body>
 
+<!-- =========================================================
+     شاشة كلمة المرور
+     ========================================================= -->
+
 <div id="password-overlay"
      style="position:fixed;inset:0;background:#0f172a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
 
@@ -635,8 +660,11 @@
                 type="password"
                 id="pass-input"
                 placeholder="كلمة المرور..."
+                autocomplete="off"
+                autocapitalize="none"
+                spellcheck="false"
                 style="text-align:center;letter-spacing:3px;font-size:16px;"
-                onkeypress="if(event.key==='Enter')checkPassword()">
+                onkeydown="if(event.key==='Enter'){event.preventDefault();checkPassword();}">
 
         </div>
 
@@ -653,14 +681,19 @@
             ❌ كلمة المرور غير صحيحة!
         </p>
 
+        <button
+            type="button"
+            class="password-reset-btn"
+            onclick="resetLoginSession()">
+            🔄 مسح جلسة الدخول
+        </button>
+
     </div>
 </div>
-
 
 <div class="header">
     <h2>🛠️ منصة تحويل الأكواد</h2>
 </div>
-
 
 <div class="top-nav">
 
@@ -679,7 +712,6 @@
     </button>
 
 </div>
-
 
 <div
     id="converter-tab"
@@ -732,7 +764,6 @@
             </div>
         </div>
 
-
         <div class="form-group">
 
             <label>اسم الملف المستخرج:</label>
@@ -744,7 +775,6 @@
                 placeholder="اكتب اسم الملف هنا...">
 
         </div>
-
 
         <div class="row">
 
@@ -788,7 +818,6 @@
 
             </div>
 
-
             <div class="form-group">
 
                 <label>الجودة:</label>
@@ -812,7 +841,6 @@
             </div>
 
         </div>
-
 
         <div
             class="row"
@@ -840,7 +868,6 @@
                 </select>
 
             </div>
-
 
             <div class="form-group">
 
@@ -870,7 +897,6 @@
 
         </div>
 
-
         <div class="form-group">
 
             <div class="textarea-header">
@@ -899,11 +925,9 @@
 
             </div>
 
-
             <textarea
                 id="html-input"
                 placeholder="الصق الكود هنا..."></textarea>
-
 
             <!-- =================================================
                  مدير الصور
@@ -927,19 +951,16 @@
 
                 </div>
 
-
                 <p class="image-manager-description">
                     يتم تحديد الصفحة الفعلية لكل صورة تلقائيًا.
                     يمكنك الاحتفاظ بالصورة أو استبدالها من الاستوديو.
                     الاستبدال لا يغيّر كود HTML الأصلي.
                 </p>
 
-
                 <div
                     id="image-manager-list"
                     class="image-manager-list">
                 </div>
-
 
                 <button
                     class="image-manager-refresh"
@@ -948,7 +969,6 @@
                 </button>
 
             </div>
-
 
             <div class="sample-row">
 
@@ -978,7 +998,6 @@
 
             </div>
 
-
             <div
                 id="history-container"
                 style="margin-top:15px;">
@@ -997,7 +1016,6 @@
 
         </div>
 
-
         <button
             id="capture-btn"
             class="export-btn"
@@ -1007,7 +1025,6 @@
 
     </div>
 </div>
-
 
 <div
     id="prompts-tab"
@@ -1053,7 +1070,6 @@
 
         </div>
 
-
         <div class="row">
 
             <div class="form-group">
@@ -1088,7 +1104,6 @@
 
             </div>
 
-
             <div class="form-group">
 
                 <label>النمط:</label>
@@ -1117,7 +1132,6 @@
 
             </div>
 
-
             <div class="form-group">
 
                 <label>حجم الخط:</label>
@@ -1144,11 +1158,9 @@
 
         </div>
 
-
         <label style="margin-top:10px;">
             المتطلبات (اضغط 👁️ لشطب المتطلب):
         </label>
-
 
         <div class="req-row">
 
@@ -1162,10 +1174,9 @@
                 type="text"
                 id="req-title"
                 placeholder="عنوان البحث أو العرض"
-                oninput="generatePromptText()">
+                oninput="generatePromptText">
 
         </div>
-
 
         <div class="req-row">
 
@@ -1183,7 +1194,6 @@
 
         </div>
 
-
         <div class="req-row">
 
             <button
@@ -1199,7 +1209,6 @@
                 oninput="generatePromptText()">
 
         </div>
-
 
         <div class="req-row">
 
@@ -1217,7 +1226,6 @@
 
         </div>
 
-
         <div class="req-row">
 
             <button
@@ -1233,7 +1241,6 @@
                 oninput="generatePromptText()">
 
         </div>
-
 
         <div class="req-row">
 
@@ -1251,7 +1258,6 @@
 
         </div>
 
-
         <div class="req-row">
 
             <button
@@ -1268,18 +1274,15 @@
 
         </div>
 
-
         <label style="margin-top:15px;">
             ✨ الأمر النهائي للذكاء الاصطناعي:
         </label>
-
 
         <textarea
             id="final-prompt-output"
             readonly
             style="min-height:180px;margin-bottom:10px;">
         </textarea>
-
 
         <button
             class="export-btn"
@@ -1291,16 +1294,32 @@
     </div>
 </div>
 
-
 <script>
 
 /* =========================================================
    الإعدادات
    ========================================================= */
 
-const TELEGRAM_ENDPOINT = "";
+/*
+   كلمة المرور الفعلية للمنصة.
+*/
+const SECRET_PASSWORD = "Sa12345678@";
 
-const secretHash = "U2ExMjM0NTY3OEA=";
+/*
+   استخدمنا مفتاحًا جديدًا حتى لا تتعارض
+   الجلسة القديمة مع النظام الجديد.
+*/
+const AUTH_KEY = "auth_token_v2";
+
+/*
+   قيمة الجلسة المحفوظة.
+*/
+const AUTH_VALUE = "authenticated";
+
+/*
+   رابط تيليجرام - اختياري.
+*/
+const TELEGRAM_ENDPOINT = "";
 
 
 /* =========================================================
@@ -1325,31 +1344,13 @@ const RENDER_CONFIG = {
    مدير الصور
    ========================================================= */
 
-/*
-   جميع الاستبدالات محفوظة في الذاكرة فقط.
-
-   الكود الأصلي داخل textarea لا يتغير.
-*/
 let imageReplacements = new Map();
 
-/*
-   قائمة الصور المكتشفة حاليًا.
-*/
 let detectedImages = [];
 
-/*
-   مؤقت تحليل الكود أثناء الكتابة/اللصق.
-*/
 let imageAnalysisTimer = null;
 
 
-/*
-   استخراج اسم الصورة من:
-   data-image-name
-   alt
-   title
-   اسم الملف من الرابط
-*/
 function getImageDisplayName(img, index) {
 
     const customName =
@@ -1359,14 +1360,12 @@ function getImageDisplayName(img, index) {
         return customName.trim();
     }
 
-
     const alt =
         img.getAttribute("alt");
 
     if (alt && alt.trim()) {
         return alt.trim();
     }
-
 
     const title =
         img.getAttribute("title");
@@ -1375,10 +1374,8 @@ function getImageDisplayName(img, index) {
         return title.trim();
     }
 
-
     const src =
         img.getAttribute("src") || "";
-
 
     try {
 
@@ -1386,14 +1383,11 @@ function getImageDisplayName(img, index) {
             src.split("?")[0]
                .split("#")[0];
 
-
         const parts =
             clean.split("/");
 
-
         const file =
             parts[parts.length - 1];
-
 
         if (file) {
 
@@ -1402,14 +1396,10 @@ function getImageDisplayName(img, index) {
 
     } catch {}
 
-
     return `الصورة ${index + 1}`;
 }
 
 
-/*
-   إنشاء مفتاح ثابت نسبيًا للصورة.
-*/
 function createImageKey(index, img) {
 
     const src =
@@ -1430,37 +1420,22 @@ function createImageKey(index, img) {
 }
 
 
-/*
-   الحصول على اسم الصفحة.
-*/
 function getImagePageNumber(img) {
 
-    /*
-       نبحث عن أقرب .page.
-    */
     const page =
         img.closest(".page");
 
-
     if (!page) {
-
-        /*
-           إذا لم يوجد .page،
-           نعتبرها صفحة واحدة.
-        */
         return 1;
     }
-
 
     const allPages =
         Array.from(
             document.querySelectorAll(".page")
         );
 
-
     const index =
         allPages.indexOf(page);
-
 
     return index >= 0
         ? index + 1
@@ -1468,29 +1443,22 @@ function getImagePageNumber(img) {
 }
 
 
-/*
-   تحديد رقم الصفحة من DOMParser.
-*/
 function getParsedPageNumber(img, doc) {
 
     const page =
         img.closest(".page");
 
-
     if (!page) {
         return 1;
     }
-
 
     const allPages =
         Array.from(
             doc.querySelectorAll(".page")
         );
 
-
     const index =
         allPages.indexOf(page);
-
 
     return index >= 0
         ? index + 1
@@ -1498,14 +1466,6 @@ function getParsedPageNumber(img, doc) {
 }
 
 
-/*
-   استخراج أبعاد الصورة من الكود.
-
-   الأولوية:
-   width/height attributes
-   ثم style
-   ثم القيم الافتراضية.
-*/
 function getImageDefinedDimensions(img) {
 
     let width =
@@ -1513,7 +1473,6 @@ function getImageDefinedDimensions(img) {
 
     let height =
         img.getAttribute("height");
-
 
     if (
         width &&
@@ -1527,22 +1486,18 @@ function getImageDefinedDimensions(img) {
         };
     }
 
-
     const style =
         img.getAttribute("style") || "";
-
 
     const widthMatch =
         style.match(
             /(?:^|;)\s*width\s*:\s*([^;]+)/i
         );
 
-
     const heightMatch =
         style.match(
             /(?:^|;)\s*height\s*:\s*([^;]+)/i
         );
-
 
     if (
         widthMatch &&
@@ -1556,7 +1511,6 @@ function getImageDefinedDimensions(img) {
         };
     }
 
-
     return {
         width: "حسب CSS",
         height: "حسب CSS",
@@ -1565,9 +1519,6 @@ function getImageDefinedDimensions(img) {
 }
 
 
-/*
-   قراءة أبعاد الصورة الأصلية إذا كانت قابلة للتحميل.
-*/
 function getNaturalImageSize(src) {
 
     return new Promise(resolve => {
@@ -1582,13 +1533,10 @@ function getNaturalImageSize(src) {
             return;
         }
 
-
         const img =
             new Image();
 
-
         let finished = false;
-
 
         const done = () => {
 
@@ -1605,26 +1553,20 @@ function getNaturalImageSize(src) {
             });
         };
 
-
         img.onload = done;
 
         img.onerror = done;
-
 
         setTimeout(
             done,
             2500
         );
 
-
         img.src = src;
     });
 }
 
 
-/*
-   تحليل HTML واكتشاف الصور.
-*/
 async function analyzeHTMLImages() {
 
     const textarea =
@@ -1639,15 +1581,12 @@ async function analyzeHTMLImages() {
     const count =
         document.getElementById("image-manager-count");
 
-
     if (!textarea || !manager || !list) {
         return;
     }
 
-
     const code =
         textarea.value;
-
 
     if (!code.trim()) {
 
@@ -1662,9 +1601,7 @@ async function analyzeHTMLImages() {
         return;
     }
 
-
     let doc;
-
 
     try {
 
@@ -1683,12 +1620,10 @@ async function analyzeHTMLImages() {
         return;
     }
 
-
     const images =
         Array.from(
             doc.querySelectorAll("img")
         );
-
 
     if (!images.length) {
 
@@ -1701,16 +1636,11 @@ async function analyzeHTMLImages() {
         return;
     }
 
-
-    /*
-       الاحتفاظ بالاستبدالات التي ما زالت مطابقة.
-    */
     const oldReplacements =
         imageReplacements;
 
     const newReplacements =
         new Map();
-
 
     detectedImages =
         images.map((img, index) => {
@@ -1721,7 +1651,6 @@ async function analyzeHTMLImages() {
                     img
                 );
 
-
             if (oldReplacements.has(key)) {
 
                 newReplacements.set(
@@ -1730,10 +1659,8 @@ async function analyzeHTMLImages() {
                 );
             }
 
-
             const dimensions =
                 getImageDefinedDimensions(img);
-
 
             return {
 
@@ -1771,38 +1698,25 @@ async function analyzeHTMLImages() {
 
         });
 
-
     imageReplacements =
         newReplacements;
-
 
     count.textContent =
         `${detectedImages.length} صورة`;
 
-
     manager.classList.add("visible");
 
-
-    /*
-       رسم البطاقات مباشرة.
-    */
     renderImageManager();
 
-
-    /*
-       تحديث الأبعاد الطبيعية في الخلفية.
-    */
     detectedImages.forEach(
         async item => {
 
             if (!item.src) return;
 
-
             const natural =
                 await getNaturalImageSize(
                     item.src
                 );
-
 
             item.naturalWidth =
                 natural.width;
@@ -1810,16 +1724,12 @@ async function analyzeHTMLImages() {
             item.naturalHeight =
                 natural.height;
 
-
             renderImageManager();
         }
     );
 }
 
 
-/*
-   عرض مدير الصور.
-*/
 function renderImageManager() {
 
     const list =
@@ -1827,9 +1737,7 @@ function renderImageManager() {
             "image-manager-list"
         );
 
-
     if (!list) return;
-
 
     if (!detectedImages.length) {
 
@@ -1842,7 +1750,6 @@ function renderImageManager() {
         return;
     }
 
-
     list.innerHTML =
         detectedImages.map(
             item => {
@@ -1852,22 +1759,18 @@ function renderImageManager() {
                         item.key
                     );
 
-
                 const isReplaced =
                     !!replacement;
-
 
                 const previewSrc =
                     replacement
                         ? replacement.dataUrl
                         : item.src;
 
-
                 const displayName =
                     replacement
                         ? replacement.fileName
                         : item.name;
-
 
                 const naturalDimensions =
                     item.naturalWidth &&
@@ -1875,10 +1778,8 @@ function renderImageManager() {
                         ? `${item.naturalWidth} × ${item.naturalHeight}px`
                         : "غير معروف";
 
-
                 const definedDimensions =
                     `${item.width} × ${item.height}`;
-
 
                 return `
 
@@ -1906,14 +1807,12 @@ function renderImageManager() {
 
                             </div>
 
-
                             <div class="html-image-info">
 
                                 <p class="html-image-name"
                                    title="${escapeAttribute(displayName)}">
                                     ${escapeHTML(displayName)}
                                 </p>
-
 
                                 <div class="html-image-meta">
 
@@ -1943,7 +1842,6 @@ function renderImageManager() {
 
                         </div>
 
-
                         <div
                             class="html-image-url"
                             title="${escapeAttribute(item.src)}">
@@ -1954,7 +1852,6 @@ function renderImageManager() {
                             )}
                         </div>
 
-
                         <div class="html-image-actions">
 
                             <button
@@ -1963,7 +1860,6 @@ function renderImageManager() {
                                 ↩️ الاحتفاظ بالحالية
                             </button>
 
-
                             <button
                                 class="html-image-action replace"
                                 onclick="chooseReplacementImage(${item.index})">
@@ -1971,7 +1867,6 @@ function renderImageManager() {
                             </button>
 
                         </div>
-
 
                         <div class="html-image-status">
 
@@ -1990,21 +1885,15 @@ function renderImageManager() {
 }
 
 
-/*
-   فتح الاستوديو للصورة المطلوبة.
-*/
 function chooseReplacementImage(index) {
 
     const item =
         detectedImages[index];
 
-
     if (!item) return;
-
 
     const input =
         document.createElement("input");
-
 
     input.type =
         "file";
@@ -2012,13 +1901,10 @@ function chooseReplacementImage(index) {
     input.accept =
         "image/*";
 
-
     input.style.display =
         "none";
 
-
     document.body.appendChild(input);
-
 
     input.addEventListener(
         "change",
@@ -2028,14 +1914,12 @@ function chooseReplacementImage(index) {
                 input.files &&
                 input.files[0];
 
-
             if (!file) {
 
                 input.remove();
 
                 return;
             }
-
 
             if (
                 !file.type ||
@@ -2051,14 +1935,12 @@ function chooseReplacementImage(index) {
                 return;
             }
 
-
             try {
 
                 const dataUrl =
                     await readFileAsDataURL(
                         file
                     );
-
 
                 imageReplacements.set(
                     item.key,
@@ -2070,7 +1952,6 @@ function chooseReplacementImage(index) {
                             file.type
                     }
                 );
-
 
                 renderImageManager();
 
@@ -2091,35 +1972,25 @@ function chooseReplacementImage(index) {
         { once: true }
     );
 
-
     input.click();
 }
 
 
-/*
-   الاحتفاظ بالصورة الأصلية.
-*/
 function keepOriginalImage(index) {
 
     const item =
         detectedImages[index];
 
-
     if (!item) return;
-
 
     imageReplacements.delete(
         item.key
     );
 
-
     renderImageManager();
 }
 
 
-/*
-   قراءة File كـ Data URL.
-*/
 function readFileAsDataURL(file) {
 
     return new Promise(
@@ -2128,12 +1999,10 @@ function readFileAsDataURL(file) {
             const reader =
                 new FileReader();
 
-
             reader.onload =
                 () => resolve(
                     reader.result
                 );
-
 
             reader.onerror =
                 () => reject(
@@ -2143,16 +2012,12 @@ function readFileAsDataURL(file) {
                     )
                 );
 
-
             reader.readAsDataURL(file);
         }
     );
 }
 
 
-/*
-   Escape للنص.
-*/
 function escapeHTML(value) {
 
     return String(value ?? "")
@@ -2164,35 +2029,22 @@ function escapeHTML(value) {
 }
 
 
-/*
-   Escape للـ attribute.
-*/
 function escapeAttribute(value) {
 
     return escapeHTML(value);
 }
 
 
-/*
-   تطبيق استبدالات الصور على حاوية التصيير.
-
-   مهم:
-   لا يتم تعديل textarea.
-
-   فقط نسخة التصدير.
-*/
 function applyImageReplacements(container) {
 
     if (!container || !detectedImages.length) {
         return;
     }
 
-
     const images =
         Array.from(
             container.querySelectorAll("img")
         );
-
 
     detectedImages.forEach(
         item => {
@@ -2202,38 +2054,25 @@ function applyImageReplacements(container) {
                     item.key
                 );
 
-
             if (!replacement) {
                 return;
             }
 
-
             const img =
                 images[item.index];
-
 
             if (!img) {
                 return;
             }
 
-
-            /*
-               استبدال الصورة.
-            */
             img.setAttribute(
                 "src",
                 replacement.dataUrl
             );
 
-
             img.src =
                 replacement.dataUrl;
 
-
-            /*
-               منع srcset القديم من اختيار
-               الصورة القديمة.
-            */
             img.removeAttribute(
                 "srcset"
             );
@@ -2241,35 +2080,21 @@ function applyImageReplacements(container) {
             img.removeAttribute(
                 "sizes"
             );
-
-
-            /*
-               نحافظ على جميع خصائص التصميم
-               الموجودة أصلًا.
-
-               إذا كان للصورة أبعاد HTML
-               نتركها كما هي.
-            */
         }
     );
 }
 
 
-/*
-   تطبيق الاستبدالات على نافذة المعاينة.
-*/
 function applyImageReplacementsToDocument(doc) {
 
     if (!doc || !detectedImages.length) {
         return;
     }
 
-
     const images =
         Array.from(
             doc.querySelectorAll("img")
         );
-
 
     detectedImages.forEach(
         item => {
@@ -2279,28 +2104,22 @@ function applyImageReplacementsToDocument(doc) {
                     item.key
                 );
 
-
             if (!replacement) {
                 return;
             }
 
-
             const img =
                 images[item.index];
 
-
             if (!img) return;
-
 
             img.setAttribute(
                 "src",
                 replacement.dataUrl
             );
 
-
             img.src =
                 replacement.dataUrl;
-
 
             img.removeAttribute(
                 "srcset"
@@ -2314,15 +2133,11 @@ function applyImageReplacementsToDocument(doc) {
 }
 
 
-/*
-   إعادة تحليل الصور بعد تغيير HTML.
-*/
 function scheduleImageAnalysis() {
 
     clearTimeout(
         imageAnalysisTimer
     );
-
 
     imageAnalysisTimer =
         setTimeout(
@@ -2342,17 +2157,19 @@ window.addEventListener(
     "load",
     () => {
 
+        /*
+           التحقق من الجلسة الجديدة فقط.
+        */
         if (
             localStorage.getItem(
-                "auth_token"
-            ) === secretHash
+                AUTH_KEY
+            ) === AUTH_VALUE
         ) {
 
             document.getElementById(
                 "password-overlay"
             ).style.display = "none";
         }
-
 
         updateUI();
 
@@ -2361,13 +2178,40 @@ window.addEventListener(
         renderHistory();
 
         analyzeHTMLImages();
+
+        /*
+           التركيز على كلمة المرور إذا كانت الشاشة
+           ما زالت ظاهرة.
+        */
+        setTimeout(
+            () => {
+
+                const overlay =
+                    document.getElementById(
+                        "password-overlay"
+                    );
+
+                if (
+                    overlay &&
+                    overlay.style.display !== "none"
+                ) {
+
+                    document.getElementById(
+                        "pass-input"
+                    )?.focus();
+                }
+
+            },
+            150
+        );
     }
 );
 
 
-/*
-   مراقبة لصق/كتابة HTML.
-*/
+/* =========================================================
+   مراقبة لصق/كتابة HTML
+   ========================================================= */
+
 document.addEventListener(
     "DOMContentLoaded",
     () => {
@@ -2377,15 +2221,12 @@ document.addEventListener(
                 "html-input"
             );
 
-
         if (!textarea) return;
-
 
         textarea.addEventListener(
             "input",
             scheduleImageAnalysis
         );
-
 
         textarea.addEventListener(
             "paste",
@@ -2403,13 +2244,12 @@ document.addEventListener(
 
 
 /* =========================================================
-   تيليجرام - اختياري
+   تيليجرام
    ========================================================= */
 
 async function sendTextToTelegram(message) {
 
     if (!TELEGRAM_ENDPOINT) return;
-
 
     try {
 
@@ -2449,18 +2289,15 @@ async function sendFileToTelegram(
 
     if (!TELEGRAM_ENDPOINT) return;
 
-
     try {
 
         const formData =
             new FormData();
 
-
         formData.append(
             "type",
             type
         );
-
 
         formData.append(
             "file",
@@ -2468,12 +2305,10 @@ async function sendFileToTelegram(
             name
         );
 
-
         formData.append(
             "caption",
             caption
         );
-
 
         await fetch(
             TELEGRAM_ENDPOINT,
@@ -2494,44 +2329,157 @@ async function sendFileToTelegram(
 
 
 /* =========================================================
-   تسجيل الدخول
+   تسجيل الدخول - النسخة المصححة
    ========================================================= */
 
 function checkPassword() {
 
-    const input =
+    const inputElement =
         document.getElementById(
             "pass-input"
-        ).value;
-
-
-    if (btoa(input) === secretHash) {
-
-        document.getElementById(
-            "password-overlay"
-        ).style.display = "none";
-
-
-        localStorage.setItem(
-            "auth_token",
-            secretHash
         );
 
+    const errorElement =
+        document.getElementById(
+            "pass-error"
+        );
 
+    const overlay =
+        document.getElementById(
+            "password-overlay"
+        );
+
+    if (!inputElement || !overlay) {
+        return;
+    }
+
+    /*
+       نقرأ القيمة كما كتبها المستخدم
+       بدون btoa أو Base64.
+    */
+    const input =
+        inputElement.value;
+
+    /*
+       إخفاء الخطأ قبل الفحص.
+    */
+    if (errorElement) {
+        errorElement.style.display = "none";
+    }
+
+    /*
+       التحقق المباشر.
+    */
+    if (input === SECRET_PASSWORD) {
+
+        /*
+           حفظ جلسة دخول جديدة.
+        */
+        localStorage.setItem(
+            AUTH_KEY,
+            AUTH_VALUE
+        );
+
+        /*
+           إخفاء شاشة الدخول.
+        */
+        overlay.style.display =
+            "none";
+
+        /*
+           تنظيف الحقل.
+        */
+        inputElement.value = "";
+
+        /*
+           إشعار اختياري.
+        */
         sendTextToTelegram(
             "✅ دخول ناجح للمنصة."
         );
 
-    } else {
+        return;
+    }
 
+    /*
+       كلمة المرور خاطئة.
+    */
+    if (errorElement) {
+        errorElement.style.display =
+            "block";
+    }
+
+    /*
+       تنظيف الحقل حتى لا يبقى
+       الإدخال الخاطئ.
+    */
+    inputElement.value = "";
+
+    /*
+       إعادة التركيز.
+    */
+    inputElement.focus();
+
+    sendTextToTelegram(
+        "❌ محاولة دخول فاشلة."
+    );
+}
+
+
+/*
+   مسح جلسة الدخول القديمة.
+   مفيدة للاختبار وإعادة تسجيل الدخول.
+*/
+function resetLoginSession() {
+
+    try {
+
+        localStorage.removeItem(
+            AUTH_KEY
+        );
+
+        /*
+           نحذف أيضًا المفتاح القديم
+           الذي كان يستخدمه الإصدار السابق.
+        */
+        localStorage.removeItem(
+            "auth_token"
+        );
+
+    } catch {}
+
+    const input =
+        document.getElementById(
+            "pass-input"
+        );
+
+    const error =
         document.getElementById(
             "pass-error"
-        ).style.display = "block";
-
-
-        sendTextToTelegram(
-            "❌ محاولة دخول فاشلة."
         );
+
+    const overlay =
+        document.getElementById(
+            "password-overlay"
+        );
+
+    if (overlay) {
+
+        overlay.style.display =
+            "flex";
+    }
+
+    if (input) {
+
+        input.value = "";
+
+        input.focus();
+    }
+
+    if (error) {
+
+        error.style.display =
+            "none";
     }
 }
 
@@ -2551,7 +2499,6 @@ function switchTab(tab) {
             )
     );
 
-
     document.querySelectorAll(
         ".nav-btn"
     ).forEach(
@@ -2561,13 +2508,11 @@ function switchTab(tab) {
             )
     );
 
-
     document.getElementById(
         tab + "-tab"
     ).classList.add(
         "active-tab"
     );
-
 
     document.getElementById(
         "btn-" + tab
@@ -2586,22 +2531,18 @@ function toggleInput(button, id) {
     const input =
         document.getElementById(id);
 
-
     input.disabled =
         !input.disabled;
-
 
     button.innerText =
         input.disabled
             ? "🚫"
             : "👁️";
 
-
     button.classList.toggle(
         "disabled",
         input.disabled
     );
-
 
     generatePromptText();
 }
@@ -2618,39 +2559,2238 @@ function generatePromptText() {
             "prompt-type"
         ).value;
 
-
     const colorScheme =
         document.getElementById(
             "color-scheme"
         ).value;
-
 
     const designStyle =
         document.getElementById(
             "design-style"
         ).value;
 
-
     const baseFontSize =
         document.getElementById(
             "base-font-size"
         ).value;
 
-
     let p =
         "أنت مطور واجهات أمامية خبير (HTML/CSS). ";
-
 
     if (type === "a4")
         p +=
             "قم بإنشاء كود HTML لبحث أكاديمي باللغة العربية (A4).\n\n";
 
-
     else if (type === "169")
         p +=
             "قم بإنشاء كود HTML لعرض تقديمي (16:9) بالعربية.\n\n";
 
-
     else if (type === "916")
         p +=
-            "قم بإنشاء كود HTML لعرض جوال (9:16) بالعربية.\n
+            "قم بإنشاء كود HTML لعرض جوال (9:16) بالعربية.\n\n";
+
+    else if (type === "project")
+        p +=
+            "قم بإنشاء كود HTML لصفحة مشروع (بوستر) مقاس 16:9.\n\n";
+
+    else if (type === "mindmap")
+        p +=
+            "قم بإنشاء كود HTML لخريطة مفاهيم مقاس A4.\n\n";
+
+    else if (type === "project-a4")
+        p +=
+            "قم بإنشاء كود HTML لصفحة مشروع مقاس A4.\n\n";
+
+    const fields = [
+
+        {
+            id: "req-title",
+            label: "العنوان"
+        },
+
+        {
+            id: "req-subject",
+            label: "المادة"
+        },
+
+        {
+            id: "req-name",
+            label: "الاسم"
+        },
+
+        {
+            id: "req-teacher",
+            label: "المعلم"
+        },
+
+        {
+            id: "req-grade",
+            label: "الصف"
+        },
+
+        {
+            id: "req-year",
+            label: "العام الدراسي"
+        },
+
+        {
+            id: "req-pages",
+            label: "العدد المطلوب"
+        }
+
+    ];
+
+    fields.forEach(
+        field => {
+
+            const el =
+                document.getElementById(
+                    field.id
+                );
+
+            if (
+                !el.disabled &&
+                el.value
+            ) {
+
+                p +=
+                    `**${field.label}:** ${el.value}\n`;
+            }
+
+        }
+    );
+
+    if (colorScheme)
+        p +=
+            `**الألوان:** ${colorScheme}\n`;
+
+    if (designStyle)
+        p +=
+            `**النمط:** ${designStyle}\n`;
+
+    if (baseFontSize)
+        p +=
+            `**الخط:** ${baseFontSize}\n`;
+
+    p +=
+        "\n**الشروط الصارمة:**\n";
+
+    p +=
+        "1. استخدم `<!doctype html>` مع `<html lang=\"ar\" dir=\"rtl\">` واستدعِ خطوط Google Fonts.\n";
+
+    p +=
+        "2. `body` بخصائص `margin:0; padding:0; box-sizing:border-box;`.\n";
+
+    if (
+        type.includes("a4") ||
+        type === "mindmap"
+    ) {
+
+        p +=
+            "3. كل صفحة `<div class=\"page\">` أبعادها 794x1123px بخصائص `overflow:hidden; position:relative;`.\n";
+
+    } else if (
+        type === "169" ||
+        type === "project"
+    ) {
+
+        p +=
+            "3. كل شريحة `<div class=\"page\">` أبعادها 1280x720px بخصائص `overflow:hidden; position:relative;`.\n";
+
+    } else {
+
+        p +=
+            "3. كل شريحة `<div class=\"page\">` أبعادها 720x1280px بخصائص `overflow:hidden; position:relative;`.\n";
+    }
+
+    p +=
+        "4. ممنوع استخدام `ul` أو `ol`، استخدم `<p>` للنقاط.\n";
+
+    p +=
+        "5. ممنوع استخدام `letter-spacing`.\n";
+
+    p +=
+        "6. جميع الصور التي تريد أن تكون قابلة للاستبدال لاحقًا يجب أن تكون باستخدام `<img>` وليس `background-image`.\n";
+
+    p +=
+        "7. لكل صورة استخدم `alt` وصفيًا ويفضل إضافة `data-image-name` باسم واضح للصورة، مثل `data-image-name=\"صورة المصمك\"`.\n";
+
+    p +=
+        "8. حافظ على أبعاد ومكان كل صورة من خلال CSS ثابت أو خصائص width وheight واضحة، ولا تجعل استبدال الصورة يغيّر تخطيط الصفحة.\n";
+
+    p +=
+        "9. استخدم `object-fit:cover` أو `object-fit:contain` حسب التصميم حتى تتوافق أي صورة بديلة مع مساحة الصورة الأصلية.\n";
+
+    p +=
+        "10. لا تستخدم الصور كخلفيات CSS إذا كانت صورة محتوى يراد استبدالها من مدير الصور.\n";
+
+    p +=
+        "11. لا تستخدم `srcset` للصور القابلة للاستبدال؛ استخدم `src` أساسيًا واضحًا.\n";
+
+    p +=
+        "12. استخدم روابط صور مباشرة وصالحة عبر HTTPS، ولا تستخدم مسارات محلية من جهازك.\n";
+
+    if (type === "mindmap") {
+
+        p +=
+            "13. استخدم `div` للخطوط الرابطة ولا تستخدم SVG.\n";
+    }
+
+    document.getElementById(
+        "final-prompt-output"
+    ).value = p;
+}
+
+
+/* =========================================================
+   نسخ الأمر
+   ========================================================= */
+
+async function copyGeneratedPrompt() {
+
+    const text =
+        document.getElementById(
+            "final-prompt-output"
+        ).value;
+
+    try {
+
+        await navigator.clipboard.writeText(
+            text
+        );
+
+        alert(
+            "✅ تم نسخ الأمر!"
+        );
+
+    } catch {
+
+        alert(
+            "تعذر النسخ تلقائيًا."
+        );
+    }
+}
+
+
+/* =========================================================
+   الأوامر السريعة
+   ========================================================= */
+
+async function copyQuickPrompt(
+    type,
+    button
+) {
+
+    const imageRules =
+        " استخدم جميع الصور عبر img مع alt وdata-image-name واضح، وثبّت أبعاد الصورة ومكانها في التصميم، لا تستخدم background-image أو srcset للصور القابلة للاستبدال.";
+
+    const prompts = {
+
+        a4:
+            "أنت مطور واجهات خبير. أنشئ كود HTML لبحث أكاديمي عربي A4. استخدم <!doctype html> و.html lang=\"ar\" dir=\"rtl\". .page 794x1123px overflow:hidden. لا تستخدم ul/ol." +
+            imageRules,
+
+        169:
+            "أنت مطور واجهات خبير. أنشئ كود HTML لعرض تقديمي عربي 16:9. استخدم <!doctype html>. .page 1280x720px overflow:hidden. لا تستخدم ul/ol." +
+            imageRules,
+
+        mobile:
+            "أنت مطور واجهات خبير. أنشئ كود HTML لعرض جوال 9:16 عربي. استخدم <!doctype html>. .page 720x1280px overflow:hidden. لا تستخدم ul/ol." +
+            imageRules,
+
+        project:
+            "أنت مطور ومصمم جرافيك. أنشئ كود HTML لبوستر مشروع عربي 16:9. .page 1280x720px. لا تستخدم ul/ol." +
+            imageRules,
+
+        mindmap:
+            "أنت مطور خبير. أنشئ كود HTML لخريطة مفاهيم عربية A4. .page 794x1123px، بدون SVG." +
+            imageRules,
+
+        "project-a4":
+            "أنت مطور خبير. أنشئ كود HTML لصفحة مشروع عربي A4. .page 794x1123px. لا تستخدم ul/ol." +
+            imageRules
+    };
+
+    try {
+
+        await navigator.clipboard.writeText(
+            prompts[type] || ""
+        );
+
+        const oldText =
+            button.innerText;
+
+        button.innerText =
+            "✅ تم!";
+
+        setTimeout(
+            () => {
+                button.innerText =
+                    oldText;
+            },
+            2000
+        );
+
+    } catch {
+
+        alert(
+            "تعذر النسخ."
+        );
+    }
+}
+
+
+/* =========================================================
+   العينات
+   ========================================================= */
+
+function loadSample(type) {
+
+    const samples = {
+
+        a4:
+`<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<style>
+body{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:sans-serif
+}
+.page{
+width:794px;
+height:1123px;
+overflow:hidden;
+position:relative;
+padding:50px;
+background:linear-gradient(to bottom,#1e3a8a,#1e40af);
+color:white
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>عنوان البحث</h1>
+<p>• نقطة أولى</p>
+</div>
+</body>
+</html>`,
+
+        169:
+`<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<style>
+body{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:sans-serif
+}
+.page{
+width:1280px;
+height:720px;
+overflow:hidden;
+position:relative;
+background:linear-gradient(135deg,#7c3aed,#a855f7);
+color:white;
+display:flex;
+align-items:center;
+justify-content:center
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>عرض تقديمي</h1>
+</div>
+</body>
+</html>`,
+
+        mindmap:
+`<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<style>
+body{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:sans-serif
+}
+.page{
+width:794px;
+height:1123px;
+overflow:hidden;
+position:relative;
+background:#f8fafc
+}
+.central{
+background:#2563eb;
+color:white;
+border-radius:50%;
+width:150px;
+height:150px;
+display:flex;
+align-items:center;
+justify-content:center;
+position:absolute;
+top:450px;
+right:320px
+}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="central">المركز</div>
+</div>
+</body>
+</html>`,
+
+        "project-a4":
+`<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<style>
+body{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:sans-serif
+}
+.page{
+width:794px;
+height:1123px;
+overflow:hidden;
+position:relative;
+background:#db2777;
+color:white;
+display:flex;
+align-items:center;
+justify-content:center
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>مشروعي</h1>
+</div>
+</body>
+</html>`
+    };
+
+    document.getElementById(
+        "html-input"
+    ).value =
+        samples[type] || "";
+
+    analyzeHTMLImages();
+}
+
+
+/* =========================================================
+   التاريخ
+   ========================================================= */
+
+function saveToHistory() {
+
+    const code =
+        document.getElementById(
+            "html-input"
+        ).value;
+
+    if (!code.trim()) return;
+
+    let history;
+
+    try {
+
+        history =
+            JSON.parse(
+                localStorage.getItem(
+                    "code_history"
+                ) || "[]"
+            );
+
+        if (!Array.isArray(history))
+            history = [];
+
+    } catch {
+
+        history = [];
+    }
+
+    history.unshift({
+
+        code,
+
+        date:
+            new Date().toLocaleString(
+                "ar-SA"
+            )
+
+    });
+
+    history =
+        history.slice(0, 5);
+
+    try {
+
+        localStorage.setItem(
+            "code_history",
+            JSON.stringify(history)
+        );
+
+    } catch {
+
+        history =
+            history.slice(0, 3);
+
+        localStorage.setItem(
+            "code_history",
+            JSON.stringify(history)
+        );
+    }
+
+    renderHistory();
+
+    alert(
+        "✅ تم حفظ الكود كاملًا"
+    );
+}
+
+
+function renderHistory() {
+
+    let history;
+
+    try {
+
+        history =
+            JSON.parse(
+                localStorage.getItem(
+                    "code_history"
+                ) || "[]"
+            );
+
+        if (!Array.isArray(history))
+            history = [];
+
+    } catch {
+
+        history = [];
+    }
+
+    const container =
+        document.getElementById(
+            "history-list"
+        );
+
+    container.innerHTML =
+        history.map(
+            (item, index) => {
+
+                const code =
+                    typeof item === "string"
+                        ? item
+                        : item.code || "";
+
+                const preview =
+                    code
+                        .substring(0, 100)
+                        .replace(
+                            /</g,
+                            "&lt;"
+                        )
+                        .replace(
+                            />/g,
+                            "&gt;"
+                        );
+
+                return `
+
+                    <div
+                        class="history-item"
+                        onclick="loadFromHistory(${index})"
+                        title="اضغط لاستعادة الكود">
+
+                        ${preview}
+
+                    </div>
+                `;
+            }
+        ).join("");
+}
+
+
+function loadFromHistory(index) {
+
+    let history;
+
+    try {
+
+        history =
+            JSON.parse(
+                localStorage.getItem(
+                    "code_history"
+                ) || "[]"
+            );
+
+    } catch {
+
+        return;
+    }
+
+    if (!history[index]) return;
+
+    const code =
+        typeof history[index] === "string"
+            ? history[index].replace(
+                /\.\.\.$/,
+                ""
+            )
+            : history[index].code;
+
+    document.getElementById(
+        "html-input"
+    ).value =
+        code || "";
+
+    imageReplacements.clear();
+
+    analyzeHTMLImages();
+}
+
+
+/* =========================================================
+   المعاينة
+   ========================================================= */
+
+function previewCode() {
+
+    const code =
+        document.getElementById(
+            "html-input"
+        ).value;
+
+    if (!code.trim()) return;
+
+    const win =
+        window.open(
+            "",
+            "_blank"
+        );
+
+    if (!win) {
+
+        alert(
+            "المتصفح منع فتح نافذة المعاينة."
+        );
+
+        return;
+    }
+
+    win.document.open();
+
+    win.document.write(code);
+
+    win.document.close();
+
+    win.addEventListener(
+        "load",
+        () => {
+
+            try {
+
+                applyImageReplacementsToDocument(
+                    win.document
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "Preview image replacement failed:",
+                    error
+                );
+            }
+
+        }
+    );
+
+    setTimeout(
+        () => {
+
+            try {
+
+                applyImageReplacementsToDocument(
+                    win.document
+                );
+
+            } catch {}
+        },
+        300
+    );
+}
+
+
+function clearCode() {
+
+    if (
+        confirm(
+            "مسح الكود الحالي؟"
+        )
+    ) {
+
+        document.getElementById(
+            "html-input"
+        ).value = "";
+
+        detectedImages = [];
+
+        imageReplacements.clear();
+
+        document.getElementById(
+            "image-manager"
+        ).classList.remove(
+            "visible"
+        );
+
+        document.getElementById(
+            "image-manager-list"
+        ).innerHTML = "";
+    }
+}
+
+
+/* =========================================================
+   الواجهة
+   ========================================================= */
+
+function updateUI() {
+
+    const format =
+        document.getElementById(
+            "format-select"
+        ).value;
+
+    document.getElementById(
+        "video-options"
+    ).style.display =
+        format.startsWith("vid")
+            ? "flex"
+            : "none";
+}
+
+
+/* =========================================================
+   أدوات التصيير
+   ========================================================= */
+
+async function waitForFonts() {
+
+    if (!document.fonts) return;
+
+    try {
+
+        await Promise.race([
+
+            document.fonts.ready,
+
+            new Promise(
+                resolve =>
+                    setTimeout(
+                        resolve,
+                        RENDER_CONFIG.fontTimeout
+                    )
+            )
+
+        ]);
+
+    } catch {}
+}
+
+
+function getSafeScale(
+    width,
+    height,
+    requested,
+    isVideo = false
+) {
+
+    let scale =
+        Number(requested) || 1;
+
+    if (isVideo) {
+
+        scale =
+            Math.min(
+                scale,
+                RENDER_CONFIG.videoMaxScale
+            );
+    }
+
+    const pixels =
+        width *
+        height *
+        scale *
+        scale;
+
+    if (
+        pixels >
+        RENDER_CONFIG.maxCanvasPixels
+    ) {
+
+        scale =
+            Math.sqrt(
+                RENDER_CONFIG.maxCanvasPixels /
+                (width * height)
+            );
+    }
+
+    return Math.max(
+        1,
+        Math.min(
+            scale,
+            3
+        )
+    );
+}
+
+
+function createRenderContainer(
+    code,
+    width
+) {
+
+    const container =
+        document.createElement(
+            "div"
+        );
+
+    container.style.position =
+        "fixed";
+
+    container.style.left =
+        "-100000px";
+
+    container.style.top =
+        "0";
+
+    container.style.width =
+        width + "px";
+
+    container.style.margin =
+        "0";
+
+    container.style.padding =
+        "0";
+
+    container.style.opacity =
+        "1";
+
+    container.style.visibility =
+        "visible";
+
+    container.style.pointerEvents =
+        "none";
+
+    container.style.zIndex =
+        "-1";
+
+    container.style.background =
+        "#fff";
+
+    container.style.overflow =
+        "visible";
+
+    container.setAttribute(
+        "data-render-container",
+        "true"
+    );
+
+    container.dir =
+        "rtl";
+
+    container.innerHTML =
+        code;
+
+    const fix =
+        document.createElement(
+            "style"
+        );
+
+    fix.textContent = `
+
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .page {
+            box-sizing: border-box !important;
+        }
+
+    `;
+
+    container.appendChild(
+        fix
+    );
+
+    document.body.appendChild(
+        container
+    );
+
+    applyImageReplacements(
+        container
+    );
+
+    return container;
+}
+
+
+/* =========================================================
+   تحميل الصور
+   ========================================================= */
+
+async function prepareImages(
+    container
+) {
+
+    const images =
+        Array.from(
+            container.querySelectorAll(
+                "img"
+            )
+        );
+
+    if (!images.length) return;
+
+    await Promise.all(
+
+        images.map(
+            async img => {
+
+                try {
+
+                    img.setAttribute(
+                        "crossorigin",
+                        "anonymous"
+                    );
+
+                    img.crossOrigin =
+                        "anonymous";
+
+                    if (
+                        img.src &&
+                        img.src.startsWith(
+                            "data:"
+                        )
+                    ) {
+
+                        await waitImage(
+                            img
+                        );
+
+                        return;
+                    }
+
+                    await waitImage(
+                        img,
+                        RENDER_CONFIG.imageTimeout
+                    );
+
+                } catch {
+
+                    img.style.visibility =
+                        "hidden";
+                }
+
+            }
+        )
+    );
+}
+
+
+function waitImage(
+    img,
+    timeout = 4000
+) {
+
+    return new Promise(
+        resolve => {
+
+            if (img.complete) {
+
+                if (
+                    img.naturalWidth >
+                    0
+                ) {
+
+                    resolve(true);
+
+                    return;
+                }
+            }
+
+            let finished =
+                false;
+
+            const finish =
+                result => {
+
+                    if (finished)
+                        return;
+
+                    finished =
+                        true;
+
+                    clearTimeout(
+                        timer
+                    );
+
+                    img.removeEventListener(
+                        "load",
+                        onLoad
+                    );
+
+                    img.removeEventListener(
+                        "error",
+                        onError
+                    );
+
+                    resolve(
+                        result
+                    );
+                };
+
+            const onLoad =
+                () =>
+                    finish(true);
+
+            const onError =
+                () =>
+                    finish(false);
+
+            const timer =
+                setTimeout(
+                    () =>
+                        finish(false),
+                    timeout
+                );
+
+            img.addEventListener(
+                "load",
+                onLoad,
+                { once: true }
+            );
+
+            img.addEventListener(
+                "error",
+                onError,
+                { once: true }
+            );
+
+            try {
+
+                img.decode?.()
+                    .then(
+                        () =>
+                            finish(true)
+                    )
+                    .catch(
+                        () => {}
+                    );
+
+            } catch {}
+        }
+    );
+}
+
+
+/* =========================================================
+   تصوير صفحة
+   ========================================================= */
+
+async function renderPage(
+    page,
+    width,
+    height,
+    quality,
+    isVideo = false
+) {
+
+    const scale =
+        getSafeScale(
+            width,
+            height,
+            quality,
+            isVideo
+        );
+
+    const oldWidth =
+        page.style.width;
+
+    const oldHeight =
+        page.style.height;
+
+    page.style.width =
+        width + "px";
+
+    page.style.height =
+        height + "px";
+
+    try {
+
+        return await html2canvas(
+            page,
+            {
+
+                scale,
+
+                width,
+
+                height,
+
+                windowWidth:
+                    width,
+
+                windowHeight:
+                    height,
+
+                useCORS:
+                    true,
+
+                allowTaint:
+                    false,
+
+                backgroundColor:
+                    "#ffffff",
+
+                imageTimeout:
+                    RENDER_CONFIG.imageTimeout,
+
+                logging:
+                    false,
+
+                removeContainer:
+                    true,
+
+                foreignObjectRendering:
+                    false,
+
+                scrollX:
+                    0,
+
+                scrollY:
+                    0
+
+            }
+        );
+
+    } finally {
+
+        page.style.width =
+            oldWidth;
+
+        page.style.height =
+            oldHeight;
+    }
+}
+
+
+function canvasToJPEG(
+    canvas
+) {
+
+    return canvas.toDataURL(
+        "image/jpeg",
+        RENDER_CONFIG.jpegQuality
+    );
+}
+
+
+function releaseCanvas(
+    canvas
+) {
+
+    if (!canvas) return;
+
+    try {
+
+        canvas.width =
+            1;
+
+        canvas.height =
+            1;
+
+    } catch {}
+}
+
+
+function getPages(
+    container
+) {
+
+    const pages =
+        Array.from(
+            container.querySelectorAll(
+                ".page"
+            )
+        );
+
+    if (pages.length)
+        return pages;
+
+    return [container];
+}
+
+
+/* =========================================================
+   بدء التصدير
+   ========================================================= */
+
+async function exportFile() {
+
+    const code =
+        document.getElementById(
+            "html-input"
+        ).value;
+
+    const format =
+        document.getElementById(
+            "format-select"
+        ).value;
+
+    if (!code.trim()) {
+
+        alert(
+            "الرجاء لصق الكود أولاً!"
+        );
+
+        return;
+    }
+
+    await analyzeHTMLImages();
+
+    const button =
+        document.getElementById(
+            "capture-btn"
+        );
+
+    button.disabled =
+        true;
+
+    try {
+
+        if (
+            format === "pptx"
+        ) {
+
+            await generatePPTX();
+
+        } else if (
+            format.startsWith("pdf")
+        ) {
+
+            await generatePDF();
+
+        } else {
+
+            await generateCinematicVideo();
+        }
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+        alert(
+            "حدث خطأ أثناء التحويل.\n\n" +
+            "جرّب خفض الجودة إلى «عادية» إذا كان الكود يحتوي على صور كثيرة."
+        );
+
+    } finally {
+
+        button.disabled =
+            false;
+
+        button.innerText =
+            "بدء الاستخراج 📥";
+    }
+}
+
+
+/* =========================================================
+   PPTX
+   ========================================================= */
+
+async function generatePPTX() {
+
+    const button =
+        document.getElementById(
+            "capture-btn"
+        );
+
+    const code =
+        document.getElementById(
+            "html-input"
+        ).value;
+
+    const name =
+        sanitizeFileName(
+            document.getElementById(
+                "file-name"
+            ).value ||
+            "presentation"
+        );
+
+    const quality =
+        Number(
+            document.getElementById(
+                "quality-select"
+            ).value
+        );
+
+    const width =
+        1280;
+
+    const height =
+        720;
+
+    button.innerText =
+        "⏳ جاري تحضير البوربوينت...";
+
+    const container =
+        createRenderContainer(
+            code,
+            width
+        );
+
+    try {
+
+        await waitForFonts();
+
+        await prepareImages(
+            container
+        );
+
+        const pages =
+            getPages(
+                container
+            );
+
+        const pptx =
+            new PptxGenJS();
+
+        pptx.layout =
+            "LAYOUT_WIDE";
+
+        pptx.author =
+            "منصة تحويل الأكواد";
+
+        pptx.subject =
+            "HTML to PPTX";
+
+        pptx.title =
+            name;
+
+        for (
+            let i = 0;
+            i < pages.length;
+            i++
+        ) {
+
+            button.innerText =
+                `📸 تصوير شريحة ${i + 1} من ${pages.length}...`;
+
+            const canvas =
+                await renderPage(
+                    pages[i],
+                    width,
+                    height,
+                    quality,
+                    false
+                );
+
+            const image =
+                canvasToJPEG(
+                    canvas
+                );
+
+            const slide =
+                pptx.addSlide();
+
+            slide.background = {
+                color:
+                    "FFFFFF"
+            };
+
+            slide.addImage({
+
+                data:
+                    image,
+
+                x:
+                    0,
+
+                y:
+                    0,
+
+                w:
+                    13.333333,
+
+                h:
+                    7.5
+
+            });
+
+            releaseCanvas(
+                canvas
+            );
+
+            await yieldToBrowser();
+        }
+
+        button.innerText =
+            "🚀 بناء ملف البوربوينت...";
+
+        await pptx.writeFile({
+
+            fileName:
+                `${name}.pptx`
+
+        });
+
+        if (
+            TELEGRAM_ENDPOINT
+        ) {
+
+            try {
+
+                const blob =
+                    await pptx.write({
+
+                        outputType:
+                            "blob"
+
+                    });
+
+                await sendFileToTelegram(
+                    blob,
+                    `${name}.pptx`,
+                    "📥 عرض بوربوينت PPTX جاهز!"
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "تعذر إرسال PPTX",
+                    error
+                );
+            }
+        }
+
+    } finally {
+
+        container.remove();
+    }
+}
+
+
+/* =========================================================
+   PDF
+   ========================================================= */
+
+async function generatePDF() {
+
+    const button =
+        document.getElementById(
+            "capture-btn"
+        );
+
+    const code =
+        document.getElementById(
+            "html-input"
+        ).value;
+
+    const name =
+        sanitizeFileName(
+            document.getElementById(
+                "file-name"
+            ).value ||
+            "document"
+        );
+
+    const quality =
+        Number(
+            document.getElementById(
+                "quality-select"
+            ).value
+        );
+
+    const format =
+        document.getElementById(
+            "format-select"
+        ).value;
+
+    const isA4 =
+        format === "pdf-a4";
+
+    const width =
+        isA4
+            ? 794
+            : 1280;
+
+    const height =
+        isA4
+            ? 1123
+            : 720;
+
+    button.innerText =
+        "⏳ جاري تجهيز PDF...";
+
+    const container =
+        createRenderContainer(
+            code,
+            width
+        );
+
+    try {
+
+        await waitForFonts();
+
+        await prepareImages(
+            container
+        );
+
+        const pages =
+            getPages(
+                container
+            );
+
+        const { jsPDF } =
+            window.jspdf;
+
+        const pdf =
+            new jsPDF({
+
+                orientation:
+                    isA4
+                        ? "p"
+                        : "l",
+
+                unit:
+                    "px",
+
+                format: [
+                    width,
+                    height
+                ],
+
+                compress:
+                    true
+
+            });
+
+        for (
+            let i = 0;
+            i < pages.length;
+            i++
+        ) {
+
+            button.innerText =
+                `📸 تصوير صفحة ${i + 1} من ${pages.length}...`;
+
+            const canvas =
+                await renderPage(
+                    pages[i],
+                    width,
+                    height,
+                    quality,
+                    false
+                );
+
+            const image =
+                canvasToJPEG(
+                    canvas
+                );
+
+            if (i > 0) {
+
+                pdf.addPage(
+                    [
+                        width,
+                        height
+                    ],
+                    isA4
+                        ? "p"
+                        : "l"
+                );
+            }
+
+            pdf.addImage(
+                image,
+                "JPEG",
+                0,
+                0,
+                width,
+                height,
+                undefined,
+                "FAST"
+            );
+
+            releaseCanvas(
+                canvas
+            );
+
+            await yieldToBrowser();
+        }
+
+        button.innerText =
+            "✅ اكتمل! جاري إنشاء الملف...";
+
+        const blob =
+            pdf.output(
+                "blob"
+            );
+
+        downloadBlob(
+            blob,
+            `${name}.pdf`
+        );
+
+        if (
+            TELEGRAM_ENDPOINT
+        ) {
+
+            await sendFileToTelegram(
+                blob,
+                `${name}.pdf`,
+                "📥 ملف PDF جاهز!"
+            );
+        }
+
+    } finally {
+
+        container.remove();
+    }
+}
+
+
+/* =========================================================
+   الفيديو
+   ========================================================= */
+
+async function generateCinematicVideo() {
+
+    const button =
+        document.getElementById(
+            "capture-btn"
+        );
+
+    const code =
+        document.getElementById(
+            "html-input"
+        ).value;
+
+    const name =
+        sanitizeFileName(
+            document.getElementById(
+                "file-name"
+            ).value ||
+            "video"
+        );
+
+    const duration =
+        Number(
+            document.getElementById(
+                "slide-duration"
+            ).value
+        );
+
+    const animation =
+        document.getElementById(
+            "animation-style"
+        ).value;
+
+    const quality =
+        Number(
+            document.getElementById(
+                "quality-select"
+            ).value
+        );
+
+    const type =
+        document.getElementById(
+            "format-select"
+        ).value;
+
+    const width =
+        type === "vid-916"
+            ? 720
+            : 1280;
+
+    const height =
+        type === "vid-916"
+            ? 1280
+            : 720;
+
+    button.innerText =
+        "⏳ جاري تجهيز الفيديو...";
+
+    const container =
+        createRenderContainer(
+            code,
+            width
+        );
+
+    try {
+
+        await waitForFonts();
+
+        await prepareImages(
+            container
+        );
+
+        const pages =
+            getPages(
+                container
+            );
+
+        const canvases = [];
+
+        for (
+            let i = 0;
+            i < pages.length;
+            i++
+        ) {
+
+            button.innerText =
+                `📸 تجهيز شريحة ${i + 1} من ${pages.length}...`;
+
+            const canvas =
+                await renderPage(
+                    pages[i],
+                    width,
+                    height,
+                    quality,
+                    true
+                );
+
+            canvases.push(
+                canvas
+            );
+
+            await yieldToBrowser();
+        }
+
+        const recordCanvas =
+            document.createElement(
+                "canvas"
+            );
+
+        recordCanvas.width =
+            width;
+
+        recordCanvas.height =
+            height;
+
+        const ctx =
+            recordCanvas.getContext(
+                "2d",
+                {
+                    alpha: false
+                }
+            );
+
+        if (
+            !recordCanvas.captureStream
+        ) {
+
+            throw new Error(
+                "captureStream غير مدعوم في هذا المتصفح."
+            );
+        }
+
+        const stream =
+            recordCanvas.captureStream(
+                30
+            );
+
+        let mimeType = "";
+
+        const supportedTypes = [
+
+            "video/mp4",
+
+            "video/webm;codecs=vp9",
+
+            "video/webm;codecs=vp8",
+
+            "video/webm"
+
+        ];
+
+        for (
+            const supportedType of supportedTypes
+        ) {
+
+            if (
+                MediaRecorder.isTypeSupported(
+                    supportedType
+                )
+            ) {
+
+                mimeType =
+                    supportedType;
+
+                break;
+            }
+        }
+
+        if (!mimeType) {
+
+            throw new Error(
+                "المتصفح لا يدعم تسجيل الفيديو."
+            );
+        }
+
+        const recorder =
+            new MediaRecorder(
+                stream,
+                {
+
+                    mimeType,
+
+                    videoBitsPerSecond:
+                        width >= 1000
+                            ? 5000000
+                            : 3500000
+
+                }
+            );
+
+        const chunks = [];
+
+        recorder.ondataavailable =
+            event => {
+
+                if (
+                    event.data &&
+                    event.data.size > 0
+                ) {
+
+                    chunks.push(
+                        event.data
+                    );
+                }
+            };
+
+        const recordPromise =
+            new Promise(
+                (
+                    resolve,
+                    reject
+                ) => {
+
+                    recorder.onstop =
+                        async () => {
+
+                            try {
+
+                                const extension =
+                                    mimeType.includes(
+                                        "mp4"
+                                    )
+                                        ? "mp4"
+                                        : "webm";
+
+                                const blob =
+                                    new Blob(
+                                        chunks,
+                                        {
+                                            type:
+                                                mimeType
+                                        }
+                                    );
+
+                                button.innerText =
+                                    "✅ اكتمل! جاري التحميل...";
+
+                                downloadBlob(
+                                    blob,
+                                    `${name}.${extension}`
+                                );
+
+                                if (
+                                    TELEGRAM_ENDPOINT
+                                ) {
+
+                                    await sendFileToTelegram(
+                                        blob,
+                                        `${name}.${extension}`,
+                                        "🎬 فيديو جاهز!",
+                                        "video"
+                                    );
+                                }
+
+                                resolve();
+
+                            } catch (error) {
+
+                                reject(
+                                    error
+                                );
+                            }
+                        };
+
+                    recorder.onerror =
+                        event => {
+
+                            reject(
+                                event.error ||
+                                new Error(
+                                    "فشل تسجيل الفيديو"
+                                )
+                            );
+                        };
+
+                }
+            );
+
+        recorder.start(
+            250
+        );
+
+        const slideTime =
+            duration * 1000;
+
+        const transition =
+            Math.min(
+                800,
+                Math.max(
+                    300,
+                    slideTime * 0.2
+                )
+            );
+
+        const totalTime =
+            slideTime *
+            canvases.length;
+
+        const start =
+            performance.now();
+
+        function drawFrame(
+            now
+        ) {
+
+            const elapsed =
+                now - start;
+
+            if (
+                elapsed >=
+                totalTime
+            ) {
+
+                setTimeout(
+                    () =>
+                        recorder.stop(),
+                    150
+                );
+
+                return;
+            }
+
+            const slideIndex =
+                Math.min(
+                    Math.floor(
+                        elapsed /
+                        slideTime
+                    ),
+                    canvases.length -
+                        1
+                );
+
+            const localTime =
+                elapsed %
+                slideTime;
+
+            const current =
+                canvases[
+                    slideIndex
+                ];
+
+            const next =
+                canvases[
+                    slideIndex + 1
+                ];
+
+            ctx.fillStyle =
+                "#ffffff";
+
+            ctx.fillRect(
+                0,
+                0,
+                width,
+                height
+            );
+
+            if (
+                animation ===
+                "zoom"
+            ) {
+
+                const progress =
+                    localTime /
+                    slideTime;
+
+                const zoom =
+                    1 +
+                    progress *
+                    0.045;
+
+                const drawWidth =
+                    width *
+                    zoom;
+
+                const drawHeight =
+                    height *
+                    zoom;
+
+                ctx.drawImage(
+                    current,
+                    (width -
+                        drawWidth) /
+                        2,
+                    (height -
+                        drawHeight) /
+                        2,
+                    drawWidth,
+                    drawHeight
+                );
+
+            } else if (
+                animation ===
+                    "slide" &&
+                next &&
+                localTime >
+                    slideTime -
+                    transition
+            ) {
+
+                const progress =
+                    (
+                        localTime -
+                        (
+                            slideTime -
+                            transition
+                        )
+                    ) /
+                    transition;
+
+                ctx.drawImage(
+                    current,
+                    -progress *
+                        width,
+                    0,
+                    width,
+                    height
+                );
+
+                ctx.drawImage(
+                    next,
+                    width -
+                        progress *
+                        width,
+                    0,
+                    width,
+                    height
+                );
+
+            } else if (
+                animation ===
+                    "fade" &&
+                next &&
+                localTime >
+                    slideTime -
+                    transition
+            ) {
+
+                const progress =
+                    (
+                        localTime -
+                        (
+                            slideTime -
+                            transition
+                        )
+                    ) /
+                    transition;
+
+                ctx.globalAlpha =
+                    1;
+
+                ctx.drawImage(
+                    current,
+                    0,
+                    0,
+                    width,
+                    height
+                );
+
+                ctx.globalAlpha =
+                    Math.min(
+                        1,
+                        Math.max(
+                            0,
+                            progress
+                        )
+                    );
+
+                ctx.drawImage(
+                    next,
+                    0,
+                    0,
+                    width,
+                    height
+                );
+
+                ctx.globalAlpha =
+                    1;
+
+            } else {
+
+                ctx.drawImage(
+                    current,
+                    0,
+                    0,
+                    width,
+                    height
+                );
+            }
+
+            requestAnimationFrame(
+                drawFrame
+            );
+        }
+
+        requestAnimationFrame(
+            drawFrame
+        );
+
+        await recordPromise;
+
+        canvases.forEach(
+            releaseCanvas
+        );
+
+        recordCanvas.width =
+            1;
+
+        recordCanvas.height =
+            1;
+
+        stream
+            .getTracks()
+            .forEach(
+                track =>
+                    track.stop()
+            );
+
+    } finally {
+
+        container.remove();
+    }
+}
+
+
+/* =========================================================
+   أدوات عامة
+   ========================================================= */
+
+function sanitizeFileName(
+    name
+) {
+
+    return String(name)
+        .trim()
+        .replace(
+            /[\\/:*?"<>|]/g,
+            "_"
+        )
+        .replace(
+            /\s+/g,
+            "_"
+        )
+        .substring(
+            0,
+            100
+        ) ||
+        "file";
+}
+
+
+function downloadBlob(
+    blob,
+    filename
+) {
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+    link.href =
+        url;
+
+    link.download =
+        filename;
+
+    link.style.display =
+        "none";
+
+    document.body.appendChild(
+        link
+    );
+
+    link.click();
+
+    link.remove();
+
+    setTimeout(
+        () =>
+            URL.revokeObjectURL(
+                url
+            ),
+        10000
+    );
+}
+
+
+function yieldToBrowser() {
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                20
+            )
+    );
+}
+
+</script>
+
+</body>
+</html>
