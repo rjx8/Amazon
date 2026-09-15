@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
     <title>منصة تحويل الأكواد الذكية (PDF / PPTX)</title>
 
@@ -13,6 +13,11 @@
     <style>
         * {
             box-sizing: border-box;
+        }
+
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         body {
@@ -26,6 +31,7 @@
             align-items: center;
             min-height: 100vh;
             overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
         }
 
         .header {
@@ -263,107 +269,6 @@
 
         .tab-content.active-tab {
             display: flex;
-        }
-
-        .ai-prompts {
-            background: #022c22;
-            border: 1px dashed #059669;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-
-        .ai-prompts p {
-            margin: 0 0 10px;
-            font-size: 13px;
-            color: #34d399;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .prompt-btns {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .prompt-btn {
-            flex: 1 1 calc(33.333% - 8px);
-            background: #1e293b;
-            border: 1px solid #059669;
-            color: #34d399;
-            padding: 10px 5px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: .2s;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .prompt-btn:hover {
-            background: #059669;
-            color: #fff;
-        }
-
-        .sample-row {
-            margin-top: 10px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            width: 100%;
-            justify-content: space-between;
-        }
-
-        .sample-btn {
-            flex: 1 1 calc(50% - 8px);
-            background: #1e293b;
-            border: 1px solid #475569;
-            color: #cbd5e1;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: .2s;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .sample-btn:hover {
-            background: #2563eb;
-            border-color: #2563eb;
-            color: #fff;
-        }
-
-        .history-box {
-            background: #0f172a;
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 8px;
-            max-height: 180px;
-            overflow-y: auto;
-            width: 100%;
-        }
-
-        .history-item {
-            padding: 8px 10px;
-            background: #1e293b;
-            margin: 5px 0;
-            border-radius: 4px;
-            font-size: 12px;
-            color: #94a3b8;
-            cursor: pointer;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .history-item:hover {
-            background: #334155;
-            color: #f8fafc;
         }
 
         /* =====================================================
@@ -836,15 +741,24 @@
             color: #f8fafc;
         }
 
+        /* =====================================================
+           تحسينات الآيفون والجوال
+           ===================================================== */
+
         @media (max-width: 600px) {
+
+            body {
+                padding: 10px;
+            }
+
+            input:not([type="checkbox"]):not([type="radio"]),
+            select {
+                font-size: 16px;
+            }
 
             .row {
                 flex-direction: column;
                 gap: 0;
-            }
-
-            .prompt-btn {
-                flex: 1 1 calc(50% - 8px);
             }
 
             .action-btns {
@@ -893,6 +807,10 @@
             .crop-action {
                 padding: 11px 5px;
                 font-size: 11px;
+            }
+
+            .box-panel {
+                padding: 15px;
             }
         }
     </style>
@@ -982,51 +900,6 @@
 
     <div class="box-panel">
 
-        <div class="ai-prompts">
-
-            <p>🤖 أوامر جاهزة للذكاء الاصطناعي:</p>
-
-            <div class="prompt-btns">
-
-                <button
-                    class="prompt-btn"
-                    onclick="copyQuickPrompt('a4',this)">
-                    📄 بحث أكاديمي
-                </button>
-
-                <button
-                    class="prompt-btn"
-                    onclick="copyQuickPrompt('169',this)">
-                    🖥️ عرض شاشات
-                </button>
-
-                <button
-                    class="prompt-btn"
-                    onclick="copyQuickPrompt('mobile',this)">
-                    📱 عرض جوال
-                </button>
-
-                <button
-                    class="prompt-btn"
-                    onclick="copyQuickPrompt('project',this)">
-                    🎨 مشروع 16:9
-                </button>
-
-                <button
-                    class="prompt-btn"
-                    onclick="copyQuickPrompt('mindmap',this)">
-                    🧠 خريطة مفاهيم
-                </button>
-
-                <button
-                    class="prompt-btn"
-                    onclick="copyQuickPrompt('project-a4',this)">
-                    📋 مشروع A4
-                </button>
-
-            </div>
-        </div>
-
         <div class="form-group">
 
             <label>اسم الملف المستخرج:</label>
@@ -1111,10 +984,6 @@
                         👁️ معاينة
                     </button>
 
-                    <button onclick="saveToHistory()">
-                        💾 حفظ
-                    </button>
-
                 </div>
 
             </div>
@@ -1165,50 +1034,6 @@
 
             </div>
 
-            <div class="sample-row">
-
-                <button
-                    class="sample-btn"
-                    onclick="loadSample('a4')">
-                    📄 تجربة بحث
-                </button>
-
-                <button
-                    class="sample-btn"
-                    onclick="loadSample('169')">
-                    🖥️ تجربة عرض
-                </button>
-
-                <button
-                    class="sample-btn"
-                    onclick="loadSample('mindmap')">
-                    🧠 خريطة مفاهيم
-                </button>
-
-                <button
-                    class="sample-btn"
-                    onclick="loadSample('project-a4')">
-                    📋 مشروع A4
-                </button>
-
-            </div>
-
-            <div
-                id="history-container"
-                style="margin-top:15px;">
-
-                <label
-                    style="font-size:12px;color:#94a3b8;">
-                    📂 آخر الأكواد المحفوظة:
-                </label>
-
-                <div
-                    id="history-list"
-                    class="history-box">
-                </div>
-
-            </div>
-
         </div>
 
         <button
@@ -1235,30 +1060,14 @@
 
             <select
                 id="prompt-type"
-                onchange="generatePromptText()">
+                onchange="onPromptTypeChange()">
 
                 <option value="a4">
                     📄 بحث / تقرير (مقاس A4)
                 </option>
 
                 <option value="169">
-                    🖥️ عرض تقديم (مقاس 16:9)
-                </option>
-
-                <option value="916">
-                    📱 عرض جوال / تيك توك (مقاس 9:16)
-                </option>
-
-                <option value="project">
-                    🎨 مشروع (صفحة واحدة 16:9)
-                </option>
-
-                <option value="mindmap">
-                    🧠 خريطة مفاهيم (A4)
-                </option>
-
-                <option value="project-a4">
-                    📋 مشروع A4 (صفحة واحدة)
+                    🖥️ عرض تقديمي (مقاس 16:9)
                 </option>
 
             </select>
@@ -1440,6 +1249,24 @@
 
         </div>
 
+        <!-- =====================================================
+             عدد الصفحات / الشرائح (ضمن النموذج الأساسي)
+             ===================================================== -->
+
+        <div class="form-group">
+
+            <label id="pages-label">
+                عدد الصفحات:
+            </label>
+
+            <input
+                type="text"
+                id="req-pages"
+                placeholder="مثال: 5 صفحات"
+                oninput="generatePromptText()">
+
+        </div>
+
         <label style="margin-top:10px;">
             المتطلبات (اضغط 👁️ لشطب المتطلب):
         </label>
@@ -1536,22 +1363,6 @@
                 type="text"
                 id="req-year"
                 placeholder="العام الدراسي"
-                oninput="generatePromptText()">
-
-        </div>
-
-        <div class="req-row">
-
-            <button
-                class="toggle-req"
-                onclick="toggleInput(this,'req-pages')">
-                👁️
-            </button>
-
-            <input
-                type="text"
-                id="req-pages"
-                placeholder="عدد الصفحات / الشرائح"
                 oninput="generatePromptText()">
 
         </div>
@@ -1702,7 +1513,7 @@
    الإعدادات
    ========================================================= */
 
-const SECRET_PASSWORD = "Sa12345678@";
+const SECRET_PASSWORD = "ayman";
 
 const AUTH_KEY = "auth_token_v2";
 
@@ -1768,7 +1579,6 @@ let cropState = {
         width: 0,
 
         height: 0
-
     },
 
     imageLeft: 0,
@@ -1796,7 +1606,6 @@ let cropState = {
     startImageLeft: 0,
 
     startImageTop: 0
-
 };
 
 /* =========================================================
@@ -3748,17 +3557,10 @@ function getCropTargetRatio(
                 )?.value;
 
             if (
-                type === "169" ||
-                type === "project"
+                type === "169"
             ) {
 
                 width = 1280;
-
-            } else if (
-                type === "916"
-            ) {
-
-                width = 720;
             }
         }
 
@@ -5090,7 +4892,6 @@ function closeCropModal() {
                 width: 0,
 
                 height: 0
-
             },
 
             imageLeft: 0,
@@ -5255,9 +5056,9 @@ window.addEventListener(
 
         togglePromptImageOptions();
 
-        generatePromptText();
+        updatePagesLabel();
 
-        renderHistory();
+        generatePromptText();
 
         analyzeHTMLImages();
 
@@ -5640,6 +5441,52 @@ function togglePromptImageOptions() {
 }
 
 /* =========================================================
+   تغيير نوع البرومبت
+   ========================================================= */
+
+function onPromptTypeChange() {
+
+    updatePagesLabel();
+
+    generatePromptText();
+}
+
+function updatePagesLabel() {
+
+    const type =
+        document.getElementById(
+            "prompt-type"
+        )?.value ||
+        "a4";
+
+    const label =
+        document.getElementById(
+            "pages-label"
+        );
+
+    const input =
+        document.getElementById(
+            "req-pages"
+        );
+
+    if (label) {
+
+        label.textContent =
+            type === "a4"
+                ? "عدد الصفحات:"
+                : "عدد الشرائح:";
+    }
+
+    if (input) {
+
+        input.placeholder =
+            type === "a4"
+                ? "مثال: 5 صفحات"
+                : "مثال: 10 شرائح";
+    }
+}
+
+/* =========================================================
    المولد الذكي
    ========================================================= */
 
@@ -5689,32 +5536,12 @@ function generatePromptText() {
     if (type === "a4") {
 
         p +=
-            "قم بإنشاء كود HTML لبحث أكاديمي باللغة العربية (A4).\n\n";
+            "قم بإنشاء كود HTML لبحث أو تقرير أكاديمي احترافي باللغة العربية بمقاس A4.\n\n";
 
-    } else if (type === "169") {
-
-        p +=
-            "قم بإنشاء كود HTML لعرض تقديمي (16:9) بالعربية.\n\n";
-
-    } else if (type === "916") {
+    } else {
 
         p +=
-            "قم بإنشاء كود HTML لعرض جوال (9:16) بالعربية.\n\n";
-
-    } else if (type === "project") {
-
-        p +=
-            "قم بإنشاء كود HTML لصفحة مشروع (بوستر) مقاس 16:9.\n\n";
-
-    } else if (type === "mindmap") {
-
-        p +=
-            "قم بإنشاء كود HTML لخريطة مفاهيم مقاس A4.\n\n";
-
-    } else if (type === "project-a4") {
-
-        p +=
-            "قم بإنشاء كود HTML لصفحة مشروع مقاس A4.\n\n";
+            "قم بإنشاء كود HTML لعرض تقديمي احترافي باللغة العربية بنسبة 16:9.\n\n";
     }
 
     const fields = [
@@ -5759,13 +5586,6 @@ function generatePromptText() {
                 "req-year",
             label:
                 "العام الدراسي"
-        },
-
-        {
-            id:
-                "req-pages",
-            label:
-                "العدد المطلوب"
         }
 
     ];
@@ -5789,6 +5609,25 @@ function generatePromptText() {
             }
         }
     );
+
+    const pagesEl =
+        document.getElementById(
+            "req-pages"
+        );
+
+    if (
+        pagesEl &&
+        pagesEl.value
+    ) {
+
+        const pagesLabel =
+            type === "a4"
+                ? "عدد الصفحات"
+                : "عدد الشرائح";
+
+        p +=
+            `**${pagesLabel}:** ${pagesEl.value}\n`;
+    }
 
     if (colorScheme) {
 
@@ -5831,26 +5670,15 @@ function generatePromptText() {
     p +=
         "2. body بخصائص margin:0; padding:0; box-sizing:border-box;.\n";
 
-    if (
-        type.includes("a4") ||
-        type === "mindmap"
-    ) {
+    if (type === "a4") {
 
         p +=
             "3. كل صفحة <div class=\"page\"> أبعادها 794x1123px بخصائص overflow:hidden; position:relative;.\n";
 
-    } else if (
-        type === "169" ||
-        type === "project"
-    ) {
-
-        p +=
-            "3. كل شريحة <div class=\"page\"> أبعادها 1280x720px بخصائص overflow:hidden; position:relative;.\n";
-
     } else {
 
         p +=
-            "3. كل شريحة <div class=\"page\"> أبعادها 720x1280px بخصائص overflow:hidden; position:relative;.\n";
+            "3. كل شريحة <div class=\"page\"> أبعادها 1280x720px بخصائص overflow:hidden; position:relative;.\n";
     }
 
     p +=
@@ -5891,26 +5719,10 @@ function generatePromptText() {
         p +=
             "14. استخدم روابط صور مباشرة وصالحة عبر HTTPS، ولا تستخدم مسارات محلية من جهازك.\n";
 
-        if (
-            type === "mindmap"
-        ) {
-
-            p +=
-                "15. استخدم div للخطوط الرابطة ولا تستخدم SVG.\n";
-        }
-
     } else {
 
         p +=
             "6. لا تستخدم أي صور داخل التصميم، سواء كانت img أو background-image أو background CSS.\n";
-
-        if (
-            type === "mindmap"
-        ) {
-
-            p +=
-                "7. استخدم div للخطوط الرابطة ولا تستخدم SVG.\n";
-        }
     }
 
     const output =
@@ -5955,516 +5767,7 @@ async function copyGeneratedPrompt() {
 }
 
 /* =========================================================
-   الأوامر السريعة
-   ========================================================= */
-
-async function copyQuickPrompt(
-    type,
-    button
-) {
-
-    const imageRules =
-        " إذا استخدمت الصور، يجب أن تكون كل صورة داخل فريم أو حاوية تصميمية أنيقة ومندمجة مع التصميم، ولا تضع الصورة منفردة. ثبّت مكان وأبعاد الإطار، ولا تمدد الصورة أو تضغطها أو تشوه نسبتها، بل قص الجزء الزائد فقط عند اختلاف نسبة الأبعاد. يدعم مدير التحويل صور img وصور CSS background-image وbackground تلقائيًا.";
-
-    const prompts = {
-
-        a4:
-            "أنت مطور واجهات خبير. أنشئ كود HTML لبحث أكاديمي عربي A4. استخدم <!doctype html> وhtml lang=\"ar\" dir=\"rtl\". .page 794x1123px overflow:hidden. لا تستخدم ul/ol." +
-            imageRules,
-
-        169:
-            "أنت مطور واجهات خبير. أنشئ كود HTML لعرض تقديمي عربي 16:9. استخدم <!doctype html>. .page 1280x720px overflow:hidden. لا تستخدم ul/ol." +
-            imageRules,
-
-        mobile:
-            "أنت مطور واجهات خبير. أنشئ كود HTML لعرض جوال 9:16 عربي. استخدم <!doctype html>. .page 720x1280px overflow:hidden. لا تستخدم ul/ol." +
-            imageRules,
-
-        project:
-            "أنت مطور ومصمم جرافيك. أنشئ كود HTML لبوستر مشروع عربي 16:9. .page 1280x720px. لا تستخدم ul/ol." +
-            imageRules,
-
-        mindmap:
-            "أنت مطور خبير. أنشئ كود HTML لخريطة مفاهيم عربية A4. .page 794x1123px، بدون SVG." +
-            imageRules,
-
-        "project-a4":
-            "أنت مطور خبير. أنشئ كود HTML لصفحة مشروع عربي A4. .page 794x1123px. لا تستخدم ul/ol." +
-            imageRules
-    };
-
-    try {
-
-        await navigator.clipboard.writeText(
-            prompts[type] || ""
-        );
-
-        const oldText =
-            button.innerText;
-
-        button.innerText =
-            "✅ تم!";
-
-        setTimeout(
-            () => {
-
-                button.innerText =
-                    oldText;
-
-            },
-            2000
-        );
-
-    } catch {
-
-        alert(
-            "تعذر النسخ."
-        );
-    }
-}
-
-/* =========================================================
-   العينات
-   ========================================================= */
-
-function loadSample(
-    type
-) {
-
-    const samples = {
-
-        a4:
-`<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<style>
-body{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:sans-serif
-}
-
-.page{
-width:794px;
-height:1123px;
-overflow:hidden;
-position:relative;
-padding:50px;
-background:linear-gradient(to bottom,#1e3a8a,#1e40af);
-color:white
-}
-
-.hero{
-width:100%;
-height:300px;
-background-image:url("https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1200");
-background-size:cover;
-background-position:center;
-border-radius:20px
-}
-</style>
-</head>
-
-<body>
-
-<div class="page">
-
-<h1>عنوان البحث</h1>
-
-<div class="hero"></div>
-
-<p>• هذه خلفية CSS قابلة للتعرف والاستبدال.</p>
-
-</div>
-
-</body>
-</html>`,
-
-        169:
-`<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-
-<style>
-
-body{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:sans-serif
-}
-
-.page{
-width:1280px;
-height:720px;
-overflow:hidden;
-position:relative;
-background:#7c3aed;
-color:white;
-display:flex;
-align-items:center;
-justify-content:center
-}
-
-.cover{
-position:absolute;
-inset:0;
-background:
-linear-gradient(
-90deg,
-rgba(0,0,0,.7),
-rgba(0,0,0,.15)
-),
-url("https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1600");
-
-background-size:cover;
-background-position:center;
-}
-
-.content{
-position:relative;
-z-index:2;
-text-align:center;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="page">
-
-<div class="cover"></div>
-
-<div class="content">
-<h1>عرض تقديمي</h1>
-<p>خلفية CSS متعددة الطبقات</p>
-</div>
-
-</div>
-
-</body>
-</html>`,
-
-        mindmap:
-`<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-
-<meta charset="UTF-8">
-
-<style>
-
-body{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:sans-serif
-}
-
-.page{
-width:794px;
-height:1123px;
-overflow:hidden;
-position:relative;
-background:#f8fafc
-}
-
-.central{
-background:#2563eb;
-color:white;
-border-radius:50%;
-width:150px;
-height:150px;
-display:flex;
-align-items:center;
-justify-content:center;
-position:absolute;
-top:450px;
-right:320px
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="page">
-
-<div class="central">
-المركز
-</div>
-
-</div>
-
-</body>
-</html>`,
-
-        "project-a4":
-`<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-
-<meta charset="UTF-8">
-
-<style>
-
-body{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:sans-serif
-}
-
-.page{
-width:794px;
-height:1123px;
-overflow:hidden;
-position:relative;
-background:#db2777;
-color:white;
-display:flex;
-align-items:center;
-justify-content:center
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="page">
-
-<h1>مشروعي</h1>
-
-</div>
-
-</body>
-</html>`
-    };
-
-    document.getElementById(
-        "html-input"
-    ).value =
-        samples[type] || "";
-
-    imageReplacements.clear();
-
-    analyzeHTMLImages();
-}
-
-/* =========================================================
-   التاريخ
-   ========================================================= */
-
-function saveToHistory() {
-
-    const code =
-        document.getElementById(
-            "html-input"
-        ).value;
-
-    if (!code.trim()) {
-        return;
-    }
-
-    let history;
-
-    try {
-
-        history =
-            JSON.parse(
-                localStorage.getItem(
-                    "code_history"
-                ) || "[]"
-            );
-
-        if (
-            !Array.isArray(
-                history
-            )
-        ) {
-
-            history = [];
-        }
-
-    } catch {
-
-        history = [];
-    }
-
-    history.unshift({
-
-        code,
-
-        date:
-            new Date()
-                .toLocaleString(
-                    "ar-SA"
-                )
-
-    });
-
-    history =
-        history.slice(
-            0,
-            5
-        );
-
-    try {
-
-        localStorage.setItem(
-            "code_history",
-            JSON.stringify(
-                history
-            )
-        );
-
-    } catch {
-
-        history =
-            history.slice(
-                0,
-                3
-            );
-
-        localStorage.setItem(
-            "code_history",
-            JSON.stringify(
-                history
-            )
-        )
-    }
-
-    renderHistory();
-
-    alert(
-        "✅ تم حفظ الكود كاملًا"
-    );
-}
-
-function renderHistory() {
-
-    let history;
-
-    try {
-
-        history =
-            JSON.parse(
-                localStorage.getItem(
-                    "code_history"
-                ) || "[]"
-            );
-
-        if (
-            !Array.isArray(
-                history
-            )
-        ) {
-
-            history = [];
-        }
-
-    } catch {
-
-        history = [];
-    }
-
-    const container =
-        document.getElementById(
-            "history-list"
-        );
-
-    if (!container) {
-        return;
-    }
-
-    container.innerHTML =
-        history.map(
-            (item, index) => {
-
-                const code =
-                    typeof item === "string"
-                        ? item
-                        : item.code || "";
-
-                const preview =
-                    code
-                        .substring(
-                            0,
-                            100
-                        )
-                        .replace(
-                            /</g,
-                            "&lt;"
-                        )
-                        .replace(
-                            />/g,
-                            "&gt;"
-                        );
-
-                return `
-
-                    <div
-                        class="history-item"
-                        onclick="loadFromHistory(${index})"
-                        title="اضغط لاستعادة الكود">
-
-                        ${preview}
-
-                    </div>
-                `;
-            }
-        ).join("");
-}
-
-function loadFromHistory(
-    index
-) {
-
-    let history;
-
-    try {
-
-        history =
-            JSON.parse(
-                localStorage.getItem(
-                    "code_history"
-                ) || "[]"
-            );
-
-    } catch {
-
-        return;
-    }
-
-    if (!history[index]) {
-        return;
-    }
-
-    const code =
-        typeof history[index] === "string"
-            ? history[index]
-            : history[index].code;
-
-    document.getElementById(
-        "html-input"
-    ).value =
-        code || "";
-
-    imageReplacements.clear();
-
-    analyzeHTMLImages();
-}
-
-/* =========================================================
-   المعاينة
+   المعاينة (معزولة في نافذة جديدة)
    ========================================================= */
 
 function previewCode() {
@@ -6568,9 +5871,12 @@ function clearCode() {
    أدوات التصيير
    ========================================================= */
 
-async function waitForFonts() {
+async function waitForFonts(win) {
 
-    if (!document.fonts) {
+    const doc =
+        win?.document;
+
+    if (!doc || !doc.fonts) {
         return;
     }
 
@@ -6578,7 +5884,7 @@ async function waitForFonts() {
 
         await Promise.race([
 
-            document.fonts.ready,
+            doc.fonts.ready,
 
             new Promise(
                 resolve =>
@@ -6635,104 +5941,107 @@ function getSafeScale(
 }
 
 /* =========================================================
-   إنشاء بيئة التصيير
+   إنشاء بيئة التصيير المعزولة (iframe)
    ========================================================= */
 
-function createRenderContainer(
+function createRenderIframe(
     code,
-    width
+    width,
+    height
 ) {
 
-    const container =
+    const iframe =
         document.createElement(
-            "div"
+            "iframe"
         );
 
-    container.style.position =
+    iframe.style.position =
         "fixed";
 
-    container.style.left =
+    iframe.style.left =
         "-100000px";
 
-    container.style.top =
+    iframe.style.top =
         "0";
 
-    container.style.width =
+    iframe.style.width =
         width + "px";
 
-    container.style.margin =
+    iframe.style.height =
+        height + "px";
+
+    iframe.style.border =
         "0";
 
-    container.style.padding =
-        "0";
+    iframe.style.visibility =
+        "hidden";
 
-    container.style.opacity =
-        "1";
-
-    container.style.visibility =
-        "visible";
-
-    container.style.pointerEvents =
+    iframe.style.pointerEvents =
         "none";
 
-    container.style.zIndex =
+    iframe.style.zIndex =
         "-1";
 
-    container.style.background =
-        "#fff";
-
-    container.style.overflow =
-        "visible";
-
-    container.setAttribute(
-        "data-render-container",
+    iframe.setAttribute(
+        "aria-hidden",
         "true"
     );
 
-    container.dir =
-        "rtl";
+    iframe.setAttribute(
+        "data-render-iframe",
+        "true"
+    );
 
-    container.innerHTML =
-        code;
+    document.body.appendChild(
+        iframe
+    );
+
+    const doc =
+        iframe.contentDocument ||
+        iframe.contentWindow?.document;
+
+    if (!doc) {
+
+        throw new Error(
+            "Cannot access iframe document."
+        );
+    }
+
+    /* كتابة الكود كاملًا داخل الإطار المعزول */
+
+    doc.open();
+
+    doc.write(
+        code
+    );
+
+    doc.close();
+
+    /* إضافة تنسيق أساسي لعنصر html/body داخل الإطار فقط */
 
     const fix =
-        document.createElement(
+        doc.createElement(
             "style"
         );
 
     fix.textContent = `
-
-        html,
-        body {
-
-            margin:
-                0 !important;
-
-            padding:
-                0 !important;
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
         }
-
         .page {
-
-            box-sizing:
-                border-box !important;
+            box-sizing: border-box !important;
         }
-
     `;
 
-    container.appendChild(
-        fix
-    );
+    if (doc.head) {
 
-    document.body.appendChild(
-        container
-    );
+        doc.head.appendChild(
+            fix
+        );
+    }
 
-    applyImageReplacements(
-        container
-    );
-
-    return container;
+    return iframe;
 }
 
 /* =========================================================
@@ -6740,12 +6049,12 @@ function createRenderContainer(
    ========================================================= */
 
 async function prepareImages(
-    container
+    doc
 ) {
 
     const images =
         Array.from(
-            container.querySelectorAll(
+            doc.querySelectorAll(
                 "img"
             )
         );
@@ -6919,74 +6228,51 @@ async function renderPage(
             quality
         );
 
-    const oldWidth =
-        page.style.width;
+    return await html2canvas(
+        page,
+        {
 
-    const oldHeight =
-        page.style.height;
+            scale,
 
-    page.style.width =
-        width + "px";
+            width,
 
-    page.style.height =
-        height + "px";
+            height,
 
-    try {
-
-        return await html2canvas(
-            page,
-            {
-
-                scale,
-
+            windowWidth:
                 width,
 
+            windowHeight:
                 height,
 
-                windowWidth:
-                    width,
+            useCORS:
+                true,
 
-                windowHeight:
-                    height,
+            allowTaint:
+                false,
 
-                useCORS:
-                    true,
+            backgroundColor:
+                "#ffffff",
 
-                allowTaint:
-                    false,
+            imageTimeout:
+                RENDER_CONFIG.imageTimeout,
 
-                backgroundColor:
-                    "#ffffff",
+            logging:
+                false,
 
-                imageTimeout:
-                    RENDER_CONFIG.imageTimeout,
+            removeContainer:
+                true,
 
-                logging:
-                    false,
+            foreignObjectRendering:
+                false,
 
-                removeContainer:
-                    true,
+            scrollX:
+                0,
 
-                foreignObjectRendering:
-                    false,
+            scrollY:
+                0
 
-                scrollX:
-                    0,
-
-                scrollY:
-                    0
-
-            }
-        );
-
-    } finally {
-
-        page.style.width =
-            oldWidth;
-
-        page.style.height =
-            oldHeight;
-    }
+        }
+    );
 }
 
 function canvasToJPEG(
@@ -7019,12 +6305,12 @@ function releaseCanvas(
 }
 
 function getPages(
-    container
+    doc
 ) {
 
     const pages =
         Array.from(
-            container.querySelectorAll(
+            doc.querySelectorAll(
                 ".page"
             )
         );
@@ -7034,7 +6320,7 @@ function getPages(
     }
 
     return [
-        container
+        doc.body
     ];
 }
 
@@ -7148,23 +6434,36 @@ async function generatePPTX() {
     button.innerText =
         "⏳ جاري تحضير البوربوينت...";
 
-    const container =
-        createRenderContainer(
+    const iframe =
+        createRenderIframe(
             code,
-            width
+            width,
+            height
         );
 
     try {
 
-        await waitForFonts();
+        const doc =
+            iframe.contentDocument;
+
+        const win =
+            iframe.contentWindow;
+
+        applyImageReplacementsToDocument(
+            doc
+        );
+
+        await waitForFonts(
+            win
+        );
 
         await prepareImages(
-            container
+            doc
         );
 
         const pages =
             getPages(
-                container
+                doc
             );
 
         const pptx =
@@ -7279,7 +6578,7 @@ async function generatePPTX() {
 
     } finally {
 
-        container.remove();
+        iframe.remove();
     }
 }
 
@@ -7336,23 +6635,36 @@ async function generatePDF() {
     button.innerText =
         "⏳ جاري تجهيز PDF...";
 
-    const container =
-        createRenderContainer(
+    const iframe =
+        createRenderIframe(
             code,
-            width
+            width,
+            height
         );
 
     try {
 
-        await waitForFonts();
+        const doc =
+            iframe.contentDocument;
+
+        const win =
+            iframe.contentWindow;
+
+        applyImageReplacementsToDocument(
+            doc
+        );
+
+        await waitForFonts(
+            win
+        );
 
         await prepareImages(
-            container
+            doc
         );
 
         const pages =
             getPages(
-                container
+                doc
             );
 
         const {
@@ -7461,7 +6773,7 @@ async function generatePDF() {
 
     } finally {
 
-        container.remove();
+        iframe.remove();
     }
 }
 
