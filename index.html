@@ -1,648 +1,153 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-
-    <title>منصة تحويل الأكواد الذكية (PDF / PPTX)</title>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
-
-    <style>
-        * { box-sizing: border-box; }
-        html, body { max-width: 100%; overflow-x: hidden; }
-        html { scrollbar-gutter: stable; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif;
-            background: #0f172a;
-            color: #e2e8f0;
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-            -webkit-text-size-adjust: 100%;
-        }
-
-        .header { text-align: center; margin-bottom: 15px; width: 100%; }
-        .header h2 { margin: 0; color: #f8fafc; font-size: 24px; }
-
-        .top-nav {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        .nav-btn {
-            flex: 1;
-            background: #1e293b;
-            color: #94a3b8;
-            border: 2px solid #334155;
-            padding: 12px 5px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: .3s;
-            text-align: center;
-        }
-
-        .nav-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
-        .nav-btn:hover:not(.active) { background: #334155; color: #f8fafc; }
-
-        .main-container {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .box-panel {
-            background: #1e293b;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,.5);
-            border: 1px solid #334155;
-            width: 100%;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
-
-        label {
-            margin-bottom: 8px;
-            font-weight: bold;
-            font-size: 13px;
-            color: #94a3b8;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            color: #f8fafc;
-            transition: .2s;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59,130,246,.2);
-        }
-
-        input:disabled, select:disabled {
-            opacity: .5;
-            cursor: not-allowed;
-            text-decoration: line-through;
-        }
-
-        .req-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
-            width: 100%;
-        }
-
-        .req-row input[type="text"] { flex: 1; }
-
-        .toggle-req {
-            background: #334155;
-            border: none;
-            color: #f8fafc;
-            border-radius: 6px;
-            padding: 12px 0;
-            cursor: pointer;
-            transition: .2s;
-            font-size: 14px;
-            width: 45px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        .toggle-req.disabled { background: #7f1d1d; color: #fca5a5; }
-
-        .textarea-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .action-btns {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            flex: 1;
-            justify-content: flex-end;
-        }
-
-        .action-btns button {
-            background: #334155;
-            color: #e2e8f0;
-            border: none;
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: .2s;
-            flex: 1;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .action-btns button.clear-btn { background: #7f1d1d; color: #fca5a5; }
-        .action-btns button:hover { background: #475569; }
-        .action-btns button.clear-btn:hover { background: #991b1b; color: #fef2f2; }
-
-        textarea#html-input {
-            min-height: 200px;
-            resize: vertical;
-            direction: ltr;
-            font-family: monospace;
-            background: #020617;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        textarea#final-prompt-output {
-            min-height: 240px;
-            resize: vertical;
-            direction: rtl;
-            text-align: right;
-            font-family: inherit;
-            background: #020617;
-            font-size: 13px;
-            line-height: 1.9;
-            white-space: pre-wrap;
-            padding: 14px;
-        }
-
-        .row { display: flex; gap: 12px; width: 100%; }
-        .row .form-group { flex: 1; min-width: 0; }
-
-        .export-btn {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 16px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: .2s;
-            width: 100%;
-        }
-
-        .export-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
-
-        .export-btn:disabled {
-            background: #475569;
-            color: #94a3b8;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .tab-content { display: none; }
-        .tab-content.active-tab { display: flex; }
-
-        /* ===================== مدير الصور ===================== */
-        .html-image-manager {
-            display: none;
-            margin-top: 15px;
-            padding: 14px;
-            background: #0b1220;
-            border: 1px solid #334155;
-            border-radius: 10px;
-        }
-
-        .html-image-manager.visible { display: block; }
-
-        .image-manager-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .image-manager-title { color: #f8fafc; font-size: 14px; font-weight: bold; margin: 0; }
-
-        .image-manager-count {
-            background: #2563eb;
-            color: #fff;
-            padding: 4px 9px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .image-manager-description {
-            color: #94a3b8;
-            font-size: 11px;
-            line-height: 1.7;
-            margin: 0 0 12px;
-        }
-
-        .image-manager-list { display: flex; flex-direction: column; gap: 10px; }
-
-        .html-image-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 10px;
-            overflow: hidden;
-        }
-
-        .html-image-card.replaced { border-color: #059669; background: #0f2923; }
-
-        .html-image-card-top { display: flex; align-items: flex-start; gap: 10px; }
-
-        .html-image-thumb {
-            width: 82px;
-            height: 70px;
-            flex: 0 0 82px;
-            border-radius: 7px;
-            background: #020617;
-            border: 1px solid #475569;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .html-image-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
-
-        .html-image-info { min-width: 0; flex: 1; }
-
-        .html-image-name {
-            color: #f8fafc;
-            font-size: 13px;
-            font-weight: bold;
-            margin: 0 0 6px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .html-image-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; }
-
-        .html-image-meta-item {
-            color: #94a3b8;
-            font-size: 10px;
-            line-height: 1.5;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .html-image-meta-item strong { color: #cbd5e1; }
-
-        .html-image-url {
-            margin-top: 8px;
-            padding: 7px 8px;
-            border-radius: 6px;
-            background: #020617;
-            color: #64748b;
-            direction: ltr;
-            text-align: left;
-            font-size: 9px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .html-image-actions { display: flex; gap: 7px; margin-top: 9px; }
-
-        .html-image-action {
-            flex: 1;
-            border: none;
-            border-radius: 7px;
-            padding: 9px 6px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: bold;
-            transition: .2s;
-        }
-
-        .html-image-action.keep { background: #334155; color: #e2e8f0; }
-        .html-image-action.keep:hover { background: #475569; }
-        .html-image-action.replace { background: #2563eb; color: #fff; }
-        .html-image-action.replace:hover { background: #1d4ed8; }
-        .html-image-action.crop-edit { background: #7c3aed; color: #fff; }
-        .html-image-action.crop-edit:hover { background: #6d28d9; }
-
-        .html-image-status {
-            margin-top: 7px;
-            min-height: 16px;
-            font-size: 10px;
-            font-weight: bold;
-            color: #64748b;
-        }
-
-        .html-image-card.replaced .html-image-status { color: #34d399; }
-
-        .image-manager-refresh {
-            width: 100%;
-            margin-top: 10px;
-            background: transparent;
-            border: 1px solid #475569;
-            color: #94a3b8;
-            padding: 8px;
-            border-radius: 7px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .image-manager-refresh:hover { background: #1e293b; color: #f8fafc; }
-
-        .image-empty { text-align: center; color: #64748b; font-size: 12px; padding: 12px; }
-
-        /* ===================== محرر قص الصور ===================== */
-        .crop-modal-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 10000;
-            background: rgba(2, 6, 23, .90);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 12px;
-        }
-
-        .crop-modal-overlay.visible { display: flex; }
-
-        .crop-modal {
-            width: min(760px, 100%);
-            max-height: calc(100vh - 24px);
-            overflow-y: auto;
-            background: #1e293b;
-            border: 1px solid #475569;
-            border-radius: 14px;
-            box-shadow: 0 25px 60px rgba(0,0,0,.65);
-            padding: 15px;
-        }
-
-        .crop-modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .crop-modal-header h3 { margin: 0; color: #f8fafc; font-size: 18px; }
-
-        .crop-close {
-            width: 38px;
-            height: 38px;
-            border: none;
-            border-radius: 8px;
-            background: #334155;
-            color: #f8fafc;
-            font-size: 22px;
-            cursor: pointer;
-        }
-
-        .crop-close:hover { background: #475569; }
-
-        .crop-target-info {
-            color: #94a3b8;
-            font-size: 11px;
-            line-height: 1.7;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .crop-stage {
-            position: relative;
-            width: 100%;
-            height: min(58vh, 480px);
-            min-height: 280px;
-            background:
-                repeating-conic-gradient(
-                    #111827 0% 25%,
-                    #0b1220 0% 50%
-                ) 50% / 20px 20px;
-            border: 1px solid #475569;
-            border-radius: 10px;
-            overflow: hidden;
-            touch-action: none;
-            user-select: none;
-        }
-
-        .crop-image {
-            position: absolute;
-            max-width: none;
-            max-height: none;
-            width: auto;
-            height: auto;
-            display: block;
-            transform-origin: center center;
-            user-select: none;
-            -webkit-user-drag: none;
-            pointer-events: none;
-        }
-
-        .crop-frame {
-            position: absolute;
-            z-index: 3;
-            border: 2px solid #fff;
-            box-shadow:
-                0 0 0 9999px rgba(0,0,0,.58),
-                0 0 0 1px rgba(255,255,255,.25);
-            pointer-events: none;
-        }
-
-        .crop-grid {
-            position: absolute;
-            inset: 0;
-            background:
-                linear-gradient(to right, transparent 33.333%, rgba(255,255,255,.35) 33.333%, rgba(255,255,255,.35) calc(33.333% + 1px), transparent calc(33.333% + 1px), transparent 66.666%, rgba(255,255,255,.35) 66.666%, rgba(255,255,255,.35) calc(66.666% + 1px), transparent calc(66.666% + 1px)),
-                linear-gradient(to bottom, transparent 33.333%, rgba(255,255,255,.35) 33.333%, rgba(255,255,255,.35) calc(33.333% + 1px), transparent calc(33.333% + 1px), transparent 66.666%, rgba(255,255,255,.35) 66.666%, rgba(255,255,255,.35) calc(66.666% + 1px), transparent calc(66.666% + 1px));
-        }
-
-        .crop-controls { display: flex; gap: 8px; margin-top: 10px; }
-
-        .crop-control {
-            flex: 1;
-            border: none;
-            border-radius: 8px;
-            padding: 10px;
-            background: #334155;
-            color: #f8fafc;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .crop-control:hover { background: #475569; }
-
-        .crop-preview-wrap {
-            display: none;
-            margin-top: 12px;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 10px;
-        }
-
-        .crop-preview-wrap.visible { display: block; }
-
-        .crop-preview-title {
-            color: #94a3b8;
-            font-size: 11px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .crop-preview {
-            display: block;
-            max-width: 100%;
-            max-height: 250px;
-            width: auto;
-            height: auto;
-            margin: auto;
-            object-fit: contain;
-            border-radius: 7px;
-            background: #020617;
-        }
-
-        .crop-actions { display: flex; gap: 8px; margin-top: 12px; }
-
-        .crop-action {
-            flex: 1;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 8px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .crop-action.cancel { background: #334155; color: #e2e8f0; }
-        .crop-action.preview { background: #0f766e; color: #fff; }
-        .crop-action.apply { background: #2563eb; color: #fff; }
-        .crop-action:hover { filter: brightness(1.1); }
-
-        /* ===================== شاشة كلمة المرور ===================== */
-        .password-reset-btn {
-            width: 100%;
-            margin-top: 10px;
-            background: transparent;
-            border: 1px solid #475569;
-            color: #94a3b8;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: .2s;
-        }
-
-        .password-reset-btn:hover { background: #334155; color: #f8fafc; }
-
-        /* ===================== الجوال ===================== */
-        @media (max-width: 600px) {
-            body { padding: 10px; }
-            input:not([type="checkbox"]):not([type="radio"]), select { font-size: 16px; }
-            .row { flex-direction: column; gap: 0; }
-            .action-btns { width: 100%; justify-content: space-between; }
-            .action-btns button { padding: 10px; }
-            .html-image-meta { grid-template-columns: 1fr; }
-            .html-image-thumb { width: 72px; flex-basis: 72px; height: 65px; }
-            .html-image-actions { flex-wrap: wrap; }
-            .html-image-action { min-width: calc(50% - 4px); }
-            .crop-modal { padding: 10px; border-radius: 12px; }
-            .crop-stage { height: min(50vh, 400px); min-height: 220px; }
-            .crop-controls, .crop-actions { gap: 6px; }
-            .crop-control, .crop-action { padding: 11px 5px; font-size: 11px; }
-            .box-panel { padding: 15px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>منصة تحويل الأكواد الذكية (PDF / PPTX)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+html{scrollbar-gutter:stable}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;margin:0;padding:15px;display:flex;flex-direction:column;align-items:center;min-height:100vh;overflow-x:hidden;-webkit-text-size-adjust:100%}
+.header{text-align:center;margin-bottom:15px;width:100%}
+.header h2{margin:0;color:#f8fafc;font-size:24px}
+.top-nav{display:flex;justify-content:center;gap:10px;margin-bottom:20px;width:100%;max-width:600px}
+.nav-btn{flex:1;background:#1e293b;color:#94a3b8;border:2px solid #334155;padding:12px 5px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;transition:.3s;text-align:center}
+.nav-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
+.nav-btn:hover:not(.active){background:#334155;color:#f8fafc}
+.main-container{width:100%;max-width:600px;display:flex;flex-direction:column}
+.box-panel{background:#1e293b;border-radius:12px;padding:20px;box-shadow:0 10px 15px -3px rgba(0,0,0,.5);border:1px solid #334155;width:100%}
+.form-group{margin-bottom:15px;display:flex;flex-direction:column;width:100%}
+label{margin-bottom:8px;font-weight:bold;font-size:13px;color:#94a3b8}
+input,select,textarea{width:100%;padding:12px;background:#0f172a;border:1px solid #334155;border-radius:8px;font-size:14px;font-family:inherit;color:#f8fafc;transition:.2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.2)}
+input:disabled,select:disabled{opacity:.5;cursor:not-allowed;text-decoration:line-through}
+.req-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;width:100%}
+.req-row input[type="text"]{flex:1}
+.toggle-req{background:#334155;border:none;color:#f8fafc;border-radius:6px;padding:12px 0;cursor:pointer;transition:.2s;font-size:14px;width:45px;text-align:center;flex-shrink:0}
+.toggle-req.disabled{background:#7f1d1d;color:#fca5a5}
+.textarea-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:10px;flex-wrap:wrap}
+.action-btns{display:flex;gap:8px;flex-wrap:wrap;flex:1;justify-content:flex-end}
+.action-btns button{background:#334155;color:#e2e8f0;border:none;padding:8px 10px;border-radius:6px;font-size:12px;font-weight:bold;cursor:pointer;transition:.2s;flex:1;text-align:center;white-space:nowrap}
+.action-btns button.clear-btn{background:#7f1d1d;color:#fca5a5}
+.action-btns button:hover{background:#475569}
+.action-btns button.clear-btn:hover{background:#991b1b;color:#fef2f2}
+textarea#html-input{min-height:200px;resize:vertical;direction:ltr;font-family:monospace;background:#020617;font-size:13px;line-height:1.6}
+textarea#final-prompt-output{min-height:260px;resize:vertical;direction:rtl;text-align:right;font-family:inherit;background:#020617;font-size:13px;line-height:1.9;white-space:pre-wrap;padding:14px}
+.row{display:flex;gap:12px;width:100%}
+.row .form-group{flex:1;min-width:0}
+.export-btn{background:#2563eb;color:white;border:none;padding:16px;border-radius:8px;font-size:16px;font-weight:bold;cursor:pointer;margin-top:10px;transition:.2s;width:100%}
+.export-btn:hover{background:#1d4ed8;transform:translateY(-2px)}
+.export-btn:disabled{background:#475569;color:#94a3b8;cursor:not-allowed;transform:none}
+.tab-content{display:none}
+.tab-content.active-tab{display:flex}
+.html-image-manager{display:none;margin-top:15px;padding:14px;background:#0b1220;border:1px solid #334155;border-radius:10px}
+.html-image-manager.visible{display:block}
+.image-manager-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.image-manager-title{color:#f8fafc;font-size:14px;font-weight:bold;margin:0}
+.image-manager-count{background:#2563eb;color:#fff;padding:4px 9px;border-radius:20px;font-size:11px;font-weight:bold}
+.image-manager-description{color:#94a3b8;font-size:11px;line-height:1.7;margin:0 0 12px}
+.image-manager-list{display:flex;flex-direction:column;gap:10px}
+.html-image-card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:10px;overflow:hidden}
+.html-image-card.replaced{border-color:#059669;background:#0f2923}
+.html-image-card-top{display:flex;align-items:flex-start;gap:10px}
+.html-image-thumb{width:82px;height:70px;flex:0 0 82px;border-radius:7px;background:#020617;border:1px solid #475569;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.html-image-thumb img{width:100%;height:100%;object-fit:contain;display:block}
+.html-image-info{min-width:0;flex:1}
+.html-image-name{color:#f8fafc;font-size:13px;font-weight:bold;margin:0 0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.html-image-meta{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px}
+.html-image-meta-item{color:#94a3b8;font-size:10px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.html-image-meta-item strong{color:#cbd5e1}
+.html-image-url{margin-top:8px;padding:7px 8px;border-radius:6px;background:#020617;color:#64748b;direction:ltr;text-align:left;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.html-image-actions{display:flex;gap:7px;margin-top:9px}
+.html-image-action{flex:1;border:none;border-radius:7px;padding:9px 6px;cursor:pointer;font-size:11px;font-weight:bold;transition:.2s}
+.html-image-action.keep{background:#334155;color:#e2e8f0}
+.html-image-action.keep:hover{background:#475569}
+.html-image-action.replace{background:#2563eb;color:#fff}
+.html-image-action.replace:hover{background:#1d4ed8}
+.html-image-action.crop-edit{background:#7c3aed;color:#fff}
+.html-image-action.crop-edit:hover{background:#6d28d9}
+.html-image-status{margin-top:7px;min-height:16px;font-size:10px;font-weight:bold;color:#64748b}
+.html-image-card.replaced .html-image-status{color:#34d399}
+.image-manager-refresh{width:100%;margin-top:10px;background:transparent;border:1px solid #475569;color:#94a3b8;padding:8px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:bold}
+.image-manager-refresh:hover{background:#1e293b;color:#f8fafc}
+.image-empty{text-align:center;color:#64748b;font-size:12px;padding:12px}
+.crop-modal-overlay{position:fixed;inset:0;z-index:10000;background:rgba(2,6,23,.90);display:none;align-items:center;justify-content:center;padding:12px}
+.crop-modal-overlay.visible{display:flex}
+.crop-modal{width:min(760px,100%);max-height:calc(100vh - 24px);overflow-y:auto;background:#1e293b;border:1px solid #475569;border-radius:14px;box-shadow:0 25px 60px rgba(0,0,0,.65);padding:15px}
+.crop-modal-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.crop-modal-header h3{margin:0;color:#f8fafc;font-size:18px}
+.crop-close{width:38px;height:38px;border:none;border-radius:8px;background:#334155;color:#f8fafc;font-size:22px;cursor:pointer}
+.crop-close:hover{background:#475569}
+.crop-target-info{color:#94a3b8;font-size:11px;line-height:1.7;margin-bottom:12px;text-align:center}
+.crop-stage{position:relative;width:100%;height:min(58vh,480px);min-height:280px;background:repeating-conic-gradient(#111827 0% 25%,#0b1220 0% 50%) 50%/20px 20px;border:1px solid #475569;border-radius:10px;overflow:hidden;touch-action:none;user-select:none}
+.crop-image{position:absolute;max-width:none;max-height:none;width:auto;height:auto;display:block;transform-origin:center center;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.crop-frame{position:absolute;z-index:3;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.58),0 0 0 1px rgba(255,255,255,.25);pointer-events:none}
+.crop-grid{position:absolute;inset:0;background:linear-gradient(to right,transparent 33.333%,rgba(255,255,255,.35) 33.333%,rgba(255,255,255,.35) calc(33.333% + 1px),transparent calc(33.333% + 1px),transparent 66.666%,rgba(255,255,255,.35) 66.666%,rgba(255,255,255,.35) calc(66.666% + 1px),transparent calc(66.666% + 1px)),linear-gradient(to bottom,transparent 33.333%,rgba(255,255,255,.35) 33.333%,rgba(255,255,255,.35) calc(33.333% + 1px),transparent calc(33.333% + 1px),transparent 66.666%,rgba(255,255,255,.35) 66.666%,rgba(255,255,255,.35) calc(66.666% + 1px),transparent calc(66.666% + 1px))}
+.crop-controls{display:flex;gap:8px;margin-top:10px}
+.crop-control{flex:1;border:none;border-radius:8px;padding:10px;background:#334155;color:#f8fafc;cursor:pointer;font-size:12px;font-weight:bold}
+.crop-control:hover{background:#475569}
+.crop-preview-wrap{display:none;margin-top:12px;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:10px}
+.crop-preview-wrap.visible{display:block}
+.crop-preview-title{color:#94a3b8;font-size:11px;font-weight:bold;margin-bottom:8px;text-align:center}
+.crop-preview{display:block;max-width:100%;max-height:250px;width:auto;height:auto;margin:auto;object-fit:contain;border-radius:7px;background:#020617}
+.crop-actions{display:flex;gap:8px;margin-top:12px}
+.crop-action{flex:1;border:none;border-radius:8px;padding:12px 8px;cursor:pointer;font-size:12px;font-weight:bold}
+.crop-action.cancel{background:#334155;color:#e2e8f0}
+.crop-action.preview{background:#0f766e;color:#fff}
+.crop-action.apply{background:#2563eb;color:#fff}
+.crop-action:hover{filter:brightness(1.1)}
+.password-reset-btn{width:100%;margin-top:10px;background:transparent;border:1px solid #475569;color:#94a3b8;padding:10px;border-radius:8px;font-size:12px;font-weight:bold;cursor:pointer;transition:.2s}
+.password-reset-btn:hover{background:#334155;color:#f8fafc}
+@media (max-width:600px){
+body{padding:10px}
+input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
+.row{flex-direction:column;gap:0}
+.action-btns{width:100%;justify-content:space-between}
+.action-btns button{padding:10px}
+.html-image-meta{grid-template-columns:1fr}
+.html-image-thumb{width:72px;flex-basis:72px;height:65px}
+.html-image-actions{flex-wrap:wrap}
+.html-image-action{min-width:calc(50% - 4px)}
+.crop-modal{padding:10px;border-radius:12px}
+.crop-stage{height:min(50vh,400px);min-height:220px}
+.crop-controls,.crop-actions{gap:6px}
+.crop-control,.crop-action{padding:11px 5px;font-size:11px}
+.box-panel{padding:15px}
+}
+</style>
 </head>
-
 <body>
 
-<!-- =========================================================
-     شاشة كلمة المرور
-     ========================================================= -->
-<div id="password-overlay"
-     style="position:fixed;inset:0;background:#0f172a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
-
+<div id="password-overlay" style="position:fixed;inset:0;background:#0f172a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
     <div style="background:#1e293b;padding:30px;border-radius:12px;box-shadow:0 10px 25px -5px rgba(0,0,0,.5);border:1px solid #334155;text-align:center;width:100%;max-width:350px;">
-
         <h3 style="margin-top:0;color:#f8fafc;font-size:22px;">🔒 حماية المنصة</h3>
-
-        <p style="font-size:13px;color:#94a3b8;margin-bottom:25px;">
-            الرجاء إدخال كلمة المرور للوصول.
-        </p>
-
+        <p style="font-size:13px;color:#94a3b8;margin-bottom:25px;">الرجاء إدخال كلمة المرور للوصول.</p>
         <div class="form-group" style="margin-bottom:20px;">
-            <input type="password" id="pass-input" placeholder="كلمة المرور..."
-                autocomplete="off" autocapitalize="none" spellcheck="false"
-                style="text-align:center;letter-spacing:3px;font-size:16px;"
-                onkeydown="if(event.key==='Enter'){event.preventDefault();checkPassword();}">
+            <input type="password" id="pass-input" placeholder="كلمة المرور..." autocomplete="off" autocapitalize="none" spellcheck="false" style="text-align:center;letter-spacing:3px;font-size:16px;">
         </div>
-
-        <button onclick="checkPassword()" class="export-btn" style="margin-top:0;">
-            تسجيل الدخول
-        </button>
-
-        <p id="pass-error"
-           style="color:#ef4444;font-size:13px;display:none;margin-top:15px;font-weight:bold;margin-bottom:0;">
-            ❌ كلمة المرور غير صحيحة!
-        </p>
-
-        <button type="button" class="password-reset-btn" onclick="resetLoginSession()">
-            🔄 مسح جلسة الدخول
-        </button>
+        <button type="button" id="login-btn" class="export-btn" style="margin-top:0;">تسجيل الدخول</button>
+        <p id="pass-error" style="color:#ef4444;font-size:13px;display:none;margin-top:15px;font-weight:bold;margin-bottom:0;">❌ كلمة المرور غير صحيحة!</p>
+        <button type="button" class="password-reset-btn" id="reset-session-btn">🔄 مسح جلسة الدخول</button>
     </div>
 </div>
 
-<div class="header">
-    <h2>🛠️ منصة تحويل الأكواد</h2>
-</div>
+<div class="header"><h2>🛠️ منصة تحويل الأكواد</h2></div>
 
 <div class="top-nav">
-    <button class="nav-btn active" id="btn-converter" onclick="switchTab('converter')">
-        ⚙️ منصة التحويل
-    </button>
-    <button class="nav-btn" id="btn-prompts" onclick="switchTab('prompts')">
-        🧠 المولد الذكي
-    </button>
+    <button type="button" class="nav-btn active" id="btn-converter" onclick="switchTab('converter')">⚙️ منصة التحويل</button>
+    <button type="button" class="nav-btn" id="btn-prompts" onclick="switchTab('prompts')">🧠 المولد الذكي</button>
 </div>
 
 <div id="converter-tab" class="main-container tab-content active-tab">
     <div class="box-panel">
-
         <div class="form-group">
             <label>اسم الملف المستخرج:</label>
             <input type="text" id="file-name" value="مستند_جديد" placeholder="اكتب اسم الملف هنا...">
         </div>
-
         <div class="row">
             <div class="form-group">
                 <label>نوع الاستخراج:</label>
@@ -663,50 +168,35 @@
                 </select>
             </div>
         </div>
-
         <div class="form-group">
             <div class="textarea-header">
                 <label style="margin:0;">كود الـ HTML:</label>
                 <div class="action-btns">
-                    <button class="clear-btn" onclick="clearCode()">🗑️ مسح</button>
-                    <button onclick="previewCode()">👁️ معاينة</button>
+                    <button type="button" class="clear-btn" onclick="clearCode()">🗑️ مسح</button>
+                    <button type="button" onclick="previewCode()">👁️ معاينة</button>
                 </div>
             </div>
-
             <textarea id="html-input" placeholder="الصق الكود هنا..."></textarea>
-
-            <!-- =================================================
-                 مدير الصور
-                 ================================================= -->
             <div id="image-manager" class="html-image-manager">
                 <div class="image-manager-header">
                     <h3 class="image-manager-title">🖼️ الصور الموجودة في الكود</h3>
                     <span id="image-manager-count" class="image-manager-count">0 صورة</span>
                 </div>
-
                 <p class="image-manager-description">
                     يتم التعرف على صور img وصور CSS الخلفية تلقائيًا.
                     يمكنك الاحتفاظ بالصورة أو اختيار صورة جديدة ثم قصها يدويًا
                     حسب إطار الصورة الحالية. لن يتم تمديد الصورة أو ضغطها أو تغيير نسبتها.
                 </p>
-
                 <div id="image-manager-list" class="image-manager-list"></div>
-
-                <button class="image-manager-refresh" onclick="analyzeHTMLImages()">
-                    🔄 تحديث قائمة الصور
-                </button>
+                <button type="button" class="image-manager-refresh" onclick="analyzeHTMLImages()">🔄 تحديث قائمة الصور</button>
             </div>
         </div>
-
-        <button id="capture-btn" class="export-btn" onclick="exportFile()">
-            بدء الاستخراج 📥
-        </button>
+        <button type="button" id="capture-btn" class="export-btn" onclick="exportFile()">بدء الاستخراج 📥</button>
     </div>
 </div>
 
 <div id="prompts-tab" class="main-container tab-content">
     <div class="box-panel">
-
         <div class="form-group">
             <label>نوع الملف المطلوب تصميم كوده:</label>
             <select id="prompt-type" onchange="onPromptTypeChange()">
@@ -714,7 +204,6 @@
                 <option value="169">🖥️ مشروع عرض (أفقي — 1280×720)</option>
             </select>
         </div>
-
         <div class="row">
             <div class="form-group">
                 <label>نظام الألوان:</label>
@@ -744,110 +233,68 @@
                 </select>
             </div>
         </div>
-
-        <div class="row">
-            <div class="form-group">
-                <label>الصور:</label>
-                <select id="prompt-images" onchange="togglePromptImageOptions(); generatePromptText();">
-                    <option value="none">بدون صور</option>
-                    <option value="yes">إضافة صور</option>
-                </select>
-            </div>
-            <div class="form-group" id="prompt-image-count-group" style="display:none;">
-                <label>عدد الصور:</label>
-                <input type="number" id="prompt-image-count" min="1" value="5"
-                    placeholder="مثال: 5" oninput="generatePromptText()">
-            </div>
-        </div>
-
         <div class="form-group">
             <label id="pages-label">عدد الصفحات:</label>
             <input type="text" id="req-pages" placeholder="مثال: 5 صفحات" oninput="generatePromptText()">
         </div>
 
-        <label style="margin-top:10px;">
-            المتطلبات (اضغط 👁️ لشطب المتطلب):
-        </label>
+        <label style="margin-top:10px;">المتطلبات (اضغط 👁️ لشطب المتطلب):</label>
 
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-title')">👁️</button>
-            <input type="text" id="req-title" placeholder="عنوان البحث أو العرض"
-                oninput="generatePromptText()">
+            <button type="button" class="toggle-req" data-target="req-images">👁️</button>
+            <input type="text" id="req-images" placeholder="الصور — اكتب العدد (مثال: 5)" oninput="generatePromptText()">
         </div>
-
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-subject')">👁️</button>
-            <input type="text" id="req-subject" placeholder="المادة"
-                oninput="generatePromptText()">
+            <button type="button" class="toggle-req" data-target="req-title">👁️</button>
+            <input type="text" id="req-title" placeholder="عنوان البحث أو العرض" oninput="generatePromptText()">
         </div>
-
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-name')">👁️</button>
-            <input type="text" id="req-name" placeholder="اسم الطالب / المقدِّم"
-                oninput="generatePromptText()">
+            <button type="button" class="toggle-req" data-target="req-subject">👁️</button>
+            <input type="text" id="req-subject" placeholder="المادة" oninput="generatePromptText()">
         </div>
-
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-teacher')">👁️</button>
-            <input type="text" id="req-teacher" placeholder="اسم المعلم"
-                oninput="generatePromptText()">
+            <button type="button" class="toggle-req" data-target="req-name">👁️</button>
+            <input type="text" id="req-name" placeholder="اسم الطالب / المقدِّم" oninput="generatePromptText()">
         </div>
-
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-grade')">👁️</button>
-            <input type="text" id="req-grade" placeholder="الصف"
-                oninput="generatePromptText()">
+            <button type="button" class="toggle-req" data-target="req-teacher">👁️</button>
+            <input type="text" id="req-teacher" placeholder="اسم المعلم" oninput="generatePromptText()">
         </div>
-
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-year')">👁️</button>
-            <input type="text" id="req-year" placeholder="العام الدراسي"
-                oninput="generatePromptText()">
+            <button type="button" class="toggle-req" data-target="req-grade">👁️</button>
+            <input type="text" id="req-grade" placeholder="الصف" oninput="generatePromptText()">
+        </div>
+        <div class="req-row">
+            <button type="button" class="toggle-req" data-target="req-year">👁️</button>
+            <input type="text" id="req-year" placeholder="العام الدراسي" oninput="generatePromptText()">
         </div>
 
         <label style="margin-top:15px;">✨ الأمر النهائي للذكاء الاصطناعي:</label>
-
         <textarea id="final-prompt-output" readonly></textarea>
-
-        <button class="export-btn" style="background:#059669;" onclick="copyGeneratedPrompt()">
-            نسخ الأمر 📋
-        </button>
+        <button type="button" class="export-btn" style="background:#059669;" onclick="copyGeneratedPrompt()">نسخ الأمر 📋</button>
     </div>
 </div>
 
-<!-- =========================================================
-     نافذة قص الصور
-     ========================================================= -->
 <div id="crop-modal" class="crop-modal-overlay" aria-hidden="true">
     <div class="crop-modal">
-
         <div class="crop-modal-header">
             <h3>قص الصورة</h3>
             <button type="button" class="crop-close" onclick="closeCropModal()">×</button>
         </div>
-
-        <div id="crop-target-info" class="crop-target-info">
-            اسحب الصورة داخل الإطار واضبط موضعها.
-        </div>
-
+        <div id="crop-target-info" class="crop-target-info">اسحب الصورة داخل الإطار واضبط موضعها.</div>
         <div id="crop-stage" class="crop-stage">
             <img id="crop-image" class="crop-image" draggable="false" alt="">
-            <div id="crop-frame" class="crop-frame">
-                <div class="crop-grid"></div>
-            </div>
+            <div id="crop-frame" class="crop-frame"><div class="crop-grid"></div></div>
         </div>
-
         <div class="crop-controls">
             <button type="button" class="crop-control" onclick="cropZoom(-0.1)">تصغير</button>
             <button type="button" class="crop-control" onclick="cropReset()">إعادة ضبط</button>
             <button type="button" class="crop-control" onclick="cropZoom(0.1)">تكبير</button>
         </div>
-
         <div id="crop-preview-wrap" class="crop-preview-wrap">
             <div class="crop-preview-title">معاينة القص</div>
             <img id="crop-preview" class="crop-preview" alt="معاينة القص">
         </div>
-
         <div class="crop-actions">
             <button type="button" class="crop-action cancel" onclick="closeCropModal()">إلغاء</button>
             <button type="button" class="crop-action preview" onclick="previewCrop()">معاينة القص</button>
@@ -857,11 +304,9 @@
 </div>
 
 <script>
-
 /* =========================================================
-   الإعدادات
+   الإعدادات العامة
    ========================================================= */
-
 const SECRET_PASSWORD = "ayman";
 const AUTH_KEY = "auth_token_v2";
 const AUTH_VALUE = "authenticated";
@@ -879,35 +324,28 @@ let detectedImages = [];
 let imageAnalysisTimer = null;
 
 let cropState = {
-    item: null,
-    sourceDataUrl: "",
-    sourceFileName: "",
-    sourceMimeType: "",
-    originalDataUrl: "",
-    image: null,
-    naturalWidth: 0,
-    naturalHeight: 0,
+    item: null, sourceDataUrl: "", sourceFileName: "", sourceMimeType: "",
+    originalDataUrl: "", image: null, naturalWidth: 0, naturalHeight: 0,
     targetRatio: 1,
     frame: { left: 0, top: 0, width: 0, height: 0 },
-    imageLeft: 0,
-    imageTop: 0,
-    baseScale: 1,
-    zoom: 1,
-    minZoom: 1,
-    maxZoom: 4,
-    displayScale: 1,
-    dragging: false,
-    pointerId: null,
-    startPointerX: 0,
-    startPointerY: 0,
-    startImageLeft: 0,
-    startImageTop: 0
+    imageLeft: 0, imageTop: 0, baseScale: 1, zoom: 1, minZoom: 1, maxZoom: 4,
+    displayScale: 1, dragging: false, pointerId: null,
+    startPointerX: 0, startPointerY: 0, startImageLeft: 0, startImageTop: 0
 };
 
 /* =========================================================
-   استخراج URL من CSS
+   أدوات عامة — Escape
    ========================================================= */
+function escapeHTML(value) {
+    return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+function escapeAttribute(value) { return escapeHTML(value); }
 
+/* =========================================================
+   استخراج روابط الصور من CSS
+   ========================================================= */
 function extractImageUrls(value) {
     if (!value) return [];
     const urls = [];
@@ -916,16 +354,15 @@ function extractImageUrls(value) {
     while ((match = regex.exec(value)) !== null) {
         const url = String(match[2] || "").trim();
         if (!url) continue;
-        if (url.startsWith("#") || url.startsWith("data:image/svg")) continue;
+        if (url.charAt(0) === "#" || url.indexOf("data:image/svg") === 0) continue;
         urls.push(url);
     }
     return urls;
 }
 
 /* =========================================================
-   أسماء الصور
+   اسم الملف من الرابط
    ========================================================= */
-
 function getFileNameFromURL(src) {
     if (!src) return "";
     try {
@@ -933,34 +370,29 @@ function getFileNameFromURL(src) {
         const parts = clean.split("/");
         const file = parts[parts.length - 1];
         if (file) return decodeURIComponent(file);
-    } catch {}
+    } catch (e) {}
     return "";
 }
 
-function getImageDisplayName(element, index, type = "img", src = "") {
+function getImageDisplayName(element, index, type, src) {
+    type = type || "img";
+    src = src || "";
     if (element) {
         const customName = element.getAttribute("data-image-name");
         if (customName && customName.trim()) return customName.trim();
-
         const alt = element.getAttribute("alt");
         if (alt && alt.trim()) return alt.trim();
-
         const title = element.getAttribute("title");
         if (title && title.trim()) return title.trim();
     }
-
     const file = getFileNameFromURL(src);
     if (file) return file;
-
-    return type === "background"
-        ? `خلفية ${index + 1}`
-        : `الصورة ${index + 1}`;
+    return type === "background" ? ("خلفية " + (index + 1)) : ("الصورة " + (index + 1));
 }
 
 /* =========================================================
-   تحديد رقم الصفحة
+   رقم الصفحة
    ========================================================= */
-
 function getParsedPageNumber(element, doc) {
     if (!element) return 1;
     const page = element.closest(".page");
@@ -971,100 +403,66 @@ function getParsedPageNumber(element, doc) {
 }
 
 /* =========================================================
-   selector ثابت للعنصر
+   selector ثابت
    ========================================================= */
-
 function getStableSelector(element, doc) {
     if (!element) return "";
-    if (element.id) return `#${CSS.escape(element.id)}`;
-
+    if (element.id) return "#" + CSS.escape(element.id);
     const classes = Array.from(element.classList || []).filter(Boolean);
-
     if (classes.length) {
-        const selector =
-            element.tagName.toLowerCase() +
-            classes.slice(0, 3).map(cls => `.${CSS.escape(cls)}`).join("");
-        try {
-            if (doc.querySelectorAll(selector).length === 1) return selector;
-        } catch {}
+        const selector = element.tagName.toLowerCase() +
+            classes.slice(0, 3).map(function (cls) { return "." + CSS.escape(cls); }).join("");
+        try { if (doc.querySelectorAll(selector).length === 1) return selector; } catch (e) {}
     }
-
     const path = [];
     let current = element;
-
     while (current && current.nodeType === 1 && current !== doc.body) {
         let part = current.tagName.toLowerCase();
-
-        if (current.id) {
-            part += `#${CSS.escape(current.id)}`;
-            path.unshift(part);
-            break;
-        }
-
+        if (current.id) { part += "#" + CSS.escape(current.id); path.unshift(part); break; }
         const parent = current.parentElement;
         if (parent) {
-            const siblings = Array.from(parent.children)
-                .filter(child => child.tagName === current.tagName);
+            const siblings = Array.from(parent.children).filter(function (child) {
+                return child.tagName === current.tagName;
+            });
             if (siblings.length > 1) {
                 const index = siblings.indexOf(current) + 1;
-                part += `:nth-of-type(${index})`;
+                part += ":nth-of-type(" + index + ")";
             }
         }
-
         path.unshift(part);
         current = parent;
     }
-
     return path.join(" > ");
 }
 
 /* =========================================================
    أبعاد IMG
    ========================================================= */
-
 function getImageDefinedDimensions(img) {
     if (!img) return { width: "حسب CSS", height: "حسب CSS", source: "CSS" };
-
-    let width = img.getAttribute("width");
-    let height = img.getAttribute("height");
-
-    if (width && height) return { width, height, source: "HTML" };
-
+    const width = img.getAttribute("width");
+    const height = img.getAttribute("height");
+    if (width && height) return { width: width, height: height, source: "HTML" };
     const style = img.getAttribute("style") || "";
-    const widthMatch = style.match(/(?:^|;)\s*width\s*:\s*([^;]+)/i);
-    const heightMatch = style.match(/(?:^|;)\s*height\s*:\s*([^;]+)/i);
-
-    if (widthMatch && heightMatch) {
-        return {
-            width: widthMatch[1].trim(),
-            height: heightMatch[1].trim(),
-            source: "CSS"
-        };
-    }
-
+    const wm = style.match(/(?:^|;)\s*width\s*:\s*([^;]+)/i);
+    const hm = style.match(/(?:^|;)\s*height\s*:\s*([^;]+)/i);
+    if (wm && hm) return { width: wm[1].trim(), height: hm[1].trim(), source: "CSS" };
     return { width: "حسب CSS", height: "حسب CSS", source: "CSS" };
 }
 
 /* =========================================================
    الأبعاد الطبيعية
    ========================================================= */
-
 function getNaturalImageSize(src) {
-    return new Promise(resolve => {
+    return new Promise(function (resolve) {
         if (!src) { resolve({ width: null, height: null }); return; }
-
         const img = new Image();
         let finished = false;
-
-        const done = () => {
+        const done = function () {
             if (finished) return;
             finished = true;
-            resolve({
-                width: img.naturalWidth || null,
-                height: img.naturalHeight || null
-            });
+            resolve({ width: img.naturalWidth || null, height: img.naturalHeight || null });
         };
-
         img.onload = done;
         img.onerror = done;
         setTimeout(done, 3000);
@@ -1073,66 +471,49 @@ function getNaturalImageSize(src) {
 }
 
 /* =========================================================
-   إضافة صورة مكتشفة
+   إضافة صورة مكتشفة (بدون تكرار)
    ========================================================= */
-
 function addDetectedImage(list, data) {
     const normalized = String(data.src || "").trim();
     if (!normalized) return;
-
-    const duplicate = list.some(
-        item =>
-            item.type === data.type &&
-            item.src === normalized &&
-            item.target === data.target
-    );
-
+    const duplicate = list.some(function (item) {
+        return item.type === data.type && item.src === normalized && item.target === data.target;
+    });
     if (duplicate) return;
-
-    list.push({ ...data, src: normalized });
+    const newItem = Object.assign({}, data);
+    newItem.src = normalized;
+    list.push(newItem);
 }
 
 /* =========================================================
-   استخراج src الفعلي من img (دعم lazy-load)
+   استخراج src الفعلي (دعم lazy-load)
    ========================================================= */
-
 function resolveImgSrc(img) {
-    let src =
-        img.getAttribute("src") ||
-        img.getAttribute("data-src") ||
-        img.getAttribute("data-original") ||
-        img.getAttribute("data-lazy-src") ||
-        "";
-
+    let src = img.getAttribute("src") ||
+              img.getAttribute("data-src") ||
+              img.getAttribute("data-original") ||
+              img.getAttribute("data-lazy-src") || "";
     if (!src) {
-        const srcset =
-            img.getAttribute("srcset") ||
-            img.getAttribute("data-srcset") ||
-            "";
+        const srcset = img.getAttribute("srcset") || img.getAttribute("data-srcset") || "";
         if (srcset) {
             const first = srcset.split(",")[0].trim().split(/\s+/)[0];
             if (first) src = first;
         }
     }
-
     return src;
 }
 
 /* =========================================================
-   تحليل الصور
+   تحليل الصور في الكود
    ========================================================= */
-
 async function analyzeHTMLImages() {
-
     const textarea = document.getElementById("html-input");
-    const manager  = document.getElementById("image-manager");
-    const list     = document.getElementById("image-manager-list");
-    const count    = document.getElementById("image-manager-count");
-
+    const manager = document.getElementById("image-manager");
+    const list = document.getElementById("image-manager-list");
+    const count = document.getElementById("image-manager-count");
     if (!textarea || !manager || !list) return;
 
     const code = textarea.value;
-
     if (!code.trim()) {
         detectedImages = [];
         imageReplacements.clear();
@@ -1142,392 +523,250 @@ async function analyzeHTMLImages() {
     }
 
     let doc;
-    try {
-        doc = new DOMParser().parseFromString(code, "text/html");
-    } catch {
-        detectedImages = [];
-        manager.classList.remove("visible");
-        return;
-    }
+    try { doc = new DOMParser().parseFromString(code, "text/html"); }
+    catch (e) { detectedImages = []; manager.classList.remove("visible"); return; }
 
     const found = [];
 
     /* ----- 1) صور IMG ----- */
     const images = Array.from(doc.querySelectorAll("img"));
-
-    images.forEach((img, index) => {
+    images.forEach(function (img, index) {
         const src = resolveImgSrc(img);
         if (!src) return;
-
         const dimensions = getImageDefinedDimensions(img);
-
         addDetectedImage(found, {
-            type: "img",
-            index,
+            type: "img", index: index,
             target: getStableSelector(img, doc),
             page: getParsedPageNumber(img, doc),
             name: getImageDisplayName(img, index, "img", src),
-            src,
-            alt: img.getAttribute("alt") || "",
-            width: dimensions.width,
-            height: dimensions.height,
+            src: src, alt: img.getAttribute("alt") || "",
+            width: dimensions.width, height: dimensions.height,
             dimensionSource: dimensions.source
         });
     });
 
     /* ----- 2) background داخل inline style ----- */
     const allElements = Array.from(doc.querySelectorAll("*"));
-
-    allElements.forEach((element, elementIndex) => {
+    allElements.forEach(function (element, elementIndex) {
         const style = element.getAttribute("style") || "";
         if (!style) return;
-
         const urls = extractImageUrls(style);
-
-        urls.forEach((src, bgIndex) => {
+        urls.forEach(function (src, bgIndex) {
             addDetectedImage(found, {
-                type: "background",
-                subtype: "inline",
+                type: "background", subtype: "inline",
                 index: found.length,
                 target: getStableSelector(element, doc),
-                elementIndex,
-                backgroundIndex: bgIndex,
+                elementIndex: elementIndex, backgroundIndex: bgIndex,
                 page: getParsedPageNumber(element, doc),
                 name: getImageDisplayName(element, found.length, "background", src),
-                src,
-                alt: "",
-                width: "حسب CSS",
-                height: "حسب CSS",
-                dimensionSource: "CSS"
+                src: src, alt: "",
+                width: "حسب CSS", height: "حسب CSS", dimensionSource: "CSS"
             });
         });
     });
 
     /* ----- 3) background داخل <style> ----- */
     const styleTags = Array.from(doc.querySelectorAll("style"));
-
-    styleTags.forEach((styleTag, styleIndex) => {
+    styleTags.forEach(function (styleTag, styleIndex) {
         const cssText = styleTag.textContent || "";
         if (!cssText.trim()) return;
-
         let cssRules = [];
-
         try {
             const tempStyle = document.createElement("style");
             tempStyle.textContent = cssText;
             document.head.appendChild(tempStyle);
-
-            cssRules = Array.from(tempStyle.sheet?.cssRules || []);
-
-            cssRules.forEach((rule, ruleIndex) => {
+            cssRules = Array.from((tempStyle.sheet && tempStyle.sheet.cssRules) || []);
+            cssRules.forEach(function (rule, ruleIndex) {
                 if (!rule.selectorText || !rule.style) return;
-
-                const cssValue = [rule.style.backgroundImage, rule.style.background]
-                    .filter(Boolean).join(";");
-
+                const cssValue = [rule.style.backgroundImage, rule.style.background].filter(Boolean).join(";");
                 const urls = extractImageUrls(cssValue);
                 if (!urls.length) return;
-
                 let matchedElements = [];
-                try {
-                    matchedElements = Array.from(doc.querySelectorAll(rule.selectorText));
-                } catch {
-                    matchedElements = [];
-                }
-
-                urls.forEach((src, bgIndex) => {
+                try { matchedElements = Array.from(doc.querySelectorAll(rule.selectorText)); }
+                catch (e) { matchedElements = []; }
+                urls.forEach(function (src, bgIndex) {
                     if (matchedElements.length) {
-                        matchedElements.forEach(element => {
+                        matchedElements.forEach(function (element) {
                             addDetectedImage(found, {
-                                type: "background",
-                                subtype: "css-rule",
+                                type: "background", subtype: "css-rule",
                                 index: found.length,
                                 target: getStableSelector(element, doc),
                                 selector: rule.selectorText,
-                                styleIndex,
-                                ruleIndex,
+                                styleIndex: styleIndex, ruleIndex: ruleIndex,
                                 backgroundIndex: bgIndex,
                                 page: getParsedPageNumber(element, doc),
                                 name: getImageDisplayName(element, found.length, "background", src),
-                                src, alt: "",
-                                width: "حسب CSS",
-                                height: "حسب CSS",
-                                dimensionSource: "CSS"
+                                src: src, alt: "",
+                                width: "حسب CSS", height: "حسب CSS", dimensionSource: "CSS"
                             });
                         });
                     } else {
                         addDetectedImage(found, {
-                            type: "background",
-                            subtype: "css-rule",
-                            index: found.length,
-                            target: "",
+                            type: "background", subtype: "css-rule",
+                            index: found.length, target: "",
                             selector: rule.selectorText,
-                            styleIndex,
-                            ruleIndex,
-                            backgroundIndex: bgIndex,
-                            page: 1,
+                            styleIndex: styleIndex, ruleIndex: ruleIndex,
+                            backgroundIndex: bgIndex, page: 1,
                             name: getImageDisplayName(null, found.length, "background", src),
-                            src, alt: "",
-                            width: "حسب CSS",
-                            height: "حسب CSS",
-                            dimensionSource: "CSS"
+                            src: src, alt: "",
+                            width: "حسب CSS", height: "حسب CSS", dimensionSource: "CSS"
                         });
                     }
                 });
             });
-
             tempStyle.remove();
-
-        } catch (error) {
-            console.warn("تعذر تحليل CSS:", error);
-        }
+        } catch (error) { console.warn("تعذر تحليل CSS:", error); }
     });
 
     /* ----- الحفاظ على الاستبدالات القديمة ----- */
     const oldReplacements = imageReplacements;
     const newReplacements = new Map();
-
-    found.forEach((item, index) => {
+    found.forEach(function (item, index) {
         item.index = index;
         item.key = createImageKey(item);
-        if (oldReplacements.has(item.key)) {
-            newReplacements.set(item.key, oldReplacements.get(item.key));
-        }
+        if (oldReplacements.has(item.key)) newReplacements.set(item.key, oldReplacements.get(item.key));
     });
-
     imageReplacements = newReplacements;
     detectedImages = found;
 
-    count.textContent = `${detectedImages.length} صورة`;
-
+    if (count) count.textContent = detectedImages.length + " صورة";
     if (!detectedImages.length) {
         manager.classList.remove("visible");
-        list.innerHTML = `<div class="image-empty">لا توجد صور في الكود الحالي.</div>`;
+        list.innerHTML = '<div class="image-empty">لا توجد صور في الكود الحالي.</div>';
         return;
     }
-
     manager.classList.add("visible");
     renderImageManager();
 
-    /* ----- جلب الأبعاد الأصلية ----- */
-    detectedImages.forEach(async item => {
-        const natural = await getNaturalImageSize(item.src);
-        item.naturalWidth = natural.width;
-        item.naturalHeight = natural.height;
-        renderImageManager();
+    detectedImages.forEach(function (item) {
+        getNaturalImageSize(item.src).then(function (natural) {
+            item.naturalWidth = natural.width;
+            item.naturalHeight = natural.height;
+            renderImageManager();
+        });
     });
 }
 
 /* =========================================================
    مفتاح الصورة
    ========================================================= */
-
 function createImageKey(item) {
-    return [
-        item.type,
-        item.subtype || "",
-        item.src || "",
-        item.target || "",
+    return [item.type, item.subtype || "", item.src || "", item.target || "",
         item.selector || "",
-        item.styleIndex ?? "",
-        item.ruleIndex ?? "",
-        item.backgroundIndex ?? ""
+        item.styleIndex != null ? item.styleIndex : "",
+        item.ruleIndex != null ? item.ruleIndex : "",
+        item.backgroundIndex != null ? item.backgroundIndex : ""
     ].join("|");
 }
 
 /* =========================================================
    عرض مدير الصور
    ========================================================= */
-
 function renderImageManager() {
-
     const list = document.getElementById("image-manager-list");
     if (!list) return;
-
     if (!detectedImages.length) {
-        list.innerHTML = `<div class="image-empty">لا توجد صور في الكود الحالي.</div>`;
+        list.innerHTML = '<div class="image-empty">لا توجد صور في الكود الحالي.</div>';
         return;
     }
-
-    list.innerHTML = detectedImages.map(item => {
-
+    list.innerHTML = detectedImages.map(function (item) {
         const replacement = imageReplacements.get(item.key);
         const isReplaced = !!replacement;
         const previewSrc = replacement ? replacement.dataUrl : item.src;
         const displayName = replacement ? replacement.fileName : item.name;
-
-        const naturalDimensions =
-            item.naturalWidth && item.naturalHeight
-                ? `${item.naturalWidth} × ${item.naturalHeight}px`
-                : "غير معروف";
-
-        const definedDimensions = `${item.width} × ${item.height}`;
+        const naturalDimensions = (item.naturalWidth && item.naturalHeight)
+            ? (item.naturalWidth + " × " + item.naturalHeight + "px")
+            : "غير معروف";
+        const definedDimensions = item.width + " × " + item.height;
         const typeLabel = item.type === "img" ? "IMG" : "خلفية CSS";
-        const sourceLabel =
-            item.type === "img" ? "src"
-            : item.subtype === "inline" ? "style"
-            : "CSS rule";
+        const sourceLabel = item.type === "img" ? "src"
+            : item.subtype === "inline" ? "style" : "CSS rule";
+        let thumbContent;
+        if (previewSrc) thumbContent = '<img src="' + escapeAttribute(previewSrc) + '" alt="">';
+        else thumbContent = '<span style="color:#475569;font-size:20px;">🖼️</span>';
+        let selectorHtml = "";
+        if (item.selector) selectorHtml = '<div class="html-image-url" title="' + escapeAttribute(item.selector) + '">CSS: ' + escapeHTML(item.selector) + '</div>';
+        let cropEditHtml = "";
+        if (isReplaced) cropEditHtml = '<button type="button" class="html-image-action crop-edit" onclick="editReplacementCrop(' + item.index + ')">✂️ تعديل القص</button>';
+        const statusHtml = isReplaced ? '✅ سيتم استخدام: ' + escapeHTML(replacement.fileName) : 'الصورة الحالية مستخدمة';
 
-        return `
-            <div class="html-image-card ${isReplaced ? "replaced" : ""}"
-                data-image-card="${item.index}">
-
-                <div class="html-image-card-top">
-                    <div class="html-image-thumb">
-                        ${previewSrc
-                            ? `<img src="${escapeAttribute(previewSrc)}" alt="">`
-                            : `<span style="color:#475569;font-size:20px;">🖼️</span>`}
-                    </div>
-
-                    <div class="html-image-info">
-                        <p class="html-image-name" title="${escapeAttribute(displayName)}">
-                            ${escapeHTML(displayName)}
-                        </p>
-
-                        <div class="html-image-meta">
-                            <div class="html-image-meta-item">
-                                <strong>النوع:</strong> ${typeLabel}
-                            </div>
-                            <div class="html-image-meta-item">
-                                <strong>المصدر:</strong> ${sourceLabel}
-                            </div>
-                            <div class="html-image-meta-item">
-                                <strong>الصفحة:</strong> ${item.page}
-                            </div>
-                            <div class="html-image-meta-item">
-                                <strong>الصورة:</strong> ${item.index + 1}
-                            </div>
-                            <div class="html-image-meta-item">
-                                <strong>أبعاد الكود:</strong> ${escapeHTML(definedDimensions)}
-                            </div>
-                            <div class="html-image-meta-item">
-                                <strong>الأبعاد الأصلية:</strong> ${naturalDimensions}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="html-image-url" title="${escapeAttribute(item.src)}">
-                    ${escapeHTML(isReplaced ? "تم اختيار صورة جديدة وقصها" : item.src)}
-                </div>
-
-                ${item.selector
-                    ? `<div class="html-image-url" title="${escapeAttribute(item.selector)}">
-                            CSS: ${escapeHTML(item.selector)}
-                       </div>`
-                    : ""}
-
-                <div class="html-image-actions">
-                    <button class="html-image-action keep"
-                        onclick="keepOriginalImage(${item.index})">
-                        ↩️ الاحتفاظ بالحالية
-                    </button>
-
-                    <button class="html-image-action replace"
-                        onclick="chooseReplacementImage(${item.index})">
-                        🖼️ اختيار من الاستوديو
-                    </button>
-
-                    ${isReplaced
-                        ? `<button class="html-image-action crop-edit"
-                              onclick="editReplacementCrop(${item.index})">
-                              ✂️ تعديل القص
-                           </button>`
-                        : ""}
-                </div>
-
-                <div class="html-image-status">
-                    ${isReplaced
-                        ? `✅ سيتم استخدام: ${escapeHTML(replacement.fileName)}`
-                        : "الصورة الحالية مستخدمة"}
-                </div>
-            </div>
-        `;
+        return '' +
+            '<div class="html-image-card ' + (isReplaced ? "replaced" : "") + '" data-image-card="' + item.index + '">' +
+                '<div class="html-image-card-top">' +
+                    '<div class="html-image-thumb">' + thumbContent + '</div>' +
+                    '<div class="html-image-info">' +
+                        '<p class="html-image-name" title="' + escapeAttribute(displayName) + '">' + escapeHTML(displayName) + '</p>' +
+                        '<div class="html-image-meta">' +
+                            '<div class="html-image-meta-item"><strong>النوع:</strong> ' + typeLabel + '</div>' +
+                            '<div class="html-image-meta-item"><strong>المصدر:</strong> ' + sourceLabel + '</div>' +
+                            '<div class="html-image-meta-item"><strong>الصفحة:</strong> ' + item.page + '</div>' +
+                            '<div class="html-image-meta-item"><strong>الصورة:</strong> ' + (item.index + 1) + '</div>' +
+                            '<div class="html-image-meta-item"><strong>أبعاد الكود:</strong> ' + escapeHTML(definedDimensions) + '</div>' +
+                            '<div class="html-image-meta-item"><strong>الأبعاد الأصلية:</strong> ' + naturalDimensions + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="html-image-url" title="' + escapeAttribute(item.src) + '">' +
+                    escapeHTML(isReplaced ? "تم اختيار صورة جديدة وقصها" : item.src) +
+                '</div>' +
+                selectorHtml +
+                '<div class="html-image-actions">' +
+                    '<button type="button" class="html-image-action keep" onclick="keepOriginalImage(' + item.index + ')">↩️ الاحتفاظ بالحالية</button>' +
+                    '<button type="button" class="html-image-action replace" onclick="chooseReplacementImage(' + item.index + ')">🖼️ اختيار من الاستوديو</button>' +
+                    cropEditHtml +
+                '</div>' +
+                '<div class="html-image-status">' + statusHtml + '</div>' +
+            '</div>';
     }).join("");
 }
 
 /* =========================================================
    اختيار صورة بديلة
    ========================================================= */
-
 function chooseReplacementImage(index) {
-
     const item = detectedImages[index];
     if (!item) return;
-
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
     input.style.display = "none";
-
     document.body.appendChild(input);
-
-    input.addEventListener("change", async () => {
-
+    input.addEventListener("change", async function () {
         const file = input.files && input.files[0];
         if (!file) { input.remove(); return; }
-
         if (!file.type || !file.type.startsWith("image/")) {
             alert("الملف المحدد ليس صورة.");
             input.remove();
             return;
         }
-
         try {
             const dataUrl = await readFileAsDataURL(file);
-
             await openCropEditor({
-                item,
-                sourceDataUrl: dataUrl,
-                sourceFileName: file.name,
-                sourceMimeType: file.type,
+                item: item, sourceDataUrl: dataUrl,
+                sourceFileName: file.name, sourceMimeType: file.type,
                 originalDataUrl: dataUrl
             });
         } catch (error) {
             console.error(error);
             alert("تعذر قراءة الصورة.");
-        } finally {
-            input.remove();
-        }
+        } finally { input.remove(); }
     }, { once: true });
-
     input.click();
 }
 
-/* =========================================================
-   تعديل قص صورة موجودة
-   ========================================================= */
-
 async function editReplacementCrop(index) {
-
     const item = detectedImages[index];
     if (!item) return;
-
     const replacement = imageReplacements.get(item.key);
-
-    if (!replacement) {
-        chooseReplacementImage(index);
-        return;
-    }
-
+    if (!replacement) { chooseReplacementImage(index); return; }
     await openCropEditor({
-        item,
-        sourceDataUrl:
-            replacement.originalDataUrl || replacement.dataUrl,
-        sourceFileName:
-            replacement.originalFileName || replacement.fileName,
-        sourceMimeType:
-            replacement.originalMimeType ||
-            replacement.mimeType ||
-            "image/png",
-        originalDataUrl:
-            replacement.originalDataUrl || replacement.dataUrl
+        item: item,
+        sourceDataUrl: replacement.originalDataUrl || replacement.dataUrl,
+        sourceFileName: replacement.originalFileName || replacement.fileName,
+        sourceMimeType: replacement.originalMimeType || replacement.mimeType || "image/png",
+        originalDataUrl: replacement.originalDataUrl || replacement.dataUrl
     });
 }
-
-/* =========================================================
-   الاحتفاظ بالصورة
-   ========================================================= */
 
 function keepOriginalImage(index) {
     const item = detectedImages[index];
@@ -1536,398 +775,242 @@ function keepOriginalImage(index) {
     renderImageManager();
 }
 
-/* =========================================================
-   قراءة الملف
-   ========================================================= */
-
 function readFileAsDataURL(file) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(reader.error || new Error("FileReader failed"));
+        reader.onload = function () { resolve(reader.result); };
+        reader.onerror = function () { reject(reader.error || new Error("FileReader failed")); };
         reader.readAsDataURL(file);
     });
 }
 
 /* =========================================================
-   Escape
+   استبدال URL داخل CSS
    ========================================================= */
-
-function escapeHTML(value) {
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-function escapeAttribute(value) {
-    return escapeHTML(value);
-}
-
-/* =========================================================
-   استبدال URL داخل قيمة CSS
-   ========================================================= */
-
 function replaceCSSImageURL(value, original, replacement) {
     if (!value || !original || !replacement) return value;
-
     const escaped = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const regex = new RegExp(escaped, "g");
-
     return value.replace(regex, replacement);
 }
 
 /* =========================================================
-   تطبيق الاستبدالات على IMG والخلفيات
+   تطبيق الاستبدالات على الحاوية
    ========================================================= */
-
 function applyImageReplacements(container) {
-
     if (!container || !detectedImages.length) return;
-
     const images = Array.from(container.querySelectorAll("img"));
-
-    detectedImages.filter(item => item.type === "img").forEach(item => {
-
+    detectedImages.filter(function (item) { return item.type === "img"; }).forEach(function (item) {
         const replacement = imageReplacements.get(item.key);
         if (!replacement) return;
-
         let img = null;
         try {
             const ownerDoc = container.ownerDocument || document;
-            img = images.find(element =>
-                getStableSelector(element, ownerDoc) === item.target
-            ) || null;
-        } catch {}
-
+            img = images.find(function (element) { return getStableSelector(element, ownerDoc) === item.target; }) || null;
+        } catch (e) {}
         if (!img) img = images[item.index] || null;
         if (!img) return;
-
         img.setAttribute("src", replacement.dataUrl);
         img.src = replacement.dataUrl;
         img.removeAttribute("srcset");
         img.removeAttribute("sizes");
     });
-
-    detectedImages.filter(item => item.type === "background").forEach(item => {
-
+    detectedImages.filter(function (item) { return item.type === "background"; }).forEach(function (item) {
         const replacement = imageReplacements.get(item.key);
         if (!replacement) return;
-
         let elements = [];
-
-        try {
-            if (item.target) {
-                elements = Array.from(container.querySelectorAll(item.target));
-            }
-        } catch {}
-
+        try { if (item.target) elements = Array.from(container.querySelectorAll(item.target)); } catch (e) {}
         if (!elements.length && item.selector) {
-            try {
-                elements = Array.from(container.querySelectorAll(item.selector));
-            } catch {}
+            try { elements = Array.from(container.querySelectorAll(item.selector)); } catch (e) {}
         }
-
         if (!elements.length) return;
-
-        elements.forEach(element => {
+        elements.forEach(function (element) {
             applyBackgroundReplacementToElement(element, item.src, replacement.dataUrl);
         });
     });
 }
 
-/* =========================================================
-   استبدال background لعنصر
-   ========================================================= */
-
 function applyBackgroundReplacementToElement(element, original, replacement) {
-
     if (!element || !original || !replacement) return;
-
     const inlineStyle = element.getAttribute("style") || "";
-
-    if (inlineStyle && inlineStyle.includes(original)) {
-        element.setAttribute("style",
-            replaceCSSImageURL(inlineStyle, original, replacement));
+    if (inlineStyle && inlineStyle.indexOf(original) !== -1) {
+        element.setAttribute("style", replaceCSSImageURL(inlineStyle, original, replacement));
     }
-
     try {
         const computed = getComputedStyle(element);
         const bgImage = computed.backgroundImage;
-        if (bgImage && bgImage.includes(original)) {
-            element.style.backgroundImage =
-                replaceCSSImageURL(bgImage, original, replacement);
+        if (bgImage && bgImage.indexOf(original) !== -1) {
+            element.style.backgroundImage = replaceCSSImageURL(bgImage, original, replacement);
         }
-    } catch {}
-
+    } catch (e) {}
     try {
         const background = element.style.background;
-        if (background && background.includes(original)) {
-            element.style.background =
-                replaceCSSImageURL(background, original, replacement);
+        if (background && background.indexOf(original) !== -1) {
+            element.style.background = replaceCSSImageURL(background, original, replacement);
         }
-    } catch {}
+    } catch (e) {}
 }
 
-/* =========================================================
-   تطبيق الاستبدالات على Document (للمعاينة فقط)
-   ========================================================= */
-
 function applyImageReplacementsToDocument(doc) {
-
     if (!doc || !detectedImages.length) return;
-
     const images = Array.from(doc.querySelectorAll("img"));
-
-    detectedImages.filter(item => item.type === "img").forEach(item => {
-
+    detectedImages.filter(function (item) { return item.type === "img"; }).forEach(function (item) {
         const replacement = imageReplacements.get(item.key);
         if (!replacement) return;
-
-        const img = images.find(element =>
-            getStableSelector(element, doc) === item.target
-        ) || images[item.index];
-
+        const img = images.find(function (element) { return getStableSelector(element, doc) === item.target; }) || images[item.index];
         if (!img) return;
-
         img.src = replacement.dataUrl;
         img.setAttribute("src", replacement.dataUrl);
         img.removeAttribute("srcset");
         img.removeAttribute("sizes");
     });
-
-    detectedImages.filter(item => item.type === "background").forEach(item => {
-
+    detectedImages.filter(function (item) { return item.type === "background"; }).forEach(function (item) {
         const replacement = imageReplacements.get(item.key);
         if (!replacement) return;
-
         let elements = [];
-
-        try {
-            if (item.target) {
-                elements = Array.from(doc.querySelectorAll(item.target));
-            }
-        } catch {}
-
-        elements.forEach(element => {
+        try { if (item.target) elements = Array.from(doc.querySelectorAll(item.target)); } catch (e) {}
+        elements.forEach(function (element) {
             applyBackgroundReplacementToElement(element, item.src, replacement.dataUrl);
         });
     });
 }
 
-/* =========================================================
-   مراقبة التحليل
-   ========================================================= */
-
 function scheduleImageAnalysis() {
     clearTimeout(imageAnalysisTimer);
-    imageAnalysisTimer = setTimeout(() => { analyzeHTMLImages(); }, 300);
+    imageAnalysisTimer = setTimeout(function () { analyzeHTMLImages(); }, 300);
 }
 
 /* =========================================================
-   الحصول على نسبة إطار الصورة الحقيقي
+   الحصول على نسبة إطار الصورة
    ========================================================= */
-
 async function getCropTargetRatio(item) {
-
-    const fallback =
-        item && item.naturalWidth && item.naturalHeight
-            ? item.naturalWidth / item.naturalHeight
-            : 1;
-
+    const fallback = (item && item.naturalWidth && item.naturalHeight)
+        ? item.naturalWidth / item.naturalHeight : 1;
     const textarea = document.getElementById("html-input");
     if (!textarea) return fallback;
-
     const code = textarea.value;
     if (!code.trim()) return fallback;
 
     let width = 794;
-    const type = document.getElementById("prompt-type")?.value;
-    if (type === "169") width = 1280;
+    const typeEl = document.getElementById("prompt-type");
+    if (typeEl && typeEl.value === "169") width = 1280;
 
     const container = document.createElement("div");
-    container.style.position = "absolute";
-    container.style.left = "-99999px";
-    container.style.top = "0";
-    container.style.width = width + "px";
-    container.style.height = "auto";
-    container.style.minHeight = "100vh";
-    container.style.visibility = "hidden";
-    container.style.pointerEvents = "none";
-    container.style.fontFamily = "inherit";
-    container.style.overflow = "visible";
-    container.style.contain = "layout";
-
+    container.style.cssText = "position:absolute;left:-99999px;top:0;width:" + width + "px;height:auto;min-height:100vh;visibility:hidden;pointer-events:none;overflow:visible;contain:layout;";
     container.innerHTML = code;
 
     const fix = document.createElement("style");
-    fix.textContent = `
-        [data-crop-measure] html,
-        [data-crop-measure] body {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-        [data-crop-measure] .page {
-            box-sizing: border-box !important;
-        }
-    `;
-
+    fix.textContent = "[data-crop-measure] html,[data-crop-measure] body{margin:0!important;padding:0!important}[data-crop-measure] .page{box-sizing:border-box!important}";
     container.setAttribute("data-crop-measure", "true");
     container.appendChild(fix);
     document.body.appendChild(container);
 
-    return await new Promise(resolve => {
-        requestAnimationFrame(() => {
+    return await new Promise(function (resolve) {
+        requestAnimationFrame(function () {
             try {
                 let target = null;
-
                 if (item.target) {
                     try {
                         const matches = Array.from(container.querySelectorAll(item.target));
                         if (matches.length) {
-                            target = matches.find(el =>
-                                getParsedPageNumber(el, container.ownerDocument) === item.page
-                            ) || matches[0];
+                            target = matches.find(function (el) {
+                                return getParsedPageNumber(el, container.ownerDocument) === item.page;
+                            }) || matches[0];
                         }
-                    } catch {}
+                    } catch (e) {}
                 }
-
                 if (!target && item.selector) {
-                    try {
-                        target = container.querySelector(item.selector);
-                    } catch {}
+                    try { target = container.querySelector(item.selector); } catch (e) {}
                 }
-
                 if (!target) {
-                    try {
-                        const firstImg = container.querySelector("img");
-                        if (firstImg) target = firstImg;
-                    } catch {}
+                    try { const firstImg = container.querySelector("img"); if (firstImg) target = firstImg; } catch (e) {}
                 }
-
                 if (target) {
                     const rect = target.getBoundingClientRect();
                     if (rect.width >= 1 && rect.height >= 1) {
                         const ratio = rect.width / rect.height;
                         if (Number.isFinite(ratio) && ratio > 0) {
-                            container.remove();
-                            resolve(ratio);
-                            return;
+                            container.remove(); resolve(ratio); return;
                         }
                     }
                 }
-            } catch (error) {
-                console.warn("تعذر تحديد نسبة إطار الصورة:", error);
-            } finally {
-                try { container.remove(); } catch {}
-            }
-
+            } catch (error) { console.warn("تعذر تحديد نسبة إطار الصورة:", error); }
+            finally { try { container.remove(); } catch (e) {} }
             resolve(fallback);
         });
     });
 }
 
 /* =========================================================
-   حساب أبعاد إطار القص
+   حساب إطار القص
    ========================================================= */
-
 function calculateCropFrame() {
-
     const stage = document.getElementById("crop-stage");
     const frame = document.getElementById("crop-frame");
-
     if (!stage || !frame) return;
-
     const stageWidth = stage.clientWidth;
     const stageHeight = stage.clientHeight;
-
     if (stageWidth < 1 || stageHeight < 1) return;
 
     const maxWidth = stageWidth * 0.9;
     const maxHeight = stageHeight * 0.9;
-
     let frameWidth = maxWidth;
     let frameHeight = frameWidth / cropState.targetRatio;
-
     if (frameHeight > maxHeight) {
         frameHeight = maxHeight;
         frameWidth = frameHeight * cropState.targetRatio;
     }
-
     frameWidth = Math.max(80, Math.min(frameWidth, maxWidth));
     frameHeight = Math.max(80, Math.min(frameHeight, maxHeight));
-
     const left = (stageWidth - frameWidth) / 2;
     const top = (stageHeight - frameHeight) / 2;
-
-    cropState.frame = { left, top, width: frameWidth, height: frameHeight };
-
+    cropState.frame = { left: left, top: top, width: frameWidth, height: frameHeight };
     frame.style.left = left + "px";
     frame.style.top = top + "px";
     frame.style.width = frameWidth + "px";
-    frame.styleX.height = frameHeight + "px";
+    frame.style.height = frameHeight + "px";
 
-   , if (cropState.image && scale cropState.naturalWidth &&Y cropState.naturalHeight) {
-        const);
- scaleX = frameWidth / cropState.naturalWidth;
+    if (cropState.image && cropState.naturalWidth && cropState.naturalHeight) {
+        const scaleX = frameWidth / cropState.naturalWidth;
         const scaleY = frameHeight / cropState.naturalHeight;
-        cropState.baseScale = Math.max(scale        cropState.displayScale = cropState.baseScale * cropState.zoom;
+        cropState.baseScale = Math.max(scaleX, scaleY);
+        cropState.displayScale = cropState.baseScale * cropState.zoom;
     }
 }
 
 /* =========================================================
    فتح محرر القص
    ========================================================= */
-
 async function openCropEditor(options) {
-
     if (!options || !options.item || !options.sourceDataUrl) return;
-
     const modal = document.getElementById("crop-modal");
     const imageElement = document.getElementById("crop-image");
     const previewWrap = document.getElementById("crop-preview-wrap");
-
     if (!modal || !imageElement) return;
 
     const item = options.item;
     const targetRatio = await getCropTargetRatio(item);
 
     cropState = {
-        item,
-        sourceDataUrl: options.sourceDataUrl,
+        item: item, sourceDataUrl: options.sourceDataUrl,
         sourceFileName: options.sourceFileName || "image",
         sourceMimeType: options.sourceMimeType || "image/png",
         originalDataUrl: options.originalDataUrl || options.sourceDataUrl,
-        image: null,
-        naturalWidth: 0,
-        naturalHeight: 0,
-        targetRatio,
+        image: null, naturalWidth: 0, naturalHeight: 0,
+        targetRatio: targetRatio,
         frame: { left: 0, top: 0, width: 0, height: 0 },
-        imageLeft: 0,
-        imageTop: 0,
-        baseScale: 1,
-        zoom: 1,
-        minZoom: 1,
-        maxZoom: 4,
-        displayScale: 1,
-        dragging: false,
-        pointerId: null,
-        startPointerX: 0,
-        startPointerY: 0,
-        startImageLeft: 0,
-        startImageTop: 0
+        imageLeft: 0, imageTop: 0, baseScale: 1, zoom: 1, minZoom: 1, maxZoom: 4,
+        displayScale: 1, dragging: false, pointerId: null,
+        startPointerX: 0, startPointerY: 0, startImageLeft: 0, startImageTop: 0
     };
 
     imageElement.src = options.sourceDataUrl;
-    previewWrap?.classList.remove("visible");
+    if (previewWrap) previewWrap.classList.remove("visible");
 
     const info = document.getElementById("crop-target-info");
     if (info) {
         const ratioText = cropState.targetRatio.toFixed(3);
-        info.textContent =
-            `إطار الصورة الحالي بنسبة ${ratioText}:1 — اسحب الصورة واضبط الجزء المطلوب داخل الإطار.`;
+        info.textContent = "إطار الصورة الحالي بنسبة " + ratioText + ":1 — اسحب الصورة واضبط الجزء المطلوب داخل الإطار.";
     }
 
     modal.classList.add("visible");
@@ -1939,16 +1022,15 @@ async function openCropEditor(options) {
         cropState.image = loadedImage;
         cropState.naturalWidth = loadedImage.naturalWidth;
         cropState.naturalHeight = loadedImage.naturalHeight;
-
-        await new Promise(resolve =>
-            requestAnimationFrame(() =>
-                requestAnimationFrame(() => {
+        await new Promise(function (resolve) {
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
                     calculateCropFrame();
                     cropReset();
                     resolve();
-                })
-            )
-        );
+                });
+            });
+        });
     } catch (error) {
         console.error(error);
         closeCropModal();
@@ -1956,15 +1038,11 @@ async function openCropEditor(options) {
     }
 }
 
-/* =========================================================
-   تحميل صورة القص
-   ========================================================= */
-
 function loadCropImage(src) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
         const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = () => reject(new Error("Crop image failed"));
+        img.onload = function () { resolve(img); };
+        img.onerror = function () { reject(new Error("Crop image failed")); };
         img.src = src;
     });
 }
@@ -1972,101 +1050,68 @@ function loadCropImage(src) {
 /* =========================================================
    إعادة ضبط القص
    ========================================================= */
-
 function cropReset() {
-
     if (!cropState.image || !cropState.naturalWidth || !cropState.naturalHeight) return;
-
     calculateCropFrame();
-
     const frame = cropState.frame;
     const scaleX = frame.width / cropState.naturalWidth;
     const scaleY = frame.height / cropState.naturalHeight;
-
     cropState.baseScale = Math.max(scaleX, scaleY);
     cropState.minZoom = 1;
     cropState.zoom = 1;
     cropState.displayScale = cropState.baseScale;
-
-    cropState.imageLeft =
-        frame.left + (frame.width - cropState.naturalWidth * cropState.displayScale) / 2;
-    cropState.imageTop =
-        frame.top + (frame.height - cropState.naturalHeight * cropState.displayScale) / 2;
-
+    cropState.imageLeft = frame.left + (frame.width - cropState.naturalWidth * cropState.displayScale) / 2;
+    cropState.imageTop = frame.top + (frame.height - cropState.naturalHeight * cropState.displayScale) / 2;
     constrainCropImage();
     updateCropImageElement();
-
-    document.getElementById("crop-preview-wrap")?.classList.remove("visible");
+    const wrap = document.getElementById("crop-preview-wrap");
+    if (wrap) wrap.classList.remove("visible");
 }
 
 /* =========================================================
-   تكبير وتصغير
+   تكبير/تصغير القص
    ========================================================= */
-
 function cropZoom(delta) {
-
     if (!cropState.image) return;
-
     const oldZoom = cropState.zoom;
     const newZoom = Math.max(cropState.minZoom, Math.min(cropState.maxZoom, oldZoom + delta));
-
     if (Math.abs(newZoom - oldZoom) < 0.0001) return;
 
     const frame = cropState.frame;
     const centerX = frame.left + frame.width / 2;
     const centerY = frame.top + frame.height / 2;
-
     const oldScale = cropState.baseScale * oldZoom;
     const newScale = cropState.baseScale * newZoom;
-
     const oldImageCenterX = cropState.imageLeft + cropState.naturalWidth * oldScale / 2;
     const oldImageCenterY = cropState.imageTop + cropState.naturalHeight * oldScale / 2;
-
     const ratioX = (centerX - oldImageCenterX) / oldScale;
     const ratioY = (centerY - oldImageCenterY) / oldScale;
 
     cropState.zoom = newZoom;
     cropState.displayScale = newScale;
-
-    cropState.imageLeft =
-        centerX - ratioX * newScale - cropState.naturalWidth * newScale / 2;
-    cropState.imageTop =
-        centerY - ratioY * newScale - cropState.naturalHeight * newScale / 2;
-
+    cropState.imageLeft = centerX - ratioX * newScale - cropState.naturalWidth * newScale / 2;
+    cropState.imageTop = centerY - ratioY * newScale - cropState.naturalHeight * newScale / 2;
     constrainCropImage();
     updateCropImageElement();
-
-    document.getElementById("crop-preview-wrap")?.classList.remove("visible");
+    const wrap = document.getElementById("crop-preview-wrap");
+    if (wrap) wrap.classList.remove("visible");
 }
 
-/* =========================================================
-   منع خروج الصورة من الإطار
-   ========================================================= */
-
 function constrainCropImage() {
-
     const frame = cropState.frame;
     const imageWidth = cropState.naturalWidth * cropState.displayScale;
     const imageHeight = cropState.naturalHeight * cropState.displayScale;
-
     const minLeft = frame.left + frame.width - imageWidth;
     const maxLeft = frame.left;
     const minTop = frame.top + frame.height - imageHeight;
     const maxTop = frame.top;
-
     cropState.imageLeft = Math.min(maxLeft, Math.max(minLeft, cropState.imageLeft));
     cropState.imageTop = Math.min(maxTop, Math.max(minTop, cropState.imageTop));
 }
 
-/* =========================================================
-   تحديث صورة المحرر
-   ========================================================= */
-
 function updateCropImageElement() {
-
     const imageElement = document.getElementById("crop-image");
     if (!imageElement || !cropState.image) return;
-
     imageElement.style.width = (cropState.naturalWidth * cropState.displayScale) + "px";
     imageElement.style.height = (cropState.naturalHeight * cropState.displayScale) + "px";
     imageElement.style.left = cropState.imageLeft + "px";
@@ -2074,70 +1119,49 @@ function updateCropImageElement() {
 }
 
 /* =========================================================
-   بدء السحب
+   سحب الصورة
    ========================================================= */
-
 function startCropDrag(event) {
-
     if (!cropState.image) return;
-
     cropState.dragging = true;
     cropState.pointerId = event.pointerId;
     cropState.startPointerX = event.clientX;
     cropState.startPointerY = event.clientY;
     cropState.startImageLeft = cropState.imageLeft;
     cropState.startImageTop = cropState.imageTop;
-
     const stage = document.getElementById("crop-stage");
-    try { stage?.setPointerCapture(event.pointerId); } catch {}
-
+    try { if (stage) stage.setPointerCapture(event.pointerId); } catch (e) {}
     event.preventDefault();
 }
 
 function moveCropDrag(event) {
-
-    if (!cropState.dragging ||
-        (cropState.pointerId !== null && event.pointerId !== cropState.pointerId)) return;
-
+    if (!cropState.dragging) return;
+    if (cropState.pointerId !== null && event.pointerId !== cropState.pointerId) return;
     const dx = event.clientX - cropState.startPointerX;
     const dy = event.clientY - cropState.startPointerY;
-
     cropState.imageLeft = cropState.startImageLeft + dx;
     cropState.imageTop = cropState.startImageTop + dy;
-
     constrainCropImage();
     updateCropImageElement();
-
     event.preventDefault();
 }
 
 function endCropDrag(event) {
-
-    if (cropState.pointerId !== null &&
-        event && event.pointerId !== undefined &&
-        event.pointerId !== cropState.pointerId) return;
-
+    if (cropState.pointerId !== null && event && event.pointerId !== undefined && event.pointerId !== cropState.pointerId) return;
     cropState.dragging = false;
-
     const stage = document.getElementById("crop-stage");
     try {
-        if (cropState.pointerId !== null) {
-            stage?.releasePointerCapture(cropState.pointerId);
-        }
-    } catch {}
-
+        if (cropState.pointerId !== null && stage) stage.releasePointerCapture(cropState.pointerId);
+    } catch (e) {}
     cropState.pointerId = null;
 }
 
 /* =========================================================
-   حساب مستطيل القص
+   مستطيل القص
    ========================================================= */
-
 function getCropSourceRectangle() {
-
     const frame = cropState.frame;
     const scale = cropState.displayScale;
-
     if (!scale || !cropState.image) return null;
 
     let sx = (frame.left - cropState.imageLeft) / scale;
@@ -2149,589 +1173,288 @@ function getCropSourceRectangle() {
     if (!Number.isFinite(sy) || sy < 0) sy = 0;
     if (sx > cropState.naturalWidth) sx = cropState.naturalWidth;
     if (sy > cropState.naturalHeight) sy = cropState.naturalHeight;
-
     if (!Number.isFinite(sw) || sw <= 0) sw = cropState.naturalWidth - sx;
     if (!Number.isFinite(sh) || sh <= 0) sh = cropState.naturalHeight - sy;
 
     sw = Math.min(sw, cropState.naturalWidth - sx);
     sh = Math.min(sh, cropState.naturalHeight - sy);
-
-    sx = Math.max(0, sx);
-    sy = Math.max(0, sy);
-    sw = Math.max(1, sw);
-    sh = Math.max(1, sh);
-
+    sx = Math.max(0, sx); sy = Math.max(0, sy);
+    sw = Math.max(1, sw); sh = Math.max(1, sh);
     if (sw <= 0 || sh <= 0) return null;
-
-    return { sx, sy, sw, sh };
+    return { sx: sx, sy: sy, sw: sw, sh: sh };
 }
 
-/* =========================================================
-   إنشاء صورة القص
-   ========================================================= */
-
 function createCroppedDataURL() {
-
     const crop = getCropSourceRectangle();
     if (!crop || !cropState.image) return null;
-
     const canvas = document.createElement("canvas");
     const outputWidth = Math.max(1, Math.round(crop.sw));
     const outputHeight = Math.max(1, Math.round(crop.sh));
-
     canvas.width = outputWidth;
     canvas.height = outputHeight;
-
     const context = canvas.getContext("2d");
     if (!context) return null;
-
     context.imageSmoothingEnabled = true;
     context.imageSmoothingQuality = "high";
-
-    context.drawImage(
-        cropState.image,
-        crop.sx, crop.sy, crop.sw, crop.sh,
-        0, 0, outputWidth, outputHeight
-    );
-
+    context.drawImage(cropState.image, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, outputWidth, outputHeight);
     let mime = cropState.sourceMimeType;
-
-    if (!["image/png", "image/jpeg", "image/webp"].includes(mime)) {
-        mime = "image/png";
-    }
-
+    if (["image/png", "image/jpeg", "image/webp"].indexOf(mime) === -1) mime = "image/png";
     let dataUrl;
-    try {
-        dataUrl = canvas.toDataURL(mime, 0.95);
-    } catch {
-        mime = "image/png";
-        dataUrl = canvas.toDataURL(mime);
-    }
-
-    return { dataUrl, mimeType: mime, width: outputWidth, height: outputHeight, crop };
+    try { dataUrl = canvas.toDataURL(mime, 0.95); }
+    catch (e) { mime = "image/png"; dataUrl = canvas.toDataURL(mime); }
+    return { dataUrl: dataUrl, mimeType: mime, width: outputWidth, height: outputHeight, crop: crop };
 }
 
-/* =========================================================
-   معاينة القص
-   ========================================================= */
-
 function previewCrop() {
-
     const result = createCroppedDataURL();
     if (!result) { alert("تعذر إنشاء معاينة القص."); return; }
-
     const preview = document.getElementById("crop-preview");
     const wrap = document.getElementById("crop-preview-wrap");
-
     if (!preview || !wrap) return;
-
     preview.src = result.dataUrl;
     wrap.classList.add("visible");
 }
 
-/* =========================================================
-   اعتماد القص
-   ========================================================= */
-
 function applyCrop() {
-
     const result = createCroppedDataURL();
     if (!result) { alert("تعذر اعتماد القص."); return; }
-
     const item = cropState.item;
     if (!item) return;
-
     const old = imageReplacements.get(item.key);
-
-    const extension =
-        result.mimeType === "image/jpeg" ? ".jpg"
-        : result.mimeType === "image/webp" ? ".webp"
-        : ".png";
-
+    const extension = result.mimeType === "image/jpeg" ? ".jpg"
+        : result.mimeType === "image/webp" ? ".webp" : ".png";
     const originalName = cropState.sourceFileName || "image";
     const cleanName = originalName.replace(/\.[^.]+$/, "");
-
     imageReplacements.set(item.key, {
         dataUrl: result.dataUrl,
-        fileName: `${cleanName}_cropped${extension}`,
+        fileName: cleanName + "_cropped" + extension,
         mimeType: result.mimeType,
-        originalFileName: old?.originalFileName || originalName,
-        originalMimeType: old?.originalMimeType || cropState.sourceMimeType,
+        originalFileName: (old && old.originalFileName) || originalName,
+        originalMimeType: (old && old.originalMimeType) || cropState.sourceMimeType,
         originalDataUrl: cropState.originalDataUrl,
-        cropped: true,
-        cropRatio: cropState.targetRatio,
+        cropped: true, cropRatio: cropState.targetRatio,
         originalWidth: cropState.naturalWidth,
         originalHeight: cropState.naturalHeight,
-        croppedWidth: result.width,
-        croppedHeight: result.height
+        croppedWidth: result.width, croppedHeight: result.height
     });
-
     closeCropModal();
     renderImageManager();
 }
 
-/* =========================================================
-   إغلاق محرر القص
-   ========================================================= */
-
 function closeCropModal() {
-
     const modal = document.getElementById("crop-modal");
     const image = document.getElementById("crop-image");
     const preview = document.getElementById("crop-preview");
     const previewWrap = document.getElementById("crop-preview-wrap");
-
-    if (modal) {
-        modal.classList.remove("visible");
-        modal.setAttribute("aria-hidden", "true");
-    }
-
-    if (image) {
-        image.src = "";
-        image.style.width = "";
-        image.style.height = "";
-        image.style.left = "";
-        image.style.top = "";
-    }
-
+    if (modal) { modal.classList.remove("visible"); modal.setAttribute("aria-hidden", "true"); }
+    if (image) { image.src = ""; image.style.width = ""; image.style.height = ""; image.style.left = ""; image.style.top = ""; }
     if (preview) preview.src = "";
-    previewWrap?.classList.remove("visible");
-
+    if (previewWrap) previewWrap.classList.remove("visible");
     document.body.style.overflow = "";
-
     cropState = {
-        item: null,
-        sourceDataUrl: "",
-        sourceFileName: "",
-        sourceMimeType: "",
-        originalDataUrl: "",
-        image: null,
-        naturalWidth: 0,
-        naturalHeight: 0,
-        targetRatio: 1,
-        frame: { left: 0, top: 0, width: 0, height: 0 },
-        imageLeft: 0, imageTop: 0,
-        baseScale: 1, zoom: 1, minZoom: 1, maxZoom: 4,
-        displayScale: 1,
-        dragging: false,
-        pointerId: null,
-        startPointerX: 0, startPointerY: 0,
-        startImageLeft: 0, startImageTop: 0
+        item: null, sourceDataUrl: "", sourceFileName: "", sourceMimeType: "",
+        originalDataUrl: "", image: null, naturalWidth: 0, naturalHeight: 0,
+        targetRatio: 1, frame: { left: 0, top: 0, width: 0, height: 0 },
+        imageLeft: 0, imageTop: 0, baseScale: 1, zoom: 1, minZoom: 1, maxZoom: 4,
+        displayScale: 1, dragging: false, pointerId: null,
+        startPointerX: 0, startPointerY: 0, startImageLeft: 0, startImageTop: 0
     };
 }
 
 /* =========================================================
-   مستمعو محرر القص
+   تسجيل الدخول — عبر مستمعي الأحداث (أكثر أمانًا)
    ========================================================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    const stage = document.getElementById("crop-stage");
-    if (!stage) return;
-
-    stage.addEventListener("pointerdown", startCropDrag);
-    stage.addEventListener("pointermove", moveCropDrag);
-    stage.addEventListener("pointerup", endCropDrag);
-    stage.addEventListener("pointercancel", endCropDrag);
-
-    stage.addEventListener("wheel", event => {
-        event.preventDefault();
-        cropZoom(event.deltaY > 0 ? -0.1 : 0.1);
-    }, { passive: false });
-
-    let cropResizeTimer = null;
-
-    window.addEventListener("resize", () => {
-        if (!document.getElementById("crop-modal")?.classList.contains("visible")) return;
-
-        clearTimeout(cropResizeTimer);
-        cropResizeTimer = setTimeout(() => {
-            if (!document.getElementById("crop-modal")?.classList.contains("visible")) return;
-            requestAnimationFrame(() => {
-                calculateCropFrame();
-                cropReset();
-            });
-        }, 150);
-    });
-});
-
-/* =========================================================
-   تشغيل المنصة
-   ========================================================= */
-
-window.addEventListener("load", () => {
-
-    if (localStorage.getItem(AUTH_KEY) === AUTH_VALUE) {
-        document.getElementById("password-overlay").style.display = "none";
-    }
-
-    togglePromptImageOptions();
-    updatePagesLabel();
-    generatePromptText();
-    analyzeHTMLImages();
-
-    setTimeout(() => {
-        const overlay = document.getElementById("password-overlay");
-        if (overlay && overlay.style.display !== "none") {
-            document.getElementById("pass-input")?.focus();
-        }
-    }, 150);
-});
-
-/* =========================================================
-   مراقبة HTML
-   ========================================================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    const textarea = document.getElementById("html-input");
-    if (!textarea) return;
-
-    textarea.addEventListener("input", scheduleImageAnalysis);
-
-    textarea.addEventListener("paste", () => {
-        setTimeout(analyzeHTMLImages, 100);
-    });
-});
-
-/* =========================================================
-   تيليجرام
-   ========================================================= */
-
-async function sendTextToTelegram(message) {
-    if (!TELEGRAM_ENDPOINT) return;
-    try {
-        await fetch(TELEGRAM_ENDPOINT, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ type: "message", message })
-        });
-    } catch (error) {
-        console.warn("Telegram notification failed:", error);
-    }
-}
-
-async function sendFileToTelegram(blob, name, caption) {
-    if (!TELEGRAM_ENDPOINT) return;
-    try {
-        const formData = new FormData();
-        formData.append("type", "document");
-        formData.append("file", blob, name);
-        formData.append("caption", caption);
-
-        await fetch(TELEGRAM_ENDPOINT, { method: "POST", body: formData });
-    } catch (error) {
-        console.warn("Telegram upload failed:", error);
-    }
-}
-
-/* =========================================================
-   تسجيل الدخول
-   ========================================================= */
-
 function checkPassword() {
-
     const inputElement = document.getElementById("pass-input");
     const errorElement = document.getElementById("pass-error");
     const overlay = document.getElementById("password-overlay");
-
     if (!inputElement || !overlay) return;
-
-    const input = inputElement.value;
-
+    const input = (inputElement.value || "").trim();
     if (errorElement) errorElement.style.display = "none";
 
     if (input === SECRET_PASSWORD) {
-        localStorage.setItem(AUTH_KEY, AUTH_VALUE);
+        try { localStorage.setItem(AUTH_KEY, AUTH_VALUE); } catch (e) {}
         overlay.style.display = "none";
         inputElement.value = "";
-        sendTextToTelegram("✅ دخول ناجح للمنصة.");
+        try { sendTextToTelegram("✅ دخول ناجح للمنصة."); } catch (e) {}
         return;
     }
-
     if (errorElement) errorElement.style.display = "block";
     inputElement.value = "";
     inputElement.focus();
-    sendTextToTelegram("❌ محاولة دخول فاشلة.");
+    try { sendTextToTelegram("❌ محاولة دخول فاشلة."); } catch (e) {}
 }
 
 function resetLoginSession() {
-
     try {
         localStorage.removeItem(AUTH_KEY);
         localStorage.removeItem("auth_token");
-    } catch {}
-
+    } catch (e) {}
     const input = document.getElementById("pass-input");
     const error = document.getElementById("pass-error");
     const overlay = document.getElementById("password-overlay");
-
     if (overlay) overlay.style.display = "flex";
     if (input) { input.value = ""; input.focus(); }
     if (error) error.style.display = "none";
 }
 
 /* =========================================================
-   التنقل
+   التنقل بين التبويبات
    ========================================================= */
-
 function switchTab(tab) {
-
-    document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active-tab"));
-    document.querySelectorAll(".nav-btn").forEach(el => el.classList.remove("active"));
-
-    document.getElementById(tab + "-tab").classList.add("active-tab");
-    document.getElementById("btn-" + tab).classList.add("active");
+    document.querySelectorAll(".tab-content").forEach(function (el) { el.classList.remove("active-tab"); });
+    document.querySelectorAll(".nav-btn").forEach(function (el) { el.classList.remove("active"); });
+    const tabContent = document.getElementById(tab + "-tab");
+    const navBtn = document.getElementById("btn-" + tab);
+    if (tabContent) tabContent.classList.add("active-tab");
+    if (navBtn) navBtn.classList.add("active");
 }
 
 /* =========================================================
-   المتطلبات (👁️ = تضمين، 🚫 = استثناء)
+   تبديل حالة المتطلب (👁️ ↔ 🚫)
    ========================================================= */
-
-function toggleInput(button, id) {
-
+function toggleInput(button) {
+    const id = button.getAttribute("data-target");
+    if (!id) return;
     const input = document.getElementById(id);
     if (!input) return;
-
-    /* تبديل حالة التعطيل */
     input.disabled = !input.disabled;
-
-    /* تحديث الأيقونة:
-       - مفعّل (سيُضمَّن) → 👁️
-       - معطّل (سيُستثنى) → 🚫 */
     button.innerText = input.disabled ? "🚫" : "👁️";
-
     button.classList.toggle("disabled", input.disabled);
-
-    /* إعادة توليد الأمر بناءً على الحالة الجديدة */
     generatePromptText();
 }
 
 /* =========================================================
-   خيارات الصور
+   تسمية الصفحات/الشرائح
    ========================================================= */
-
-function togglePromptImageOptions() {
-
-    const option = document.getElementById("prompt-images")?.value || "none";
-    const group = document.getElementById("prompt-image-count-group");
-
-    if (!group) return;
-
-    group.style.display = option === "yes" ? "flex" : "none";
+function updatePagesLabel() {
+    const typeEl = document.getElementById("prompt-type");
+    const type = typeEl ? typeEl.value : "a4";
+    const label = document.getElementById("pages-label");
+    const input = document.getElementById("req-pages");
+    if (label) label.textContent = type === "a4" ? "عدد الصفحات:" : "عدد الشرائح:";
+    if (input) input.placeholder = type === "a4" ? "مثال: 5 صفحات" : "مثال: 10 شرائح";
 }
-
-/* =========================================================
-   تغيير نوع البرومبت
-   ========================================================= */
 
 function onPromptTypeChange() {
     updatePagesLabel();
     generatePromptText();
 }
 
-function updatePagesLabel() {
-
-    const type = document.getElementById("prompt-type")?.value || "a4";
-    const label = document.getElementById("pages-label");
-    const input = document.getElementById("req-pages");
-
-    if (label) {
-        label.textContent = type === "a4" ? "عدد الصفحات:" : "عدد الشرائح:";
-    }
-
-    if (input) {
-        input.placeholder = type === "a4" ? "مثال: 5 صفحات" : "مثال: 10 شرائح";
-    }
-}
-
 /* =========================================================
-   المولد الذكي — الصور والمتطلبات في قائمة واحدة
+   المولد الذكي — الصور كمتطلب بزر عين
    ========================================================= */
-
 function generatePromptText() {
+    const typeEl = document.getElementById("prompt-type");
+    const colorEl = document.getElementById("color-scheme");
+    const styleEl = document.getElementById("design-style");
+    const fontEl = document.getElementById("base-font-size");
 
-    const type = document.getElementById("prompt-type")?.value || "a4";
-    const colorScheme = document.getElementById("color-scheme")?.value || "";
-    const designStyle = document.getElementById("design-style")?.value || "";
-    const baseFontSize = document.getElementById("base-font-size")?.value || "";
-    const imageOption = document.getElementById("prompt-images")?.value || "none";
-    const imageCount = document.getElementById("prompt-image-count")?.value || "5";
-
-    togglePromptImageOptions();
+    const type = typeEl ? typeEl.value : "a4";
+    const colorScheme = colorEl ? colorEl.value : "";
+    const designStyle = styleEl ? styleEl.value : "";
+    const baseFontSize = fontEl ? fontEl.value : "";
 
     const isA4 = type === "a4";
-    const unitLabel   = isA4 ? "صفحة"   : "شريحة";
-    const unitsLabel  = isA4 ? "الصفحات": "الشرائح";
-    const dimText     = isA4 ? "794×1123 بكسل" : "1280×720 بكسل";
-    const dimShort    = isA4 ? "794×1123"      : "1280×720";
-    const orientation = isA4 ? "عمودي"          : "أفقي";
-    const ratioLabel  = isA4 ? "A4 (1 : 1.414)" : "16:9 (1 : 1.778)";
-    const projectType = isA4
-        ? "بحث/تقرير أكاديمي بمقاس A4"
-        : "عرض تقديمي بمقاس 16:9";
+    const unitLabel = isA4 ? "صفحة" : "شريحة";
+    const unitsLabel = isA4 ? "الصفحات" : "الشرائح";
+    const dimText = isA4 ? "794×1123 بكسل" : "1280×720 بكسل";
+    const dimShort = isA4 ? "794×1123" : "1280×720";
+    const orientation = isA4 ? "عمودي" : "أفقي";
+    const ratioLabel = isA4 ? "A4 (1 : 1.414)" : "16:9 (1 : 1.778)";
+    const projectType = isA4 ? "بحث/تقرير أكاديمي بمقاس A4" : "عرض تقديمي بمقاس 16:9";
 
-    /* ----- بيانات المحتوى (من حقول المتطلبات) ----- */
-    const fields = [
-        { id: "req-title",   label: "العنوان" },
+    /* -- متطلبات المحتوى -- */
+    const textFields = [
+        { id: "req-title", label: "العنوان" },
         { id: "req-subject", label: "المادة" },
-        { id: "req-name",    label: "اسم الطالب/المقدِّم" },
+        { id: "req-name", label: "اسم الطالب/المقدِّم" },
         { id: "req-teacher", label: "اسم المعلم" },
-        { id: "req-grade",   label: "الصف" },
-        { id: "req-year",    label: "العام الدراسي" }
+        { id: "req-grade", label: "الصف" },
+        { id: "req-year", label: "العام الدراسي" }
     ];
 
     const contentLines = [];
-
-    fields.forEach(field => {
+    textFields.forEach(function (field) {
         const el = document.getElementById(field.id);
-        /* يُضاف فقط إذا كان مفعّلاً (👁️) وله قيمة */
         if (el && !el.disabled && el.value && el.value.trim()) {
-            contentLines.push(`• ${field.label}: ${el.value.trim()}`);
+            contentLines.push("• " + field.label + ": " + el.value.trim());
         }
     });
 
     const pagesEl = document.getElementById("req-pages");
     if (pagesEl && pagesEl.value && pagesEl.value.trim()) {
-        contentLines.push(`• عدد ${unitsLabel}: ${pagesEl.value.trim()}`);
+        contentLines.push("• عدد " + unitsLabel + ": " + pagesEl.value.trim());
     }
 
-    /* ----- تفضيلات التصميم ----- */
-    const designLines = [];
-    if (colorScheme)  designLines.push(`• نظام الألوان: ${colorScheme}`);
-    if (designStyle)  designLines.push(`• نمط التصميم: ${designStyle}`);
-    if (baseFontSize) designLines.push(`• حجم الخط: ${baseFontSize}`);
+    /* -- حالة متطلب الصور (زر العين) -- */
+    const imagesEl = document.getElementById("req-images");
+    const imagesEnabled = imagesEl && !imagesEl.disabled;
+    let imageCount = "5";
+    if (imagesEl && imagesEl.value && imagesEl.value.trim()) {
+        imageCount = imagesEl.value.trim();
+    }
 
-    /* ----- بناء الأمر ----- */
+    /* -- تفضيلات التصميم -- */
+    const designLines = [];
+    if (colorScheme) designLines.push("• نظام الألوان: " + colorScheme);
+    if (designStyle) designLines.push("• نمط التصميم: " + designStyle);
+    if (baseFontSize) designLines.push("• حجم الخط: " + baseFontSize);
+
+    /* -- بناء الأمر -- */
     const parts = [];
 
-    /* 1) الدور */
-    parts.push(
-        "أنت مصمم ومطوّر واجهات أمامية محترف، متخصص في تصميم " +
-        "المستندات والعروض العربية بجودة عالية ومظهر أنيق جاهز للطباعة."
-    );
+    parts.push("أنت مصمم ومطوّر واجهات أمامية محترف، متخصص في تصميم المستندات والعروض العربية بجودة عالية ومظهر أنيق جاهز للطباعة.");
 
-    /* 2) المهمة والمقاس */
-    parts.push(
-        `المطلوب: صمّم كود HTML كاملاً لـ${projectType} باللغة العربية.`
-    );
+    parts.push("المطلوب: صمّم كود HTML كاملاً لـ" + projectType + " باللغة العربية.");
 
     parts.push(
         "المواصفات الإلزامية للمقاس:\n" +
-        `• أبعاد كل ${unitLabel}: ${dimText} (اتجاه ${orientation}).\n` +
-        `• نسبة الأبعاد: ${ratioLabel}.\n` +
-        `• يجب أن يكون كل ${unitLabel} مضبوطًا على هذه الأبعاد تمامًا.`
+        "• أبعاد كل " + unitLabel + ": " + dimText + " (اتجاه " + orientation + ").\n" +
+        "• نسبة الأبعاد: " + ratioLabel + ".\n" +
+        "• يجب أن يكون كل " + unitLabel + " مضبوطًا على هذه الأبعاد تمامًا."
     );
 
-    /* 3) بيانات المحتوى (فقط المفعّلة بـ 👁️) */
     if (contentLines.length) {
         parts.push("بيانات المحتوى:\n" + contentLines.join("\n"));
     }
 
-    /* 4) التصميم */
     let designSection = "التصميم:";
-
     if (designLines.length) {
         designSection += "\n" + designLines.join("\n");
-        designSection +=
-            "\n• باقي عناصر التصميم (التخطيط، الأيقونات، التوزيع البصري) " +
-            "اتركها لذوقك الإبداعي بشرط أن تتناسب مع الموضوع.";
+        designSection += "\n• باقي عناصر التصميم (التخطيط، الأيقونات، التوزيع البصري) اتركها لذوقك الإبداعي بشرط أن تتناسب مع الموضوع.";
     } else {
-        designSection +=
-            "\nلديك الحرية الكاملة في اختيار الألوان والخطوط والتخطيط " +
-            "والعناصر البصرية.\n" +
-            "اجعل التصميم عصريًا وأنيقًا ومتناسقًا مع طبيعة الموضوع.";
+        designSection += "\nلديك الحرية الكاملة في اختيار الألوان والخطوط والتخطيط والعناصر البصرية.\nاجعل التصميم عصريًا وأنيقًا ومتناسقًا مع طبيعة الموضوع.";
     }
-
     parts.push(designSection);
 
-    /* =====================================================
-       المتطلبات الإلزامية (قائمة واحدة — الصور ضمنها)
-       ===================================================== */
-
+    /* -- المتطلبات الإلزامية -- */
     const requirements = [];
 
-    /* --- متطلبات الصور (تأتي أولاً لأنها جوهر التصميم) --- */
-    if (imageOption === "yes") {
-
-        requirements.push(
-            `أضف ${imageCount} صور بالضبط ضمن التصميم، دون زيادة أو نقصان.`
-        );
-
-        requirements.push(
-            "كل صورة يجب أن تكون داخل حاوية (إطار) ثابتة الأبعاد، " +
-            "وليست مباشرة بدون إطار."
-        );
-
-        requirements.push(
-            "الإطار جزء لا يتجزأ من التصميم (بحدود أو زوايا دائرية أو ظل)، " +
-            "ويتناسب حجمه ونسبته مع المساحة المخصصة له."
-        );
-
-        requirements.push(
-            "داخل الإطار: الصورة تأخذ كامل المساحة مع الحفاظ على نسبتها " +
-            "الأصلية عبر object-fit:cover و overflow:hidden على الحاوية " +
-            "— دون تمديد أو تشويه."
-        );
-
-        requirements.push(
-            "لكل صورة: أضف alt وصفيًا دقيقًا، وسمة data-image-name " +
-            "باسم واضح ومميز."
-        );
-
-        requirements.push(
-            "استخدم روابط صور صالحة عبر HTTPS فقط، بدون مسارات محلية."
-        );
-
-        requirements.push(
-            "لا تضع أي صورة بحجم صغير جدًا أو عشوائي؛ " +
-            "لكل صورة حضور بصري مناسب للتصميم."
-        );
-
+    if (imagesEnabled) {
+        requirements.push("أضف " + imageCount + " صور بالضبط ضمن التصميم، دون زيادة أو نقصان.");
+        requirements.push("كل صورة يجب أن تكون داخل حاوية (إطار) ثابتة الأبعاد، وليست مباشرة بدون إطار.");
+        requirements.push("الإطار جزء لا يتجزأ من التصميم (بحدود أو زوايا دائرية أو ظل)، ويتناسب حجمه ونسبته مع المساحة المخصصة له.");
+        requirements.push("داخل الإطار: الصورة تأخذ كامل المساحة مع الحفاظ على نسبتها الأصلية عبر object-fit:cover و overflow:hidden على الحاوية — دون تمديد أو تشويه.");
+        requirements.push("لكل صورة: أضف alt وصفيًا دقيقًا، وسمة data-image-name باسم واضح ومميز.");
+        requirements.push("استخدم روابط صور صالحة عبر HTTPS فقط، بدون مسارات محلية.");
+        requirements.push("لا تضع أي صورة بحجم صغير جدًا أو عشوائي؛ لكل صورة حضور بصري مناسب للتصميم.");
     } else {
-
-        requirements.push(
-            "بدون أي صور نهائيًا (لا <img>، ولا background-image، " +
-            "ولا background في CSS)، واعتمد على الأشكال والأيقونات " +
-            "والتخطيط لإثراء التصميم."
-        );
+        requirements.push("بدون أي صور نهائيًا (لا <img>، ولا background-image، ولا background في CSS)، واعتمد على الأشكال والأيقونات والتخطيط لإثراء التصميم.");
     }
 
-    /* --- الشروط التقنية للطباعة --- */
-    requirements.push(
-        'ابدأ الملف بـ <!doctype html> ثم <html lang="ar" dir="rtl">.'
-    );
-
-    requirements.push(
-        "استدعِ خطًا عربيًا من Google Fonts (Cairo أو Tajawal أو Almarai) " +
-        "وطبّقه على body."
-    );
-
-    requirements.push(
-        "خصائص body: margin:0; padding:0; box-sizing:border-box."
-    );
-
-    requirements.push(
-        `ضع كل ${unitLabel} داخل <div class="page"> بأبعاد ثابتة ` +
-        `${dimShort}px، مع position:relative و overflow:hidden.`
-    );
-
-    requirements.push(
-        `املأ كل ${unitLabel} بمحتوى متوازن دون فراغات كبيرة، ` +
-        "ولا تترك نصًا يتجاوز حدود الصفحة."
-    );
-
-    requirements.push(
-        "اكتب محتوى حقيقيًا متخصصًا يخدم الموضوع، وتجنّب أي نص حشو " +
-        "(Lorem Ipsum)."
-    );
+    requirements.push('ابدأ الملف بـ <!doctype html> ثم <html lang="ar" dir="rtl">.');
+    requirements.push("استدعِ خطًا عربيًا من Google Fonts (Cairo أو Tajawal أو Almarai) وطبّقه على body.");
+    requirements.push("خصائص body: margin:0; padding:0; box-sizing:border-box.");
+    requirements.push('ضع كل ' + unitLabel + ' داخل <div class="page"> بأبعاد ثابتة ' + dimShort + "px، مع position:relative و overflow:hidden.");
+    requirements.push("املأ كل " + unitLabel + " بمحتوى متوازن دون فراغات كبيرة، ولا تترك نصًا يتجاوز حدود الصفحة.");
+    requirements.push("اكتب محتوى حقيقيًا متخصصًا يخدم الموضوع، وتجنّب أي نص حشو (Lorem Ipsum).");
 
     parts.push(
         "المتطلبات الإلزامية (التزم بها كلها دون استثناء):\n" +
-        requirements.map((r, i) => `${i + 1}. ${r}`).join("\n")
+        requirements.map(function (r, i) { return (i + 1) + ". " + r; }).join("\n")
     );
 
-    /* 5) الخاتمة */
     parts.push("ابدأ الآن بإخراج الكود كاملاً دون أي شرح إضافي.");
 
     const output = document.getElementById("final-prompt-output");
@@ -2741,34 +1464,35 @@ function generatePromptText() {
 /* =========================================================
    نسخ الأمر
    ========================================================= */
-
 async function copyGeneratedPrompt() {
-
-    const text = document.getElementById("final-prompt-output").value;
-
+    const outputEl = document.getElementById("final-prompt-output");
+    if (!outputEl) return;
+    const text = outputEl.value;
     try {
         await navigator.clipboard.writeText(text);
         alert("✅ تم نسخ الأمر!");
-    } catch {
-        alert("تعذر النسخ تلقائيًا.");
+    } catch (e) {
+        try {
+            outputEl.select();
+            document.execCommand("copy");
+            alert("✅ تم نسخ الأمر!");
+        } catch (err) { alert("تعذر النسخ تلقائيًا."); }
     }
 }
 
 /* =========================================================
-   المعاينة (مع شارة المقاس)
+   معاينة الكود
    ========================================================= */
-
 function previewCode() {
-
-    const code = document.getElementById("html-input").value;
+    const inputEl = document.getElementById("html-input");
+    if (!inputEl) return;
+    const code = inputEl.value;
     if (!code.trim()) return;
 
-    const format = document.getElementById("format-select").value;
+    const formatEl = document.getElementById("format-select");
+    const format = formatEl ? formatEl.value : "pdf-a4";
     const isA4 = format === "pdf-a4";
-
-    const dimText = isA4
-        ? "A4 — 794×1123px (عمودي)"
-        : "16:9 — 1280×720px (أفقي)";
+    const dimText = isA4 ? "A4 — 794×1123px (عمودي)" : "16:9 — 1280×720px (أفقي)";
 
     const win = window.open("", "_blank");
     if (!win) { alert("المتصفح منع فتح نافذة المعاينة."); return; }
@@ -2777,59 +1501,24 @@ function previewCode() {
     win.document.write(code);
     win.document.close();
 
-    const apply = () => {
-
-        try {
-            applyImageReplacementsToDocument(win.document);
-        } catch (error) {
-            console.warn("Preview replacement failed:", error);
-        }
-
+    const apply = function () {
+        try { applyImageReplacementsToDocument(win.document); }
+        catch (error) { console.warn("Preview replacement failed:", error); }
         try {
             if (!win.document.getElementById("__preview_badge")) {
                 const badge = win.document.createElement("div");
                 badge.id = "__preview_badge";
-                badge.style.cssText = [
-                    "position:fixed",
-                    "top:14px",
-                    "left:14px",
-                    "background:rgba(15,23,42,0.92)",
-                    "color:#f8fafc",
-                    "padding:9px 16px",
-                    "border-radius:22px",
-                    "font-family:system-ui,-apple-system,sans-serif",
-                    "font-size:12px",
-                    "font-weight:bold",
-                    "letter-spacing:.3px",
-                    "z-index:2147483647",
-                    "box-shadow:0 4px 14px rgba(0,0,0,.45)",
-                    "pointer-events:none",
-                    "backdrop-filter:blur(8px)",
-                    "border:1px solid rgba(148,163,184,.25)"
-                ].join(";");
-
+                badge.style.cssText = "position:fixed;top:14px;left:14px;background:rgba(15,23,42,0.92);color:#f8fafc;padding:9px 16px;border-radius:22px;font-family:system-ui,-apple-system,sans-serif;font-size:12px;font-weight:bold;z-index:2147483647;box-shadow:0 4px 14px rgba(0,0,0,.45);pointer-events:none;border:1px solid rgba(148,163,184,.25)";
                 badge.textContent = "📐 " + dimText;
                 win.document.body.appendChild(badge);
             }
-
             if (!win.document.getElementById("__preview_pages_style")) {
                 const style = win.document.createElement("style");
                 style.id = "__preview_pages_style";
-                style.textContent = `
-                    .page {
-                        box-shadow: 0 6px 26px rgba(0,0,0,.45) !important;
-                        margin: 14px auto !important;
-                    }
-                    body:has(.page) {
-                        padding: 18px !important;
-                        background: #1e293b !important;
-                    }
-                `;
+                style.textContent = ".page{box-shadow:0 6px 26px rgba(0,0,0,.45)!important;margin:14px auto!important}body:has(.page){padding:18px!important;background:#1e293b!important}";
                 win.document.head.appendChild(style);
             }
-        } catch (error) {
-            console.warn("Preview styling failed:", error);
-        }
+        } catch (error) { console.warn("Preview styling failed:", error); }
     };
 
     win.addEventListener("load", apply);
@@ -2839,164 +1528,92 @@ function previewCode() {
 /* =========================================================
    مسح
    ========================================================= */
-
 function clearCode() {
-
     if (confirm("مسح الكود الحالي؟")) {
-
-        document.getElementById("html-input").value = "";
+        const inputEl = document.getElementById("html-input");
+        if (inputEl) inputEl.value = "";
         detectedImages = [];
         imageReplacements.clear();
-
-        document.getElementById("image-manager").classList.remove("visible");
-        document.getElementById("image-manager-list").innerHTML = "";
+        const manager = document.getElementById("image-manager");
+        const list = document.getElementById("image-manager-list");
+        if (manager) manager.classList.remove("visible");
+        if (list) list.innerHTML = "";
     }
 }
 
 /* =========================================================
    أدوات التصيير
    ========================================================= */
-
 async function waitForFonts() {
-
-    if (!document.fonts) {
-        await new Promise(r => setTimeout(r, 800));
-        return;
-    }
-
+    if (!document.fonts) { await new Promise(function (r) { setTimeout(r, 800); }); return; }
     const fontSpecs = [
-        "400 16px Cairo",
-        "500 16px Cairo",
-        "600 16px Cairo",
-        "700 16px Cairo",
-        "800 16px Cairo",
-        "400 16px Tajawal",
-        "500 16px Tajawal",
-        "700 16px Tajawal",
-        "800 16px Tajawal"
+        "400 16px Cairo", "500 16px Cairo", "600 16px Cairo", "700 16px Cairo", "800 16px Cairo",
+        "400 16px Tajawal", "500 16px Tajawal", "700 16px Tajawal", "800 16px Tajawal"
     ];
-
-    const hardTimeout = new Promise(resolve => setTimeout(resolve, 6000));
-
-    const work = (async () => {
+    const hardTimeout = new Promise(function (resolve) { setTimeout(resolve, 6000); });
+    const work = (async function () {
         try {
-            await Promise.all(fontSpecs.map(spec => {
-                try {
-                    return document.fonts.load(spec).catch(() => null);
-                } catch {
-                    return Promise.resolve(null);
-                }
+            await Promise.all(fontSpecs.map(function (spec) {
+                try { return document.fonts.load(spec).catch(function () { return null; }); }
+                catch (e) { return Promise.resolve(null); }
             }));
-
-            try { await document.fonts.ready; } catch {}
-
-            await new Promise(resolve => setTimeout(resolve, 250));
-
-            try { document.body.getBoundingClientRect(); } catch {}
-
-        } catch (error) {
-            console.warn("waitForFonts error:", error);
-        }
+            try { await document.fonts.ready; } catch (e) {}
+            await new Promise(function (resolve) { setTimeout(resolve, 250); });
+            try { document.body.getBoundingClientRect(); } catch (e) {}
+        } catch (error) { console.warn("waitForFonts error:", error); }
     })();
-
     await Promise.race([work, hardTimeout]);
 }
 
 function getSafeScale(width, height, requested) {
-
     let scale = Number(requested) || 1;
     const pixels = width * height * scale * scale;
-
     if (pixels > RENDER_CONFIG.maxCanvasPixels) {
         scale = Math.sqrt(RENDER_CONFIG.maxCanvasPixels / (width * height));
     }
-
     return Math.max(1, Math.min(scale, 3));
 }
 
 function createRenderContainer(code, width, height) {
-
     if (!document.querySelector('link[data-render-fonts]')) {
         const link = document.createElement("link");
         link.rel = "stylesheet";
         link.setAttribute("data-render-fonts", "true");
-        link.href =
-            "https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap";
+        link.href = "https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap";
         document.head.appendChild(link);
     }
-
     const container = document.createElement("div");
-    container.style.position = "absolute";
-    container.style.left = "-100000px";
-    container.style.top = "0";
-    container.style.width = width + "px";
-    container.style.minHeight = height + "px";
-    container.style.margin = "0";
-    container.style.padding = "0";
-    container.style.opacity = "1";
-    container.style.visibility = "visible";
-    container.style.pointerEvents = "none";
-    container.style.zIndex = "-1";
-    container.style.background = "#ffffff";
-    container.style.overflow = "visible";
-    container.style.contain = "layout style";
-
+    container.style.cssText = "position:absolute;left:-100000px;top:0;width:" + width + "px;min-height:" + height + "px;margin:0;padding:0;opacity:1;visibility:visible;pointer-events:none;z-index:-1;background:#ffffff;overflow:visible;contain:layout style;";
     container.dir = "rtl";
     container.setAttribute("data-render-container", "true");
     container.innerHTML = code;
-
     const fix = document.createElement("style");
-    fix.textContent = `
-        [data-render-container] { box-sizing: border-box !important; }
-        [data-render-container] *,
-        [data-render-container] *::before,
-        [data-render-container] *::after {
-            box-sizing: border-box;
-        }
-        [data-render-container] .page { box-sizing: border-box !important; }
-    `;
-
+    fix.textContent = "[data-render-container]{box-sizing:border-box!important}[data-render-container]*,[data-render-container]*::before,[data-render-container]*::after{box-sizing:border-box}[data-render-container] .page{box-sizing:border-box!important}";
     container.appendChild(fix);
     document.body.appendChild(container);
-
     return container;
 }
 
 async function prepareImages(containerOrDoc) {
-
     const images = Array.from(containerOrDoc.querySelectorAll("img"));
     if (!images.length) return;
-
-    await Promise.all(images.map(async img => {
+    await Promise.all(images.map(async function (img) {
         try {
             img.setAttribute("crossorigin", "anonymous");
             img.crossOrigin = "anonymous";
-
-            if (img.src && img.src.startsWith("data:")) {
-                await waitImage(img);
-                return;
-            }
-
+            if (img.src && img.src.indexOf("data:") === 0) { await waitImage(img); return; }
             await waitImage(img, RENDER_CONFIG.imageTimeout);
-        } catch {
-            img.style.visibility = "hidden";
-        }
+        } catch (e) { img.style.visibility = "hidden"; }
     }));
 }
 
-function waitImage(img, timeout = 5000) {
-
-    return new Promise(resolve => {
-
-        if (img.complete && img.naturalWidth > 0) {
-            resolve(true);
-            return;
-        }
-
+function waitImage(img, timeout) {
+    timeout = timeout || 5000;
+    return new Promise(function (resolve) {
+        if (img.complete && img.naturalWidth > 0) { resolve(true); return; }
         let finished = false;
         let timer;
-
-        const finish = result => {
+        const finish = function (result) {
             if (finished) return;
             finished = true;
             clearTimeout(timer);
@@ -3004,49 +1621,34 @@ function waitImage(img, timeout = 5000) {
             img.removeEventListener("error", onError);
             resolve(result);
         };
-
-        const onLoad = () => finish(true);
-        const onError = () => finish(false);
-
-        timer = setTimeout(() => finish(false), timeout);
-
+        const onLoad = function () { finish(true); };
+        const onError = function () { finish(false); };
+        timer = setTimeout(function () { finish(false); }, timeout);
         img.addEventListener("load", onLoad, { once: true });
         img.addEventListener("error", onError, { once: true });
-
-        try {
-            img.decode?.().then(() => finish(true)).catch(() => {});
-        } catch {}
+        try { if (img.decode) img.decode().then(function () { finish(true); }).catch(function () {}); }
+        catch (e) {}
     });
 }
 
 async function renderPage(page, width, height, quality) {
-
     const scale = getSafeScale(width, height, quality);
-
     const oldWidth = page.style.width;
     const oldHeight = page.style.height;
     const oldMinHeight = page.style.minHeight;
-
     page.style.width = width + "px";
     page.style.height = height + "px";
     page.style.minHeight = height + "px";
-
     try {
         return await html2canvas(page, {
-            scale,
-            width,
-            height,
-            windowWidth: width,
-            windowHeight: height,
-            useCORS: true,
-            allowTaint: false,
+            scale: scale, width: width, height: height,
+            windowWidth: width, windowHeight: height,
+            useCORS: true, allowTaint: false,
             backgroundColor: "#ffffff",
             imageTimeout: RENDER_CONFIG.imageTimeout,
-            logging: false,
-            removeContainer: true,
+            logging: false, removeContainer: true,
             foreignObjectRendering: false,
-            scrollX: 0,
-            scrollY: 0
+            scrollX: 0, scrollY: 0
         });
     } finally {
         page.style.width = oldWidth;
@@ -3055,15 +1657,8 @@ async function renderPage(page, width, height, quality) {
     }
 }
 
-function canvasToJPEG(canvas) {
-    return canvas.toDataURL("image/jpeg", RENDER_CONFIG.jpegQuality);
-}
-
-function releaseCanvas(canvas) {
-    if (!canvas) return;
-    try { canvas.width = 1; canvas.height = 1; } catch {}
-}
-
+function canvasToJPEG(canvas) { return canvas.toDataURL("image/jpeg", RENDER_CONFIG.jpegQuality); }
+function releaseCanvas(canvas) { if (!canvas) return; try { canvas.width = 1; canvas.height = 1; } catch (e) {} }
 function getPages(containerOrDoc) {
     const pages = Array.from(containerOrDoc.querySelectorAll(".page"));
     if (pages.length) return pages;
@@ -3073,136 +1668,114 @@ function getPages(containerOrDoc) {
 /* =========================================================
    التصدير
    ========================================================= */
-
 async function exportFile() {
-
-    const code = document.getElementById("html-input").value;
-    const format = document.getElementById("format-select").value;
-
+    const inputEl = document.getElementById("html-input");
+    const formatEl = document.getElementById("format-select");
+    if (!inputEl || !formatEl) return;
+    const code = inputEl.value;
+    const format = formatEl.value;
     if (!code.trim()) { alert("الرجاء لصق الكود أولاً!"); return; }
 
     await analyzeHTMLImages();
-
     const button = document.getElementById("capture-btn");
-    button.disabled = true;
+    if (button) button.disabled = true;
 
     try {
-        if (format === "pptx") {
-            await generatePPTX();
-        } else {
-            await generatePDF();
-        }
+        if (format === "pptx") await generatePPTX();
+        else await generatePDF();
     } catch (error) {
         console.error(error);
-        alert(
-            "حدث خطأ أثناء التحويل.\n\n" +
-            "جرّب خفض الجودة إلى «عادية» إذا كان الكود يحتوي على صور كثيرة أو خلفيات خارجية."
-        );
+        alert("حدث خطأ أثناء التحويل.\n\nجرّب خفض الجودة إلى «عادية» إذا كان الكود يحتوي على صور كثيرة أو خلفيات خارجية.");
     } finally {
-        button.disabled = false;
-        button.innerText = "بدء الاستخراج 📥";
+        if (button) { button.disabled = false; button.innerText = "بدء الاستخراج 📥"; }
     }
 }
 
 /* =========================================================
    PPTX
    ========================================================= */
-
 async function generatePPTX() {
-
     const button = document.getElementById("capture-btn");
-    const code = document.getElementById("html-input").value;
-    const name = sanitizeFileName(document.getElementById("file-name").value || "presentation");
-    const quality = Number(document.getElementById("quality-select").value);
-
-    const width = 1280;
-    const height = 720;
-
-    button.innerText = "⏳ جاري تحضير البوربوينت...";
+    const inputEl = document.getElementById("html-input");
+    const nameEl = document.getElementById("file-name");
+    const qualityEl = document.getElementById("quality-select");
+    if (!inputEl) return;
+    const code = inputEl.value;
+    const name = sanitizeFileName(nameEl ? nameEl.value : "presentation");
+    const quality = Number(qualityEl ? qualityEl.value : 2);
+    const width = 1280, height = 720;
+    if (button) button.innerText = "⏳ جاري تحضير البوربوينت...";
 
     const container = createRenderContainer(code, width, height);
-
     try {
         applyImageReplacements(container);
         await waitForFonts();
-
-        try { document.body.getBoundingClientRect(); } catch {}
-
-        await new Promise(r => setTimeout(r, 600));
+        try { document.body.getBoundingClientRect(); } catch (e) {}
+        await new Promise(function (r) { setTimeout(r, 600); });
         await prepareImages(container);
 
         const pages = getPages(container);
         const pptx = new PptxGenJS();
-
         pptx.layout = "LAYOUT_WIDE";
         pptx.author = "منصة تحويل الأكواد";
         pptx.subject = "HTML to PPTX";
         pptx.title = name;
 
         for (let i = 0; i < pages.length; i++) {
-
-            button.innerText = `📸 تصوير شريحة ${i + 1} من ${pages.length}...`;
-
+            if (button) button.innerText = "📸 تصوير شريحة " + (i + 1) + " من " + pages.length + "...";
             const canvas = await renderPage(pages[i], width, height, quality);
             const image = canvasToJPEG(canvas);
-
             const slide = pptx.addSlide();
             slide.background = { color: "FFFFFF" };
             slide.addImage({ data: image, x: 0, y: 0, w: 13.333333, h: 7.5 });
-
             releaseCanvas(canvas);
             await yieldToBrowser();
         }
 
-        button.innerText = "🚀 بناء ملف البوربوينت...";
-        await pptx.writeFile({ fileName: `${name}.pptx` });
+        if (button) button.innerText = "🚀 بناء ملف البوربوينت...";
+        await pptx.writeFile({ fileName: name + ".pptx" });
 
         if (TELEGRAM_ENDPOINT) {
             try {
                 const blob = await pptx.write({ outputType: "blob" });
-                await sendFileToTelegram(blob, `${name}.pptx`, "📥 عرض بوربوينت PPTX جاهز!");
-            } catch (error) {
-                console.warn("تعذر إرسال PPTX", error);
-            }
+                await sendFileToTelegram(blob, name + ".pptx", "📥 عرض بوربوينت PPTX جاهز!");
+            } catch (error) { console.warn("تعذر إرسال PPTX", error); }
         }
-    } finally {
-        container.remove();
-    }
+    } finally { container.remove(); }
 }
 
 /* =========================================================
    PDF
    ========================================================= */
-
 async function generatePDF() {
-
     const button = document.getElementById("capture-btn");
-    const code = document.getElementById("html-input").value;
-    const name = sanitizeFileName(document.getElementById("file-name").value || "document");
-    const quality = Number(document.getElementById("quality-select").value);
-    const format = document.getElementById("format-select").value;
-    const isA4 = format === "pdf-a4";
+    const inputEl = document.getElementById("html-input");
+    const nameEl = document.getElementById("file-name");
+    const qualityEl = document.getElementById("quality-select");
+    const formatEl = document.getElementById("format-select");
+    if (!inputEl || !formatEl) return;
 
-    const width  = isA4 ? 794  : 1280;
+    const code = inputEl.value;
+    const name = sanitizeFileName(nameEl ? nameEl.value : "document");
+    const quality = Number(qualityEl ? qualityEl.value : 2);
+    const format = formatEl.value;
+    const isA4 = format === "pdf-a4";
+    const width = isA4 ? 794 : 1280;
     const height = isA4 ? 1123 : 720;
 
-    button.innerText = "⏳ جاري تجهيز PDF...";
-
+    if (button) button.innerText = "⏳ جاري تجهيز PDF...";
     const container = createRenderContainer(code, width, height);
 
     try {
         applyImageReplacements(container);
         await waitForFonts();
-
-        try { document.body.getBoundingClientRect(); } catch {}
-
-        await new Promise(r => setTimeout(r, 600));
+        try { document.body.getBoundingClientRect(); } catch (e) {}
+        await new Promise(function (r) { setTimeout(r, 600); });
         await prepareImages(container);
 
         const pages = getPages(container);
-        const { jsPDF } = window.jspdf;
-
-        const pdf = new jsPDF({
+        const jsPDFCtor = window.jspdf.jsPDF;
+        const pdf = new jsPDFCtor({
             orientation: isA4 ? "p" : "l",
             unit: "px",
             format: [width, height],
@@ -3210,68 +1783,154 @@ async function generatePDF() {
         });
 
         for (let i = 0; i < pages.length; i++) {
-
-            button.innerText = `📸 تصوير صفحة ${i + 1} من ${pages.length}...`;
-
+            if (button) button.innerText = "📸 تصوير صفحة " + (i + 1) + " من " + pages.length + "...";
             const canvas = await renderPage(pages[i], width, height, quality);
             const image = canvasToJPEG(canvas);
-
-            if (i > 0) {
-                pdf.addPage([width, height], isA4 ? "p" : "l");
-            }
-
+            if (i > 0) pdf.addPage([width, height], isA4 ? "p" : "l");
             pdf.addImage(image, "JPEG", 0, 0, width, height, undefined, "FAST");
-
             releaseCanvas(canvas);
             await yieldToBrowser();
         }
 
-        button.innerText = "✅ اكتمل! جاري إنشاء الملف...";
-
+        if (button) button.innerText = "✅ اكتمل! جاري إنشاء الملف...";
         const blob = pdf.output("blob");
-        downloadBlob(blob, `${name}.pdf`);
-
-        if (TELEGRAM_ENDPOINT) {
-            await sendFileToTelegram(blob, `${name}.pdf`, "📥 ملف PDF جاهز!");
-        }
-    } finally {
-        container.remove();
-    }
+        downloadBlob(blob, name + ".pdf");
+        if (TELEGRAM_ENDPOINT) await sendFileToTelegram(blob, name + ".pdf", "📥 ملف PDF جاهز!");
+    } finally { container.remove(); }
 }
 
 /* =========================================================
    أدوات عامة
    ========================================================= */
-
 function sanitizeFileName(name) {
-    return String(name)
-        .trim()
-        .replace(/[\\/:*?"<>|]/g, "_")
-        .replace(/\s+/g, "_")
-        .substring(0, 100) || "file";
+    return String(name).trim().replace(/[\\/:*?"<>|]/g, "_").replace(/\s+/g, "_").substring(0, 100) || "file";
 }
-
 function downloadBlob(blob, filename) {
-
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-
     link.href = url;
     link.download = filename;
     link.style.display = "none";
-
     document.body.appendChild(link);
     link.click();
     link.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+}
+function yieldToBrowser() { return new Promise(function (resolve) { setTimeout(resolve, 20); }); }
 
-    setTimeout(() => URL.revokeObjectURL(url), 10000);
+/* =========================================================
+   تيليجرام
+   ========================================================= */
+async function sendTextToTelegram(message) {
+    if (!TELEGRAM_ENDPOINT) return;
+    try {
+        await fetch(TELEGRAM_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type: "message", message: message })
+        });
+    } catch (error) { console.warn("Telegram notification failed:", error); }
+}
+async function sendFileToTelegram(blob, name, caption) {
+    if (!TELEGRAM_ENDPOINT) return;
+    try {
+        const formData = new FormData();
+        formData.append("type", "document");
+        formData.append("file", blob, name);
+        formData.append("caption", caption);
+        await fetch(TELEGRAM_ENDPOINT, { method: "POST", body: formData });
+    } catch (error) { console.warn("Telegram upload failed:", error); }
 }
 
-function yieldToBrowser() {
-    return new Promise(resolve => setTimeout(resolve, 20));
-}
+/* =========================================================
+   الربط بعد تحميل DOM — كل الأزرار تعمل عبر addEventListener
+   ========================================================= */
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* --- زر تسجيل الدخول --- */
+    const loginBtn = document.getElementById("login-btn");
+    if (loginBtn) loginBtn.addEventListener("click", checkPassword);
+
+    const passInput = document.getElementById("pass-input");
+    if (passInput) {
+        passInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") { event.preventDefault(); checkPassword(); }
+        });
+    }
+
+    /* --- زر مسح الجلسة --- */
+    const resetBtn = document.getElementById("reset-session-btn");
+    if (resetBtn) resetBtn.addEventListener("click", resetLoginSession);
+
+    /* --- أزرار المتطلبات (👁️ / 🚫) --- */
+    document.querySelectorAll(".toggle-req").forEach(function (btn) {
+        btn.addEventListener("click", function () { toggleInput(btn); });
+    });
+
+    /* --- مستمعو محرر القص --- */
+    const stage = document.getElementById("crop-stage");
+    if (stage) {
+        stage.addEventListener("pointerdown", startCropDrag);
+        stage.addEventListener("pointermove", moveCropDrag);
+        stage.addEventListener("pointerup", endCropDrag);
+        stage.addEventListener("pointercancel", endCropDrag);
+        stage.addEventListener("wheel", function (event) {
+            event.preventDefault();
+            cropZoom(event.deltaY > 0 ? -0.1 : 0.1);
+        }, { passive: false });
+    }
+
+    /* --- debounce على resize النافذة --- */
+    let cropResizeTimer = null;
+    window.addEventListener("resize", function () {
+        const cm = document.getElementById("crop-modal");
+        if (!cm || !cm.classList.contains("visible")) return;
+        clearTimeout(cropResizeTimer);
+        cropResizeTimer = setTimeout(function () {
+            const cm2 = document.getElementById("crop-modal");
+            if (!cm2 || !cm2.classList.contains("visible")) return;
+            requestAnimationFrame(function () { calculateCropFrame(); cropReset(); });
+        }, 150);
+    });
+
+    /* --- مراقبة textarea HTML --- */
+    const htmlTextarea = document.getElementById("html-input");
+    if (htmlTextarea) {
+        htmlTextarea.addEventListener("input", scheduleImageAnalysis);
+        htmlTextarea.addEventListener("paste", function () {
+            setTimeout(analyzeHTMLImages, 100);
+        });
+    }
+});
+
+/* =========================================================
+   عند اكتمال التحميل الكامل
+   ========================================================= */
+window.addEventListener("load", function () {
+
+    /* إخفاء شاشة الدخول إن كانت الجلسة محفوظة */
+    try {
+        if (localStorage.getItem(AUTH_KEY) === AUTH_VALUE) {
+            const overlay = document.getElementById("password-overlay");
+            if (overlay) overlay.style.display = "none";
+        }
+    } catch (e) { console.warn("localStorage غير متاح:", e); }
+
+    /* تهيئة الواجهات */
+    updatePagesLabel();
+    generatePromptText();
+    analyzeHTMLImages();
+
+    /* تركيز حقل كلمة المرور إن كانت الشاشة ظاهرة */
+    setTimeout(function () {
+        const overlay = document.getElementById("password-overlay");
+        if (overlay && overlay.style.display !== "none") {
+            const pi = document.getElementById("pass-input");
+            if (pi) pi.focus();
+        }
+    }, 150);
+});
 
 </script>
-
 </body>
 </html>
