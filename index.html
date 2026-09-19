@@ -51,8 +51,9 @@ textarea#final-prompt-output{min-height:260px;resize:vertical;direction:rtl;text
 .image-manager-count{background:#2563eb;color:#fff;padding:4px 9px;border-radius:20px;font-size:11px;font-weight:bold}
 .image-manager-description{color:#94a3b8;font-size:11px;line-height:1.7;margin:0 0 12px}
 .image-manager-list{display:flex;flex-direction:column;gap:10px}
-.html-image-card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:10px;overflow:hidden}
+.html-image-card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:10px;overflow:hidden;transition:.2s}
 .html-image-card.replaced{border-color:#059669;background:#0f2923}
+.html-image-card.selected{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.35)}
 .html-image-card-top{display:flex;align-items:flex-start;gap:10px}
 .html-image-thumb{width:82px;height:70px;flex:0 0 82px;border-radius:7px;background:#020617;border:1px solid #475569;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .html-image-thumb img{width:100%;height:100%;object-fit:contain;display:block}
@@ -75,6 +76,19 @@ textarea#final-prompt-output{min-height:260px;resize:vertical;direction:rtl;text
 .image-manager-refresh{width:100%;margin-top:10px;background:transparent;border:1px solid #475569;color:#94a3b8;padding:8px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:bold}
 .image-manager-refresh:hover{background:#1e293b;color:#f8fafc}
 .image-empty{text-align:center;color:#64748b;font-size:12px;padding:12px}
+.image-batch-bar{display:none;align-items:center;gap:8px;padding:10px;margin-bottom:12px;background:#0f172a;border:1px solid #2563eb;border-radius:8px;flex-wrap:wrap}
+.image-batch-bar.visible{display:flex}
+.image-selected-count{color:#60a5fa;font-size:12px;font-weight:bold;padding:5px 12px;background:#1e3a8a;border-radius:14px;flex-shrink:0}
+.image-batch-action{flex:1;min-width:110px;border:none;border-radius:6px;padding:9px 10px;background:#2563eb;color:#fff;font-size:11px;font-weight:bold;cursor:pointer;transition:.2s}
+.image-batch-action:hover{background:#1d4ed8}
+.image-batch-action.keep{background:#475569}
+.image-batch-action.keep:hover{background:#334155}
+.image-batch-action.clear{background:#7f1d1d;color:#fca5a5}
+.image-batch-action.clear:hover{background:#991b1b;color:#fef2f2}
+.html-image-select-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:6px 8px;background:#0f172a;border-radius:6px;cursor:pointer;user-select:none}
+.html-image-select-row:hover{background:#111c33}
+.html-image-select-row input[type="checkbox"]{width:18px;height:18px;cursor:pointer;accent-color:#2563eb;flex-shrink:0;margin:0}
+.html-image-select-row span{font-size:11px;color:#94a3b8;font-weight:bold;cursor:pointer;flex:1}
 .crop-modal-overlay{position:fixed;inset:0;z-index:10000;background:rgba(2,6,23,.90);display:none;align-items:center;justify-content:center;padding:12px}
 .crop-modal-overlay.visible{display:flex}
 .crop-modal{width:min(760px,100%);max-height:calc(100vh - 24px);overflow-y:auto;background:#1e293b;border:1px solid #475569;border-radius:14px;box-shadow:0 25px 60px rgba(0,0,0,.65);padding:15px}
@@ -112,6 +126,7 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
 .html-image-thumb{width:72px;flex-basis:72px;height:65px}
 .html-image-actions{flex-wrap:wrap}
 .html-image-action{min-width:calc(50% - 4px)}
+.image-batch-action{min-width:100%;}
 .crop-modal{padding:10px;border-radius:12px}
 .crop-stage{height:min(50vh,400px);min-height:220px}
 .crop-controls,.crop-actions{gap:6px}
@@ -162,9 +177,9 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
             <div class="form-group">
                 <label>الجودة:</label>
                 <select id="quality-select">
-                    <option value="1">عادية (سريعة جداً)</option>
-                    <option value="2" selected>عالية (متوازنة)</option>
-                    <option value="3">ممتازة (للصور الدقيقة)</option>
+                    <option value="1">عادية (سريعة)</option>
+                    <option value="2">عالية (متوازنة)</option>
+                    <option value="3" selected>ممتازة (أقصى جودة) ⭐</option>
                 </select>
             </div>
         </div>
@@ -184,9 +199,14 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
                 </div>
                 <p class="image-manager-description">
                     يتم التعرف على صور img وصور CSS الخلفية تلقائيًا.
-                    يمكنك الاحتفاظ بالصورة أو اختيار صورة جديدة ثم قصها يدويًا
-                    حسب إطار الصورة الحالية. لن يتم تمديد الصورة أو ضغطها أو تغيير نسبتها.
+                    يمكنك تحديد عدة صور دفعة واحدة (عبر مربع الاختيار) ثم استبدالها جميعًا بصورة واحدة مقصوصة.
                 </p>
+                <div id="image-batch-bar" class="image-batch-bar">
+                    <span id="image-selected-count" class="image-selected-count">0 محدد</span>
+                    <button type="button" class="image-batch-action" onclick="replaceSelectedImages()">🖼️ استبدال المحدد</button>
+                    <button type="button" class="image-batch-action keep" onclick="keepSelectedImages()">↩️ الاحتفاظ بالمحدد</button>
+                    <button type="button" class="image-batch-action clear" onclick="clearImageSelection()">✖ إلغاء التحديد</button>
+                </div>
                 <div id="image-manager-list" class="image-manager-list"></div>
                 <button type="button" class="image-manager-refresh" onclick="analyzeHTMLImages()">🔄 تحديث قائمة الصور</button>
             </div>
@@ -224,12 +244,36 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
                     <option value="bold">جريء وملون</option>
                 </select>
             </div>
+        </div>
+        <div class="row">
             <div class="form-group">
                 <label>حجم الخط:</label>
                 <select id="base-font-size" onchange="generatePromptText()">
                     <option value="">افتراضي</option>
                     <option value="large">كبير (للعروض)</option>
                     <option value="small">صغير (للتفاصيل)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>الخط العربي المقترح:</label>
+                <select id="font-choice" onchange="generatePromptText()">
+                    <option value="">🎲 دع الذكاء يختار</option>
+                    <option value="Cairo">Cairo — كايرو (حديث)</option>
+                    <option value="Tajawal">Tajawal — تجوال (مرن)</option>
+                    <option value="Almarai">Almarai — المراعي (نظيف)</option>
+                    <option value="Amiri">Amiri — أميري (كلاسيكي)</option>
+                    <option value="El Messiri">El Messiri — المصيري (أنيق)</option>
+                    <option value="Reem Kufi">Reem Kufi — ريم كوفي (هندسي)</option>
+                    <option value="Noto Kufi Arabic">Noto Kufi Arabic — نوتو كوفي</option>
+                    <option value="Noto Naskh Arabic">Noto Naskh Arabic — نسخ</option>
+                    <option value="Changa">Changa — شنغا (عصري)</option>
+                    <option value="Mada">Mada — مدى (بسيط)</option>
+                    <option value="Markazi Text">Markazi Text — مركزي (رسمي)</option>
+                    <option value="Harmattan">Harmattan — هرمتان</option>
+                    <option value="Lemonada">Lemonada — ليموندا (ودّي)</option>
+                    <option value="Rakkas">Rakkas — رقّاص (زخرفي)</option>
+                    <option value="Aref Ruqaa">Aref Ruqaa — رقعة</option>
+                    <option value="Scheherazade New">Scheherazade New — شهرزاد</option>
                 </select>
             </div>
         </div>
@@ -312,16 +356,51 @@ const AUTH_KEY = "auth_token_v2";
 const AUTH_VALUE = "authenticated";
 const TELEGRAM_ENDPOINT = "";
 
+/* إعدادات التصيير — جودة قصوى */
 const RENDER_CONFIG = {
-    maxCanvasPixels: 6500000,
-    fontTimeout: 4500,
-    imageTimeout: 7000,
-    jpegQuality: 0.88
+    maxCanvasPixels: 20000000,   // 20M بكسل — يسمح بدقة عالية جدًا
+    fontTimeout: 12000,
+    imageTimeout: 14000,
+    jpegQuality: 0.98,           // أقصى جودة عملية
+    preRenderWait: 2800,         // انتظار قبل التصوير
+    postImageWait: 1400,         // انتظار بعد تحميل الصور
+    fontHardTimeout: 14000,      // حد أقصى لانتظار الخطوط
+    pageStabilize: 400           // استقرار كل صفحة قبل التصوير
 };
+
+/* قائمة الخطوط العربية المدعومة */
+const ARABIC_FONTS = [
+    "Cairo", "Tajawal", "Almarai", "Amiri", "El Messiri",
+    "Reem Kufi", "Noto Kufi Arabic", "Noto Naskh Arabic",
+    "Changa", "Mada", "Markazi Text", "Harmattan",
+    "Lemonada", "Rakkas", "Aref Ruqaa", "Scheherazade New"
+];
+
+const GOOGLE_FONTS_URL = "https://fonts.googleapis.com/css2?" + [
+    "family=Cairo:wght@400;500;600;700;800;900",
+    "family=Tajawal:wght@400;500;700;800;900",
+    "family=Almarai:wght@300;400;700;800",
+    "family=Amiri:ital,wght@0,400;0,700;1,400;1,700",
+    "family=El+Messiri:wght@400;500;600;700",
+    "family=Reem+Kufi:wght@400;500;600;700",
+    "family=Noto+Kufi+Arabic:wght@300;400;500;600;700;800",
+    "family=Noto+Naskh+Arabic:wght@400;500;600;700",
+    "family=Changa:wght@400;500;600;700;800",
+    "family=Mada:wght@300;400;500;600;700;800;900",
+    "family=Markazi+Text:wght@400;500;600;700",
+    "family=Harmattan:wght@400;500;600;700",
+    "family=Lemonada:wght@300;400;500;600;700",
+    "family=Rakkas",
+    "family=Aref+Ruqaa:wght@400;700",
+    "family=Scheherazade+New:wght@400;500;600;700",
+    "display=swap"
+].join("&");
 
 let imageReplacements = new Map();
 let detectedImages = [];
 let imageAnalysisTimer = null;
+let selectedImageKeys = new Set();
+let pendingBatchReplacement = null;
 
 let cropState = {
     item: null, sourceDataUrl: "", sourceFileName: "", sourceMimeType: "",
@@ -471,7 +550,7 @@ function getNaturalImageSize(src) {
 }
 
 /* =========================================================
-   إضافة صورة مكتشفة (بدون تكرار)
+   إضافة صورة مكتشفة
    ========================================================= */
 function addDetectedImage(list, data) {
     const normalized = String(data.src || "").trim();
@@ -517,8 +596,11 @@ async function analyzeHTMLImages() {
     if (!code.trim()) {
         detectedImages = [];
         imageReplacements.clear();
+        selectedImageKeys.clear();
+        pendingBatchReplacement = null;
         manager.classList.remove("visible");
         list.innerHTML = "";
+        updateBatchBar();
         return;
     }
 
@@ -528,7 +610,6 @@ async function analyzeHTMLImages() {
 
     const found = [];
 
-    /* ----- 1) صور IMG ----- */
     const images = Array.from(doc.querySelectorAll("img"));
     images.forEach(function (img, index) {
         const src = resolveImgSrc(img);
@@ -545,7 +626,6 @@ async function analyzeHTMLImages() {
         });
     });
 
-    /* ----- 2) background داخل inline style ----- */
     const allElements = Array.from(doc.querySelectorAll("*"));
     allElements.forEach(function (element, elementIndex) {
         const style = element.getAttribute("style") || "";
@@ -565,7 +645,6 @@ async function analyzeHTMLImages() {
         });
     });
 
-    /* ----- 3) background داخل <style> ----- */
     const styleTags = Array.from(doc.querySelectorAll("style"));
     styleTags.forEach(function (styleTag, styleIndex) {
         const cssText = styleTag.textContent || "";
@@ -618,7 +697,6 @@ async function analyzeHTMLImages() {
         } catch (error) { console.warn("تعذر تحليل CSS:", error); }
     });
 
-    /* ----- الحفاظ على الاستبدالات القديمة ----- */
     const oldReplacements = imageReplacements;
     const newReplacements = new Map();
     found.forEach(function (item, index) {
@@ -629,10 +707,17 @@ async function analyzeHTMLImages() {
     imageReplacements = newReplacements;
     detectedImages = found;
 
+    const validKeys = new Set(found.map(function (it) { return it.key; }));
+    Array.from(selectedImageKeys).forEach(function (k) {
+        if (!validKeys.has(k)) selectedImageKeys.delete(k);
+    });
+    pendingBatchReplacement = null;
+
     if (count) count.textContent = detectedImages.length + " صورة";
     if (!detectedImages.length) {
         manager.classList.remove("visible");
         list.innerHTML = '<div class="image-empty">لا توجد صور في الكود الحالي.</div>';
+        updateBatchBar();
         return;
     }
     manager.classList.add("visible");
@@ -667,11 +752,13 @@ function renderImageManager() {
     if (!list) return;
     if (!detectedImages.length) {
         list.innerHTML = '<div class="image-empty">لا توجد صور في الكود الحالي.</div>';
+        updateBatchBar();
         return;
     }
     list.innerHTML = detectedImages.map(function (item) {
         const replacement = imageReplacements.get(item.key);
         const isReplaced = !!replacement;
+        const isSelected = selectedImageKeys.has(item.key);
         const previewSrc = replacement ? replacement.dataUrl : item.src;
         const displayName = replacement ? replacement.fileName : item.name;
         const naturalDimensions = (item.naturalWidth && item.naturalHeight)
@@ -691,7 +778,11 @@ function renderImageManager() {
         const statusHtml = isReplaced ? '✅ سيتم استخدام: ' + escapeHTML(replacement.fileName) : 'الصورة الحالية مستخدمة';
 
         return '' +
-            '<div class="html-image-card ' + (isReplaced ? "replaced" : "") + '" data-image-card="' + item.index + '">' +
+            '<div class="html-image-card ' + (isReplaced ? "replaced " : "") + (isSelected ? "selected" : "") + '" data-image-card="' + item.index + '">' +
+                '<div class="html-image-select-row">' +
+                    '<input type="checkbox" data-image-key="' + escapeAttribute(item.key) + '" ' + (isSelected ? "checked" : "") + ' onchange="toggleImageSelection(this)">' +
+                    '<span>تحديد هذه الصورة (للاستبدال الجماعي)</span>' +
+                '</div>' +
                 '<div class="html-image-card-top">' +
                     '<div class="html-image-thumb">' + thumbContent + '</div>' +
                     '<div class="html-image-info">' +
@@ -718,6 +809,88 @@ function renderImageManager() {
                 '<div class="html-image-status">' + statusHtml + '</div>' +
             '</div>';
     }).join("");
+    updateBatchBar();
+}
+
+/* =========================================================
+   التحديد المتعدد للصور
+   ========================================================= */
+function toggleImageSelection(checkbox) {
+    const key = checkbox.getAttribute("data-image-key");
+    if (!key) return;
+    if (checkbox.checked) selectedImageKeys.add(key);
+    else selectedImageKeys.delete(key);
+    const card = checkbox.closest(".html-image-card");
+    if (card) card.classList.toggle("selected", checkbox.checked);
+    updateBatchBar();
+}
+
+function updateBatchBar() {
+    const bar = document.getElementById("image-batch-bar");
+    const countEl = document.getElementById("image-selected-count");
+    if (!bar || !countEl) return;
+    const n = selectedImageKeys.size;
+    countEl.textContent = n + " محدد";
+    bar.classList.toggle("visible", n > 0);
+}
+
+function clearImageSelection() {
+    selectedImageKeys.clear();
+    renderImageManager();
+}
+
+function keepSelectedImages() {
+    selectedImageKeys.forEach(function (key) { imageReplacements.delete(key); });
+    selectedImageKeys.clear();
+    renderImageManager();
+}
+
+async function replaceSelectedImages() {
+    if (selectedImageKeys.size === 0) {
+        alert("الرجاء تحديد صورة واحدة على الأقل.");
+        return;
+    }
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.style.display = "none";
+    document.body.appendChild(input);
+    input.addEventListener("change", async function () {
+        const file = input.files && input.files[0];
+        if (!file) { input.remove(); return; }
+        if (!file.type || !file.type.startsWith("image/")) {
+            alert("الملف المحدد ليس صورة.");
+            input.remove();
+            return;
+        }
+        try {
+            const dataUrl = await readFileAsDataURL(file);
+            const keysArray = Array.from(selectedImageKeys);
+            const firstKey = keysArray[0];
+            const firstItem = detectedImages.find(function (it) { return it.key === firstKey; });
+            if (!firstItem) { input.remove(); return; }
+
+            pendingBatchReplacement = {
+                keys: keysArray,
+                dataUrl: dataUrl,
+                fileName: file.name,
+                mimeType: file.type
+            };
+
+            await openCropEditor({
+                item: firstItem,
+                sourceDataUrl: dataUrl,
+                sourceFileName: file.name,
+                sourceMimeType: file.type,
+                originalDataUrl: dataUrl
+            });
+        } catch (error) {
+            console.error(error);
+            alert("تعذر قراءة الصورة.");
+            pendingBatchReplacement = null;
+        } finally { input.remove(); }
+    }, { once: true });
+    input.click();
 }
 
 /* =========================================================
@@ -741,6 +914,7 @@ function chooseReplacementImage(index) {
         }
         try {
             const dataUrl = await readFileAsDataURL(file);
+            pendingBatchReplacement = null;
             await openCropEditor({
                 item: item, sourceDataUrl: dataUrl,
                 sourceFileName: file.name, sourceMimeType: file.type,
@@ -759,6 +933,7 @@ async function editReplacementCrop(index) {
     if (!item) return;
     const replacement = imageReplacements.get(item.key);
     if (!replacement) { chooseReplacementImage(index); return; }
+    pendingBatchReplacement = null;
     await openCropEditor({
         item: item,
         sourceDataUrl: replacement.originalDataUrl || replacement.dataUrl,
@@ -772,6 +947,7 @@ function keepOriginalImage(index) {
     const item = detectedImages[index];
     if (!item) return;
     imageReplacements.delete(item.key);
+    selectedImageKeys.delete(item.key);
     renderImageManager();
 }
 
@@ -837,13 +1013,6 @@ function applyBackgroundReplacementToElement(element, original, replacement) {
         element.setAttribute("style", replaceCSSImageURL(inlineStyle, original, replacement));
     }
     try {
-        const computed = getComputedStyle(element);
-        const bgImage = computed.backgroundImage;
-        if (bgImage && bgImage.indexOf(original) !== -1) {
-            element.style.backgroundImage = replaceCSSImageURL(bgImage, original, replacement);
-        }
-    } catch (e) {}
-    try {
         const background = element.style.background;
         if (background && background.indexOf(original) !== -1) {
             element.style.background = replaceCSSImageURL(background, original, replacement);
@@ -892,8 +1061,8 @@ async function getCropTargetRatio(item) {
     if (!code.trim()) return fallback;
 
     let width = 794;
-    const typeEl = document.getElementById("prompt-type");
-    if (typeEl && typeEl.value === "169") width = 1280;
+    const formatEl = document.getElementById("format-select");
+    if (formatEl && (formatEl.value === "pdf-169" || formatEl.value === "pptx")) width = 1280;
 
     const container = document.createElement("div");
     container.style.cssText = "position:absolute;left:-99999px;top:0;width:" + width + "px;height:auto;min-height:100vh;visibility:hidden;pointer-events:none;overflow:visible;contain:layout;";
@@ -1009,8 +1178,10 @@ async function openCropEditor(options) {
 
     const info = document.getElementById("crop-target-info");
     if (info) {
+        const isBatch = pendingBatchReplacement && pendingBatchReplacement.keys.length > 1;
+        const batchText = isBatch ? " ⚠️ سيُطبَّق على " + pendingBatchReplacement.keys.length + " صور محددة." : "";
         const ratioText = cropState.targetRatio.toFixed(3);
-        info.textContent = "إطار الصورة الحالي بنسبة " + ratioText + ":1 — اسحب الصورة واضبط الجزء المطلوب داخل الإطار.";
+        info.textContent = "إطار الصورة الحالي بنسبة " + ratioText + ":1 — اسحب الصورة واضبط الجزء المطلوب داخل الإطار." + batchText;
     }
 
     modal.classList.add("visible");
@@ -1200,7 +1371,7 @@ function createCroppedDataURL() {
     let mime = cropState.sourceMimeType;
     if (["image/png", "image/jpeg", "image/webp"].indexOf(mime) === -1) mime = "image/png";
     let dataUrl;
-    try { dataUrl = canvas.toDataURL(mime, 0.95); }
+    try { dataUrl = canvas.toDataURL(mime, 1.0); }
     catch (e) { mime = "image/png"; dataUrl = canvas.toDataURL(mime); }
     return { dataUrl: dataUrl, mimeType: mime, width: outputWidth, height: outputHeight, crop: crop };
 }
@@ -1220,23 +1391,42 @@ function applyCrop() {
     if (!result) { alert("تعذر اعتماد القص."); return; }
     const item = cropState.item;
     if (!item) return;
-    const old = imageReplacements.get(item.key);
-    const extension = result.mimeType === "image/jpeg" ? ".jpg"
-        : result.mimeType === "image/webp" ? ".webp" : ".png";
-    const originalName = cropState.sourceFileName || "image";
-    const cleanName = originalName.replace(/\.[^.]+$/, "");
-    imageReplacements.set(item.key, {
-        dataUrl: result.dataUrl,
-        fileName: cleanName + "_cropped" + extension,
-        mimeType: result.mimeType,
-        originalFileName: (old && old.originalFileName) || originalName,
-        originalMimeType: (old && old.originalMimeType) || cropState.sourceMimeType,
-        originalDataUrl: cropState.originalDataUrl,
-        cropped: true, cropRatio: cropState.targetRatio,
-        originalWidth: cropState.naturalWidth,
-        originalHeight: cropState.naturalHeight,
-        croppedWidth: result.width, croppedHeight: result.height
-    });
+
+    const buildReplacement = function (targetItem) {
+        const old = imageReplacements.get(targetItem.key);
+        const extension = result.mimeType === "image/jpeg" ? ".jpg"
+            : result.mimeType === "image/webp" ? ".webp" : ".png";
+        const originalName = cropState.sourceFileName || "image";
+        const cleanName = originalName.replace(/\.[^.]+$/, "");
+        return {
+            dataUrl: result.dataUrl,
+            fileName: cleanName + "_cropped" + extension,
+            mimeType: result.mimeType,
+            originalFileName: (old && old.originalFileName) || originalName,
+            originalMimeType: (old && old.originalMimeType) || cropState.sourceMimeType,
+            originalDataUrl: cropState.originalDataUrl,
+            cropped: true, cropRatio: cropState.targetRatio,
+            originalWidth: cropState.naturalWidth,
+            originalHeight: cropState.naturalHeight,
+            croppedWidth: result.width, croppedHeight: result.height
+        };
+    };
+
+    if (pendingBatchReplacement && pendingBatchReplacement.keys.indexOf(item.key) !== -1) {
+        const keysToApply = pendingBatchReplacement.keys.slice();
+        keysToApply.forEach(function (key) {
+            const targetItem = detectedImages.find(function (it) { return it.key === key; });
+            if (!targetItem) return;
+            imageReplacements.set(key, buildReplacement(targetItem));
+        });
+        pendingBatchReplacement = null;
+        selectedImageKeys.clear();
+    } else {
+        imageReplacements.set(item.key, buildReplacement(item));
+        pendingBatchReplacement = null;
+        selectedImageKeys.delete(item.key);
+    }
+
     closeCropModal();
     renderImageManager();
 }
@@ -1251,6 +1441,7 @@ function closeCropModal() {
     if (preview) preview.src = "";
     if (previewWrap) previewWrap.classList.remove("visible");
     document.body.style.overflow = "";
+    pendingBatchReplacement = null;
     cropState = {
         item: null, sourceDataUrl: "", sourceFileName: "", sourceMimeType: "",
         originalDataUrl: "", image: null, naturalWidth: 0, naturalHeight: 0,
@@ -1262,7 +1453,7 @@ function closeCropModal() {
 }
 
 /* =========================================================
-   تسجيل الدخول — عبر مستمعي الأحداث (أكثر أمانًا)
+   تسجيل الدخول
    ========================================================= */
 function checkPassword() {
     const inputElement = document.getElementById("pass-input");
@@ -1311,7 +1502,7 @@ function switchTab(tab) {
 }
 
 /* =========================================================
-   تبديل حالة المتطلب (👁️ ↔ 🚫)
+   تبديل حالة المتطلب
    ========================================================= */
 function toggleInput(button) {
     const id = button.getAttribute("data-target");
@@ -1342,18 +1533,20 @@ function onPromptTypeChange() {
 }
 
 /* =========================================================
-   المولد الذكي — الصور كمتطلب بزر عين
+   المولد الذكي
    ========================================================= */
 function generatePromptText() {
     const typeEl = document.getElementById("prompt-type");
     const colorEl = document.getElementById("color-scheme");
     const styleEl = document.getElementById("design-style");
     const fontEl = document.getElementById("base-font-size");
+    const fontChoiceEl = document.getElementById("font-choice");
 
     const type = typeEl ? typeEl.value : "a4";
     const colorScheme = colorEl ? colorEl.value : "";
     const designStyle = styleEl ? styleEl.value : "";
     const baseFontSize = fontEl ? fontEl.value : "";
+    const fontChoice = fontChoiceEl ? fontChoiceEl.value : "";
 
     const isA4 = type === "a4";
     const unitLabel = isA4 ? "صفحة" : "شريحة";
@@ -1364,7 +1557,6 @@ function generatePromptText() {
     const ratioLabel = isA4 ? "A4 (1 : 1.414)" : "16:9 (1 : 1.778)";
     const projectType = isA4 ? "بحث/تقرير أكاديمي بمقاس A4" : "عرض تقديمي بمقاس 16:9";
 
-    /* -- متطلبات المحتوى -- */
     const textFields = [
         { id: "req-title", label: "العنوان" },
         { id: "req-subject", label: "المادة" },
@@ -1387,7 +1579,6 @@ function generatePromptText() {
         contentLines.push("• عدد " + unitsLabel + ": " + pagesEl.value.trim());
     }
 
-    /* -- حالة متطلب الصور (زر العين) -- */
     const imagesEl = document.getElementById("req-images");
     const imagesEnabled = imagesEl && !imagesEl.disabled;
     let imageCount = "5";
@@ -1395,13 +1586,12 @@ function generatePromptText() {
         imageCount = imagesEl.value.trim();
     }
 
-    /* -- تفضيلات التصميم -- */
     const designLines = [];
     if (colorScheme) designLines.push("• نظام الألوان: " + colorScheme);
     if (designStyle) designLines.push("• نمط التصميم: " + designStyle);
     if (baseFontSize) designLines.push("• حجم الخط: " + baseFontSize);
+    if (fontChoice) designLines.push("• الخط العربي المطلوب: " + fontChoice + " (يُستدعى من Google Fonts)");
 
-    /* -- بناء الأمر -- */
     const parts = [];
 
     parts.push("أنت مصمم ومطوّر واجهات أمامية محترف، متخصص في تصميم المستندات والعروض العربية بجودة عالية ومظهر أنيق جاهز للطباعة.");
@@ -1428,7 +1618,6 @@ function generatePromptText() {
     }
     parts.push(designSection);
 
-    /* -- المتطلبات الإلزامية -- */
     const requirements = [];
 
     if (imagesEnabled) {
@@ -1444,7 +1633,15 @@ function generatePromptText() {
     }
 
     requirements.push('ابدأ الملف بـ <!doctype html> ثم <html lang="ar" dir="rtl">.');
-    requirements.push("استدعِ خطًا عربيًا من Google Fonts (Cairo أو Tajawal أو Almarai) وطبّقه على body.");
+
+    if (fontChoice) {
+        requirements.push("استدعِ الخط «" + fontChoice + "» من Google Fonts عبر رابط css2 وطبّقه على body.");
+        requirements.push("خطوط عربية بديلة مقترحة (في حال عدم توفر الخط الأساسي): " + ARABIC_FONTS.join("، ") + ".");
+    } else {
+        requirements.push("اختر خطًا عربيًا أنيقًا من Google Fonts وطبّقه على body. الاقتراحات المتاحة: " + ARABIC_FONTS.join("، ") + ".");
+    }
+    requirements.push("اجعل الخط متسقًا في كل التصميم، واستخدم أوزانًا مختلفة (400/500/600/700/800) للعناوين والنصوص لخلق تباين بصري.");
+
     requirements.push("خصائص body: margin:0; padding:0; box-sizing:border-box.");
     requirements.push('ضع كل ' + unitLabel + ' داخل <div class="page"> بأبعاد ثابتة ' + dimShort + "px، مع position:relative و overflow:hidden.");
     requirements.push("املأ كل " + unitLabel + " بمحتوى متوازن دون فراغات كبيرة، ولا تترك نصًا يتجاوز حدود الصفحة.");
@@ -1534,23 +1731,27 @@ function clearCode() {
         if (inputEl) inputEl.value = "";
         detectedImages = [];
         imageReplacements.clear();
+        selectedImageKeys.clear();
+        pendingBatchReplacement = null;
         const manager = document.getElementById("image-manager");
         const list = document.getElementById("image-manager-list");
         if (manager) manager.classList.remove("visible");
         if (list) list.innerHTML = "";
+        updateBatchBar();
     }
 }
 
 /* =========================================================
-   أدوات التصيير
+   أدوات التصيير — جودة قصوى
    ========================================================= */
 async function waitForFonts() {
-    if (!document.fonts) { await new Promise(function (r) { setTimeout(r, 800); }); return; }
-    const fontSpecs = [
-        "400 16px Cairo", "500 16px Cairo", "600 16px Cairo", "700 16px Cairo", "800 16px Cairo",
-        "400 16px Tajawal", "500 16px Tajawal", "700 16px Tajawal", "800 16px Tajawal"
-    ];
-    const hardTimeout = new Promise(function (resolve) { setTimeout(resolve, 6000); });
+    if (!document.fonts) { await new Promise(function (r) { setTimeout(r, 1500); }); return; }
+    const fontSpecs = [];
+    ARABIC_FONTS.forEach(function (fam) {
+        fontSpecs.push('400 16px "' + fam + '"');
+        fontSpecs.push('700 16px "' + fam + '"');
+    });
+    const hardTimeout = new Promise(function (resolve) { setTimeout(resolve, RENDER_CONFIG.fontHardTimeout); });
     const work = (async function () {
         try {
             await Promise.all(fontSpecs.map(function (spec) {
@@ -1558,7 +1759,7 @@ async function waitForFonts() {
                 catch (e) { return Promise.resolve(null); }
             }));
             try { await document.fonts.ready; } catch (e) {}
-            await new Promise(function (resolve) { setTimeout(resolve, 250); });
+            await new Promise(function (resolve) { setTimeout(resolve, 900); });
             try { document.body.getBoundingClientRect(); } catch (e) {}
         } catch (error) { console.warn("waitForFonts error:", error); }
     })();
@@ -1566,12 +1767,16 @@ async function waitForFonts() {
 }
 
 function getSafeScale(width, height, requested) {
-    let scale = Number(requested) || 1;
-    const pixels = width * height * scale * scale;
+    let baseScale;
+    if (Number(requested) >= 3) baseScale = 3.5;
+    else if (Number(requested) >= 2) baseScale = 2.5;
+    else baseScale = 1.8;
+
+    const pixels = width * height * baseScale * baseScale;
     if (pixels > RENDER_CONFIG.maxCanvasPixels) {
-        scale = Math.sqrt(RENDER_CONFIG.maxCanvasPixels / (width * height));
+        baseScale = Math.sqrt(RENDER_CONFIG.maxCanvasPixels / (width * height));
     }
-    return Math.max(1, Math.min(scale, 3));
+    return Math.max(1, Math.min(baseScale, 4));
 }
 
 function createRenderContainer(code, width, height) {
@@ -1579,7 +1784,7 @@ function createRenderContainer(code, width, height) {
         const link = document.createElement("link");
         link.rel = "stylesheet";
         link.setAttribute("data-render-fonts", "true");
-        link.href = "https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap";
+        link.href = GOOGLE_FONTS_URL;
         document.head.appendChild(link);
     }
     const container = document.createElement("div");
@@ -1588,7 +1793,7 @@ function createRenderContainer(code, width, height) {
     container.setAttribute("data-render-container", "true");
     container.innerHTML = code;
     const fix = document.createElement("style");
-    fix.textContent = "[data-render-container]{box-sizing:border-box!important}[data-render-container]*,[data-render-container]*::before,[data-render-container]*::after{box-sizing:border-box}[data-render-container] .page{box-sizing:border-box!important}";
+    fix.textContent = "[data-render-container]{box-sizing:border-box!important}[data-render-container]*,[data-render-container]*::before,[data-render-container]*::after{box-sizing:border-box}[data-render-container] .page{box-sizing:border-box!important}[data-render-container] img{image-rendering:auto;-webkit-backface-visibility:hidden}";
     container.appendChild(fix);
     document.body.appendChild(container);
     return container;
@@ -1608,7 +1813,7 @@ async function prepareImages(containerOrDoc) {
 }
 
 function waitImage(img, timeout) {
-    timeout = timeout || 5000;
+    timeout = timeout || 7000;
     return new Promise(function (resolve) {
         if (img.complete && img.naturalWidth > 0) { resolve(true); return; }
         let finished = false;
@@ -1639,16 +1844,34 @@ async function renderPage(page, width, height, quality) {
     page.style.width = width + "px";
     page.style.height = height + "px";
     page.style.minHeight = height + "px";
+
     try {
+        await new Promise(function (r) {
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    setTimeout(r, RENDER_CONFIG.pageStabilize);
+                });
+            });
+        });
+
         return await html2canvas(page, {
-            scale: scale, width: width, height: height,
-            windowWidth: width, windowHeight: height,
-            useCORS: true, allowTaint: false,
+            scale: scale,
+            width: width,
+            height: height,
+            windowWidth: width,
+            windowHeight: height,
+            useCORS: true,
+            allowTaint: false,
             backgroundColor: "#ffffff",
             imageTimeout: RENDER_CONFIG.imageTimeout,
-            logging: false, removeContainer: true,
+            logging: false,
+            removeContainer: true,
             foreignObjectRendering: false,
-            scrollX: 0, scrollY: 0
+            scrollX: 0,
+            scrollY: 0,
+            letterRendering: true,
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: "high"
         });
     } finally {
         page.style.width = oldWidth;
@@ -1685,7 +1908,7 @@ async function exportFile() {
         else await generatePDF();
     } catch (error) {
         console.error(error);
-        alert("حدث خطأ أثناء التحويل.\n\nجرّب خفض الجودة إلى «عادية» إذا كان الكود يحتوي على صور كثيرة أو خلفيات خارجية.");
+        alert("حدث خطأ أثناء التحويل.\n\nجرّب خفض الجودة إلى «عالية» إذا كان الكود يحتوي على صور كثيرة أو خلفيات خارجية.");
     } finally {
         if (button) { button.disabled = false; button.innerText = "بدء الاستخراج 📥"; }
     }
@@ -1702,7 +1925,7 @@ async function generatePPTX() {
     if (!inputEl) return;
     const code = inputEl.value;
     const name = sanitizeFileName(nameEl ? nameEl.value : "presentation");
-    const quality = Number(qualityEl ? qualityEl.value : 2);
+    const quality = Number(qualityEl ? qualityEl.value : 3);
     const width = 1280, height = 720;
     if (button) button.innerText = "⏳ جاري تحضير البوربوينت...";
 
@@ -1711,8 +1934,9 @@ async function generatePPTX() {
         applyImageReplacements(container);
         await waitForFonts();
         try { document.body.getBoundingClientRect(); } catch (e) {}
-        await new Promise(function (r) { setTimeout(r, 600); });
+        await new Promise(function (r) { setTimeout(r, RENDER_CONFIG.preRenderWait); });
         await prepareImages(container);
+        await new Promise(function (r) { setTimeout(r, RENDER_CONFIG.postImageWait); });
 
         const pages = getPages(container);
         const pptx = new PptxGenJS();
@@ -1757,7 +1981,7 @@ async function generatePDF() {
 
     const code = inputEl.value;
     const name = sanitizeFileName(nameEl ? nameEl.value : "document");
-    const quality = Number(qualityEl ? qualityEl.value : 2);
+    const quality = Number(qualityEl ? qualityEl.value : 3);
     const format = formatEl.value;
     const isA4 = format === "pdf-a4";
     const width = isA4 ? 794 : 1280;
@@ -1770,8 +1994,9 @@ async function generatePDF() {
         applyImageReplacements(container);
         await waitForFonts();
         try { document.body.getBoundingClientRect(); } catch (e) {}
-        await new Promise(function (r) { setTimeout(r, 600); });
+        await new Promise(function (r) { setTimeout(r, RENDER_CONFIG.preRenderWait); });
         await prepareImages(container);
+        await new Promise(function (r) { setTimeout(r, RENDER_CONFIG.postImageWait); });
 
         const pages = getPages(container);
         const jsPDFCtor = window.jspdf.jsPDF;
@@ -1843,11 +2068,10 @@ async function sendFileToTelegram(blob, name, caption) {
 }
 
 /* =========================================================
-   الربط بعد تحميل DOM — كل الأزرار تعمل عبر addEventListener
+   الربط بعد تحميل DOM
    ========================================================= */
 document.addEventListener("DOMContentLoaded", function () {
 
-    /* --- زر تسجيل الدخول --- */
     const loginBtn = document.getElementById("login-btn");
     if (loginBtn) loginBtn.addEventListener("click", checkPassword);
 
@@ -1858,16 +2082,13 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* --- زر مسح الجلسة --- */
     const resetBtn = document.getElementById("reset-session-btn");
     if (resetBtn) resetBtn.addEventListener("click", resetLoginSession);
 
-    /* --- أزرار المتطلبات (👁️ / 🚫) --- */
     document.querySelectorAll(".toggle-req").forEach(function (btn) {
         btn.addEventListener("click", function () { toggleInput(btn); });
     });
 
-    /* --- مستمعو محرر القص --- */
     const stage = document.getElementById("crop-stage");
     if (stage) {
         stage.addEventListener("pointerdown", startCropDrag);
@@ -1880,7 +2101,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }, { passive: false });
     }
 
-    /* --- debounce على resize النافذة --- */
     let cropResizeTimer = null;
     window.addEventListener("resize", function () {
         const cm = document.getElementById("crop-modal");
@@ -1893,7 +2113,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 150);
     });
 
-    /* --- مراقبة textarea HTML --- */
     const htmlTextarea = document.getElementById("html-input");
     if (htmlTextarea) {
         htmlTextarea.addEventListener("input", scheduleImageAnalysis);
@@ -1903,12 +2122,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-/* =========================================================
-   عند اكتمال التحميل الكامل
-   ========================================================= */
 window.addEventListener("load", function () {
 
-    /* إخفاء شاشة الدخول إن كانت الجلسة محفوظة */
     try {
         if (localStorage.getItem(AUTH_KEY) === AUTH_VALUE) {
             const overlay = document.getElementById("password-overlay");
@@ -1916,12 +2131,10 @@ window.addEventListener("load", function () {
         }
     } catch (e) { console.warn("localStorage غير متاح:", e); }
 
-    /* تهيئة الواجهات */
     updatePagesLabel();
     generatePromptText();
     analyzeHTMLImages();
 
-    /* تركيز حقل كلمة المرور إن كانت الشاشة ظاهرة */
     setTimeout(function () {
         const overlay = document.getElementById("password-overlay");
         if (overlay && overlay.style.display !== "none") {
