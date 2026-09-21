@@ -433,18 +433,12 @@ const AUTH_KEY = "auth_token_v2";
 const AUTH_VALUE = "authenticated";
 const TELEGRAM_ENDPOINT = "";
 
-/* إعدادات التصيير — محسّنة للاستقرار والجودة */
+/* إعدادات التصيير — القيم الأصلية التي كانت تعمل */
 const RENDER_CONFIG = {
-    maxCanvasPixels: 16777216,   // 16M بكسل (آمن للمتصفحات)
-    maxCanvasSide: 8192,          // حد Safari/iOS لكل ضلع
-    fontTimeout: 12000,
-    imageTimeout: 14000,
-    jpegQuality: 0.97,
-    preRenderWait: 3200,
-    postImageWait: 1800,
-    fontHardTimeout: 15000,
-    pageStabilize: 500,
-    maxImagesToDataURL: 60
+    maxCanvasPixels: 6500000,
+    fontTimeout: 4500,
+    imageTimeout: 7000,
+    jpegQuality: 0.88
 };
 
 const ARABIC_FONTS = [
@@ -643,7 +637,7 @@ function resolveImgSrc(img) {
 }
 
 /* =========================================================
-   تحويل أي مصدر صورة إلى data URL آمن (3 طبقات)
+   تحويل مصدر الصورة إلى data URL آمن
    ========================================================= */
 function blobToDataURL(blob) {
     return new Promise(function (resolve, reject) {
@@ -663,14 +657,6 @@ async function toSafeDataURL(src) {
         if (res.ok) {
             const blob = await res.blob();
             return await blobToDataURL(blob);
-        }
-    } catch (e) { /* تجاهل */ }
-
-    try {
-        const res = await fetch(src, { mode: "no-cors", credentials: "omit" });
-        if (res.ok || res.type === "opaque") {
-            const blob = await res.blob();
-            if (blob && blob.size > 0) return await blobToDataURL(blob);
         }
     } catch (e) { /* تجاهل */ }
 
@@ -1545,7 +1531,7 @@ function closeCropModal() {
 }
 
 /* =========================================================
-   🪄 إزالة الخلفية (لون موحّد)
+   🪄 إزالة الخلفية
    ========================================================= */
 function openBackgroundRemover(index) {
     const item = detectedImages[index];
@@ -2106,55 +2092,36 @@ function clearCode() {
 }
 
 /* =========================================================
-   أدوات التصيير — محسّنة للاستقرار والجودة
+   أدوات التصيير — النسخة الأصلية
    ========================================================= */
 async function waitForFonts() {
-    if (!document.fonts) {
-        await new Promise(function (r) { setTimeout(r, 2000); });
-        return;
-    }
-
-    const fontSpecs = [];
-    ARABIC_FONTS.forEach(function (fam) {
-        ["400", "500", "600", "700", "800"].forEach(function (w) {
-            fontSpecs.push(w + ' 16px "' + fam + '"');
-        });
-    });
-
-    const hardTimeout = new Promise(function (resolve) {
-        setTimeout(resolve, RENDER_CONFIG.fontHardTimeout);
-    });
-
+    if (!document.fonts) { await new Promise(function (r) { setTimeout(r, 800); }); return; }
+    const fontSpecs = [
+        "400 16px Cairo", "500 16px Cairo", "600 16px Cairo", "700 16px Cairo", "800 16px Cairo",
+        "400 16px Tajawal", "500 16px Tajawal", "700 16px Tajawal", "800 16px Tajawal"
+    ];
+    const hardTimeout = new Promise(function (resolve) { setTimeout(resolve, 6000); });
     const work = (async function () {
         try {
             await Promise.all(fontSpecs.map(function (spec) {
-                try {
-                    return document.fonts.load(spec).catch(function () { return null; });
-                } catch (e) { return Promise.resolve(null); }
+                try { return document.fonts.load(spec).catch(function () { return null; }); }
+                catch (e) { return Promise.resolve(null); }
             }));
-        } catch (e) { /* تجاهل */ }
-
-        try { await document.fonts.ready; } catch (e) {}
-        await new Promise(function (r) { setTimeout(r, 1200); });
+            try { await document.fonts.ready; } catch (e) {}
+            await new Promise(function (resolve) { setTimeout(resolve, 250); });
+            try { document.body.getBoundingClientRect(); } catch (e) {}
+        } catch (error) { console.warn("waitForFonts error:", error); }
     })();
-
     await Promise.race([work, hardTimeout]);
 }
 
 function getSafeScale(width, height, requested) {
-    const qualityMap = { 1: 2.0, 2: 2.8, 3: 3.5 };
-    let baseScale = qualityMap[Number(requested)] || 2.8;
-
-    const totalPixels = width * height * baseScale * baseScale;
-    if (totalPixels > RENDER_CONFIG.maxCanvasPixels) {
-        baseScale = Math.sqrt(RENDER_CONFIG.maxCanvasPixels / (width * height));
+    let scale = Number(requested) || 1;
+    const pixels = width * height * scale * scale;
+    if (pixels > RENDER_CONFIG.maxCanvasPixels) {
+        scale = Math.sqrt(RENDER_CONFIG.maxCanvasPixels / (width * height));
     }
-
-    const maxSide = RENDER_CONFIG.maxCanvasSide;
-    if (width * baseScale > maxSide) baseScale = maxSide / width;
-    if (height * baseScale > maxSide) baseScale = Math.min(baseScale, maxSide / height);
-
-    return Math.max(1, Math.min(baseScale, 4));
+    return Math.max(1, Math.min(scale, 3));
 }
 
 function createRenderContainer(code, width, height) {
@@ -2165,48 +2132,14 @@ function createRenderContainer(code, width, height) {
         link.href = GOOGLE_FONTS_URL;
         document.head.appendChild(link);
     }
-
     const container = document.createElement("div");
-    container.style.cssText =
-        "position:absolute;left:-100000px;top:0;" +
-        "width:" + width + "px;" +
-        "min-height:" + height + "px;" +
-        "margin:0;padding:0;opacity:1;visibility:visible;" +
-        "pointer-events:none;z-index:-1;background:#ffffff;" +
-        "overflow:visible;contain:layout style;";
+    container.style.cssText = "position:absolute;left:-100000px;top:0;width:" + width + "px;min-height:" + height + "px;margin:0;padding:0;opacity:1;visibility:visible;pointer-events:none;z-index:-1;background:#ffffff;overflow:visible;contain:layout style;";
     container.dir = "rtl";
     container.setAttribute("data-render-container", "true");
     container.innerHTML = code;
-
     const fix = document.createElement("style");
-    fix.textContent =
-        "[data-render-container]{box-sizing:border-box!important;}" +
-        "[data-render-container]*,[data-render-container]*::before,[data-render-container]*::after{" +
-            "box-sizing:border-box!important;" +
-            "animation:none!important;" +
-            "animation-duration:0s!important;" +
-            "animation-delay:0s!important;" +
-            "transition:none!important;" +
-            "transition-duration:0s!important;" +
-            "caret-color:transparent!important;" +
-        "}" +
-        "[data-render-container] .page{" +
-            "box-sizing:border-box!important;" +
-            "transform:none!important;" +
-            "margin:0!important;" +
-        "}" +
-        "[data-render-container] img{" +
-            "image-rendering:auto;" +
-            "-webkit-backface-visibility:hidden;" +
-            "backface-visibility:hidden;" +
-        "}";
+    fix.textContent = "[data-render-container]{box-sizing:border-box!important}[data-render-container]*,[data-render-container]*::before,[data-render-container]*::after{box-sizing:border-box}[data-render-container] .page{box-sizing:border-box!important}[data-render-container] img{image-rendering:auto;-webkit-backface-visibility:hidden}";
     container.appendChild(fix);
-
-    container.querySelectorAll("img").forEach(function (img) {
-        img.removeAttribute("srcset");
-        img.removeAttribute("sizes");
-    });
-
     document.body.appendChild(container);
     return container;
 }
@@ -2214,35 +2147,18 @@ function createRenderContainer(code, width, height) {
 async function prepareImages(containerOrDoc) {
     const images = Array.from(containerOrDoc.querySelectorAll("img"));
     if (!images.length) return;
-
     await Promise.all(images.map(async function (img) {
-        const src = img.getAttribute("src") || "";
-        if (!src) return;
-
-        if (src.indexOf("data:") === 0) {
-            await waitImage(img, 4000);
-            return;
-        }
-
-        await waitImage(img, RENDER_CONFIG.imageTimeout);
-
-        if (!img.complete || img.naturalWidth === 0) {
-            try {
-                const safe = await toSafeDataURL(src);
-                img.setAttribute("src", safe);
-                img.src = safe;
-                await waitImage(img, 4000);
-            } catch (e) {
-                console.warn("تعذر تجهيز الصورة:", src, e);
-                img.setAttribute("src", "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==");
-                img.src = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
-            }
-        }
+        try {
+            img.setAttribute("crossorigin", "anonymous");
+            img.crossOrigin = "anonymous";
+            if (img.src && img.src.indexOf("data:") === 0) { await waitImage(img); return; }
+            await waitImage(img, RENDER_CONFIG.imageTimeout);
+        } catch (e) { img.style.visibility = "hidden"; }
     }));
 }
 
 function waitImage(img, timeout) {
-    timeout = timeout || 7000;
+    timeout = timeout || 5000;
     return new Promise(function (resolve) {
         if (img.complete && img.naturalWidth > 0) { resolve(true); return; }
         let finished = false;
@@ -2267,88 +2183,27 @@ function waitImage(img, timeout) {
 
 async function renderPage(page, width, height, quality) {
     const scale = getSafeScale(width, height, quality);
-
-    const oldStyles = {
-        width: page.style.width,
-        height: page.style.height,
-        minHeight: page.style.minHeight,
-        maxHeight: page.style.maxHeight,
-        overflow: page.style.overflow,
-        position: page.style.position,
-        left: page.style.left,
-        top: page.style.top
-    };
-
+    const oldWidth = page.style.width;
+    const oldHeight = page.style.height;
+    const oldMinHeight = page.style.minHeight;
     page.style.width = width + "px";
     page.style.height = height + "px";
     page.style.minHeight = height + "px";
-    page.style.maxHeight = height + "px";
-    page.style.overflow = "hidden";
-
     try {
-        await new Promise(function (r) {
-            requestAnimationFrame(function () {
-                requestAnimationFrame(function () {
-                    setTimeout(r, RENDER_CONFIG.pageStabilize);
-                });
-            });
-        });
-
-        const canvas = await html2canvas(page, {
-            scale: scale,
-            width: width,
-            height: height,
-            windowWidth: width,
-            windowHeight: height,
-            x: 0,
-            y: 0,
-            scrollX: 0,
-            scrollY: 0,
-            useCORS: true,
-            allowTaint: true,
+        return await html2canvas(page, {
+            scale: scale, width: width, height: height,
+            windowWidth: width, windowHeight: height,
+            useCORS: true, allowTaint: false,
             backgroundColor: "#ffffff",
             imageTimeout: RENDER_CONFIG.imageTimeout,
-            logging: false,
-            removeContainer: true,
+            logging: false, removeContainer: true,
             foreignObjectRendering: false,
-            onclone: function (clonedDoc) {
-                try {
-                    if (clonedDoc.body) {
-                        clonedDoc.body.style.background = "#ffffff";
-                        clonedDoc.body.style.margin = "0";
-                        clonedDoc.body.style.padding = "0";
-                        clonedDoc.body.style.overflow = "hidden";
-                    }
-                    if (clonedDoc.documentElement) {
-                        clonedDoc.documentElement.style.background = "#ffffff";
-                    }
-                    clonedDoc.querySelectorAll("img").forEach(function (img) {
-                        const s = img.getAttribute("src") || "";
-                        if (s && s.indexOf("data:") !== 0) {
-                            img.removeAttribute("srcset");
-                            img.removeAttribute("sizes");
-                        }
-                    });
-                    clonedDoc.querySelectorAll("*").forEach(function (el) {
-                        const cs = window.getComputedStyle(el);
-                        if (cs.overflow === "auto" || cs.overflow === "scroll") {
-                            el.style.overflow = "hidden";
-                        }
-                    });
-                } catch (e) { console.warn("onclone error:", e); }
-            }
+            scrollX: 0, scrollY: 0
         });
-
-        return canvas;
     } finally {
-        page.style.width = oldStyles.width;
-        page.style.height = oldStyles.height;
-        page.style.minHeight = oldStyles.minHeight;
-        page.style.maxHeight = oldStyles.maxHeight;
-        page.style.overflow = oldStyles.overflow;
-        page.style.position = oldStyles.position;
-        page.style.left = oldStyles.left;
-        page.style.top = oldStyles.top;
+        page.style.width = oldWidth;
+        page.style.height = oldHeight;
+        page.style.minHeight = oldMinHeight;
     }
 }
 
@@ -2380,7 +2235,7 @@ async function exportFile() {
         else await generatePDF();
     } catch (error) {
         console.error(error);
-        alert("حدث خطأ أثناء التحويل.\n\nجرّب خفض الجودة إلى «عالية» إذا كان الكود يحتوي على صور كثيرة أو خلفيات خارجية.");
+        alert("حدث خطأ أثناء التحويل.\n\nجرّب خفض الجودة إلى «عادية» إذا كان الكود يحتوي على صور كثيرة أو خلفيات خارجية.");
     } finally {
         if (button) { button.disabled = false; button.innerText = "بدء الاستخراج 📥"; }
     }
@@ -2394,7 +2249,7 @@ async function generatePPTX() {
     if (!inputEl) return;
     const code = inputEl.value;
     const name = sanitizeFileName(nameEl ? nameEl.value : "presentation");
-    const quality = Number(qualityEl ? qualityEl.value : 3);
+    const quality = Number(qualityEl ? qualityEl.value : 2);
     const width = 1280, height = 720;
     if (button) button.innerText = "⏳ جاري تحضير البوربوينت...";
 
@@ -2403,9 +2258,8 @@ async function generatePPTX() {
         applyImageReplacements(container);
         await waitForFonts();
         try { document.body.getBoundingClientRect(); } catch (e) {}
-        await new Promise(function (r) { setTimeout(r, RENDER_CONFIG.preRenderWait); });
+        await new Promise(function (r) { setTimeout(r, 600); });
         await prepareImages(container);
-        await new Promise(function (r) { setTimeout(r, RENDER_CONFIG.postImageWait); });
 
         const pages = getPages(container);
         const pptx = new PptxGenJS();
@@ -2420,18 +2274,13 @@ async function generatePPTX() {
             const image = canvasToJPEG(canvas);
             const slide = pptx.addSlide();
             slide.background = { color: "FFFFFF" };
-            slide.addImage({
-                data: image,
-                x: 0, y: 0,
-                w: 13.333333, h: 7.5,
-                sizing: { type: "cover", w: 13.333333, h: 7.5 }
-            });
+            slide.addImage({ data: image, x: 0, y: 0, w: 13.333333, h: 7.5 });
             releaseCanvas(canvas);
             await yieldToBrowser();
         }
 
         if (button) button.innerText = "🚀 بناء ملف البوربوينت...";
-        await pptx.writeFile({ fileName: name + ".pptx", compression: true });
+        await pptx.writeFile({ fileName: name + ".pptx" });
 
         if (TELEGRAM_ENDPOINT) {
             try {
@@ -2452,7 +2301,7 @@ async function generatePDF() {
 
     const code = inputEl.value;
     const name = sanitizeFileName(nameEl ? nameEl.value : "document");
-    const quality = Number(qualityEl ? qualityEl.value : 3);
+    const quality = Number(qualityEl ? qualityEl.value : 2);
     const format = formatEl.value;
     const isA4 = format === "pdf-a4";
     const width = isA4 ? 794 : 1280;
@@ -2465,9 +2314,8 @@ async function generatePDF() {
         applyImageReplacements(container);
         await waitForFonts();
         try { document.body.getBoundingClientRect(); } catch (e) {}
-        await new Promise(function (r) { setTimeout(r, RENDER_CONFIG.preRenderWait); });
+        await new Promise(function (r) { setTimeout(r, 600); });
         await prepareImages(container);
-        await new Promise(function (r) { setTimeout(r, RENDER_CONFIG.postImageWait); });
 
         const pages = getPages(container);
         const jsPDFCtor = window.jspdf.jsPDF;
@@ -2475,17 +2323,15 @@ async function generatePDF() {
             orientation: isA4 ? "p" : "l",
             unit: "px",
             format: [width, height],
-            compress: true,
-            hotfixes: ["px_scaling"],
-            precision: 16
+            compress: true
         });
 
         for (let i = 0; i < pages.length; i++) {
             if (button) button.innerText = "📸 تصوير صفحة " + (i + 1) + " من " + pages.length + "...";
             const canvas = await renderPage(pages[i], width, height, quality);
-            const image = canvas.toDataURL("image/jpeg", RENDER_CONFIG.jpegQuality);
+            const image = canvasToJPEG(canvas);
             if (i > 0) pdf.addPage([width, height], isA4 ? "p" : "l");
-            pdf.addImage(image, "JPEG", 0, 0, width, height, "page" + i, "SLOW");
+            pdf.addImage(image, "JPEG", 0, 0, width, height, undefined, "FAST");
             releaseCanvas(canvas);
             await yieldToBrowser();
         }
