@@ -55,7 +55,7 @@ textarea#final-prompt-output{min-height:260px;resize:vertical;direction:rtl;text
 .html-image-card.replaced{border-color:#059669;background:#0f2923}
 .html-image-card.selected{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.35)}
 .html-image-card-top{display:flex;align-items:flex-start;gap:10px}
-.html-image-thumb{width:82px;height:70px;flex:0 0 82px;border-radius:7px;background:#020617;border:1px solid #475569;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.html-image-thumb{width:82px;height:70px;flex:0 0 82px;border-radius:7px;background:repeating-conic-gradient(#111827 0% 25%,#0b1220 0% 50%) 50%/14px 14px;border:1px solid #475569;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .html-image-thumb img{width:100%;height:100%;object-fit:contain;display:block}
 .html-image-info{min-width:0;flex:1}
 .html-image-name{color:#f8fafc;font-size:13px;font-weight:bold;margin:0 0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -63,12 +63,14 @@ textarea#final-prompt-output{min-height:260px;resize:vertical;direction:rtl;text
 .html-image-meta-item{color:#94a3b8;font-size:10px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .html-image-meta-item strong{color:#cbd5e1}
 .html-image-url{margin-top:8px;padding:7px 8px;border-radius:6px;background:#020617;color:#64748b;direction:ltr;text-align:left;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.html-image-actions{display:flex;gap:7px;margin-top:9px}
-.html-image-action{flex:1;border:none;border-radius:7px;padding:9px 6px;cursor:pointer;font-size:11px;font-weight:bold;transition:.2s}
+.html-image-actions{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+.html-image-action{flex:1;min-width:calc(50% - 4px);border:none;border-radius:7px;padding:9px 6px;cursor:pointer;font-size:11px;font-weight:bold;transition:.2s}
 .html-image-action.keep{background:#334155;color:#e2e8f0}
 .html-image-action.keep:hover{background:#475569}
 .html-image-action.replace{background:#2563eb;color:#fff}
 .html-image-action.replace:hover{background:#1d4ed8}
+.html-image-action.remove-bg{background:#0d9488;color:#fff}
+.html-image-action.remove-bg:hover{background:#0f766e}
 .html-image-action.crop-edit{background:#7c3aed;color:#fff}
 .html-image-action.crop-edit:hover{background:#6d28d9}
 .html-image-status{margin-top:7px;min-height:16px;font-size:10px;font-weight:bold;color:#64748b}
@@ -83,6 +85,8 @@ textarea#final-prompt-output{min-height:260px;resize:vertical;direction:rtl;text
 .image-batch-action:hover{background:#1d4ed8}
 .image-batch-action.keep{background:#475569}
 .image-batch-action.keep:hover{background:#334155}
+.image-batch-action.remove-bg{background:#0d9488}
+.image-batch-action.remove-bg:hover{background:#0f766e}
 .image-batch-action.clear{background:#7f1d1d;color:#fca5a5}
 .image-batch-action.clear:hover{background:#991b1b;color:#fef2f2}
 .html-image-select-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:6px 8px;background:#0f172a;border-radius:6px;cursor:pointer;user-select:none}
@@ -107,7 +111,7 @@ textarea#final-prompt-output{min-height:260px;resize:vertical;direction:rtl;text
 .crop-preview-wrap{display:none;margin-top:12px;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:10px}
 .crop-preview-wrap.visible{display:block}
 .crop-preview-title{color:#94a3b8;font-size:11px;font-weight:bold;margin-bottom:8px;text-align:center}
-.crop-preview{display:block;max-width:100%;max-height:250px;width:auto;height:auto;margin:auto;object-fit:contain;border-radius:7px;background:#020617}
+.crop-preview{display:block;max-width:100%;max-height:250px;width:auto;height:auto;margin:auto;object-fit:contain;border-radius:7px;background:repeating-conic-gradient(#111827 0% 25%,#0b1220 0% 50%) 50%/14px 14px}
 .crop-actions{display:flex;gap:8px;margin-top:12px}
 .crop-action{flex:1;border:none;border-radius:8px;padding:12px 8px;cursor:pointer;font-size:12px;font-weight:bold}
 .crop-action.cancel{background:#334155;color:#e2e8f0}
@@ -116,6 +120,34 @@ textarea#final-prompt-output{min-height:260px;resize:vertical;direction:rtl;text
 .crop-action:hover{filter:brightness(1.1)}
 .password-reset-btn{width:100%;margin-top:10px;background:transparent;border:1px solid #475569;color:#94a3b8;padding:10px;border-radius:8px;font-size:12px;font-weight:bold;cursor:pointer;transition:.2s}
 .password-reset-btn:hover{background:#334155;color:#f8fafc}
+.bg-modal-tabs{display:flex;gap:6px;margin-bottom:12px;background:#0f172a;padding:5px;border-radius:9px}
+.bg-modal-tab{flex:1;border:none;background:transparent;color:#94a3b8;padding:10px 6px;border-radius:6px;font-size:12px;font-weight:bold;cursor:pointer;transition:.2s}
+.bg-modal-tab.active{background:#2563eb;color:#fff}
+.bg-modal-tab:hover:not(.active){background:#1e293b;color:#f8fafc}
+.bg-mode-panel{display:none}
+.bg-mode-panel.active{display:block}
+.bg-preview-wrap{position:relative;background:repeating-conic-gradient(#1e293b 0% 25%,#0f172a 0% 50%) 50%/18px 18px;border:1px solid #475569;border-radius:10px;overflow:hidden;margin-bottom:12px;cursor:crosshair;touch-action:manipulation}
+.bg-preview-img{display:block;width:100%;height:auto;max-height:340px;object-fit:contain;margin:auto;user-select:none;-webkit-user-drag:none;pointer-events:auto}
+.bg-preview-hint{position:absolute;top:8px;right:8px;background:rgba(15,23,42,.88);color:#f8fafc;padding:5px 10px;border-radius:14px;font-size:10px;font-weight:bold;pointer-events:none}
+.bg-color-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.bg-color-swatch{width:44px;height:44px;border-radius:9px;border:2px solid #475569;background:#020617;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:#64748b;font-weight:bold;text-align:center;line-height:1.1;padding:2px}
+.bg-color-info{flex:1;font-size:11px;color:#94a3b8;line-height:1.6;min-width:140px}
+.bg-color-info strong{color:#cbd5e1}
+.bg-slider-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.bg-slider-row label{margin:0;flex-shrink:0;min-width:80px;font-size:11px}
+.bg-slider-row input[type="range"]{flex:1;accent-color:#2563eb;height:5px}
+.bg-slider-value{color:#60a5fa;font-size:11px;font-weight:bold;min-width:38px;text-align:center;background:#0f172a;padding:4px 7px;border-radius:5px}
+.bg-hint{color:#94a3b8;font-size:11px;line-height:1.7;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:10px;margin-bottom:12px}
+.bg-hint strong{color:#cbd5e1}
+.bg-ai-warn{background:#422006;border:1px solid #78350f;color:#fcd34d;font-size:11px;line-height:1.7;padding:11px;border-radius:8px;margin-bottom:12px}
+.bg-ai-warn strong{color:#fbbf24}
+.bg-loader{display:none;text-align:center;padding:20px}
+.bg-loader.visible{display:block}
+.bg-loader-spinner{width:42px;height:42px;border:4px solid #334155;border-top-color:#2563eb;border-radius:50%;margin:0 auto 12px;animation:bgSpin 1s linear infinite}
+@keyframes bgSpin{to{transform:rotate(360deg)}}
+.bg-loader-text{color:#94a3b8;font-size:12px;font-weight:bold}
+.bg-loader-progress{color:#60a5fa;font-size:11px;margin-top:6px;font-weight:bold}
+.bg-result-note{margin-top:8px;color:#34d399;font-size:11px;font-weight:bold;text-align:center;min-height:16px}
 @media (max-width:600px){
 body{padding:10px}
 input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
@@ -124,7 +156,6 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
 .action-btns button{padding:10px}
 .html-image-meta{grid-template-columns:1fr}
 .html-image-thumb{width:72px;flex-basis:72px;height:65px}
-.html-image-actions{flex-wrap:wrap}
 .html-image-action{min-width:calc(50% - 4px)}
 .image-batch-action{min-width:100%;}
 .crop-modal{padding:10px;border-radius:12px}
@@ -199,11 +230,12 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
                 </div>
                 <p class="image-manager-description">
                     يتم التعرف على صور img وصور CSS الخلفية تلقائيًا.
-                    يمكنك تحديد عدة صور دفعة واحدة (عبر مربع الاختيار) ثم استبدالها جميعًا بصورة واحدة مقصوصة.
+                    يمكنك تحديد عدة صور دفعة واحدة، استبدالها، إزالة خلفيتها، أو قصها.
                 </p>
                 <div id="image-batch-bar" class="image-batch-bar">
                     <span id="image-selected-count" class="image-selected-count">0 محدد</span>
                     <button type="button" class="image-batch-action" onclick="replaceSelectedImages()">🖼️ استبدال المحدد</button>
+                    <button type="button" class="image-batch-action remove-bg" onclick="removeBackgroundSelected()">🪄 إزالة خلفية المحدد</button>
                     <button type="button" class="image-batch-action keep" onclick="keepSelectedImages()">↩️ الاحتفاظ بالمحدد</button>
                     <button type="button" class="image-batch-action clear" onclick="clearImageSelection()">✖ إلغاء التحديد</button>
                 </div>
@@ -347,6 +379,74 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
     </div>
 </div>
 
+<div id="bg-remove-modal" class="crop-modal-overlay" aria-hidden="true">
+    <div class="crop-modal">
+        <div class="crop-modal-header">
+            <h3>🪄 إزالة الخلفية</h3>
+            <button type="button" class="crop-close" onclick="closeBackgroundRemover()">×</button>
+        </div>
+        <div id="bg-target-info" class="crop-target-info">اختر طريقة الإزالة ثم اضبط الإعدادات.</div>
+
+        <div class="bg-modal-tabs">
+            <button type="button" class="bg-modal-tab active" data-mode="color" onclick="switchBgMode('color')">🎨 لون موحّد</button>
+            <button type="button" class="bg-modal-tab" data-mode="ai" onclick="switchBgMode('ai')">🤖 ذكاء اصطناعي</button>
+        </div>
+
+        <div id="bg-panel-color" class="bg-mode-panel active">
+            <div class="bg-hint">
+                <strong>💡 كيف يعمل؟</strong> انقر على لون الخلفية في الصورة أدناه، ثم اضبط <strong>التسامح</strong> حتى تختفي الخلفية تمامًا مع بقاء العنصر الأساسي.
+            </div>
+            <div class="bg-preview-wrap" id="bg-preview-wrap">
+                <img id="bg-preview-img" class="bg-preview-img" alt="">
+                <div class="bg-preview-hint">👆 انقر على الخلفية</div>
+            </div>
+            <div class="bg-color-row">
+                <div class="bg-color-swatch" id="bg-color-swatch">لم يُحدد</div>
+                <div class="bg-color-info" id="bg-color-info">
+                    <strong>اللون المحدد:</strong> —<br>
+                    <strong>RGB:</strong> —
+                </div>
+            </div>
+            <div class="bg-slider-row">
+                <label>التسامح:</label>
+                <input type="range" id="bg-tolerance" min="1" max="100" value="30" oninput="updateBgTolerance(this.value)">
+                <span class="bg-slider-value" id="bg-tolerance-value">30</span>
+            </div>
+            <div class="bg-slider-row">
+                <label>نعومة الحواف:</label>
+                <input type="range" id="bg-feather" min="0" max="10" value="2" oninput="updateBgFeather(this.value)">
+                <span class="bg-slider-value" id="bg-feather-value">2</span>
+            </div>
+        </div>
+
+        <div id="bg-panel-ai" class="bg-mode-panel">
+            <div class="bg-ai-warn">
+                <strong>⚠️ تنبيه:</strong> الطريقة الذكية تحمّل نموذجًا (~40MB) عند أول استخدام فقط، ثم يعمل بدون إنترنت. قد يستغرق أول تشغيل 20-60 ثانية.
+            </div>
+            <div class="bg-hint">
+                <strong>🤖 الطريقة الذكية:</strong> تتعرف على العنصر الرئيسي (شخص، منتج، حيوان...) وتزيل الخلفية تلقائيًا. مناسبة للخلفيات المعقّدة.
+            </div>
+            <div id="bg-ai-loader" class="bg-loader">
+                <div class="bg-loader-spinner"></div>
+                <div class="bg-loader-text" id="bg-ai-loader-text">جاري التحضير...</div>
+                <div class="bg-loader-progress" id="bg-ai-loader-progress"></div>
+            </div>
+            <div class="bg-preview-wrap" id="bg-ai-preview-wrap" style="display:none;">
+                <img id="bg-ai-preview-img" class="bg-preview-img" alt="">
+                <div class="bg-preview-hint">✨ النتيجة</div>
+            </div>
+        </div>
+
+        <div class="bg-result-note" id="bg-result-note"></div>
+
+        <div class="crop-actions">
+            <button type="button" class="crop-action cancel" onclick="closeBackgroundRemover()">إلغاء</button>
+            <button type="button" class="crop-action preview" onclick="previewBackgroundRemoval()">معاينة</button>
+            <button type="button" class="crop-action apply" onclick="applyBackgroundRemoval()">اعتماد الإزالة</button>
+        </div>
+    </div>
+</div>
+
 <script>
 /* =========================================================
    الإعدادات العامة
@@ -356,19 +456,17 @@ const AUTH_KEY = "auth_token_v2";
 const AUTH_VALUE = "authenticated";
 const TELEGRAM_ENDPOINT = "";
 
-/* إعدادات التصيير — جودة قصوى */
 const RENDER_CONFIG = {
-    maxCanvasPixels: 20000000,   // 20M بكسل — يسمح بدقة عالية جدًا
+    maxCanvasPixels: 20000000,
     fontTimeout: 12000,
     imageTimeout: 14000,
-    jpegQuality: 0.98,           // أقصى جودة عملية
-    preRenderWait: 2800,         // انتظار قبل التصوير
-    postImageWait: 1400,         // انتظار بعد تحميل الصور
-    fontHardTimeout: 14000,      // حد أقصى لانتظار الخطوط
-    pageStabilize: 400           // استقرار كل صفحة قبل التصوير
+    jpegQuality: 0.98,
+    preRenderWait: 2800,
+    postImageWait: 1400,
+    fontHardTimeout: 14000,
+    pageStabilize: 400
 };
 
-/* قائمة الخطوط العربية المدعومة */
 const ARABIC_FONTS = [
     "Cairo", "Tajawal", "Almarai", "Amiri", "El Messiri",
     "Reem Kufi", "Noto Kufi Arabic", "Noto Naskh Arabic",
@@ -412,8 +510,15 @@ let cropState = {
     startPointerX: 0, startPointerY: 0, startImageLeft: 0, startImageTop: 0
 };
 
+let bgRemovalState = {
+    item: null, sourceDataUrl: "", sourceFileName: "", sourceMimeType: "image/png",
+    originalDataUrl: "", imageEl: null, naturalWidth: 0, naturalHeight: 0,
+    targetColor: null, tolerance: 30, feather: 2, mode: "color",
+    resultDataUrl: null, batchKeys: null, imglyLoaded: false
+};
+
 /* =========================================================
-   أدوات عامة — Escape
+   أدوات عامة
    ========================================================= */
 function escapeHTML(value) {
     return String(value == null ? "" : value)
@@ -422,9 +527,6 @@ function escapeHTML(value) {
 }
 function escapeAttribute(value) { return escapeHTML(value); }
 
-/* =========================================================
-   استخراج روابط الصور من CSS
-   ========================================================= */
 function extractImageUrls(value) {
     if (!value) return [];
     const urls = [];
@@ -439,9 +541,6 @@ function extractImageUrls(value) {
     return urls;
 }
 
-/* =========================================================
-   اسم الملف من الرابط
-   ========================================================= */
 function getFileNameFromURL(src) {
     if (!src) return "";
     try {
@@ -469,9 +568,6 @@ function getImageDisplayName(element, index, type, src) {
     return type === "background" ? ("خلفية " + (index + 1)) : ("الصورة " + (index + 1));
 }
 
-/* =========================================================
-   رقم الصفحة
-   ========================================================= */
 function getParsedPageNumber(element, doc) {
     if (!element) return 1;
     const page = element.closest(".page");
@@ -481,9 +577,6 @@ function getParsedPageNumber(element, doc) {
     return index >= 0 ? index + 1 : 1;
 }
 
-/* =========================================================
-   selector ثابت
-   ========================================================= */
 function getStableSelector(element, doc) {
     if (!element) return "";
     if (element.id) return "#" + CSS.escape(element.id);
@@ -514,9 +607,6 @@ function getStableSelector(element, doc) {
     return path.join(" > ");
 }
 
-/* =========================================================
-   أبعاد IMG
-   ========================================================= */
 function getImageDefinedDimensions(img) {
     if (!img) return { width: "حسب CSS", height: "حسب CSS", source: "CSS" };
     const width = img.getAttribute("width");
@@ -529,9 +619,6 @@ function getImageDefinedDimensions(img) {
     return { width: "حسب CSS", height: "حسب CSS", source: "CSS" };
 }
 
-/* =========================================================
-   الأبعاد الطبيعية
-   ========================================================= */
 function getNaturalImageSize(src) {
     return new Promise(function (resolve) {
         if (!src) { resolve({ width: null, height: null }); return; }
@@ -549,9 +636,6 @@ function getNaturalImageSize(src) {
     });
 }
 
-/* =========================================================
-   إضافة صورة مكتشفة
-   ========================================================= */
 function addDetectedImage(list, data) {
     const normalized = String(data.src || "").trim();
     if (!normalized) return;
@@ -564,9 +648,6 @@ function addDetectedImage(list, data) {
     list.push(newItem);
 }
 
-/* =========================================================
-   استخراج src الفعلي (دعم lazy-load)
-   ========================================================= */
 function resolveImgSrc(img) {
     let src = img.getAttribute("src") ||
               img.getAttribute("data-src") ||
@@ -583,7 +664,7 @@ function resolveImgSrc(img) {
 }
 
 /* =========================================================
-   تحليل الصور في الكود
+   تحليل الصور
    ========================================================= */
 async function analyzeHTMLImages() {
     const textarea = document.getElementById("html-input");
@@ -732,9 +813,6 @@ async function analyzeHTMLImages() {
     });
 }
 
-/* =========================================================
-   مفتاح الصورة
-   ========================================================= */
 function createImageKey(item) {
     return [item.type, item.subtype || "", item.src || "", item.target || "",
         item.selector || "",
@@ -798,12 +876,13 @@ function renderImageManager() {
                     '</div>' +
                 '</div>' +
                 '<div class="html-image-url" title="' + escapeAttribute(item.src) + '">' +
-                    escapeHTML(isReplaced ? "تم اختيار صورة جديدة وقصها" : item.src) +
+                    escapeHTML(isReplaced ? "تم اختيار صورة جديدة / إزالة الخلفية" : item.src) +
                 '</div>' +
                 selectorHtml +
                 '<div class="html-image-actions">' +
                     '<button type="button" class="html-image-action keep" onclick="keepOriginalImage(' + item.index + ')">↩️ الاحتفاظ بالحالية</button>' +
                     '<button type="button" class="html-image-action replace" onclick="chooseReplacementImage(' + item.index + ')">🖼️ اختيار من الاستوديو</button>' +
+                    '<button type="button" class="html-image-action remove-bg" onclick="openBackgroundRemover(' + item.index + ')">🪄 إزالة الخلفية</button>' +
                     cropEditHtml +
                 '</div>' +
                 '<div class="html-image-status">' + statusHtml + '</div>' +
@@ -813,7 +892,7 @@ function renderImageManager() {
 }
 
 /* =========================================================
-   التحديد المتعدد للصور
+   التحديد المتعدد
    ========================================================= */
 function toggleImageSelection(checkbox) {
     const key = checkbox.getAttribute("data-image-key");
@@ -894,7 +973,7 @@ async function replaceSelectedImages() {
 }
 
 /* =========================================================
-   اختيار صورة بديلة
+   اختيار صورة بديلة / الاحتفاظ
    ========================================================= */
 function chooseReplacementImage(index) {
     const item = detectedImages[index];
@@ -970,9 +1049,6 @@ function replaceCSSImageURL(value, original, replacement) {
     return value.replace(regex, replacement);
 }
 
-/* =========================================================
-   تطبيق الاستبدالات على الحاوية
-   ========================================================= */
 function applyImageReplacements(container) {
     if (!container || !detectedImages.length) return;
     const images = Array.from(container.querySelectorAll("img"));
@@ -1050,7 +1126,7 @@ function scheduleImageAnalysis() {
 }
 
 /* =========================================================
-   الحصول على نسبة إطار الصورة
+   نسبة إطار الصورة
    ========================================================= */
 async function getCropTargetRatio(item) {
     const fallback = (item && item.naturalWidth && item.naturalHeight)
@@ -1111,7 +1187,7 @@ async function getCropTargetRatio(item) {
 }
 
 /* =========================================================
-   حساب إطار القص
+   محرر القص
    ========================================================= */
 function calculateCropFrame() {
     const stage = document.getElementById("crop-stage");
@@ -1147,9 +1223,6 @@ function calculateCropFrame() {
     }
 }
 
-/* =========================================================
-   فتح محرر القص
-   ========================================================= */
 async function openCropEditor(options) {
     if (!options || !options.item || !options.sourceDataUrl) return;
     const modal = document.getElementById("crop-modal");
@@ -1218,9 +1291,6 @@ function loadCropImage(src) {
     });
 }
 
-/* =========================================================
-   إعادة ضبط القص
-   ========================================================= */
 function cropReset() {
     if (!cropState.image || !cropState.naturalWidth || !cropState.naturalHeight) return;
     calculateCropFrame();
@@ -1239,9 +1309,6 @@ function cropReset() {
     if (wrap) wrap.classList.remove("visible");
 }
 
-/* =========================================================
-   تكبير/تصغير القص
-   ========================================================= */
 function cropZoom(delta) {
     if (!cropState.image) return;
     const oldZoom = cropState.zoom;
@@ -1289,9 +1356,6 @@ function updateCropImageElement() {
     imageElement.style.top = cropState.imageTop + "px";
 }
 
-/* =========================================================
-   سحب الصورة
-   ========================================================= */
 function startCropDrag(event) {
     if (!cropState.image) return;
     cropState.dragging = true;
@@ -1327,9 +1391,6 @@ function endCropDrag(event) {
     cropState.pointerId = null;
 }
 
-/* =========================================================
-   مستطيل القص
-   ========================================================= */
 function getCropSourceRectangle() {
     const frame = cropState.frame;
     const scale = cropState.displayScale;
@@ -1453,6 +1514,357 @@ function closeCropModal() {
 }
 
 /* =========================================================
+   🪄 إزالة الخلفية
+   ========================================================= */
+function openBackgroundRemover(index) {
+    const item = detectedImages[index];
+    if (!item) return;
+    const replacement = imageReplacements.get(item.key);
+    const sourceDataUrl = replacement ? replacement.dataUrl : item.src;
+    const sourceFileName = replacement ? replacement.fileName : (item.name || "image");
+    const sourceMimeType = replacement ? replacement.mimeType : "image/png";
+
+    openBgRemoverInternal({
+        item: item,
+        sourceDataUrl: sourceDataUrl,
+        sourceFileName: sourceFileName,
+        sourceMimeType: sourceMimeType,
+        originalDataUrl: replacement ? (replacement.originalDataUrl || sourceDataUrl) : sourceDataUrl,
+        batchKeys: null
+    });
+}
+
+function removeBackgroundSelected() {
+    if (selectedImageKeys.size === 0) {
+        alert("الرجاء تحديد صورة واحدة على الأقل.");
+        return;
+    }
+    const keysArray = Array.from(selectedImageKeys);
+    const firstItem = detectedImages.find(function (it) { return it.key === keysArray[0]; });
+    if (!firstItem) return;
+    const replacement = imageReplacements.get(firstItem.key);
+    const sourceDataUrl = replacement ? replacement.dataUrl : firstItem.src;
+    const sourceFileName = replacement ? replacement.fileName : (firstItem.name || "image");
+    const sourceMimeType = replacement ? replacement.mimeType : "image/png";
+
+    openBgRemoverInternal({
+        item: firstItem,
+        sourceDataUrl: sourceDataUrl,
+        sourceFileName: sourceFileName,
+        sourceMimeType: sourceMimeType,
+        originalDataUrl: replacement ? (replacement.originalDataUrl || sourceDataUrl) : sourceDataUrl,
+        batchKeys: keysArray
+    });
+}
+
+async function openBgRemoverInternal(opts) {
+    const modal = document.getElementById("bg-remove-modal");
+    const img = document.getElementById("bg-preview-img");
+    if (!modal || !img) return;
+
+    bgRemovalState = {
+        item: opts.item,
+        sourceDataUrl: opts.sourceDataUrl,
+        sourceFileName: opts.sourceFileName || "image",
+        sourceMimeType: opts.sourceMimeType || "image/png",
+        originalDataUrl: opts.originalDataUrl || opts.sourceDataUrl,
+        imageEl: null, naturalWidth: 0, naturalHeight: 0,
+        targetColor: null, tolerance: 30, feather: 2, mode: "color",
+        resultDataUrl: null, batchKeys: opts.batchKeys, imglyLoaded: !!window.__imglyModule
+    };
+
+    switchBgMode("color");
+    const swatch = document.getElementById("bg-color-swatch");
+    swatch.textContent = "لم يُحدد";
+    swatch.style.background = "#020617";
+    document.getElementById("bg-color-info").innerHTML = "<strong>اللون المحدد:</strong> —<br><strong>RGB:</strong> —";
+    document.getElementById("bg-tolerance").value = 30;
+    document.getElementById("bg-tolerance-value").textContent = "30";
+    document.getElementById("bg-feather").value = 2;
+    document.getElementById("bg-feather-value").textContent = "2";
+    document.getElementById("bg-result-note").textContent = "";
+    document.getElementById("bg-ai-preview-wrap").style.display = "none";
+    document.getElementById("bg-ai-loader").classList.remove("visible");
+
+    const info = document.getElementById("bg-target-info");
+    if (info) {
+        const isBatch = opts.batchKeys && opts.batchKeys.length > 1;
+        info.textContent = isBatch
+            ? "⚠️ سيُطبَّق على " + opts.batchKeys.length + " صور محددة. اختر الطريقة ثم اعتمد."
+            : "اختر طريقة الإزالة ثم اضبط الإعدادات.";
+    }
+
+    modal.classList.add("visible");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+
+    try {
+        const loaded = await loadCropImage(opts.sourceDataUrl);
+        bgRemovalState.imageEl = loaded;
+        bgRemovalState.naturalWidth = loaded.naturalWidth;
+        bgRemovalState.naturalHeight = loaded.naturalHeight;
+        img.src = opts.sourceDataUrl;
+    } catch (error) {
+        console.error(error);
+        closeBackgroundRemover();
+        alert("تعذر فتح الصورة.");
+    }
+}
+
+function closeBackgroundRemover() {
+    const modal = document.getElementById("bg-remove-modal");
+    if (modal) { modal.classList.remove("visible"); modal.setAttribute("aria-hidden", "true"); }
+    const img = document.getElementById("bg-preview-img");
+    const aiImg = document.getElementById("bg-ai-preview-img");
+    if (img) img.src = "";
+    if (aiImg) aiImg.src = "";
+    document.body.style.overflow = "";
+    bgRemovalState = {
+        item: null, sourceDataUrl: "", sourceFileName: "", sourceMimeType: "image/png",
+        originalDataUrl: "", imageEl: null, naturalWidth: 0, naturalHeight: 0,
+        targetColor: null, tolerance: 30, feather: 2, mode: "color",
+        resultDataUrl: null, batchKeys: null, imglyLoaded: false
+    };
+}
+
+function switchBgMode(mode) {
+    bgRemovalState.mode = mode;
+    document.querySelectorAll(".bg-modal-tab").forEach(function (t) {
+        t.classList.toggle("active", t.getAttribute("data-mode") === mode);
+    });
+    document.getElementById("bg-panel-color").classList.toggle("active", mode === "color");
+    document.getElementById("bg-panel-ai").classList.toggle("active", mode === "ai");
+    bgRemovalState.resultDataUrl = null;
+    document.getElementById("bg-result-note").textContent = "";
+}
+
+function handleBgImageClick(event) {
+    if (bgRemovalState.mode !== "color") return;
+    const img = event.currentTarget;
+    const rect = img.getBoundingClientRect();
+    const displayX = event.clientX - rect.left;
+    const displayY = event.clientY - rect.top;
+    const ratioX = img.naturalWidth / rect.width;
+    const ratioY = img.naturalHeight / rect.height;
+    const px = Math.max(0, Math.min(img.naturalWidth - 1, Math.floor(displayX * ratioX)));
+    const py = Math.max(0, Math.min(img.naturalHeight - 1, Math.floor(displayY * ratioY)));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, px, py, 1, 1, 0, 0, 1, 1);
+    const data = ctx.getImageData(0, 0, 1, 1).data;
+    const color = { r: data[0], g: data[1], b: data[2] };
+    bgRemovalState.targetColor = color;
+
+    const swatch = document.getElementById("bg-color-swatch");
+    swatch.style.background = "rgb(" + color.r + "," + color.g + "," + color.b + ")";
+    swatch.textContent = "";
+
+    document.getElementById("bg-color-info").innerHTML =
+        "<strong>اللون المحدد:</strong> " +
+        "<span style='color:rgb(" + color.r + "," + color.g + "," + color.b + ");font-weight:bold;'>■</span><br>" +
+        "<strong>RGB:</strong> " + color.r + "، " + color.g + "، " + color.b;
+
+    previewBackgroundRemoval();
+}
+
+function updateBgTolerance(value) {
+    bgRemovalState.tolerance = Number(value);
+    document.getElementById("bg-tolerance-value").textContent = value;
+    if (bgRemovalState.targetColor) previewBackgroundRemoval();
+}
+
+function updateBgFeather(value) {
+    bgRemovalState.feather = Number(value);
+    document.getElementById("bg-feather-value").textContent = value;
+    if (bgRemovalState.targetColor) previewBackgroundRemoval();
+}
+
+function computeChromaKey(dataUrl, color, tolerance, feather) {
+    return new Promise(function (resolve, reject) {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = function () {
+            try {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                const tr = color.r, tg = color.g, tb = color.b;
+                const tol = tolerance * 2.55;
+                const softEnd = tol + feather * 20;
+
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i], g = data[i + 1], b = data[i + 2];
+                    const dr = r - tr, dg = g - tg, db = b - tb;
+                    const dist = Math.sqrt(dr * dr + dg * dg + db * db);
+                    if (dist <= tol) {
+                        data[i + 3] = 0;
+                    } else if (dist < softEnd) {
+                        const factor = (dist - tol) / (softEnd - tol);
+                        data[i + 3] = Math.round(data[i + 3] * factor);
+                    }
+                }
+                ctx.putImageData(imageData, 0, 0);
+                resolve(canvas.toDataURL("image/png"));
+            } catch (e) { reject(e); }
+        };
+        img.onerror = reject;
+        img.src = dataUrl;
+    });
+}
+
+async function loadImglyLibrary() {
+    if (window.__imglyModule) return window.__imglyModule;
+    if (window.__imglyLoading) return window.__imglyLoading;
+
+    const setProgress = function (text) {
+        const el = document.getElementById("bg-ai-loader-progress");
+        if (el) el.textContent = text || "";
+    };
+
+    window.__imglyLoading = (async function () {
+        setProgress("جاري تحميل المكتبة...");
+        try {
+            const mod = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.8/+esm");
+            const fn = mod.removeBackground || mod.default || (mod.imgly && mod.imgly.removeBackground);
+            if (typeof fn !== "function") throw new Error("removeBackground غير متاح");
+            window.__imglyModule = fn;
+            setProgress("✅ جاهز");
+            return fn;
+        } catch (err) {
+            console.warn("فشل تحميل IMGLY عبر ESM، محاولة عبر script...", err);
+            return await new Promise(function (resolve, reject) {
+                const s = document.createElement("script");
+                s.src = "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.8/dist/browser.js";
+                s.onload = function () {
+                    const fn = window.imglyRemoveBackground;
+                    if (typeof fn === "function") {
+                        window.__imglyModule = fn;
+                        resolve(fn);
+                    } else reject(new Error("imglyRemoveBackground غير موجود"));
+                };
+                s.onerror = function () { reject(new Error("فشل تحميل السكربت")); };
+                document.head.appendChild(s);
+            });
+        }
+    })();
+
+    return window.__imglyLoading;
+}
+
+async function previewBackgroundRemoval() {
+    if (bgRemovalState.mode === "color") {
+        if (!bgRemovalState.targetColor) {
+            alert("انقر على لون الخلفية في الصورة أولاً.");
+            return;
+        }
+        try {
+            const result = await computeChromaKey(
+                bgRemovalState.sourceDataUrl,
+                bgRemovalState.targetColor,
+                bgRemovalState.tolerance,
+                bgRemovalState.feather
+            );
+            bgRemovalState.resultDataUrl = result;
+            const img = document.getElementById("bg-preview-img");
+            img.src = result;
+            img.onclick = handleBgImageClick;
+            document.getElementById("bg-result-note").textContent = "✅ معاينة جاهزة — اضغط اعتماد الإزالة للحفظ.";
+        } catch (e) {
+            console.error(e);
+            alert("تعذر إنشاء المعاينة.");
+        }
+    } else {
+        const loader = document.getElementById("bg-ai-loader");
+        const loaderText = document.getElementById("bg-ai-loader-text");
+        const progressEl = document.getElementById("bg-ai-loader-progress");
+        const wrap = document.getElementById("bg-ai-preview-wrap");
+        const aiImg = document.getElementById("bg-ai-preview-img");
+
+        loader.classList.add("visible");
+        loaderText.textContent = "جاري تجهيز النموذج...";
+        progressEl.textContent = "";
+        document.getElementById("bg-result-note").textContent = "";
+
+        try {
+            const removeFn = await loadImglyLibrary();
+            loaderText.textContent = "جاري إزالة الخلفية...";
+            const blob = await removeFn(bgRemovalState.sourceDataUrl, {
+                progress: function (key, current, total) {
+                    if (total > 0) {
+                        progressEl.textContent = key + " (" + Math.round((current / total) * 100) + "%)";
+                    }
+                }
+            });
+            const dataUrl = await blobToDataURL(blob);
+            bgRemovalState.resultDataUrl = dataUrl;
+            aiImg.src = dataUrl;
+            wrap.style.display = "block";
+            loader.classList.remove("visible");
+            document.getElementById("bg-result-note").textContent = "✅ النتيجة جاهزة — اضغط اعتماد الإزالة للحفظ.";
+        } catch (e) {
+            console.error(e);
+            loader.classList.remove("visible");
+            alert("فشلت إزالة الخلفية بالذكاء الاصطناعي.\n" + (e && e.message ? e.message : ""));
+        }
+    }
+}
+
+function blobToDataURL(blob) {
+    return new Promise(function (resolve, reject) {
+        const r = new FileReader();
+        r.onload = function () { resolve(r.result); };
+        r.onerror = reject;
+        r.readAsDataURL(blob);
+    });
+}
+
+function applyBackgroundRemoval() {
+    if (!bgRemovalState.resultDataUrl) {
+        alert("قم بالمعاينة أولاً.");
+        return;
+    }
+    const item = bgRemovalState.item;
+    if (!item) return;
+
+    const buildReplacement = function (targetItem) {
+        const old = imageReplacements.get(targetItem.key);
+        const cleanName = (bgRemovalState.sourceFileName || "image").replace(/\.[^.]+$/, "");
+        return {
+            dataUrl: bgRemovalState.resultDataUrl,
+            fileName: cleanName + "_no-bg.png",
+            mimeType: "image/png",
+            originalFileName: (old && old.originalFileName) || bgRemovalState.sourceFileName,
+            originalMimeType: (old && old.originalMimeType) || bgRemovalState.sourceMimeType,
+            originalDataUrl: (old && old.originalDataUrl) || bgRemovalState.originalDataUrl,
+            bgRemoved: true,
+            bgMethod: bgRemovalState.mode
+        };
+    };
+
+    if (bgRemovalState.batchKeys && bgRemovalState.batchKeys.length > 0) {
+        const keysToApply = bgRemovalState.batchKeys.slice();
+        keysToApply.forEach(function (key) {
+            const targetItem = detectedImages.find(function (it) { return it.key === key; });
+            if (!targetItem) return;
+            imageReplacements.set(key, buildReplacement(targetItem));
+        });
+        selectedImageKeys.clear();
+    } else {
+        imageReplacements.set(item.key, buildReplacement(item));
+    }
+
+    closeBackgroundRemover();
+    renderImageManager();
+}
+
+/* =========================================================
    تسجيل الدخول
    ========================================================= */
 function checkPassword() {
@@ -1516,7 +1928,7 @@ function toggleInput(button) {
 }
 
 /* =========================================================
-   تسمية الصفحات/الشرائح
+   تسمية الصفحات
    ========================================================= */
 function updatePagesLabel() {
     const typeEl = document.getElementById("prompt-type");
@@ -1658,9 +2070,6 @@ function generatePromptText() {
     if (output) output.value = parts.join("\n\n");
 }
 
-/* =========================================================
-   نسخ الأمر
-   ========================================================= */
 async function copyGeneratedPrompt() {
     const outputEl = document.getElementById("final-prompt-output");
     if (!outputEl) return;
@@ -1722,9 +2131,6 @@ function previewCode() {
     setTimeout(apply, 500);
 }
 
-/* =========================================================
-   مسح
-   ========================================================= */
 function clearCode() {
     if (confirm("مسح الكود الحالي؟")) {
         const inputEl = document.getElementById("html-input");
@@ -1914,9 +2320,6 @@ async function exportFile() {
     }
 }
 
-/* =========================================================
-   PPTX
-   ========================================================= */
 async function generatePPTX() {
     const button = document.getElementById("capture-btn");
     const inputEl = document.getElementById("html-input");
@@ -1968,9 +2371,6 @@ async function generatePPTX() {
     } finally { container.remove(); }
 }
 
-/* =========================================================
-   PDF
-   ========================================================= */
 async function generatePDF() {
     const button = document.getElementById("capture-btn");
     const inputEl = document.getElementById("html-input");
@@ -2024,9 +2424,6 @@ async function generatePDF() {
     } finally { container.remove(); }
 }
 
-/* =========================================================
-   أدوات عامة
-   ========================================================= */
 function sanitizeFileName(name) {
     return String(name).trim().replace(/[\\/:*?"<>|]/g, "_").replace(/\s+/g, "_").substring(0, 100) || "file";
 }
@@ -2043,9 +2440,6 @@ function downloadBlob(blob, filename) {
 }
 function yieldToBrowser() { return new Promise(function (resolve) { setTimeout(resolve, 20); }); }
 
-/* =========================================================
-   تيليجرام
-   ========================================================= */
 async function sendTextToTelegram(message) {
     if (!TELEGRAM_ENDPOINT) return;
     try {
@@ -2100,6 +2494,9 @@ document.addEventListener("DOMContentLoaded", function () {
             cropZoom(event.deltaY > 0 ? -0.1 : 0.1);
         }, { passive: false });
     }
+
+    const bgPreviewImg = document.getElementById("bg-preview-img");
+    if (bgPreviewImg) bgPreviewImg.addEventListener("click", handleBgImageClick);
 
     let cropResizeTimer = null;
     window.addEventListener("resize", function () {
