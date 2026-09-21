@@ -2329,7 +2329,8 @@ function createRenderContainer(code, width, height) {
     }
 
     var container = document.createElement("div");
-    container.style.cssText = "position:absolute;left:-100000px;top:0;width:" + width + "px;min-height:" + height + "px;margin:0;padding:0;opacity:1;visibility:visible;pointer-events:none;z-index:-1;background:#ffffff;overflow:visible;contain:layout style;";
+    /* التعديل الجوهري الأول: تغيير position الحاوية من -100000px إلى صفر مع إخفائها لتجنب إيقاف تحميل الصور */
+    container.style.cssText = "position:fixed;top:0;left:0;width:" + width + "px;min-height:" + height + "px;margin:0;padding:0;opacity:0.001;pointer-events:none;z-index:-9999;background:#ffffff;overflow:visible;contain:layout style;";
     container.dir = "rtl";
     container.setAttribute("data-render-container", "true");
     container.innerHTML = code;
@@ -2399,14 +2400,14 @@ function inlineAllImages(container) {
             return toSafeDataURL(src).then(function (dataUrl) {
                 img.removeAttribute("srcset");
                 img.removeAttribute("sizes");
-                img.removeAttribute("crossorigin");
-                img.removeAttribute("loading");
-                try { img.crossOrigin = null; } catch (e) { /* ignore */ }
+                img.removeAttribute("loading"); // التعديل الجوهري الثاني: إزالة التحميل البطيء
+                img.setAttribute("crossorigin", "anonymous"); // التعديل الجوهري الثالث: إضافة كروس-أوريجين
                 img.setAttribute("src", dataUrl);
                 img.src = dataUrl;
                 return waitImage(img, RENDER_CONFIG.imageTimeout);
             }).catch(function (err) {
                 console.warn("inline img failed:", err);
+                img.setAttribute("crossorigin", "anonymous"); // محاولة أخيرة قبل التصوير
             });
         })();
     }));
@@ -2477,6 +2478,8 @@ function renderPage(page, width, height, quality) {
                 Array.prototype.forEach.call(imgs, function (img) {
                     img.style.visibility = "visible";
                     img.style.opacity = "1";
+                    img.removeAttribute("loading"); // إجبار html2canvas على عدم تأجيل الصورة
+                    img.setAttribute("crossorigin", "anonymous"); // إجبار html2canvas على السماح بالصورة
                 });
             } catch (e) { /* ignore */ }
         }
