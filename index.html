@@ -1,584 +1,212 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-    <title>منصة تحويل الأكواد الذكية (PDF / PPTX)</title>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
-
-    <style>
-        * { box-sizing: border-box; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif;
-            background: #0f172a;
-            color: #e2e8f0;
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .header { text-align: center; margin-bottom: 15px; width: 100%; }
-        .header h2 { margin: 0; color: #f8fafc; font-size: 24px; }
-
-        .top-nav {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        .nav-btn {
-            flex: 1;
-            background: #1e293b;
-            color: #94a3b8;
-            border: 2px solid #334155;
-            padding: 12px 5px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: .3s;
-            text-align: center;
-        }
-
-        .nav-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
-        .nav-btn:hover:not(.active) { background: #334155; color: #f8fafc; }
-
-        .main-container { width: 100%; max-width: 600px; display: flex; flex-direction: column; }
-
-        .box-panel {
-            background: #1e293b;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,.5);
-            border: 1px solid #334155;
-            width: 100%;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
-
-        label { margin-bottom: 8px; font-weight: bold; font-size: 13px; color: #94a3b8; }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            color: #f8fafc;
-            transition: .2s;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59,130,246,.2);
-        }
-
-        input:disabled, select:disabled {
-            opacity: .5;
-            cursor: not-allowed;
-            text-decoration: line-through;
-        }
-
-        .req-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
-            width: 100%;
-        }
-
-        .req-row input[type="text"] { flex: 1; }
-
-        .toggle-req {
-            background: #334155;
-            border: none;
-            color: #f8fafc;
-            border-radius: 6px;
-            padding: 12px 0;
-            cursor: pointer;
-            transition: .2s;
-            font-size: 14px;
-            width: 45px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        .toggle-req.disabled { background: #7f1d1d; color: #fca5a5; }
-
-        .textarea-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .action-btns {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            flex: 1;
-            justify-content: flex-end;
-        }
-
-        .action-btns button {
-            background: #334155;
-            color: #e2e8f0;
-            border: none;
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: .2s;
-            flex: 1;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .action-btns button.clear-btn { background: #7f1d1d; color: #fca5a5; }
-        .action-btns button:hover { background: #475569; }
-        .action-btns button.clear-btn:hover { background: #991b1b; color: #fef2f2; }
-
-        textarea {
-            min-height: 200px;
-            resize: vertical;
-            direction: ltr;
-            font-family: monospace;
-            background: #020617;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        .row { display: flex; gap: 12px; width: 100%; }
-        .row .form-group { flex: 1; min-width: 0; }
-
-        .export-btn {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 16px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: .2s;
-            width: 100%;
-        }
-
-        .export-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
-        .export-btn:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; transform: none; }
-
-        .tab-content { display: none; }
-        .tab-content.active-tab { display: flex; }
-
-        .history-box {
-            background: #0f172a;
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 8px;
-            max-height: 180px;
-            overflow-y: auto;
-            width: 100%;
-        }
-
-        .history-item {
-            padding: 8px 10px;
-            background: #1e293b;
-            margin: 5px 0;
-            border-radius: 4px;
-            font-size: 12px;
-            color: #94a3b8;
-            cursor: pointer;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .history-item:hover { background: #334155; color: #f8fafc; }
-
-        /* مدير الصور */
-        .html-image-manager {
-            display: none;
-            margin-top: 15px;
-            padding: 14px;
-            background: #0b1220;
-            border: 1px solid #334155;
-            border-radius: 10px;
-        }
-
-        .html-image-manager.visible { display: block; }
-
-        .image-manager-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .image-manager-title { color: #f8fafc; font-size: 14px; font-weight: bold; margin: 0; }
-        .image-manager-count { background: #2563eb; color: #fff; padding: 4px 9px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-        .image-manager-description { color: #94a3b8; font-size: 11px; line-height: 1.7; margin: 0 0 12px; }
-
-        .image-manager-list { display: flex; flex-direction: column; gap: 10px; }
-
-        .html-image-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 10px;
-            overflow: hidden;
-        }
-
-        .html-image-card.replaced { border-color: #059669; background: #0f2923; }
-
-        .html-image-card-top { display: flex; align-items: flex-start; gap: 10px; }
-
-        .html-image-thumb {
-            width: 82px;
-            height: 70px;
-            flex: 0 0 82px;
-            border-radius: 7px;
-            background: #020617;
-            border: 1px solid #475569;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .html-image-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
-
-        .html-image-info { min-width: 0; flex: 1; }
-
-        .html-image-name {
-            color: #f8fafc;
-            font-size: 13px;
-            font-weight: bold;
-            margin: 0 0 6px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .html-image-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; }
-
-        .html-image-meta-item {
-            color: #94a3b8;
-            font-size: 10px;
-            line-height: 1.5;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .html-image-meta-item strong { color: #cbd5e1; }
-
-        .html-image-url {
-            margin-top: 8px;
-            padding: 7px 8px;
-            border-radius: 6px;
-            background: #020617;
-            color: #64748b;
-            direction: ltr;
-            text-align: left;
-            font-size: 9px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .html-image-actions { display: flex; gap: 7px; margin-top: 9px; }
-
-        .html-image-action {
-            flex: 1;
-            border: none;
-            border-radius: 7px;
-            padding: 9px 6px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: bold;
-            transition: .2s;
-        }
-
-        .html-image-action.keep { background: #334155; color: #e2e8f0; }
-        .html-image-action.keep:hover { background: #475569; }
-        .html-image-action.replace { background: #2563eb; color: #fff; }
-        .html-image-action.replace:hover { background: #1d4ed8; }
-        .html-image-action.crop-edit { background: #7c3aed; color: #fff; }
-        .html-image-action.crop-edit:hover { background: #6d28d9; }
-
-        .html-image-status {
-            margin-top: 7px;
-            min-height: 16px;
-            font-size: 10px;
-            font-weight: bold;
-            color: #64748b;
-        }
-
-        .html-image-card.replaced .html-image-status { color: #34d399; }
-
-        .image-manager-refresh {
-            width: 100%;
-            margin-top: 10px;
-            background: transparent;
-            border: 1px solid #475569;
-            color: #94a3b8;
-            padding: 8px;
-            border-radius: 7px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .image-manager-refresh:hover { background: #1e293b; color: #f8fafc; }
-
-        .image-empty { text-align: center; color: #64748b; font-size: 12px; padding: 12px; }
-
-        /* محرر قص الصور */
-        .crop-modal-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 10000;
-            background: rgba(2, 6, 23, .90);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 12px;
-        }
-
-        .crop-modal-overlay.visible { display: flex; }
-
-        .crop-modal {
-            width: min(760px, 100%);
-            max-height: calc(100vh - 24px);
-            overflow-y: auto;
-            background: #1e293b;
-            border: 1px solid #475569;
-            border-radius: 14px;
-            box-shadow: 0 25px 60px rgba(0,0,0,.65);
-            padding: 15px;
-        }
-
-        .crop-modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .crop-modal-header h3 { margin: 0; color: #f8fafc; font-size: 18px; }
-
-        .crop-close {
-            width: 38px;
-            height: 38px;
-            border: none;
-            border-radius: 8px;
-            background: #334155;
-            color: #f8fafc;
-            font-size: 22px;
-            cursor: pointer;
-        }
-
-        .crop-close:hover { background: #475569; }
-
-        .crop-target-info {
-            color: #94a3b8;
-            font-size: 11px;
-            line-height: 1.7;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .crop-stage {
-            position: relative;
-            width: 100%;
-            height: min(58vh, 480px);
-            min-height: 280px;
-            background: repeating-conic-gradient(#111827 0% 25%, #0b1220 0% 50%) 50% / 20px 20px;
-            border: 1px solid #475569;
-            border-radius: 10px;
-            overflow: hidden;
-            touch-action: none;
-            user-select: none;
-        }
-
-        .crop-image {
-            position: absolute;
-            max-width: none;
-            max-height: none;
-            width: auto;
-            height: auto;
-            display: block;
-            transform-origin: center center;
-            user-select: none;
-            -webkit-user-drag: none;
-            pointer-events: none;
-        }
-
-        .crop-frame {
-            position: absolute;
-            z-index: 3;
-            border: 2px solid #fff;
-            box-shadow: 0 0 0 9999px rgba(0,0,0,.58), 0 0 0 1px rgba(255,255,255,.25);
-            pointer-events: none;
-        }
-
-        .crop-grid {
-            position: absolute;
-            inset: 0;
-            background:
-                linear-gradient(to right, transparent 33.333%, rgba(255,255,255,.35) 33.333%, rgba(255,255,255,.35) calc(33.333% + 1px), transparent calc(33.333% + 1px), transparent 66.666%, rgba(255,255,255,.35) 66.666%, rgba(255,255,255,.35) calc(66.666% + 1px), transparent calc(66.666% + 1px)),
-                linear-gradient(to bottom, transparent 33.333%, rgba(255,255,255,.35) 33.333%, rgba(255,255,255,.35) calc(33.333% + 1px), transparent calc(33.333% + 1px), transparent 66.666%, rgba(255,255,255,.35) 66.666%, rgba(255,255,255,.35) calc(66.666% + 1px), transparent calc(66.666% + 1px));
-        }
-
-        .crop-controls { display: flex; gap: 8px; margin-top: 10px; }
-
-        .crop-control {
-            flex: 1;
-            border: none;
-            border-radius: 8px;
-            padding: 10px;
-            background: #334155;
-            color: #f8fafc;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .crop-control:hover { background: #475569; }
-
-        .crop-preview-wrap {
-            display: none;
-            margin-top: 12px;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 10px;
-        }
-
-        .crop-preview-wrap.visible { display: block; }
-
-        .crop-preview-title { color: #94a3b8; font-size: 11px; font-weight: bold; margin-bottom: 8px; text-align: center; }
-
-        .crop-preview {
-            display: block;
-            max-width: 100%;
-            max-height: 250px;
-            width: auto;
-            height: auto;
-            margin: auto;
-            object-fit: contain;
-            border-radius: 7px;
-            background: #020617;
-        }
-
-        .crop-actions { display: flex; gap: 8px; margin-top: 12px; }
-
-        .crop-action {
-            flex: 1;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 8px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .crop-action.cancel { background: #334155; color: #e2e8f0; }
-        .crop-action.preview { background: #0f766e; color: #fff; }
-        .crop-action.apply { background: #2563eb; color: #fff; }
-        .crop-action:hover { filter: brightness(1.1); }
-
-        .password-reset-btn {
-            width: 100%;
-            margin-top: 10px;
-            background: transparent;
-            border: 1px solid #475569;
-            color: #94a3b8;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: .2s;
-        }
-
-        .password-reset-btn:hover { background: #334155; color: #f8fafc; }
-
-        @media (max-width: 600px) {
-            .row { flex-direction: column; gap: 0; }
-            .action-btns { width: 100%; justify-content: space-between; }
-            .action-btns button { padding: 10px; }
-            .html-image-meta { grid-template-columns: 1fr; }
-            .html-image-thumb { width: 72px; flex-basis: 72px; height: 65px; }
-            .html-image-actions { flex-wrap: wrap; }
-            .html-image-action { min-width: calc(50% - 4px); }
-            .crop-modal { padding: 10px; border-radius: 12px; }
-            .crop-stage { height: 52vh; min-height: 260px; }
-            .crop-controls, .crop-actions { gap: 6px; }
-            .crop-control, .crop-action { padding: 11px 5px; font-size: 11px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>منصة تحويل الأكواد الذكية (PDF / PPTX)</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+
+<style>
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+html{scrollbar-gutter:stable}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;margin:0;padding:15px;display:flex;flex-direction:column;align-items:center;min-height:100vh;overflow-x:hidden;-webkit-text-size-adjust:100%}
+.header{text-align:center;margin-bottom:15px;width:100%}
+.header h2{margin:0;color:#f8fafc;font-size:24px}
+.top-nav{display:flex;justify-content:center;gap:10px;margin-bottom:20px;width:100%;max-width:600px}
+.nav-btn{flex:1;background:#1e293b;color:#94a3b8;border:2px solid #334155;padding:12px 5px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;transition:.3s;text-align:center}
+.nav-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
+.nav-btn:hover:not(.active){background:#334155;color:#f8fafc}
+.main-container{width:100%;max-width:600px;display:flex;flex-direction:column}
+.box-panel{background:#1e293b;border-radius:12px;padding:20px;box-shadow:0 10px 15px -3px rgba(0,0,0,.5);border:1px solid #334155;width:100%}
+.form-group{margin-bottom:15px;display:flex;flex-direction:column;width:100%}
+label{margin-bottom:8px;font-weight:bold;font-size:13px;color:#94a3b8}
+input,select,textarea{width:100%;padding:12px;background:#0f172a;border:1px solid #334155;border-radius:8px;font-size:14px;font-family:inherit;color:#f8fafc;transition:.2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.2)}
+input:disabled,select:disabled{opacity:.5;cursor:not-allowed;text-decoration:line-through}
+.req-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;width:100%}
+.req-row input[type="text"]{flex:1}
+.toggle-req{background:#334155;border:none;color:#f8fafc;border-radius:6px;padding:12px 0;cursor:pointer;transition:.2s;font-size:14px;width:45px;text-align:center;flex-shrink:0}
+.toggle-req.disabled{background:#7f1d1d;color:#fca5a5}
+.textarea-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:10px;flex-wrap:wrap}
+.action-btns{display:flex;gap:8px;flex-wrap:wrap;flex:1;justify-content:flex-end}
+.action-btns button{background:#334155;color:#e2e8f0;border:none;padding:8px 10px;border-radius:6px;font-size:12px;font-weight:bold;cursor:pointer;transition:.2s;flex:1;text-align:center;white-space:nowrap}
+.action-btns button.clear-btn{background:#7f1d1d;color:#fca5a5}
+.action-btns button:hover{background:#475569}
+.action-btns button.clear-btn:hover{background:#991b1b;color:#fef2f2}
+textarea#html-input{min-height:200px;resize:vertical;direction:ltr;font-family:monospace;background:#020617;font-size:13px;line-height:1.6}
+textarea#final-prompt-output{min-height:260px;resize:vertical;direction:rtl;text-align:right;font-family:inherit;background:#020617;font-size:13px;line-height:1.9;white-space:pre-wrap;padding:14px}
+.row{display:flex;gap:12px;width:100%}
+.row .form-group{flex:1;min-width:0}
+.export-btn{background:#2563eb;color:white;border:none;padding:16px;border-radius:8px;font-size:16px;font-weight:bold;cursor:pointer;margin-top:10px;transition:.2s;width:100%}
+.export-btn:hover{background:#1d4ed8;transform:translateY(-2px)}
+.export-btn:disabled{background:#475569;color:#94a3b8;cursor:not-allowed;transform:none}
+.tab-content{display:none}
+.tab-content.active-tab{display:flex}
+.html-image-manager{display:none;margin-top:15px;padding:14px;background:#0b1220;border:1px solid #334155;border-radius:10px}
+.html-image-manager.visible{display:block}
+.image-manager-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.image-manager-title{color:#f8fafc;font-size:14px;font-weight:bold;margin:0}
+.image-manager-count{background:#2563eb;color:#fff;padding:4px 9px;border-radius:20px;font-size:11px;font-weight:bold}
+.image-manager-description{color:#94a3b8;font-size:11px;line-height:1.7;margin:0 0 12px}
+.image-manager-list{display:flex;flex-direction:column;gap:10px}
+.html-image-card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:10px;overflow:hidden;transition:.2s}
+.html-image-card.replaced{border-color:#059669;background:#0f2923}
+.html-image-card.selected{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.35)}
+.html-image-card-top{display:flex;align-items:flex-start;gap:10px}
+.html-image-thumb{width:82px;height:70px;flex:0 0 82px;border-radius:7px;background:repeating-conic-gradient(#111827 0% 25%,#0b1220 0% 50%) 50%/14px 14px;border:1px solid #475569;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.html-image-thumb img{width:100%;height:100%;object-fit:contain;display:block}
+.html-image-info{min-width:0;flex:1}
+.html-image-name{color:#f8fafc;font-size:13px;font-weight:bold;margin:0 0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.html-image-meta{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px}
+.html-image-meta-item{color:#94a3b8;font-size:10px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.html-image-meta-item strong{color:#cbd5e1}
+.html-image-url{margin-top:8px;padding:7px 8px;border-radius:6px;background:#020617;color:#64748b;direction:ltr;text-align:left;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.html-image-actions{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+.html-image-action{flex:1;min-width:calc(50% - 4px);border:none;border-radius:7px;padding:9px 6px;cursor:pointer;font-size:11px;font-weight:bold;transition:.2s}
+.html-image-action.keep{background:#334155;color:#e2e8f0}
+.html-image-action.keep:hover{background:#475569}
+.html-image-action.replace{background:#2563eb;color:#fff}
+.html-image-action.replace:hover{background:#1d4ed8}
+.html-image-action.remove-bg{background:#0d9488;color:#fff}
+.html-image-action.remove-bg:hover{background:#0f766e}
+.html-image-action.crop-edit{background:#7c3aed;color:#fff}
+.html-image-action.crop-edit:hover{background:#6d28d9}
+.html-image-status{margin-top:7px;min-height:16px;font-size:10px;font-weight:bold;color:#64748b}
+.html-image-card.replaced .html-image-status{color:#34d399}
+.image-manager-refresh{width:100%;margin-top:10px;background:transparent;border:1px solid #475569;color:#94a3b8;padding:8px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:bold}
+.image-manager-refresh:hover{background:#1e293b;color:#f8fafc}
+.image-empty{text-align:center;color:#64748b;font-size:12px;padding:12px}
+.image-batch-bar{display:none;align-items:center;gap:8px;padding:10px;margin-bottom:12px;background:#0f172a;border:1px solid #2563eb;border-radius:8px;flex-wrap:wrap}
+.image-batch-bar.visible{display:flex}
+.image-selected-count{color:#60a5fa;font-size:12px;font-weight:bold;padding:5px 12px;background:#1e3a8a;border-radius:14px;flex-shrink:0}
+.image-batch-action{flex:1;min-width:110px;border:none;border-radius:6px;padding:9px 10px;background:#2563eb;color:#fff;font-size:11px;font-weight:bold;cursor:pointer;transition:.2s}
+.image-batch-action:hover{background:#1d4ed8}
+.image-batch-action.keep{background:#475569}
+.image-batch-action.keep:hover{background:#334155}
+.image-batch-action.remove-bg{background:#0d9488}
+.image-batch-action.remove-bg:hover{background:#0f766e}
+.image-batch-action.clear{background:#7f1d1d;color:#fca5a5}
+.image-batch-action.clear:hover{background:#991b1b;color:#fef2f2}
+.html-image-select-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:6px 8px;background:#0f172a;border-radius:6px;cursor:pointer;user-select:none}
+.html-image-select-row:hover{background:#111c33}
+.html-image-select-row input[type="checkbox"]{width:18px;height:18px;cursor:pointer;accent-color:#2563eb;flex-shrink:0;margin:0}
+.html-image-select-row span{font-size:11px;color:#94a3b8;font-weight:bold;cursor:pointer;flex:1}
+.crop-modal-overlay{position:fixed;inset:0;z-index:10000;background:rgba(2,6,23,.90);display:none;align-items:center;justify-content:center;padding:12px}
+.crop-modal-overlay.visible{display:flex}
+.crop-modal{width:min(760px,100%);max-height:calc(100vh - 24px);overflow-y:auto;background:#1e293b;border:1px solid #475569;border-radius:14px;box-shadow:0 25px 60px rgba(0,0,0,.65);padding:15px}
+.crop-modal-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.crop-modal-header h3{margin:0;color:#f8fafc;font-size:18px}
+.crop-close{width:38px;height:38px;border:none;border-radius:8px;background:#334155;color:#f8fafc;font-size:22px;cursor:pointer}
+.crop-close:hover{background:#475569}
+.crop-target-info{color:#94a3b8;font-size:11px;line-height:1.7;margin-bottom:12px;text-align:center}
+.crop-stage{position:relative;width:100%;height:min(58vh,480px);min-height:280px;background:repeating-conic-gradient(#111827 0% 25%,#0b1220 0% 50%) 50%/20px 20px;border:1px solid #475569;border-radius:10px;overflow:hidden;touch-action:none;user-select:none}
+.crop-image{position:absolute;max-width:none;max-height:none;width:auto;height:auto;display:block;transform-origin:center center;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.crop-frame{position:absolute;z-index:3;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.58),0 0 0 1px rgba(255,255,255,.25);pointer-events:none}
+.crop-grid{position:absolute;inset:0;background:linear-gradient(to right,transparent 33.333%,rgba(255,255,255,.35) 33.333%,rgba(255,255,255,.35) calc(33.333% + 1px),transparent calc(33.333% + 1px),transparent 66.666%,rgba(255,255,255,.35) 66.666%,rgba(255,255,255,.35) calc(66.666% + 1px),transparent calc(66.666% + 1px)),linear-gradient(to bottom,transparent 33.333%,rgba(255,255,255,.35) 33.333%,rgba(255,255,255,.35) calc(33.333% + 1px),transparent calc(33.333% + 1px),transparent 66.666%,rgba(255,255,255,.35) 66.666%,rgba(255,255,255,.35) calc(66.666% + 1px),transparent calc(66.666% + 1px))}
+.crop-controls{display:flex;gap:8px;margin-top:10px}
+.crop-control{flex:1;border:none;border-radius:8px;padding:10px;background:#334155;color:#f8fafc;cursor:pointer;font-size:12px;font-weight:bold}
+.crop-control:hover{background:#475569}
+.crop-preview-wrap{display:none;margin-top:12px;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:10px}
+.crop-preview-wrap.visible{display:block}
+.crop-preview-title{color:#94a3b8;font-size:11px;font-weight:bold;margin-bottom:8px;text-align:center}
+.crop-preview{display:block;max-width:100%;max-height:250px;width:auto;height:auto;margin:auto;object-fit:contain;border-radius:7px;background:repeating-conic-gradient(#111827 0% 25%,#0b1220 0% 50%) 50%/14px 14px}
+.crop-actions{display:flex;gap:8px;margin-top:12px}
+.crop-action{flex:1;border:none;border-radius:8px;padding:12px 8px;cursor:pointer;font-size:12px;font-weight:bold}
+.crop-action.cancel{background:#334155;color:#e2e8f0}
+.crop-action.preview{background:#0f766e;color:#fff}
+.crop-action.apply{background:#2563eb;color:#fff}
+.crop-action:hover{filter:brightness(1.1)}
+.password-reset-btn{width:100%;margin-top:10px;background:transparent;border:1px solid #475569;color:#94a3b8;padding:10px;border-radius:8px;font-size:12px;font-weight:bold;cursor:pointer;transition:.2s}
+.password-reset-btn:hover{background:#334155;color:#f8fafc}
+.bg-preview-wrap{position:relative;background:repeating-conic-gradient(#1e293b 0% 25%,#0f172a 0% 50%) 50%/18px 18px;border:1px solid #475569;border-radius:10px;overflow:hidden;margin-bottom:12px;cursor:crosshair;touch-action:manipulation}
+.bg-preview-img{display:block;width:100%;height:auto;max-height:340px;object-fit:contain;margin:auto;user-select:none;-webkit-user-drag:none;pointer-events:auto}
+.bg-preview-hint{position:absolute;top:8px;right:8px;background:rgba(15,23,42,.88);color:#f8fafc;padding:5px 10px;border-radius:14px;font-size:10px;font-weight:bold;pointer-events:none}
+.bg-color-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.bg-color-swatch{width:44px;height:44px;border-radius:9px;border:2px solid #475569;background:#020617;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:#64748b;font-weight:bold;text-align:center;line-height:1.1;padding:2px}
+.bg-color-info{flex:1;font-size:11px;color:#94a3b8;line-height:1.6;min-width:140px}
+.bg-color-info strong{color:#cbd5e1}
+.bg-slider-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.bg-slider-row label{margin:0;flex-shrink:0;min-width:80px;font-size:11px}
+.bg-slider-row input[type="range"]{flex:1;accent-color:#2563eb;height:5px}
+.bg-slider-value{color:#60a5fa;font-size:11px;font-weight:bold;min-width:38px;text-align:center;background:#0f172a;padding:4px 7px;border-radius:5px}
+.bg-hint{color:#94a3b8;font-size:11px;line-height:1.7;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:10px;margin-bottom:12px}
+.bg-hint strong{color:#cbd5e1}
+.bg-loader{display:none;text-align:center;padding:14px}
+.bg-loader.visible{display:block}
+.bg-loader-spinner{width:36px;height:36px;border:4px solid #334155;border-top-color:#2563eb;border-radius:50%;margin:0 auto 10px;animation:bgSpin 1s linear infinite}
+@keyframes bgSpin{to{transform:rotate(360deg)}}
+.bg-loader-text{color:#94a3b8;font-size:12px;font-weight:bold}
+.bg-result-note{margin-top:8px;color:#34d399;font-size:11px;font-weight:bold;text-align:center;min-height:16px}
+.bg-error-note{margin-top:8px;color:#fca5a5;font-size:11px;font-weight:bold;text-align:center;min-height:16px}
+
+@media print {
+  html, body, * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  [data-render-container] img { visibility: visible !important; opacity: 1 !important; }
+  .page { page-break-after: always; break-after: page; }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+}
+img { -webkit-user-drag: none; }
+
+@media (max-width:600px){
+body{padding:10px}
+input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
+.row{flex-direction:column;gap:0}
+.action-btns{width:100%;justify-content:space-between}
+.action-btns button{padding:10px}
+.html-image-meta{grid-template-columns:1fr}
+.html-image-thumb{width:72px;flex-basis:72px;height:65px}
+.html-image-action{min-width:calc(50% - 4px)}
+.image-batch-action{min-width:100%;}
+.crop-modal{padding:10px;border-radius:12px}
+.crop-stage{height:min(50vh,400px);min-height:220px}
+.crop-controls,.crop-actions{gap:6px}
+.crop-control,.crop-action{padding:11px 5px;font-size:11px}
+.box-panel{padding:15px}
+}
+</style>
 </head>
-
 <body>
 
-<!-- شاشة كلمة المرور -->
+<!-- ============ شاشة كلمة المرور ============ -->
 <div id="password-overlay" style="position:fixed;inset:0;background:#0f172a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
     <div style="background:#1e293b;padding:30px;border-radius:12px;box-shadow:0 10px 25px -5px rgba(0,0,0,.5);border:1px solid #334155;text-align:center;width:100%;max-width:350px;">
         <h3 style="margin-top:0;color:#f8fafc;font-size:22px;">🔒 حماية المنصة</h3>
         <p style="font-size:13px;color:#94a3b8;margin-bottom:25px;">الرجاء إدخال كلمة المرور للوصول.</p>
         <div class="form-group" style="margin-bottom:20px;">
-            <input type="password" id="pass-input" placeholder="كلمة المرور..." autocomplete="off" autocapitalize="none" spellcheck="false" style="text-align:center;letter-spacing:3px;font-size:16px;" onkeydown="if(event.key==='Enter'){event.preventDefault();checkPassword();}">
+            <input type="password" id="pass-input" placeholder="كلمة المرور..." autocomplete="off" autocapitalize="none" spellcheck="false" style="text-align:center;letter-spacing:3px;font-size:16px;">
         </div>
-        <button onclick="checkPassword()" class="export-btn" style="margin-top:0;">تسجيل الدخول</button>
+        <button type="button" id="login-btn" class="export-btn" style="margin-top:0;">تسجيل الدخول</button>
         <p id="pass-error" style="color:#ef4444;font-size:13px;display:none;margin-top:15px;font-weight:bold;margin-bottom:0;">❌ كلمة المرور غير صحيحة!</p>
-        <button type="button" class="password-reset-btn" onclick="resetLoginSession()">🔄 مسح جلسة الدخول</button>
+        <button type="button" class="password-reset-btn" id="reset-session-btn">🔄 مسح جلسة الدخول</button>
     </div>
 </div>
 
-<div class="header">
-    <h2>🛠️ منصة تحويل الأكواد</h2>
-</div>
+<div class="header"><h2>🛠️ منصة تحويل الأكواد</h2></div>
 
 <div class="top-nav">
-    <button class="nav-btn active" id="btn-converter" onclick="switchTab('converter')">⚙️ منصة التحويل</button>
-    <button class="nav-btn" id="btn-prompts" onclick="switchTab('prompts')">🧠 المولد الذكي</button>
+    <button type="button" class="nav-btn active" id="btn-converter" onclick="switchTab('converter')">⚙️ منصة التحويل</button>
+    <button type="button" class="nav-btn" id="btn-prompts" onclick="switchTab('prompts')">🧠 المولد الذكي</button>
 </div>
 
+<!-- ============ تبويب التحويل ============ -->
 <div id="converter-tab" class="main-container tab-content active-tab">
     <div class="box-panel">
-
         <div class="form-group">
             <label>اسم الملف المستخرج:</label>
             <input type="text" id="file-name" value="مستند_جديد" placeholder="اكتب اسم الملف هنا...">
         </div>
-
         <div class="row">
             <div class="form-group">
                 <label>نوع الملف المطلوب:</label>
@@ -587,65 +215,58 @@
                     <option value="pdf-a4">📄 بحث / تقرير (مشروع A4)</option>
                 </select>
             </div>
-
             <div class="form-group">
                 <label>الجودة:</label>
                 <select id="quality-select">
-                    <option value="1">عادية (سريعة جداً)</option>
-                    <option value="2" selected>عالية (متوازنة)</option>
-                    <option value="3">ممتازة (للصور الدقيقة)</option>
+                    <option value="1">عادية (سريعة)</option>
+                    <option value="2">عالية (متوازنة)</option>
+                    <option value="3" selected>ممتازة (أقصى جودة) ⭐</option>
                 </select>
             </div>
         </div>
-
         <div class="form-group">
             <div class="textarea-header">
                 <label style="margin:0;">كود الـ HTML:</label>
                 <div class="action-btns">
-                    <button class="clear-btn" onclick="clearCode()">🗑️ مسح</button>
-                    <button onclick="previewCode()">👁️ معاينة</button>
+                    <button type="button" class="clear-btn" onclick="clearCode()">🗑️ مسح</button>
+                    <button type="button" onclick="previewCode()">👁️ معاينة</button>
                 </div>
             </div>
-
             <textarea id="html-input" placeholder="الصق الكود هنا..."></textarea>
-
-            <!-- مدير الصور -->
             <div id="image-manager" class="html-image-manager">
                 <div class="image-manager-header">
                     <h3 class="image-manager-title">🖼️ الصور الموجودة في الكود</h3>
                     <span id="image-manager-count" class="image-manager-count">0 صورة</span>
                 </div>
                 <p class="image-manager-description">
-                    يتم التعرف على صور img وصور CSS الخلفية تلقائيًا،
-                    سواء كانت داخل style أو داخل قواعد CSS.
-                    يمكنك الاحتفاظ بالصورة أو اختيار صورة جديدة ثم قصها يدويًا
-                    حسب إطار الصورة الحالية. لن يتم تمديد الصورة أو ضغطها أو تغيير نسبتها.
+                    يتم التعرف على صور img وصور CSS الخلفية تلقائيًا.
+                    يمكنك تحديد عدة صور دفعة واحدة، استبدالها، إزالة خلفيتها، أو قصها.
                 </p>
+                <div id="image-batch-bar" class="image-batch-bar">
+                    <span id="image-selected-count" class="image-selected-count">0 محدد</span>
+                    <button type="button" class="image-batch-action" onclick="replaceSelectedImages()">🖼️ استبدال المحدد</button>
+                    <button type="button" class="image-batch-action remove-bg" onclick="removeBackgroundSelected()">🪄 إزالة خلفية المحدد</button>
+                    <button type="button" class="image-batch-action keep" onclick="keepSelectedImages()">↩️ الاحتفاظ بالمحدد</button>
+                    <button type="button" class="image-batch-action clear" onclick="clearImageSelection()">✖ إلغاء التحديد</button>
+                </div>
                 <div id="image-manager-list" class="image-manager-list"></div>
-                <button class="image-manager-refresh" onclick="analyzeHTMLImages()">🔄 تحديث قائمة الصور</button>
-            </div>
-
-            <div id="history-container" style="margin-top:15px;">
-                <label style="font-size:12px;color:#94a3b8;">📂 آخر الأكواد المحفوظة:</label>
-                <div id="history-list" class="history-box"></div>
+                <button type="button" class="image-manager-refresh" onclick="analyzeHTMLImages()">🔄 تحديث قائمة الصور</button>
             </div>
         </div>
-
-        <button id="capture-btn" class="export-btn" onclick="exportFile()">بدء الاستخراج 📥</button>
+        <button type="button" id="capture-btn" class="export-btn" onclick="exportFile()">بدء الاستخراج 📥</button>
     </div>
 </div>
 
+<!-- ============ تبويب المولد الذكي ============ -->
 <div id="prompts-tab" class="main-container tab-content">
     <div class="box-panel">
-
         <div class="form-group">
             <label>نوع الملف المطلوب تصميم كوده:</label>
-            <select id="prompt-type" onchange="generatePromptText()">
-                <option value="169">🖥️ عرض</option>
-                <option value="project-a4">📄 بحث / تقرير (مشروع A4)</option>
+            <select id="prompt-type" onchange="onPromptTypeChange()">
+                <option value="169">🖥️ عرض (أفقي — 1280×720)</option>
+                <option value="a4" selected>📄 بحث / تقرير (مشروع A4 — عمودي 794×1123)</option>
             </select>
         </div>
-
         <div class="row">
             <div class="form-group">
                 <label>نظام الألوان:</label>
@@ -657,7 +278,6 @@
                     <option value="warm">ألوان دافئة</option>
                 </select>
             </div>
-
             <div class="form-group">
                 <label>النمط:</label>
                 <select id="design-style" onchange="generatePromptText()">
@@ -667,7 +287,8 @@
                     <option value="bold">جريء وملون</option>
                 </select>
             </div>
-
+        </div>
+        <div class="row">
             <div class="form-group">
                 <label>حجم الخط:</label>
                 <select id="base-font-size" onchange="generatePromptText()">
@@ -676,107 +297,92 @@
                     <option value="small">صغير (للتفاصيل)</option>
                 </select>
             </div>
-        </div>
-
-        <div class="row">
             <div class="form-group">
-                <label>الصور:</label>
-                <select id="prompt-images" onchange="togglePromptImageOptions(); generatePromptText();">
-                    <option value="none">بدون صور</option>
-                    <option value="yes">إضافة صور</option>
+                <label>الخط العربي المقترح:</label>
+                <select id="font-choice" onchange="generatePromptText()">
+                    <option value="">🎲 دع الذكاء يختار</option>
+                    <option value="Cairo">Cairo — كايرو (حديث)</option>
+                    <option value="Tajawal">Tajawal — تجوال (مرن)</option>
+                    <option value="Almarai">Almarai — المراعي (نظيف)</option>
+                    <option value="Amiri">Amiri — أميري (كلاسيكي)</option>
+                    <option value="El Messiri">El Messiri — المصيري (أنيق)</option>
+                    <option value="Reem Kufi">Reem Kufi — ريم كوفي (هندسي)</option>
+                    <option value="Noto Kufi Arabic">Noto Kufi Arabic — نوتو كوفي</option>
+                    <option value="Noto Naskh Arabic">Noto Naskh Arabic — نسخ</option>
+                    <option value="Changa">Changa — شنغا (عصري)</option>
+                    <option value="Mada">Mada — مدى (بسيط)</option>
+                    <option value="Markazi Text">Markazi Text — مركزي (رسمي)</option>
+                    <option value="Harmattan">Harmattan — هرمتان</option>
+                    <option value="Lemonada">Lemonada — ليموندا (ودّي)</option>
+                    <option value="Rakkas">Rakkas — رقّاص (زخرفي)</option>
+                    <option value="Aref Ruqaa">Aref Ruqaa — رقعة</option>
+                    <option value="Scheherazade New">Scheherazade New — شهرزاد</option>
                 </select>
             </div>
-
-            <div class="form-group" id="prompt-image-count-group" style="display:none;">
-                <label>عدد الصور:</label>
-                <select id="prompt-image-count" onchange="generatePromptText()">
-                    <option value="1">1 صورة</option>
-                    <option value="2">2 صور</option>
-                    <option value="3">3 صور</option>
-                    <option value="4">4 صور</option>
-                    <option value="5" selected>5 صور</option>
-                    <option value="6">6 صور</option>
-                    <option value="7">7 صور</option>
-                    <option value="8">8 صور</option>
-                    <option value="9">9 صور</option>
-                    <option value="10">10 صور</option>
-                </select>
-            </div>
+        </div>
+        <div class="form-group">
+            <label id="pages-label">عدد الصفحات:</label>
+            <input type="text" id="req-pages" placeholder="مثال: 5 صفحات" oninput="generatePromptText()">
         </div>
 
         <label style="margin-top:10px;">المتطلبات (اضغط 👁️ لشطب المتطلب):</label>
 
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-title')">👁️</button>
+            <button type="button" class="toggle-req" data-target="req-images">👁️</button>
+            <input type="text" id="req-images" placeholder="الصور — اكتب العدد (مثال: 5)" oninput="generatePromptText()">
+        </div>
+        <div class="req-row">
+            <button type="button" class="toggle-req" data-target="req-title">👁️</button>
             <input type="text" id="req-title" placeholder="عنوان البحث أو العرض" oninput="generatePromptText()">
         </div>
-
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-subject')">👁️</button>
+            <button type="button" class="toggle-req" data-target="req-subject">👁️</button>
             <input type="text" id="req-subject" placeholder="المادة" oninput="generatePromptText()">
         </div>
-
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-name')">👁️</button>
+            <button type="button" class="toggle-req" data-target="req-name">👁️</button>
             <input type="text" id="req-name" placeholder="اسم الطالب / المقدِّم" oninput="generatePromptText()">
         </div>
-
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-teacher')">👁️</button>
+            <button type="button" class="toggle-req" data-target="req-teacher">👁️</button>
             <input type="text" id="req-teacher" placeholder="اسم المعلم" oninput="generatePromptText()">
         </div>
-
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-grade')">👁️</button>
+            <button type="button" class="toggle-req" data-target="req-grade">👁️</button>
             <input type="text" id="req-grade" placeholder="الصف" oninput="generatePromptText()">
         </div>
-
         <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-year')">👁️</button>
+            <button type="button" class="toggle-req" data-target="req-year">👁️</button>
             <input type="text" id="req-year" placeholder="العام الدراسي" oninput="generatePromptText()">
         </div>
 
-        <div class="req-row">
-            <button class="toggle-req" onclick="toggleInput(this,'req-pages')">👁️</button>
-            <input type="text" id="req-pages" placeholder="عدد الصفحات / الشرائح" oninput="generatePromptText()">
-        </div>
-
         <label style="margin-top:15px;">✨ الأمر النهائي للذكاء الاصطناعي:</label>
-
-        <textarea id="final-prompt-output" readonly style="min-height:180px;margin-bottom:10px;"></textarea>
-
-        <button class="export-btn" style="background:#059669;" onclick="copyGeneratedPrompt()">نسخ الأمر 📋</button>
+        <textarea id="final-prompt-output" readonly></textarea>
+        <button type="button" class="export-btn" style="background:#059669;" onclick="copyGeneratedPrompt()">نسخ الأمر 📋</button>
     </div>
 </div>
 
-<!-- نافذة قص الصور -->
+<!-- ============ نافذة القص ============ -->
 <div id="crop-modal" class="crop-modal-overlay" aria-hidden="true">
     <div class="crop-modal">
         <div class="crop-modal-header">
             <h3>قص الصورة</h3>
             <button type="button" class="crop-close" onclick="closeCropModal()">×</button>
         </div>
-
         <div id="crop-target-info" class="crop-target-info">اسحب الصورة داخل الإطار واضبط موضعها.</div>
-
         <div id="crop-stage" class="crop-stage">
             <img id="crop-image" class="crop-image" draggable="false" alt="">
-            <div id="crop-frame" class="crop-frame">
-                <div class="crop-grid"></div>
-            </div>
+            <div id="crop-frame" class="crop-frame"><div class="crop-grid"></div></div>
         </div>
-
         <div class="crop-controls">
             <button type="button" class="crop-control" onclick="cropZoom(-0.1)">تصغير</button>
             <button type="button" class="crop-control" onclick="cropReset()">إعادة ضبط</button>
             <button type="button" class="crop-control" onclick="cropZoom(0.1)">تكبير</button>
         </div>
-
         <div id="crop-preview-wrap" class="crop-preview-wrap">
             <div class="crop-preview-title">معاينة القص</div>
             <img id="crop-preview" class="crop-preview" alt="معاينة القص">
         </div>
-
         <div class="crop-actions">
             <button type="button" class="crop-action cancel" onclick="closeCropModal()">إلغاء</button>
             <button type="button" class="crop-action preview" onclick="previewCrop()">معاينة القص</button>
@@ -785,66 +391,151 @@
     </div>
 </div>
 
+<!-- ============ نافذة إزالة الخلفية ============ -->
+<div id="bg-remove-modal" class="crop-modal-overlay" aria-hidden="true">
+    <div class="crop-modal">
+        <div class="crop-modal-header">
+            <h3>🪄 إزالة الخلفية (لون موحّد)</h3>
+            <button type="button" class="crop-close" onclick="closeBackgroundRemover()">×</button>
+        </div>
+        <div id="bg-target-info" class="crop-target-info">انقر على لون الخلفية في الصورة ثم اضبط الإعدادات.</div>
+
+        <div class="bg-hint">
+            <strong>💡 كيف يعمل؟</strong> انقر على لون الخلفية في الصورة أدناه، ثم اضبط <strong>التسامح</strong> حتى تختفي الخلفية تمامًا مع بقاء العنصر الأساسي.
+        </div>
+
+        <div id="bg-loading" class="bg-loader">
+            <div class="bg-loader-spinner"></div>
+            <div class="bg-loader-text">جاري تحضير الصورة للتحرير...</div>
+        </div>
+
+        <div id="bg-preview-wrap" class="bg-preview-wrap" style="display:none;">
+            <img id="bg-preview-img" class="bg-preview-img" alt="">
+            <div class="bg-preview-hint">👆 انقر على الخلفية</div>
+        </div>
+
+        <div id="bg-controls" style="display:none;">
+            <div class="bg-color-row">
+                <div class="bg-color-swatch" id="bg-color-swatch">لم يُحدد</div>
+                <div class="bg-color-info" id="bg-color-info">
+                    <strong>اللون المحدد:</strong> —<br>
+                    <strong>RGB:</strong> —
+                </div>
+            </div>
+            <div class="bg-slider-row">
+                <label>التسامح:</label>
+                <input type="range" id="bg-tolerance" min="1" max="100" value="30" oninput="updateBgTolerance(this.value)">
+                <span class="bg-slider-value" id="bg-tolerance-value">30</span>
+            </div>
+            <div class="bg-slider-row">
+                <label>نعومة الحواف:</label>
+                <input type="range" id="bg-feather" min="0" max="10" value="2" oninput="updateBgFeather(this.value)">
+                <span class="bg-slider-value" id="bg-feather-value">2</span>
+            </div>
+        </div>
+
+        <div class="bg-result-note" id="bg-result-note"></div>
+        <div class="bg-error-note" id="bg-error-note"></div>
+
+        <div class="crop-actions">
+            <button type="button" class="crop-action cancel" onclick="closeBackgroundRemover()">إلغاء</button>
+            <button type="button" class="crop-action preview" onclick="previewBackgroundRemoval()">معاينة</button>
+            <button type="button" class="crop-action apply" onclick="applyBackgroundRemoval()">اعتماد الإزالة</button>
+        </div>
+    </div>
+</div>
+
 <script>
-
 /* =========================================================
-   الإعدادات
+   1) الإعدادات العامة وكشف بيئة iOS/Safari
    ========================================================= */
+var SECRET_PASSWORD = "ayman";
+var AUTH_KEY = "auth_token_v2";
+var AUTH_VALUE = "authenticated";
+var TELEGRAM_ENDPOINT = "";
 
-const SECRET_PASSWORD = "ayman";
-const AUTH_KEY = "auth_token_v2";
-const AUTH_VALUE = "authenticated";
-const TELEGRAM_ENDPOINT = "";
+var IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+var IS_SAFARI = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-const RENDER_CONFIG = {
-    maxCanvasPixels: 6500000,
-    fontTimeout: 4500,
-    imageTimeout: 7000,
-    jpegQuality: 0.88
+var RENDER_CONFIG = {
+    maxCanvasPixels: IS_IOS ? 3200000 : 6500000,
+    fontTimeout: IS_IOS ? 9000 : 5000,
+    imageTimeout: IS_IOS ? 12000 : 7000,
+    jpegQuality: IS_IOS ? 0.82 : 0.88
 };
 
-let imageReplacements = new Map();
-let detectedImages = [];
-let imageAnalysisTimer = null;
+var ARABIC_FONTS = [
+    "Cairo", "Tajawal", "Almarai", "Amiri", "El Messiri",
+    "Reem Kufi", "Noto Kufi Arabic", "Noto Naskh Arabic",
+    "Changa", "Mada", "Markazi Text", "Harmattan",
+    "Lemonada", "Rakkas", "Aref Ruqaa", "Scheherazade New"
+];
 
-let cropState = {
-    item: null,
-    sourceDataUrl: "",
-    sourceFileName: "",
-    sourceMimeType: "",
-    originalDataUrl: "",
-    image: null,
-    naturalWidth: 0,
-    naturalHeight: 0,
+var GOOGLE_FONTS_URL = "https://fonts.googleapis.com/css2?" + [
+    "family=Cairo:wght@400;500;600;700;800;900",
+    "family=Tajawal:wght@400;500;700;800;900",
+    "family=Almarai:wght@300;400;700;800",
+    "family=Amiri:ital,wght@0,400;0,700;1,400;1,700",
+    "family=El+Messiri:wght@400;500;600;700",
+    "family=Reem+Kufi:wght@400;500;600;700",
+    "family=Noto+Kufi+Arabic:wght@300;400;500;600;700;800",
+    "family=Noto+Naskh+Arabic:wght@400;500;600;700",
+    "family=Changa:wght@400;500;600;700;800",
+    "family=Mada:wght@300;400;500;600;700;800;900",
+    "family=Markazi+Text:wght@400;500;600;700",
+    "family=Harmattan:wght@400;500;600;700",
+    "family=Lemonada:wght@300;400;500;600;700",
+    "family=Rakkas",
+    "family=Aref+Ruqaa:wght@400;700",
+    "family=Scheherazade+New:wght@400;500;600;700",
+    "display=swap"
+].join("&");
+
+var imageReplacements = new Map();
+var detectedImages = [];
+var imageAnalysisTimer = null;
+var selectedImageKeys = new Set();
+var pendingBatchReplacement = null;
+
+var cropState = {
+    item: null, sourceDataUrl: "", sourceFileName: "", sourceMimeType: "",
+    originalDataUrl: "", image: null, naturalWidth: 0, naturalHeight: 0,
     targetRatio: 1,
     frame: { left: 0, top: 0, width: 0, height: 0 },
-    imageLeft: 0,
-    imageTop: 0,
-    baseScale: 1,
-    zoom: 1,
-    minZoom: 1,
-    maxZoom: 4,
-    displayScale: 1,
-    dragging: false,
-    pointerId: null,
-    startPointerX: 0,
-    startPointerY: 0,
-    startImageLeft: 0,
-    startImageTop: 0
+    imageLeft: 0, imageTop: 0, baseScale: 1, zoom: 1, minZoom: 1, maxZoom: 4,
+    displayScale: 1, dragging: false, pointerId: null,
+    startPointerX: 0, startPointerY: 0, startImageLeft: 0, startImageTop: 0
+};
+
+var bgRemovalState = {
+    item: null, safeDataUrl: "", sourceFileName: "", sourceMimeType: "image/png",
+    originalDataUrl: "", imageEl: null, naturalWidth: 0, naturalHeight: 0,
+    targetColor: null, tolerance: 30, feather: 2, resultDataUrl: null, batchKeys: null
 };
 
 /* =========================================================
-   استخراج URL من CSS
+   2) أدوات عامة
    ========================================================= */
+function escapeHTML(value) {
+    return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+function escapeAttribute(value) { return escapeHTML(value); }
 
 function extractImageUrls(value) {
     if (!value) return [];
-    const urls = [];
-    const regex = /url\(\s*(['"]?)(.*?)\1\s*\)/gi;
-    let match;
+    var urls = [];
+    var regex = /url\(\s*(['"]?)(.*?)\1\s*\)/gi;
+    var match;
     while ((match = regex.exec(value)) !== null) {
-        const url = String(match[2] || "").trim();
-        if (!url || url.startsWith("#") || url.startsWith("data:image/svg")) continue;
+        var url = String(match[2] || "").trim();
+        if (!url) continue;
+        if (url.charAt(0) === "#" || url.indexOf("data:image/svg") === 0) continue;
         urls.push(url);
     }
     return urls;
@@ -853,60 +544,61 @@ function extractImageUrls(value) {
 function getFileNameFromURL(src) {
     if (!src) return "";
     try {
-        const clean = src.split("?")[0].split("#")[0];
-        const parts = clean.split("/");
-        const file = parts[parts.length - 1];
+        var clean = src.split("?")[0].split("#")[0];
+        var parts = clean.split("/");
+        var file = parts[parts.length - 1];
         if (file) return decodeURIComponent(file);
-    } catch {}
+    } catch (e) { /* ignore */ }
     return "";
 }
 
-function getImageDisplayName(element, index, type = "img", src = "") {
+function getImageDisplayName(element, index, type, src) {
+    type = type || "img";
+    src = src || "";
     if (element) {
-        const customName = element.getAttribute("data-image-name");
+        var customName = element.getAttribute("data-image-name");
         if (customName && customName.trim()) return customName.trim();
-        const alt = element.getAttribute("alt");
+        var alt = element.getAttribute("alt");
         if (alt && alt.trim()) return alt.trim();
-        const title = element.getAttribute("title");
+        var title = element.getAttribute("title");
         if (title && title.trim()) return title.trim();
     }
-    const file = getFileNameFromURL(src);
+    var file = getFileNameFromURL(src);
     if (file) return file;
-    return type === "background" ? `خلفية ${index + 1}` : `الصورة ${index + 1}`;
+    return type === "background" ? ("خلفية " + (index + 1)) : ("الصورة " + (index + 1));
 }
 
 function getParsedPageNumber(element, doc) {
     if (!element) return 1;
-    const page = element.closest(".page");
+    var page = element.closest(".page");
     if (!page) return 1;
-    const allPages = Array.from(doc.querySelectorAll(".page"));
-    const index = allPages.indexOf(page);
+    var allPages = Array.prototype.slice.call(doc.querySelectorAll(".page"));
+    var index = allPages.indexOf(page);
     return index >= 0 ? index + 1 : 1;
 }
 
 function getStableSelector(element, doc) {
     if (!element) return "";
-    if (element.id) return `#${CSS.escape(element.id)}`;
-    const classes = Array.from(element.classList || []).filter(Boolean);
+    if (element.id) return "#" + CSS.escape(element.id);
+    var classes = Array.prototype.slice.call(element.classList || []).filter(Boolean);
     if (classes.length) {
-        const selector = element.tagName.toLowerCase() + classes.slice(0, 3).map(cls => `.${CSS.escape(cls)}`).join("");
-        try { if (doc.querySelectorAll(selector).length === 1) return selector; } catch {}
+        var selector = element.tagName.toLowerCase() +
+            classes.slice(0, 3).map(function (cls) { return "." + CSS.escape(cls); }).join("");
+        try { if (doc.querySelectorAll(selector).length === 1) return selector; } catch (e) {}
     }
-    const path = [];
-    let current = element;
+    var path = [];
+    var current = element;
     while (current && current.nodeType === 1 && current !== doc.body) {
-        let part = current.tagName.toLowerCase();
-        if (current.id) {
-            part += `#${CSS.escape(current.id)}`;
-            path.unshift(part);
-            break;
-        }
-        const parent = current.parentElement;
+        var part = current.tagName.toLowerCase();
+        if (current.id) { part += "#" + CSS.escape(current.id); path.unshift(part); break; }
+        var parent = current.parentElement;
         if (parent) {
-            const siblings = Array.from(parent.children).filter(child => child.tagName === current.tagName);
+            var siblings = Array.prototype.slice.call(parent.children).filter(function (child) {
+                return child.tagName === current.tagName;
+            });
             if (siblings.length > 1) {
-                const index = siblings.indexOf(current) + 1;
-                part += `:nth-of-type(${index})`;
+                var idx = siblings.indexOf(current) + 1;
+                part += ":nth-of-type(" + idx + ")";
             }
         }
         path.unshift(part);
@@ -917,22 +609,22 @@ function getStableSelector(element, doc) {
 
 function getImageDefinedDimensions(img) {
     if (!img) return { width: "حسب CSS", height: "حسب CSS", source: "CSS" };
-    let width = img.getAttribute("width");
-    let height = img.getAttribute("height");
-    if (width && height) return { width, height, source: "HTML" };
-    const style = img.getAttribute("style") || "";
-    const widthMatch = style.match(/(?:^|;)\s*width\s*:\s*([^;]+)/i);
-    const heightMatch = style.match(/(?:^|;)\s*height\s*:\s*([^;]+)/i);
-    if (widthMatch && heightMatch) return { width: widthMatch[1].trim(), height: heightMatch[1].trim(), source: "CSS" };
+    var width = img.getAttribute("width");
+    var height = img.getAttribute("height");
+    if (width && height) return { width: width, height: height, source: "HTML" };
+    var style = img.getAttribute("style") || "";
+    var wm = style.match(/(?:^|;)\s*width\s*:\s*([^;]+)/i);
+    var hm = style.match(/(?:^|;)\s*height\s*:\s*([^;]+)/i);
+    if (wm && hm) return { width: wm[1].trim(), height: hm[1].trim(), source: "CSS" };
     return { width: "حسب CSS", height: "حسب CSS", source: "CSS" };
 }
 
 function getNaturalImageSize(src) {
-    return new Promise(resolve => {
+    return new Promise(function (resolve) {
         if (!src) { resolve({ width: null, height: null }); return; }
-        const img = new Image();
-        let finished = false;
-        const done = () => {
+        var img = new Image();
+        var finished = false;
+        var done = function () {
             if (finished) return;
             finished = true;
             resolve({ width: img.naturalWidth || null, height: img.naturalHeight || null });
@@ -945,96 +637,192 @@ function getNaturalImageSize(src) {
 }
 
 function addDetectedImage(list, data) {
-    const normalized = String(data.src || "").trim();
+    var normalized = String(data.src || "").trim();
     if (!normalized) return;
-    const duplicate = list.some(item => item.type === data.type && item.src === normalized && item.target === data.target);
+    var duplicate = list.some(function (item) {
+        return item.type === data.type && item.src === normalized && item.target === data.target;
+    });
     if (duplicate) return;
-    list.push({ ...data, src: normalized });
+    var newItem = Object.assign({}, data);
+    newItem.src = normalized;
+    list.push(newItem);
 }
 
-async function analyzeHTMLImages() {
-    const textarea = document.getElementById("html-input");
-    const manager = document.getElementById("image-manager");
-    const list = document.getElementById("image-manager-list");
-    const count = document.getElementById("image-manager-count");
+function resolveImgSrc(img) {
+    var src = img.getAttribute("src") ||
+              img.getAttribute("data-src") ||
+              img.getAttribute("data-original") ||
+              img.getAttribute("data-lazy-src") || "";
+    if (!src) {
+        var srcset = img.getAttribute("srcset") || img.getAttribute("data-srcset") || "";
+        if (srcset) {
+            var first = srcset.split(",")[0].trim().split(/\s+/)[0];
+            if (first) src = first;
+        }
+    }
+    return src;
+}
 
+/* =========================================================
+   3) تحويل مصادر الصور إلى data URL آمن
+   ========================================================= */
+function blobToDataURL(blob) {
+    return new Promise(function (resolve, reject) {
+        var r = new FileReader();
+        r.onload = function () { resolve(r.result); };
+        r.onerror = function () { reject(new Error("FileReader فشل")); };
+        r.readAsDataURL(blob);
+    });
+}
+
+function toSafeDataURL(src) {
+    return new Promise(function (resolve, reject) {
+        if (!src) { reject(new Error("مصدر فارغ")); return; }
+        if (src.indexOf("data:") === 0) { resolve(src); return; }
+
+        fetch(src, { mode: "cors", credentials: "omit" })
+            .then(function (res) {
+                if (res.ok) return res.blob();
+                throw new Error("fetch failed");
+            })
+            .then(blobToDataURL)
+            .then(resolve)
+            .catch(function () {
+                var img = new Image();
+                img.crossOrigin = "anonymous";
+                img.onload = function () {
+                    try {
+                        var canvas = document.createElement("canvas");
+                        canvas.width = img.naturalWidth;
+                        canvas.height = img.naturalHeight;
+                        var ctx = canvas.getContext("2d");
+                        ctx.drawImage(img, 0, 0);
+                        resolve(canvas.toDataURL("image/png"));
+                    } catch (err) {
+                        reject(new Error("لا يمكن قراءة بكسلات الصورة (CORS)."));
+                    }
+                };
+                img.onerror = function () { reject(new Error("تعذر تحميل الصورة")); };
+                img.src = src;
+            });
+    });
+}
+
+function readFileAsDataURL(file) {
+    return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function () { resolve(reader.result); };
+        reader.onerror = function () { reject(reader.error || new Error("FileReader failed")); };
+        reader.readAsDataURL(file);
+    });
+}
+
+/* =========================================================
+   4) تحليل الصور في كود HTML
+   ========================================================= */
+function analyzeHTMLImages() {
+    var textarea = document.getElementById("html-input");
+    var manager = document.getElementById("image-manager");
+    var list = document.getElementById("image-manager-list");
+    var count = document.getElementById("image-manager-count");
     if (!textarea || !manager || !list) return;
 
-    const code = textarea.value;
+    var code = textarea.value;
     if (!code.trim()) {
         detectedImages = [];
         imageReplacements.clear();
+        selectedImageKeys.clear();
+        pendingBatchReplacement = null;
         manager.classList.remove("visible");
         list.innerHTML = "";
+        updateBatchBar();
         return;
     }
 
-    let doc;
-    try {
-        doc = new DOMParser().parseFromString(code, "text/html");
-    } catch {
-        detectedImages = [];
-        manager.classList.remove("visible");
-        return;
-    }
+    var doc;
+    try { doc = new DOMParser().parseFromString(code, "text/html"); }
+    catch (e) { detectedImages = []; manager.classList.remove("visible"); return; }
 
-    const found = [];
+    var found = [];
 
-    Array.from(doc.querySelectorAll("img")).forEach((img, index) => {
-        const src = img.getAttribute("src") || "";
+    var images = Array.prototype.slice.call(doc.querySelectorAll("img"));
+    images.forEach(function (img, index) {
+        var src = resolveImgSrc(img);
         if (!src) return;
-        const dimensions = getImageDefinedDimensions(img);
+        var dimensions = getImageDefinedDimensions(img);
         addDetectedImage(found, {
-            type: "img", index, target: getStableSelector(img, doc), page: getParsedPageNumber(img, doc),
-            name: getImageDisplayName(img, index, "img", src), src, alt: img.getAttribute("alt") || "",
-            width: dimensions.width, height: dimensions.height, dimensionSource: dimensions.source
+            type: "img", index: index,
+            target: getStableSelector(img, doc),
+            page: getParsedPageNumber(img, doc),
+            name: getImageDisplayName(img, index, "img", src),
+            src: src, alt: img.getAttribute("alt") || "",
+            width: dimensions.width, height: dimensions.height,
+            dimensionSource: dimensions.source
         });
     });
 
-    Array.from(doc.querySelectorAll("*")).forEach((element, elementIndex) => {
-        const style = element.getAttribute("style") || "";
+    var allElements = Array.prototype.slice.call(doc.querySelectorAll("*"));
+    allElements.forEach(function (element, elementIndex) {
+        var style = element.getAttribute("style") || "";
         if (!style) return;
-        extractImageUrls(style).forEach((src, bgIndex) => {
+        var urls = extractImageUrls(style);
+        urls.forEach(function (src, bgIndex) {
             addDetectedImage(found, {
-                type: "background", subtype: "inline", index: found.length, target: getStableSelector(element, doc),
-                elementIndex, backgroundIndex: bgIndex, page: getParsedPageNumber(element, doc),
-                name: getImageDisplayName(element, found.length, "background", src), src, alt: "",
+                type: "background", subtype: "inline",
+                index: found.length,
+                target: getStableSelector(element, doc),
+                elementIndex: elementIndex, backgroundIndex: bgIndex,
+                page: getParsedPageNumber(element, doc),
+                name: getImageDisplayName(element, found.length, "background", src),
+                src: src, alt: "",
                 width: "حسب CSS", height: "حسب CSS", dimensionSource: "CSS"
             });
         });
     });
 
-    Array.from(doc.querySelectorAll("style")).forEach((styleTag, styleIndex) => {
-        const cssText = styleTag.textContent || "";
+    var styleTags = Array.prototype.slice.call(doc.querySelectorAll("style"));
+    styleTags.forEach(function (styleTag, styleIndex) {
+        var cssText = styleTag.textContent || "";
         if (!cssText.trim()) return;
         try {
-            const tempStyle = document.createElement("style");
+            var tempStyle = document.createElement("style");
             tempStyle.textContent = cssText;
             document.head.appendChild(tempStyle);
-            const cssRules = Array.from(tempStyle.sheet?.cssRules || []);
-            cssRules.forEach((rule, ruleIndex) => {
+            var cssRules = Array.prototype.slice.call((tempStyle.sheet && tempStyle.sheet.cssRules) || []);
+            cssRules.forEach(function (rule, ruleIndex) {
                 if (!rule.selectorText || !rule.style) return;
-                const cssValue = [rule.style.backgroundImage, rule.style.background].filter(Boolean).join(";");
-                const urls = extractImageUrls(cssValue);
+                var cssValue = [rule.style.backgroundImage, rule.style.background].filter(Boolean).join(";");
+                var urls = extractImageUrls(cssValue);
                 if (!urls.length) return;
-                let matchedElements = [];
-                try { matchedElements = Array.from(doc.querySelectorAll(rule.selectorText)); } catch { matchedElements = []; }
-                urls.forEach((src, bgIndex) => {
+                var matchedElements = [];
+                try { matchedElements = Array.prototype.slice.call(doc.querySelectorAll(rule.selectorText)); }
+                catch (e) { matchedElements = []; }
+                urls.forEach(function (src, bgIndex) {
                     if (matchedElements.length) {
-                        matchedElements.forEach(element => {
+                        matchedElements.forEach(function (element) {
                             addDetectedImage(found, {
-                                type: "background", subtype: "css-rule", index: found.length, target: getStableSelector(element, doc),
-                                selector: rule.selectorText, styleIndex, ruleIndex, backgroundIndex: bgIndex,
-                                page: getParsedPageNumber(element, doc), name: getImageDisplayName(element, found.length, "background", src),
-                                src, alt: "", width: "حسب CSS", height: "حسب CSS", dimensionSource: "CSS"
+                                type: "background", subtype: "css-rule",
+                                index: found.length,
+                                target: getStableSelector(element, doc),
+                                selector: rule.selectorText,
+                                styleIndex: styleIndex, ruleIndex: ruleIndex,
+                                backgroundIndex: bgIndex,
+                                page: getParsedPageNumber(element, doc),
+                                name: getImageDisplayName(element, found.length, "background", src),
+                                src: src, alt: "",
+                                width: "حسب CSS", height: "حسب CSS", dimensionSource: "CSS"
                             });
                         });
                     } else {
                         addDetectedImage(found, {
-                            type: "background", subtype: "css-rule", index: found.length, target: "",
-                            selector: rule.selectorText, styleIndex, ruleIndex, backgroundIndex: bgIndex,
-                            page: 1, name: getImageDisplayName(null, found.length, "background", src),
-                            src, alt: "", width: "حسب CSS", height: "حسب CSS", dimensionSource: "CSS"
+                            type: "background", subtype: "css-rule",
+                            index: found.length, target: "",
+                            selector: rule.selectorText,
+                            styleIndex: styleIndex, ruleIndex: ruleIndex,
+                            backgroundIndex: bgIndex, page: 1,
+                            name: getImageDisplayName(null, found.length, "background", src),
+                            src: src, alt: "",
+                            width: "حسب CSS", height: "حسب CSS", dimensionSource: "CSS"
                         });
                     }
                 });
@@ -1043,768 +831,1966 @@ async function analyzeHTMLImages() {
         } catch (error) { console.warn("تعذر تحليل CSS:", error); }
     });
 
-    const oldReplacements = imageReplacements;
-    const newReplacements = new Map();
-    found.forEach((item, index) => {
+    var oldReplacements = imageReplacements;
+    var newReplacements = new Map();
+    found.forEach(function (item, index) {
         item.index = index;
         item.key = createImageKey(item);
         if (oldReplacements.has(item.key)) newReplacements.set(item.key, oldReplacements.get(item.key));
     });
     imageReplacements = newReplacements;
     detectedImages = found;
-    count.textContent = `${detectedImages.length} صورة`;
 
+    var validKeys = new Set(found.map(function (it) { return it.key; }));
+    Array.prototype.slice.call(selectedImageKeys).forEach(function (k) {
+        if (!validKeys.has(k)) selectedImageKeys.delete(k);
+    });
+    pendingBatchReplacement = null;
+
+    if (count) count.textContent = detectedImages.length + " صورة";
     if (!detectedImages.length) {
         manager.classList.remove("visible");
-        list.innerHTML = `<div class="image-empty">لا توجد صور في الكود الحالي.</div>`;
+        list.innerHTML = '<div class="image-empty">لا توجد صور في الكود الحالي.</div>';
+        updateBatchBar();
         return;
     }
-
     manager.classList.add("visible");
     renderImageManager();
 
-    detectedImages.forEach(async item => {
-        const natural = await getNaturalImageSize(item.src);
-        item.naturalWidth = natural.width;
-        item.naturalHeight = natural.height;
-        renderImageManager();
+    detectedImages.forEach(function (item) {
+        getNaturalImageSize(item.src).then(function (natural) {
+            item.naturalWidth = natural.width;
+            item.naturalHeight = natural.height;
+            renderImageManager();
+        });
     });
 }
 
 function createImageKey(item) {
-    return [item.type, item.subtype || "", item.src || "", item.target || "", item.selector || "", item.styleIndex ?? "", item.ruleIndex ?? "", item.backgroundIndex ?? ""].join("|");
+    return [
+        item.type, item.subtype || "", item.src || "", item.target || "",
+        item.selector || "",
+        item.styleIndex != null ? item.styleIndex : "",
+        item.ruleIndex != null ? item.ruleIndex : "",
+        item.backgroundIndex != null ? item.backgroundIndex : ""
+    ].join("|");
 }
 
+/* =========================================================
+   5) عرض مدير الصور
+   ========================================================= */
 function renderImageManager() {
-    const list = document.getElementById("image-manager-list");
+    var list = document.getElementById("image-manager-list");
     if (!list) return;
     if (!detectedImages.length) {
-        list.innerHTML = `<div class="image-empty">لا توجد صور في الكود الحالي.</div>`;
+        list.innerHTML = '<div class="image-empty">لا توجد صور في الكود الحالي.</div>';
+        updateBatchBar();
         return;
     }
 
-    list.innerHTML = detectedImages.map(item => {
-        const replacement = imageReplacements.get(item.key);
-        const isReplaced = !!replacement;
-        const previewSrc = replacement ? replacement.dataUrl : item.src;
-        const displayName = replacement ? replacement.fileName : item.name;
-        const naturalDimensions = item.naturalWidth && item.naturalHeight ? `${item.naturalWidth} × ${item.naturalHeight}px` : "غير معروف";
-        const definedDimensions = `${item.width} × ${item.height}`;
-        const typeLabel = item.type === "img" ? "IMG" : "خلفية CSS";
-        const sourceLabel = item.type === "img" ? "src" : item.subtype === "inline" ? "style" : "CSS rule";
+    var html = detectedImages.map(function (item) {
+        var replacement = imageReplacements.get(item.key);
+        var isReplaced = !!replacement;
+        var isSelected = selectedImageKeys.has(item.key);
+        var previewSrc = replacement ? replacement.dataUrl : item.src;
+        var displayName = replacement ? replacement.fileName : item.name;
+        var naturalDimensions = (item.naturalWidth && item.naturalHeight)
+            ? (item.naturalWidth + " × " + item.naturalHeight + "px")
+            : "غير معروف";
+        var definedDimensions = item.width + " × " + item.height;
+        var typeLabel = item.type === "img" ? "IMG" : "خلفية CSS";
+        var sourceLabel = item.type === "img" ? "src"
+            : item.subtype === "inline" ? "style" : "CSS rule";
 
-        return `
-            <div class="html-image-card ${isReplaced ? "replaced" : ""}" data-image-card="${item.index}">
-                <div class="html-image-card-top">
-                    <div class="html-image-thumb">
-                        ${previewSrc ? `<img src="${escapeAttribute(previewSrc)}" alt="">` : `<span style="color:#475569;font-size:20px;">🖼️</span>`}
-                    </div>
-                    <div class="html-image-info">
-                        <p class="html-image-name" title="${escapeAttribute(displayName)}">${escapeHTML(displayName)}</p>
-                        <div class="html-image-meta">
-                            <div class="html-image-meta-item"><strong>النوع:</strong> ${typeLabel}</div>
-                            <div class="html-image-meta-item"><strong>المصدر:</strong> ${sourceLabel}</div>
-                            <div class="html-image-meta-item"><strong>الصفحة:</strong> ${item.page}</div>
-                            <div class="html-image-meta-item"><strong>الصورة:</strong> ${item.index + 1}</div>
-                            <div class="html-image-meta-item"><strong>أبعاد الكود:</strong> ${escapeHTML(definedDimensions)}</div>
-                            <div class="html-image-meta-item"><strong>الأبعاد الأصلية:</strong> ${naturalDimensions}</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="html-image-url" title="${escapeAttribute(item.src)}">
-                    ${escapeHTML(isReplaced ? "تم اختيار صورة جديدة وقصها" : item.src)}
-                </div>
-                ${item.selector ? `<div class="html-image-url" title="${escapeAttribute(item.selector)}">CSS: ${escapeHTML(item.selector)}</div>` : ""}
-                <div class="html-image-actions">
-                    <button class="html-image-action keep" onclick="keepOriginalImage(${item.index})">↩️ الاحتفاظ بالحالية</button>
-                    <button class="html-image-action replace" onclick="chooseReplacementImage(${item.index})">🖼️ اختيار من الاستوديو</button>
-                    ${isReplaced ? `<button class="html-image-action crop-edit" onclick="editReplacementCrop(${item.index})">✂️ تعديل القص</button>` : ""}
-                </div>
-                <div class="html-image-status">
-                    ${isReplaced ? `✅ سيتم استخدام: ${escapeHTML(replacement.fileName)}` : "الصورة الحالية مستخدمة"}
-                </div>
-            </div>
-        `;
+        var thumbContent;
+        if (previewSrc) thumbContent = '<img src="' + escapeAttribute(previewSrc) + '" alt="">';
+        else thumbContent = '<span style="color:#475569;font-size:20px;">🖼️</span>';
+
+        var selectorHtml = "";
+        if (item.selector) {
+            selectorHtml = '<div class="html-image-url" title="' + escapeAttribute(item.selector) + '">CSS: ' + escapeHTML(item.selector) + '</div>';
+        }
+
+        var cropEditHtml = "";
+        if (isReplaced) {
+            cropEditHtml = '<button type="button" class="html-image-action crop-edit" onclick="editReplacementCrop(' + item.index + ')">✂️ تعديل القص</button>';
+        }
+
+        var statusHtml = isReplaced
+            ? '✅ سيتم استخدام: ' + escapeHTML(replacement.fileName)
+            : 'الصورة الحالية مستخدمة';
+
+        return '' +
+            '<div class="html-image-card ' + (isReplaced ? "replaced " : "") + (isSelected ? "selected" : "") + '" data-image-card="' + item.index + '">' +
+                '<div class="html-image-select-row">' +
+                    '<input type="checkbox" data-image-key="' + escapeAttribute(item.key) + '" ' + (isSelected ? "checked" : "") + ' onchange="toggleImageSelection(this)">' +
+                    '<span>تحديد هذه الصورة (للاستبدال الجماعي)</span>' +
+                '</div>' +
+                '<div class="html-image-card-top">' +
+                    '<div class="html-image-thumb">' + thumbContent + '</div>' +
+                    '<div class="html-image-info">' +
+                        '<p class="html-image-name" title="' + escapeAttribute(displayName) + '">' + escapeHTML(displayName) + '</p>' +
+                        '<div class="html-image-meta">' +
+                            '<div class="html-image-meta-item"><strong>النوع:</strong> ' + typeLabel + '</div>' +
+                            '<div class="html-image-meta-item"><strong>المصدر:</strong> ' + sourceLabel + '</div>' +
+                            '<div class="html-image-meta-item"><strong>الصفحة:</strong> ' + item.page + '</div>' +
+                            '<div class="html-image-meta-item"><strong>الصورة:</strong> ' + (item.index + 1) + '</div>' +
+                            '<div class="html-image-meta-item"><strong>أبعاد الكود:</strong> ' + escapeHTML(definedDimensions) + '</div>' +
+                            '<div class="html-image-meta-item"><strong>الأبعاد الأصلية:</strong> ' + naturalDimensions + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="html-image-url" title="' + escapeAttribute(item.src) + '">' +
+                    escapeHTML(isReplaced ? "تم اختيار صورة جديدة / إزالة الخلفية" : item.src) +
+                '</div>' +
+                selectorHtml +
+                '<div class="html-image-actions">' +
+                    '<button type="button" class="html-image-action keep" onclick="keepOriginalImage(' + item.index + ')">↩️ الاحتفاظ بالحالية</button>' +
+                    '<button type="button" class="html-image-action replace" onclick="chooseReplacementImage(' + item.index + ')">🖼️ اختيار من الاستوديو</button>' +
+                    '<button type="button" class="html-image-action remove-bg" onclick="openBackgroundRemover(' + item.index + ')">🪄 إزالة الخلفية</button>' +
+                    cropEditHtml +
+                '</div>' +
+                '<div class="html-image-status">' + statusHtml + '</div>' +
+            '</div>';
     }).join("");
+
+    list.innerHTML = html;
+    updateBatchBar();
 }
 
-function chooseReplacementImage(index) {
-    const item = detectedImages[index];
-    if (!item) return;
-    const input = document.createElement("input");
+/* =========================================================
+   6) التحديد المتعدد
+   ========================================================= */
+function toggleImageSelection(checkbox) {
+    var key = checkbox.getAttribute("data-image-key");
+    if (!key) return;
+    if (checkbox.checked) selectedImageKeys.add(key);
+    else selectedImageKeys.delete(key);
+    var card = checkbox.closest(".html-image-card");
+    if (card) card.classList.toggle("selected", checkbox.checked);
+    updateBatchBar();
+}
+
+function updateBatchBar() {
+    var bar = document.getElementById("image-batch-bar");
+    var countEl = document.getElementById("image-selected-count");
+    if (!bar || !countEl) return;
+    var n = selectedImageKeys.size;
+    countEl.textContent = n + " محدد";
+    bar.classList.toggle("visible", n > 0);
+}
+
+function clearImageSelection() {
+    selectedImageKeys.clear();
+    renderImageManager();
+}
+
+function keepSelectedImages() {
+    selectedImageKeys.forEach(function (key) { imageReplacements.delete(key); });
+    selectedImageKeys.clear();
+    renderImageManager();
+}
+
+function replaceSelectedImages() {
+    if (selectedImageKeys.size === 0) {
+        alert("الرجاء تحديد صورة واحدة على الأقل.");
+        return;
+    }
+    var input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
     input.style.display = "none";
     document.body.appendChild(input);
-    input.addEventListener("change", async () => {
-        const file = input.files && input.files[0];
+    input.addEventListener("change", function () {
+        var file = input.files && input.files[0];
         if (!file) { input.remove(); return; }
-        if (!file.type || !file.type.startsWith("image/")) { alert("الملف المحدد ليس صورة."); input.remove(); return; }
-        try {
-            const dataUrl = await readFileAsDataURL(file);
-            openCropEditor({ item, sourceDataUrl: dataUrl, sourceFileName: file.name, sourceMimeType: file.type, originalDataUrl: dataUrl });
-        } catch (error) {
-            console.error(error); alert("تعذر قراءة الصورة.");
-        } finally { input.remove(); }
+        if (!file.type || file.type.indexOf("image/") !== 0) {
+            alert("الملف المحدد ليس صورة.");
+            input.remove();
+            return;
+        }
+        readFileAsDataURL(file).then(function (dataUrl) {
+            var keysArray = Array.prototype.slice.call(selectedImageKeys);
+            var firstKey = keysArray[0];
+            var firstItem = detectedImages.find(function (it) { return it.key === firstKey; });
+            if (!firstItem) { input.remove(); return; }
+
+            pendingBatchReplacement = {
+                keys: keysArray,
+                dataUrl: dataUrl,
+                fileName: file.name,
+                mimeType: file.type
+            };
+
+            openCropEditor({
+                item: firstItem,
+                sourceDataUrl: dataUrl,
+                sourceFileName: file.name,
+                sourceMimeType: file.type,
+                originalDataUrl: dataUrl
+            }).finally(function () { input.remove(); });
+        }).catch(function (error) {
+            console.error(error);
+            alert("تعذر قراءة الصورة.");
+            pendingBatchReplacement = null;
+            input.remove();
+        });
+    }, { once: true });
+    input.click();
+}
+
+/* =========================================================
+   7) اختيار صورة بديلة
+   ========================================================= */
+function chooseReplacementImage(index) {
+    var item = detectedImages[index];
+    if (!item) return;
+    var input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.style.display = "none";
+    document.body.appendChild(input);
+    input.addEventListener("change", function () {
+        var file = input.files && input.files[0];
+        if (!file) { input.remove(); return; }
+        if (!file.type || file.type.indexOf("image/") !== 0) {
+            alert("الملف المحدد ليس صورة.");
+            input.remove();
+            return;
+        }
+        readFileAsDataURL(file).then(function (dataUrl) {
+            pendingBatchReplacement = null;
+            return openCropEditor({
+                item: item, sourceDataUrl: dataUrl,
+                sourceFileName: file.name, sourceMimeType: file.type,
+                originalDataUrl: dataUrl
+            });
+        }).catch(function (error) {
+            console.error(error);
+            alert("تعذر قراءة الصورة.");
+        }).finally(function () { input.remove(); });
     }, { once: true });
     input.click();
 }
 
 function editReplacementCrop(index) {
-    const item = detectedImages[index];
+    var item = detectedImages[index];
     if (!item) return;
-    const replacement = imageReplacements.get(item.key);
+    var replacement = imageReplacements.get(item.key);
     if (!replacement) { chooseReplacementImage(index); return; }
+    pendingBatchReplacement = null;
     openCropEditor({
-        item, sourceDataUrl: replacement.originalDataUrl || replacement.dataUrl, sourceFileName: replacement.originalFileName || replacement.fileName,
-        sourceMimeType: replacement.originalMimeType || replacement.mimeType || "image/png", originalDataUrl: replacement.originalDataUrl || replacement.dataUrl
+        item: item,
+        sourceDataUrl: replacement.originalDataUrl || replacement.dataUrl,
+        sourceFileName: replacement.originalFileName || replacement.fileName,
+        sourceMimeType: replacement.originalMimeType || replacement.mimeType || "image/png",
+        originalDataUrl: replacement.originalDataUrl || replacement.dataUrl
     });
 }
 
 function keepOriginalImage(index) {
-    const item = detectedImages[index];
+    var item = detectedImages[index];
     if (!item) return;
     imageReplacements.delete(item.key);
+    selectedImageKeys.delete(item.key);
     renderImageManager();
 }
 
-function readFileAsDataURL(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(reader.error || new Error("FileReader failed"));
-        reader.readAsDataURL(file);
-    });
-}
-
-function escapeHTML(value) {
-    return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-}
-function escapeAttribute(value) { return escapeHTML(value); }
-
+/* =========================================================
+   8) استبدال URL داخل CSS
+   ========================================================= */
 function replaceCSSImageURL(value, original, replacement) {
     if (!value || !original || !replacement) return value;
-    const escaped = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(escaped, "g");
+    var escaped = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    var regex = new RegExp(escaped, "g");
     return value.replace(regex, replacement);
 }
 
 function applyImageReplacements(container) {
     if (!container || !detectedImages.length) return;
-    const images = Array.from(container.querySelectorAll("img"));
 
-    detectedImages.filter(item => item.type === "img").forEach(item => {
-        const replacement = imageReplacements.get(item.key);
+    var images = Array.prototype.slice.call(container.querySelectorAll("img"));
+
+    detectedImages.filter(function (item) { return item.type === "img"; }).forEach(function (item) {
+        var replacement = imageReplacements.get(item.key);
         if (!replacement) return;
-        const img = images.find(element => getStableSelector(element, container.ownerDocument) === item.target) || images[item.index];
+        var img = null;
+        try {
+            var ownerDoc = container.ownerDocument || document;
+            img = images.find(function (element) {
+                return getStableSelector(element, ownerDoc) === item.target;
+            }) || null;
+        } catch (e) { /* ignore */ }
+        if (!img) img = images[item.index] || null;
         if (!img) return;
         img.setAttribute("src", replacement.dataUrl);
         img.src = replacement.dataUrl;
-        img.removeAttribute("srcset"); img.removeAttribute("sizes");
+        img.removeAttribute("srcset");
+        img.removeAttribute("sizes");
     });
 
-    detectedImages.filter(item => item.type === "background").forEach(item => {
-        const replacement = imageReplacements.get(item.key);
+    detectedImages.filter(function (item) { return item.type === "background"; }).forEach(function (item) {
+        var replacement = imageReplacements.get(item.key);
         if (!replacement) return;
-        let elements = [];
-        try { if (item.target) elements = Array.from(container.querySelectorAll(item.target)); } catch {}
+        var elements = [];
+        try {
+            if (item.target) elements = Array.prototype.slice.call(container.querySelectorAll(item.target));
+        } catch (e) { /* ignore */ }
+        if (!elements.length && item.selector) {
+            try { elements = Array.prototype.slice.call(container.querySelectorAll(item.selector)); }
+            catch (e) { /* ignore */ }
+        }
         if (!elements.length) return;
-        elements.forEach(element => applyBackgroundReplacementToElement(element, item.src, replacement.dataUrl));
+        elements.forEach(function (element) {
+            applyBackgroundReplacementToElement(element, item.src, replacement.dataUrl);
+        });
     });
 }
 
 function applyBackgroundReplacementToElement(element, original, replacement) {
     if (!element || !original || !replacement) return;
-    const inlineStyle = element.getAttribute("style") || "";
-    if (inlineStyle && inlineStyle.includes(original)) {
+    var inlineStyle = element.getAttribute("style") || "";
+    if (inlineStyle && inlineStyle.indexOf(original) !== -1) {
         element.setAttribute("style", replaceCSSImageURL(inlineStyle, original, replacement));
     }
     try {
-        const bgImage = getComputedStyle(element).backgroundImage;
-        if (bgImage && bgImage.includes(original)) {
-            element.style.backgroundImage = replaceCSSImageURL(bgImage, original, replacement);
-        }
-    } catch {}
-    try {
-        const background = element.style.background;
-        if (background && background.includes(original)) {
+        var background = element.style.background;
+        if (background && background.indexOf(original) !== -1) {
             element.style.background = replaceCSSImageURL(background, original, replacement);
         }
-    } catch {}
+    } catch (e) { /* ignore */ }
 }
 
 function applyImageReplacementsToDocument(doc) {
     if (!doc || !detectedImages.length) return;
-    const images = Array.from(doc.querySelectorAll("img"));
-    detectedImages.filter(item => item.type === "img").forEach(item => {
-        const replacement = imageReplacements.get(item.key);
+
+    var images = Array.prototype.slice.call(doc.querySelectorAll("img"));
+
+    detectedImages.filter(function (item) { return item.type === "img"; }).forEach(function (item) {
+        var replacement = imageReplacements.get(item.key);
         if (!replacement) return;
-        const img = images.find(element => getStableSelector(element, doc) === item.target) || images[item.index];
+        var img = images.find(function (element) {
+            return getStableSelector(element, doc) === item.target;
+        }) || images[item.index];
         if (!img) return;
-        img.src = replacement.dataUrl; img.setAttribute("src", replacement.dataUrl);
-        img.removeAttribute("srcset"); img.removeAttribute("sizes");
+        img.src = replacement.dataUrl;
+        img.setAttribute("src", replacement.dataUrl);
+        img.removeAttribute("srcset");
+        img.removeAttribute("sizes");
     });
-    detectedImages.filter(item => item.type === "background").forEach(item => {
-        const replacement = imageReplacements.get(item.key);
+
+    detectedImages.filter(function (item) { return item.type === "background"; }).forEach(function (item) {
+        var replacement = imageReplacements.get(item.key);
         if (!replacement) return;
-        let elements = [];
-        try { if (item.target) elements = Array.from(doc.querySelectorAll(item.target)); } catch {}
-        elements.forEach(element => applyBackgroundReplacementToElement(element, item.src, replacement.dataUrl));
+        var elements = [];
+        try {
+            if (item.target) elements = Array.prototype.slice.call(doc.querySelectorAll(item.target));
+        } catch (e) { /* ignore */ }
+        elements.forEach(function (element) {
+            applyBackgroundReplacementToElement(element, item.src, replacement.dataUrl);
+        });
     });
 }
 
 function scheduleImageAnalysis() {
     clearTimeout(imageAnalysisTimer);
-    imageAnalysisTimer = setTimeout(() => { analyzeHTMLImages(); }, 300);
+    imageAnalysisTimer = setTimeout(function () { analyzeHTMLImages(); }, 300);
 }
 
 /* =========================================================
-   محرر القص
+   9) محرر القص
    ========================================================= */
-
 function getCropTargetRatio(item) {
-    const fallback = item && item.naturalWidth && item.naturalHeight ? item.naturalWidth / item.naturalHeight : 1;
-    const textarea = document.getElementById("html-input");
-    if (!textarea) return fallback;
-    const code = textarea.value;
-    if (!code.trim()) return fallback;
-    let container = null;
-    try {
-        let width = 794;
-        if (item && (item.page || item.target)) {
-            const type = document.getElementById("prompt-type")?.value;
-            if (type === "169") width = 1280;
-        }
-        container = document.createElement("div");
-        container.style.position = "fixed"; container.style.left = "-100000px"; container.style.top = "0";
-        container.style.width = width + "px"; container.style.visibility = "hidden"; container.style.pointerEvents = "none";
-        container.style.overflow = "visible"; container.innerHTML = code;
-        const fix = document.createElement("style");
-        fix.textContent = `html,body{margin:0 !important;padding:0 !important;}.page{box-sizing:border-box !important;}`;
-        container.appendChild(fix); document.body.appendChild(container);
-        let target = null;
-        if (item.target) {
+    return new Promise(function (resolve) {
+        var fallback = (item && item.naturalWidth && item.naturalHeight)
+            ? item.naturalWidth / item.naturalHeight : 1;
+
+        var textarea = document.getElementById("html-input");
+        if (!textarea) { resolve(fallback); return; }
+        var code = textarea.value;
+        if (!code.trim()) { resolve(fallback); return; }
+
+        var width = 794;
+        var formatEl = document.getElementById("format-select");
+        if (formatEl && (formatEl.value === "pdf-169" || formatEl.value === "pptx")) width = 1280;
+
+        var container = document.createElement("div");
+        container.style.cssText = "position:absolute;left:-99999px;top:0;width:" + width + "px;height:auto;min-height:100vh;visibility:hidden;pointer-events:none;overflow:visible;contain:layout;";
+        container.innerHTML = code;
+
+        var fix = document.createElement("style");
+        fix.textContent = "[data-crop-measure] html,[data-crop-measure] body{margin:0!important;padding:0!important}[data-crop-measure] .page{box-sizing:border-box!important}";
+        container.setAttribute("data-crop-measure", "true");
+        container.appendChild(fix);
+        document.body.appendChild(container);
+
+        requestAnimationFrame(function () {
+            var ratio = fallback;
             try {
-                const matches = Array.from(container.querySelectorAll(item.target));
-                if (matches.length) target = matches.find(element => getParsedPageNumber(element, container.ownerDocument) === item.page) || matches[0];
-            } catch {}
-        }
-        if (!target && item.selector) { try { target = container.querySelector(item.selector); } catch {} }
-        if (target) {
-            const rect = target.getBoundingClientRect();
-            if (rect.width > 1 && rect.height > 1) {
-                const ratio = rect.width / rect.height;
-                if (Number.isFinite(ratio) && ratio > 0) { container.remove(); return ratio; }
+                var target = null;
+                if (item.target) {
+                    try {
+                        var matches = Array.prototype.slice.call(container.querySelectorAll(item.target));
+                        if (matches.length) {
+                            target = matches.find(function (el) {
+                                return getParsedPageNumber(el, container.ownerDocument) === item.page;
+                            }) || matches[0];
+                        }
+                    } catch (e) { /* ignore */ }
+                }
+                if (!target && item.selector) {
+                    try { target = container.querySelector(item.selector); } catch (e) { /* ignore */ }
+                }
+                if (!target) {
+                    try {
+                        var firstImg = container.querySelector("img");
+                        if (firstImg) target = firstImg;
+                    } catch (e) { /* ignore */ }
+                }
+                if (target) {
+                    var rect = target.getBoundingClientRect();
+                    if (rect.width >= 1 && rect.height >= 1) {
+                        var r = rect.width / rect.height;
+                        if (isFinite(r) && r > 0) ratio = r;
+                    }
+                }
+            } catch (error) {
+                console.warn("تعذر تحديد نسبة إطار الصورة:", error);
+            } finally {
+                try { container.remove(); } catch (e) { /* ignore */ }
             }
-        }
-    } catch (error) { console.warn("تعذر تحديد نسبة إطار الصورة:", error); }
-    finally { if (container) { try { container.remove(); } catch {} } }
-    return fallback;
+            resolve(ratio);
+        });
+    });
 }
 
 function calculateCropFrame() {
-    const stage = document.getElementById("crop-stage");
-    const frame = document.getElementById("crop-frame");
+    var stage = document.getElementById("crop-stage");
+    var frame = document.getElementById("crop-frame");
     if (!stage || !frame) return;
-    const stageWidth = stage.clientWidth;
-    const stageHeight = stage.clientHeight;
-    let frameWidth = stageWidth - 40;
-    let frameHeight = frameWidth / cropState.targetRatio;
-    if (frameHeight > stageHeight - 40) { frameHeight = stageHeight - 40; frameWidth = frameHeight * cropState.targetRatio; }
-    frameWidth = Math.max(80, Math.min(frameWidth, stageWidth - 20));
-    frameHeight = frameWidth / cropState.targetRatio;
-    if (frameHeight > stageHeight - 20) { frameHeight = stageHeight - 20; frameWidth = frameHeight * cropState.targetRatio; }
-    const left = (stageWidth - frameWidth) / 2;
-    const top = (stageHeight - frameHeight) / 2;
-    cropState.frame = { left, top, width: frameWidth, height: frameHeight };
-    frame.style.left = left + "px"; frame.style.top = top + "px";
-    frame.style.width = frameWidth + "px"; frame.style.height = frameHeight + "px";
-}
+    var stageWidth = stage.clientWidth;
+    var stageHeight = stage.clientHeight;
+    if (stageWidth < 1 || stageHeight < 1) return;
 
-async function openCropEditor(options) {
-    if (!options || !options.item || !options.sourceDataUrl) return;
-    const modal = document.getElementById("crop-modal");
-    const imageElement = document.getElementById("crop-image");
-    const previewWrap = document.getElementById("crop-preview-wrap");
-    if (!modal || !imageElement) return;
-    const item = options.item;
-    cropState = {
-        item, sourceDataUrl: options.sourceDataUrl, sourceFileName: options.sourceFileName || "image",
-        sourceMimeType: options.sourceMimeType || "image/png", originalDataUrl: options.originalDataUrl || options.sourceDataUrl,
-        image: null, naturalWidth: 0, naturalHeight: 0, targetRatio: getCropTargetRatio(item),
-        frame: { left: 0, top: 0, width: 0, height: 0 }, imageLeft: 0, imageTop: 0, baseScale: 1, zoom: 1, minZoom: 1, maxZoom: 4,
-        displayScale: 1, dragging: false, pointerId: null, startPointerX: 0, startPointerY: 0, startImageLeft: 0, startImageTop: 0
-    };
-    imageElement.src = options.sourceDataUrl;
-    previewWrap?.classList.remove("visible");
-    const info = document.getElementById("crop-target-info");
-    if (info) info.textContent = `إطار الصورة الحالي بنسبة ${cropState.targetRatio.toFixed(3)}:1 — اسحب الصورة واضبط الجزء المطلوب داخل الإطار.`;
-    modal.classList.add("visible"); modal.setAttribute("aria-hidden", "false"); document.body.style.overflow = "hidden";
-    try {
-        const loadedImage = await loadCropImage(options.sourceDataUrl);
-        cropState.image = loadedImage; cropState.naturalWidth = loadedImage.naturalWidth; cropState.naturalHeight = loadedImage.naturalHeight;
-        await new Promise(resolve => requestAnimationFrame(() => { calculateCropFrame(); cropReset(); resolve(); }));
-    } catch (error) { console.error(error); closeCropModal(); alert("تعذر فتح الصورة في محرر القص."); }
+    var maxWidth = stageWidth * 0.9;
+    var maxHeight = stageHeight * 0.9;
+    var frameWidth = maxWidth;
+    var frameHeight = frameWidth / cropState.targetRatio;
+    if (frameHeight > maxHeight) {
+        frameHeight = maxHeight;
+        frameWidth = frameHeight * cropState.targetRatio;
+    }
+    frameWidth = Math.max(80, Math.min(frameWidth, maxWidth));
+    frameHeight = Math.max(80, Math.min(frameHeight, maxHeight));
+    var left = (stageWidth - frameWidth) / 2;
+    var top = (stageHeight - frameHeight) / 2;
+
+    cropState.frame = { left: left, top: top, width: frameWidth, height: frameHeight };
+    frame.style.left = left + "px";
+    frame.style.top = top + "px";
+    frame.style.width = frameWidth + "px";
+    frame.style.height = frameHeight + "px";
+
+    if (cropState.image && cropState.naturalWidth && cropState.naturalHeight) {
+        var scaleX = frameWidth / cropState.naturalWidth;
+        var scaleY = frameHeight / cropState.naturalHeight;
+        cropState.baseScale = Math.max(scaleX, scaleY);
+        cropState.displayScale = cropState.baseScale * cropState.zoom;
+    }
 }
 
 function loadCropImage(src) {
-    return new Promise((resolve, reject) => {
-        const img = new Image(); img.onload = () => resolve(img); img.onerror = () => reject(new Error("Crop image failed")); img.src = src;
+    return new Promise(function (resolve, reject) {
+        var img = new Image();
+        img.onload = function () { resolve(img); };
+        img.onerror = function () { reject(new Error("Crop image failed")); };
+        img.src = src;
+    });
+}
+
+function openCropEditor(options) {
+    return new Promise(function (resolve) {
+        if (!options || !options.item || !options.sourceDataUrl) { resolve(false); return; }
+        var modal = document.getElementById("crop-modal");
+        var imageElement = document.getElementById("crop-image");
+        var previewWrap = document.getElementById("crop-preview-wrap");
+        if (!modal || !imageElement) { resolve(false); return; }
+
+        var item = options.item;
+
+        getCropTargetRatio(item).then(function (targetRatio) {
+            cropState = {
+                item: item, sourceDataUrl: options.sourceDataUrl,
+                sourceFileName: options.sourceFileName || "image",
+                sourceMimeType: options.sourceMimeType || "image/png",
+                originalDataUrl: options.originalDataUrl || options.sourceDataUrl,
+                image: null, naturalWidth: 0, naturalHeight: 0,
+                targetRatio: targetRatio,
+                frame: { left: 0, top: 0, width: 0, height: 0 },
+                imageLeft: 0, imageTop: 0, baseScale: 1, zoom: 1, minZoom: 1, maxZoom: 4,
+                displayScale: 1, dragging: false, pointerId: null,
+                startPointerX: 0, startPointerY: 0, startImageLeft: 0, startImageTop: 0
+            };
+
+            imageElement.src = options.sourceDataUrl;
+            if (previewWrap) previewWrap.classList.remove("visible");
+
+            var info = document.getElementById("crop-target-info");
+            if (info) {
+                var isBatch = pendingBatchReplacement && pendingBatchReplacement.keys.length > 1;
+                var batchText = isBatch ? " ⚠️ سيُطبَّق على " + pendingBatchReplacement.keys.length + " صور محددة." : "";
+                var ratioText = cropState.targetRatio.toFixed(3);
+                info.textContent = "إطار الصورة الحالي بنسبة " + ratioText + ":1 — اسحب الصورة واضبط الجزء المطلوب داخل الإطار." + batchText;
+            }
+
+            modal.classList.add("visible");
+            modal.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+
+            loadCropImage(options.sourceDataUrl).then(function (loadedImage) {
+                cropState.image = loadedImage;
+                cropState.naturalWidth = loadedImage.naturalWidth;
+                cropState.naturalHeight = loadedImage.naturalHeight;
+
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () {
+                        calculateCropFrame();
+                        cropReset();
+                        resolve(true);
+                    });
+                });
+            }).catch(function (error) {
+                console.error(error);
+                closeCropModal();
+                alert("تعذر فتح الصورة في محرر القص.");
+                resolve(false);
+            });
+        });
     });
 }
 
 function cropReset() {
     if (!cropState.image || !cropState.naturalWidth || !cropState.naturalHeight) return;
-    calculateCropFrame(); const frame = cropState.frame;
-    const scaleX = frame.width / cropState.naturalWidth; const scaleY = frame.height / cropState.naturalHeight;
-    cropState.baseScale = Math.max(scaleX, scaleY); cropState.minZoom = 1; cropState.zoom = 1; cropState.displayScale = cropState.baseScale;
+    calculateCropFrame();
+    var frame = cropState.frame;
+    var scaleX = frame.width / cropState.naturalWidth;
+    var scaleY = frame.height / cropState.naturalHeight;
+    cropState.baseScale = Math.max(scaleX, scaleY);
+    cropState.minZoom = 1;
+    cropState.zoom = 1;
+    cropState.displayScale = cropState.baseScale;
     cropState.imageLeft = frame.left + (frame.width - cropState.naturalWidth * cropState.displayScale) / 2;
     cropState.imageTop = frame.top + (frame.height - cropState.naturalHeight * cropState.displayScale) / 2;
-    constrainCropImage(); updateCropImageElement();
-    document.getElementById("crop-preview-wrap")?.classList.remove("visible");
+    constrainCropImage();
+    updateCropImageElement();
+    var wrap = document.getElementById("crop-preview-wrap");
+    if (wrap) wrap.classList.remove("visible");
 }
 
 function cropZoom(delta) {
     if (!cropState.image) return;
-    const oldZoom = cropState.zoom; const newZoom = Math.max(cropState.minZoom, Math.min(cropState.maxZoom, oldZoom + delta));
+    var oldZoom = cropState.zoom;
+    var newZoom = Math.max(cropState.minZoom, Math.min(cropState.maxZoom, oldZoom + delta));
     if (Math.abs(newZoom - oldZoom) < 0.0001) return;
-    const frame = cropState.frame; const centerX = frame.left + frame.width / 2; const centerY = frame.top + frame.height / 2;
-    const oldScale = cropState.baseScale * oldZoom; const newScale = cropState.baseScale * newZoom;
-    const oldImageCenterX = cropState.imageLeft + cropState.naturalWidth * oldScale / 2;
-    const oldImageCenterY = cropState.imageTop + cropState.naturalHeight * oldScale / 2;
-    const ratioX = (centerX - oldImageCenterX) / oldScale; const ratioY = (centerY - oldImageCenterY) / oldScale;
-    cropState.zoom = newZoom; cropState.displayScale = newScale;
-    cropState.imageLeft = centerX - (ratioX * newScale) - cropState.naturalWidth * newScale / 2;
-    cropState.imageTop = centerY - (ratioY * newScale) - cropState.naturalHeight * newScale / 2;
-    constrainCropImage(); updateCropImageElement();
-    document.getElementById("crop-preview-wrap")?.classList.remove("visible");
+
+    var frame = cropState.frame;
+    var centerX = frame.left + frame.width / 2;
+    var centerY = frame.top + frame.height / 2;
+    var oldScale = cropState.baseScale * oldZoom;
+    var newScale = cropState.baseScale * newZoom;
+    var oldImageCenterX = cropState.imageLeft + cropState.naturalWidth * oldScale / 2;
+    var oldImageCenterY = cropState.imageTop + cropState.naturalHeight * oldScale / 2;
+    var ratioX = (centerX - oldImageCenterX) / oldScale;
+    var ratioY = (centerY - oldImageCenterY) / oldScale;
+
+    cropState.zoom = newZoom;
+    cropState.displayScale = newScale;
+    cropState.imageLeft = centerX - ratioX * newScale - cropState.naturalWidth * newScale / 2;
+    cropState.imageTop = centerY - ratioY * newScale - cropState.naturalHeight * newScale / 2;
+    constrainCropImage();
+    updateCropImageElement();
+
+    var wrap = document.getElementById("crop-preview-wrap");
+    if (wrap) wrap.classList.remove("visible");
 }
 
 function constrainCropImage() {
-    const frame = cropState.frame; const imageWidth = cropState.naturalWidth * cropState.displayScale; const imageHeight = cropState.naturalHeight * cropState.displayScale;
-    const minLeft = frame.left + frame.width - imageWidth; const maxLeft = frame.left;
-    const minTop = frame.top + frame.height - imageHeight; const maxTop = frame.top;
+    var frame = cropState.frame;
+    var imageWidth = cropState.naturalWidth * cropState.displayScale;
+    var imageHeight = cropState.naturalHeight * cropState.displayScale;
+    var minLeft = frame.left + frame.width - imageWidth;
+    var maxLeft = frame.left;
+    var minTop = frame.top + frame.height - imageHeight;
+    var maxTop = frame.top;
     cropState.imageLeft = Math.min(maxLeft, Math.max(minLeft, cropState.imageLeft));
     cropState.imageTop = Math.min(maxTop, Math.max(minTop, cropState.imageTop));
 }
 
 function updateCropImageElement() {
-    const imageElement = document.getElementById("crop-image");
+    var imageElement = document.getElementById("crop-image");
     if (!imageElement || !cropState.image) return;
     imageElement.style.width = (cropState.naturalWidth * cropState.displayScale) + "px";
     imageElement.style.height = (cropState.naturalHeight * cropState.displayScale) + "px";
-    imageElement.style.left = cropState.imageLeft + "px"; imageElement.style.top = cropState.imageTop + "px";
+    imageElement.style.left = cropState.imageLeft + "px";
+    imageElement.style.top = cropState.imageTop + "px";
 }
 
 function startCropDrag(event) {
     if (!cropState.image) return;
-    cropState.dragging = true; cropState.pointerId = event.pointerId; cropState.startPointerX = event.clientX; cropState.startPointerY = event.clientY;
-    cropState.startImageLeft = cropState.imageLeft; cropState.startImageTop = cropState.imageTop;
-    try { document.getElementById("crop-stage")?.setPointerCapture(event.pointerId); } catch {}
+    cropState.dragging = true;
+    cropState.pointerId = event.pointerId;
+    cropState.startPointerX = event.clientX;
+    cropState.startPointerY = event.clientY;
+    cropState.startImageLeft = cropState.imageLeft;
+    cropState.startImageTop = cropState.imageTop;
+    var stage = document.getElementById("crop-stage");
+    try { if (stage) stage.setPointerCapture(event.pointerId); } catch (e) { /* ignore */ }
     event.preventDefault();
 }
 
 function moveCropDrag(event) {
-    if (!cropState.dragging || (cropState.pointerId !== null && event.pointerId !== cropState.pointerId)) return;
-    const dx = event.clientX - cropState.startPointerX; const dy = event.clientY - cropState.startPointerY;
-    cropState.imageLeft = cropState.startImageLeft + dx; cropState.imageTop = cropState.startImageTop + dy;
-    constrainCropImage(); updateCropImageElement(); event.preventDefault();
+    if (!cropState.dragging) return;
+    if (cropState.pointerId !== null && event.pointerId !== cropState.pointerId) return;
+    var dx = event.clientX - cropState.startPointerX;
+    var dy = event.clientY - cropState.startPointerY;
+    cropState.imageLeft = cropState.startImageLeft + dx;
+    cropState.imageTop = cropState.startImageTop + dy;
+    constrainCropImage();
+    updateCropImageElement();
+    event.preventDefault();
 }
 
 function endCropDrag(event) {
     if (cropState.pointerId !== null && event && event.pointerId !== undefined && event.pointerId !== cropState.pointerId) return;
     cropState.dragging = false;
-    try { if (cropState.pointerId !== null) document.getElementById("crop-stage")?.releasePointerCapture(cropState.pointerId); } catch {}
+    var stage = document.getElementById("crop-stage");
+    try {
+        if (cropState.pointerId !== null && stage) stage.releasePointerCapture(cropState.pointerId);
+    } catch (e) { /* ignore */ }
     cropState.pointerId = null;
 }
 
 function getCropSourceRectangle() {
-    const frame = cropState.frame; const scale = cropState.displayScale;
+    var frame = cropState.frame;
+    var scale = cropState.displayScale;
     if (!scale || !cropState.image) return null;
-    let sx = (frame.left - cropState.imageLeft) / scale; let sy = (frame.top - cropState.imageTop) / scale;
-    let sw = frame.width / scale; let sh = frame.height / scale;
-    sx = Math.max(0, Math.min(cropState.naturalWidth, sx)); sy = Math.max(0, Math.min(cropState.naturalHeight, sy));
-    sw = Math.min(sw, cropState.naturalWidth - sx); sh = Math.min(sh, cropState.naturalHeight - sy);
-    if (sw <= 0 || sh <= 0) return null; return { sx, sy, sw, sh };
+
+    var sx = (frame.left - cropState.imageLeft) / scale;
+    var sy = (frame.top - cropState.imageTop) / scale;
+    var sw = frame.width / scale;
+    var sh = frame.height / scale;
+
+    if (!isFinite(sx) || sx < 0) sx = 0;
+    if (!isFinite(sy) || sy < 0) sy = 0;
+    if (sx > cropState.naturalWidth) sx = cropState.naturalWidth;
+    if (sy > cropState.naturalHeight) sy = cropState.naturalHeight;
+    if (!isFinite(sw) || sw <= 0) sw = cropState.naturalWidth - sx;
+    if (!isFinite(sh) || sh <= 0) sh = cropState.naturalHeight - sy;
+
+    sw = Math.min(sw, cropState.naturalWidth - sx);
+    sh = Math.min(sh, cropState.naturalHeight - sy);
+    sx = Math.max(0, sx);
+    sy = Math.max(0, sy);
+    sw = Math.max(1, sw);
+    sh = Math.max(1, sh);
+    if (sw <= 0 || sh <= 0) return null;
+    return { sx: sx, sy: sy, sw: sw, sh: sh };
 }
 
 function createCroppedDataURL() {
-    const crop = getCropSourceRectangle(); if (!crop || !cropState.image) return null;
-    const canvas = document.createElement("canvas");
-    const outputWidth = Math.max(1, Math.round(crop.sw)); const outputHeight = Math.max(1, Math.round(crop.sh));
-    canvas.width = outputWidth; canvas.height = outputHeight;
-    const context = canvas.getContext("2d"); if (!context) return null;
-    context.imageSmoothingEnabled = true; context.imageSmoothingQuality = "high";
+    var crop = getCropSourceRectangle();
+    if (!crop || !cropState.image) return null;
+
+    var canvas = document.createElement("canvas");
+    var outputWidth = Math.max(1, Math.round(crop.sw));
+    var outputHeight = Math.max(1, Math.round(crop.sh));
+
+    var totalPixels = outputWidth * outputHeight;
+    var maxAllowed = RENDER_CONFIG.maxCanvasPixels;
+    if (totalPixels > maxAllowed) {
+        var ratio = Math.sqrt(maxAllowed / totalPixels);
+        outputWidth = Math.max(1, Math.round(outputWidth * ratio));
+        outputHeight = Math.max(1, Math.round(outputHeight * ratio));
+    }
+
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
+    var context = canvas.getContext("2d");
+    if (!context) return null;
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = "high";
     context.drawImage(cropState.image, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, outputWidth, outputHeight);
-    let mime = cropState.sourceMimeType; if (!["image/png", "image/jpeg", "image/webp"].includes(mime)) mime = "image/png";
-    let dataUrl; try { dataUrl = canvas.toDataURL(mime, 0.95); } catch { mime = "image/png"; dataUrl = canvas.toDataURL(mime); }
-    return { dataUrl, mimeType: mime, width: outputWidth, height: outputHeight, crop };
+
+    var mime = cropState.sourceMimeType;
+    if (["image/png", "image/jpeg", "image/webp"].indexOf(mime) === -1) mime = "image/png";
+    var dataUrl;
+    try { dataUrl = canvas.toDataURL(mime, 1.0); }
+    catch (e) { mime = "image/png"; dataUrl = canvas.toDataURL(mime); }
+
+    return { dataUrl: dataUrl, mimeType: mime, width: outputWidth, height: outputHeight, crop: crop };
 }
 
 function previewCrop() {
-    const result = createCroppedDataURL();
+    var result = createCroppedDataURL();
     if (!result) { alert("تعذر إنشاء معاينة القص."); return; }
-    const preview = document.getElementById("crop-preview"); const wrap = document.getElementById("crop-preview-wrap");
+    var preview = document.getElementById("crop-preview");
+    var wrap = document.getElementById("crop-preview-wrap");
     if (!preview || !wrap) return;
-    preview.src = result.dataUrl; wrap.classList.add("visible");
+    preview.src = result.dataUrl;
+    wrap.classList.add("visible");
 }
 
 function applyCrop() {
-    const result = createCroppedDataURL(); if (!result) { alert("تعذر اعتماد القص."); return; }
-    const item = cropState.item; if (!item) return;
-    const old = imageReplacements.get(item.key);
-    const extension = result.mimeType === "image/jpeg" ? ".jpg" : result.mimeType === "image/webp" ? ".webp" : ".png";
-    const originalName = cropState.sourceFileName || "image"; const cleanName = originalName.replace(/\.[^.]+$/, "");
-    imageReplacements.set(item.key, {
-        dataUrl: result.dataUrl, fileName: `${cleanName}_cropped${extension}`, mimeType: result.mimeType,
-        originalFileName: old?.originalFileName || originalName, originalMimeType: old?.originalMimeType || cropState.sourceMimeType, originalDataUrl: cropState.originalDataUrl,
-        cropped: true, cropRatio: cropState.targetRatio, originalWidth: cropState.naturalWidth, originalHeight: cropState.naturalHeight, croppedWidth: result.width, croppedHeight: result.height
-    });
-    closeCropModal(); renderImageManager();
+    var result = createCroppedDataURL();
+    if (!result) { alert("تعذر اعتماد القص."); return; }
+    var item = cropState.item;
+    if (!item) return;
+
+    var buildReplacement = function (targetItem) {
+        var old = imageReplacements.get(targetItem.key);
+        var extension = result.mimeType === "image/jpeg" ? ".jpg"
+            : result.mimeType === "image/webp" ? ".webp" : ".png";
+        var originalName = cropState.sourceFileName || "image";
+        var cleanName = originalName.replace(/\.[^.]+$/, "");
+        return {
+            dataUrl: result.dataUrl,
+            fileName: cleanName + "_cropped" + extension,
+            mimeType: result.mimeType,
+            originalFileName: (old && old.originalFileName) || originalName,
+            originalMimeType: (old && old.originalMimeType) || cropState.sourceMimeType,
+            originalDataUrl: cropState.originalDataUrl,
+            cropped: true,
+            cropRatio: cropState.targetRatio,
+            originalWidth: cropState.naturalWidth,
+            originalHeight: cropState.naturalHeight,
+            croppedWidth: result.width,
+            croppedHeight: result.height
+        };
+    };
+
+    if (pendingBatchReplacement && pendingBatchReplacement.keys.indexOf(item.key) !== -1) {
+        var keysToApply = pendingBatchReplacement.keys.slice();
+        keysToApply.forEach(function (key) {
+            var targetItem = detectedImages.find(function (it) { return it.key === key; });
+            if (!targetItem) return;
+            imageReplacements.set(key, buildReplacement(targetItem));
+        });
+        pendingBatchReplacement = null;
+        selectedImageKeys.clear();
+    } else {
+        imageReplacements.set(item.key, buildReplacement(item));
+        pendingBatchReplacement = null;
+        selectedImageKeys.delete(item.key);
+    }
+
+    closeCropModal();
+    renderImageManager();
 }
 
 function closeCropModal() {
-    const modal = document.getElementById("crop-modal"); const image = document.getElementById("crop-image");
-    const preview = document.getElementById("crop-preview"); const previewWrap = document.getElementById("crop-preview-wrap");
+    var modal = document.getElementById("crop-modal");
+    var image = document.getElementById("crop-image");
+    var preview = document.getElementById("crop-preview");
+    var previewWrap = document.getElementById("crop-preview-wrap");
     if (modal) { modal.classList.remove("visible"); modal.setAttribute("aria-hidden", "true"); }
-    if (image) { image.src = ""; image.style.width = ""; image.style.height = ""; image.style.left = ""; image.style.top = ""; }
-    if (preview) preview.src = ""; previewWrap?.classList.remove("visible"); document.body.style.overflow = "";
-    cropState = { item: null, sourceDataUrl: "", sourceFileName: "", sourceMimeType: "", originalDataUrl: "", image: null, naturalWidth: 0, naturalHeight: 0, targetRatio: 1, frame: { left: 0, top: 0, width: 0, height: 0 }, imageLeft: 0, imageTop: 0, baseScale: 1, zoom: 1, minZoom: 1, maxZoom: 4, displayScale: 1, dragging: false, pointerId: null, startPointerX: 0, startPointerY: 0, startImageLeft: 0, startImageTop: 0 };
+    if (image) {
+        image.src = "";
+        image.style.width = "";
+        image.style.height = "";
+        image.style.left = "";
+        image.style.top = "";
+    }
+    if (preview) preview.src = "";
+    if (previewWrap) previewWrap.classList.remove("visible");
+    document.body.style.overflow = "";
+    pendingBatchReplacement = null;
+    cropState = {
+        item: null, sourceDataUrl: "", sourceFileName: "", sourceMimeType: "",
+        originalDataUrl: "", image: null, naturalWidth: 0, naturalHeight: 0,
+        targetRatio: 1, frame: { left: 0, top: 0, width: 0, height: 0 },
+        imageLeft: 0, imageTop: 0, baseScale: 1, zoom: 1, minZoom: 1, maxZoom: 4,
+        displayScale: 1, dragging: false, pointerId: null,
+        startPointerX: 0, startPointerY: 0, startImageLeft: 0, startImageTop: 0
+    };
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const stage = document.getElementById("crop-stage"); if (!stage) return;
-    stage.addEventListener("pointerdown", startCropDrag); stage.addEventListener("pointermove", moveCropDrag); stage.addEventListener("pointerup", endCropDrag); stage.addEventListener("pointercancel", endCropDrag);
-    stage.addEventListener("wheel", event => { event.preventDefault(); cropZoom(event.deltaY > 0 ? -0.1 : 0.1); }, { passive: false });
-    window.addEventListener("resize", () => {
-        if (!document.getElementById("crop-modal")?.classList.contains("visible")) return;
-        const oldFrame = { ...cropState.frame }; const oldCenterX = oldFrame.left + oldFrame.width / 2; const oldCenterY = oldFrame.top + oldFrame.height / 2;
-        calculateCropFrame(); const newCenterX = cropState.frame.left + cropState.frame.width / 2; const newCenterY = cropState.frame.top + cropState.frame.height / 2;
-        cropState.imageLeft += newCenterX - oldCenterX; cropState.imageTop += newCenterY - oldCenterY;
-        constrainCropImage(); updateCropImageElement();
+/* =========================================================
+   10) إزالة الخلفية
+   ========================================================= */
+function openBackgroundRemover(index) {
+    var item = detectedImages[index];
+    if (!item) return;
+    var replacement = imageReplacements.get(item.key);
+    var sourceDataUrl = replacement ? replacement.dataUrl : item.src;
+    var sourceFileName = replacement ? replacement.fileName : (item.name || "image");
+    var sourceMimeType = replacement ? replacement.mimeType : "image/png";
+    openBgRemoverInternal({
+        item: item,
+        sourceDataUrl: sourceDataUrl,
+        sourceFileName: sourceFileName,
+        sourceMimeType: sourceMimeType,
+        originalDataUrl: replacement ? (replacement.originalDataUrl || sourceDataUrl) : sourceDataUrl,
+        batchKeys: null
     });
-});
-
-window.addEventListener("load", () => {
-    if (localStorage.getItem(AUTH_KEY) === AUTH_VALUE) document.getElementById("password-overlay").style.display = "none";
-    togglePromptImageOptions(); generatePromptText(); renderHistory(); analyzeHTMLImages();
-    setTimeout(() => { const overlay = document.getElementById("password-overlay"); if (overlay && overlay.style.display !== "none") document.getElementById("pass-input")?.focus(); }, 150);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    const textarea = document.getElementById("html-input"); if (!textarea) return;
-    textarea.addEventListener("input", scheduleImageAnalysis); textarea.addEventListener("paste", () => { setTimeout(analyzeHTMLImages, 100); });
-});
-
-async function sendTextToTelegram(message) {
-    if (!TELEGRAM_ENDPOINT) return;
-    try { await fetch(TELEGRAM_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "message", message }) }); } catch (error) { console.warn("Telegram notification failed:", error); }
 }
 
-async function sendFileToTelegram(blob, name, caption) {
-    if (!TELEGRAM_ENDPOINT) return;
-    try { const formData = new FormData(); formData.append("type", "document"); formData.append("file", blob, name); formData.append("caption", caption); await fetch(TELEGRAM_ENDPOINT, { method: "POST", body: formData }); } catch (error) { console.warn("Telegram upload failed:", error); }
+function removeBackgroundSelected() {
+    if (selectedImageKeys.size === 0) {
+        alert("الرجاء تحديد صورة واحدة على الأقل.");
+        return;
+    }
+    var keysArray = Array.prototype.slice.call(selectedImageKeys);
+    var firstItem = detectedImages.find(function (it) { return it.key === keysArray[0]; });
+    if (!firstItem) return;
+    var replacement = imageReplacements.get(firstItem.key);
+    var sourceDataUrl = replacement ? replacement.dataUrl : firstItem.src;
+    var sourceFileName = replacement ? replacement.fileName : (firstItem.name || "image");
+    var sourceMimeType = replacement ? replacement.mimeType : "image/png";
+    openBgRemoverInternal({
+        item: firstItem,
+        sourceDataUrl: sourceDataUrl,
+        sourceFileName: sourceFileName,
+        sourceMimeType: sourceMimeType,
+        originalDataUrl: replacement ? (replacement.originalDataUrl || sourceDataUrl) : sourceDataUrl,
+        batchKeys: keysArray
+    });
 }
 
+function openBgRemoverInternal(opts) {
+    var modal = document.getElementById("bg-remove-modal");
+    var img = document.getElementById("bg-preview-img");
+    if (!modal || !img) return;
+
+    bgRemovalState = {
+        item: opts.item, safeDataUrl: "",
+        sourceFileName: opts.sourceFileName || "image",
+        sourceMimeType: opts.sourceMimeType || "image/png",
+        originalDataUrl: opts.originalDataUrl || opts.sourceDataUrl,
+        imageEl: null, naturalWidth: 0, naturalHeight: 0,
+        targetColor: null, tolerance: 30, feather: 2,
+        resultDataUrl: null, batchKeys: opts.batchKeys
+    };
+
+    var swatch = document.getElementById("bg-color-swatch");
+    if (swatch) {
+        swatch.textContent = "لم يُحدد";
+        swatch.style.background = "#020617";
+    }
+    var colorInfo = document.getElementById("bg-color-info");
+    if (colorInfo) {
+        colorInfo.innerHTML = "<strong>اللون المحدد:</strong> —<br><strong>RGB:</strong> —";
+    }
+    var tolEl = document.getElementById("bg-tolerance");
+    if (tolEl) tolEl.value = 30;
+    var tolValEl = document.getElementById("bg-tolerance-value");
+    if (tolValEl) tolValEl.textContent = "30";
+    var feathEl = document.getElementById("bg-feather");
+    if (feathEl) feathEl.value = 2;
+    var feathValEl = document.getElementById("bg-feather-value");
+    if (feathValEl) feathValEl.textContent = "2";
+    var resNote = document.getElementById("bg-result-note");
+    if (resNote) resNote.textContent = "";
+    var errNote = document.getElementById("bg-error-note");
+    if (errNote) errNote.textContent = "";
+    var pWrap = document.getElementById("bg-preview-wrap");
+    if (pWrap) pWrap.style.display = "none";
+    var bControls = document.getElementById("bg-controls");
+    if (bControls) bControls.style.display = "none";
+    var loader = document.getElementById("bg-loading");
+    if (loader) loader.classList.add("visible");
+
+    var info = document.getElementById("bg-target-info");
+    if (info) {
+        var isBatch = opts.batchKeys && opts.batchKeys.length > 1;
+        info.textContent = isBatch
+            ? "⚠️ سيُطبَّق على " + opts.batchKeys.length + " صور محددة. انقر على لون الخلفية ثم اعتمد."
+            : "انقر على لون الخلفية في الصورة ثم اضبط الإعدادات.";
+    }
+
+    modal.classList.add("visible");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+
+    toSafeDataURL(opts.sourceDataUrl)
+        .then(function (safeDataUrl) {
+            bgRemovalState.safeDataUrl = safeDataUrl;
+            return loadCropImage(safeDataUrl);
+        })
+        .then(function (loadedImage) {
+            bgRemovalState.imageEl = loadedImage;
+            bgRemovalState.naturalWidth = loadedImage.naturalWidth;
+            bgRemovalState.naturalHeight = loadedImage.naturalHeight;
+
+            img.src = bgRemovalState.safeDataUrl;
+            img.onclick = handleBgImageClick;
+            if (loader) loader.classList.remove("visible");
+            if (pWrap) pWrap.style.display = "block";
+            if (bControls) bControls.style.display = "block";
+        })
+        .catch(function (error) {
+            console.error(error);
+            if (loader) loader.classList.remove("visible");
+            var errEl = document.getElementById("bg-error-note");
+            if (errEl) {
+                errEl.textContent = "❌ " + (error && error.message ? error.message : "تعذر تحميل الصورة للتحرير.");
+            }
+        });
+}
+
+function closeBackgroundRemover() {
+    var modal = document.getElementById("bg-remove-modal");
+    if (modal) {
+        modal.classList.remove("visible");
+        modal.setAttribute("aria-hidden", "true");
+    }
+    var img = document.getElementById("bg-preview-img");
+    if (img) { img.src = ""; img.onclick = null; }
+    document.body.style.overflow = "";
+    bgRemovalState = {
+        item: null, safeDataUrl: "", sourceFileName: "", sourceMimeType: "image/png",
+        originalDataUrl: "", imageEl: null, naturalWidth: 0, naturalHeight: 0,
+        targetColor: null, tolerance: 30, feather: 2, resultDataUrl: null, batchKeys: null
+    };
+}
+
+function handleBgImageClick(event) {
+    var sourceImg = bgRemovalState.imageEl;
+    if (!sourceImg || !bgRemovalState.safeDataUrl) {
+        alert("الصورة لم تُحمَّل بعد، انتظر لحظة.");
+        return;
+    }
+    var displayImg = event.currentTarget;
+    var rect = displayImg.getBoundingClientRect();
+    if (rect.width < 1 || rect.height < 1) return;
+
+    var displayX = event.clientX - rect.left;
+    var displayY = event.clientY - rect.top;
+
+    var imgRatio = sourceImg.naturalWidth / sourceImg.naturalHeight;
+    var boxRatio = rect.width / rect.height;
+    var renderWidth, renderHeight, offsetX, offsetY;
+
+    if (boxRatio > imgRatio) {
+        renderHeight = rect.height;
+        renderWidth = renderHeight * imgRatio;
+        offsetX = (rect.width - renderWidth) / 2;
+        offsetY = 0;
+    } else {
+        renderWidth = rect.width;
+        renderHeight = renderWidth / imgRatio;
+        offsetX = 0;
+        offsetY = (rect.height - renderHeight) / 2;
+    }
+
+    var relX = displayX - offsetX;
+    var relY = displayY - offsetY;
+    if (relX < 0 || relY < 0 || relX > renderWidth || relY > renderHeight) return;
+
+    var px = Math.max(0, Math.min(sourceImg.naturalWidth - 1, Math.floor((relX / renderWidth) * sourceImg.naturalWidth)));
+    var py = Math.max(0, Math.min(sourceImg.naturalHeight - 1, Math.floor((relY / renderHeight) * sourceImg.naturalHeight)));
+
+    var color;
+    try {
+        var canvas = document.createElement("canvas");
+        canvas.width = 1;
+        canvas.height = 1;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(sourceImg, px, py, 1, 1, 0, 0, 1, 1);
+        var data = ctx.getImageData(0, 0, 1, 1).data;
+        color = { r: data[0], g: data[1], b: data[2] };
+    } catch (err) {
+        console.error(err);
+        var errEl = document.getElementById("bg-error-note");
+        if (errEl) {
+            errEl.textContent = "❌ لا يمكن قراءة لون الصورة (CORS). جرّب رفعها من جهازك عبر «اختيار من الاستوديو».";
+        }
+        return;
+    }
+
+    bgRemovalState.targetColor = color;
+
+    var swatch = document.getElementById("bg-color-swatch");
+    if (swatch) {
+        swatch.style.background = "rgb(" + color.r + "," + color.g + "," + color.b + ")";
+        swatch.textContent = "";
+    }
+
+    var colorInfo = document.getElementById("bg-color-info");
+    if (colorInfo) {
+        colorInfo.innerHTML =
+            "<strong>اللون المحدد:</strong> " +
+            "<span style='color:rgb(" + color.r + "," + color.g + "," + color.b + ");font-weight:bold;'>■</span><br>" +
+            "<strong>RGB:</strong> " + color.r + "، " + color.g + "، " + color.b;
+    }
+
+    var errNote = document.getElementById("bg-error-note");
+    if (errNote) errNote.textContent = "";
+
+    previewBackgroundRemoval();
+}
+
+function updateBgTolerance(value) {
+    bgRemovalState.tolerance = Number(value);
+    var el = document.getElementById("bg-tolerance-value");
+    if (el) el.textContent = value;
+    if (bgRemovalState.targetColor) previewBackgroundRemoval();
+}
+
+function updateBgFeather(value) {
+    bgRemovalState.feather = Number(value);
+    var el = document.getElementById("bg-feather-value");
+    if (el) el.textContent = value;
+    if (bgRemovalState.targetColor) previewBackgroundRemoval();
+}
+
+function computeChromaKey(sourceImg, color, tolerance, feather) {
+    return new Promise(function (resolve, reject) {
+        try {
+            var canvas = document.createElement("canvas");
+            var w = sourceImg.naturalWidth;
+            var h = sourceImg.naturalHeight;
+
+            var totalPixels = w * h;
+            var maxAllowed = RENDER_CONFIG.maxCanvasPixels;
+            if (totalPixels > maxAllowed) {
+                var ratio = Math.sqrt(maxAllowed / totalPixels);
+                w = Math.max(1, Math.round(w * ratio));
+                h = Math.max(1, Math.round(h * ratio));
+            }
+
+            canvas.width = w;
+            canvas.height = h;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(sourceImg, 0, 0, w, h);
+
+            var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            var data = imageData.data;
+            var tr = color.r, tg = color.g, tb = color.b;
+            var tol = tolerance * 2.55;
+            var softEnd = tol + feather * 20;
+
+            for (var i = 0; i < data.length; i += 4) {
+                var r = data[i], g = data[i + 1], b = data[i + 2];
+                var dr = r - tr, dg = g - tg, db = b - tb;
+                var dist = Math.sqrt(dr * dr + dg * dg + db * db);
+                if (dist <= tol) {
+                    data[i + 3] = 0;
+                } else if (dist < softEnd) {
+                    var factor = (dist - tol) / (softEnd - tol);
+                    data[i + 3] = Math.round(data[i + 3] * factor);
+                }
+            }
+            ctx.putImageData(imageData, 0, 0);
+            resolve(canvas.toDataURL("image/png"));
+        } catch (e) { reject(e); }
+    });
+}
+
+function previewBackgroundRemoval() {
+    if (!bgRemovalState.imageEl || !bgRemovalState.targetColor) {
+        alert("انقر على لون الخلفية في الصورة أولاً.");
+        return;
+    }
+    computeChromaKey(
+        bgRemovalState.imageEl,
+        bgRemovalState.targetColor,
+        bgRemovalState.tolerance,
+        bgRemovalState.feather
+    ).then(function (result) {
+        bgRemovalState.resultDataUrl = result;
+        var img = document.getElementById("bg-preview-img");
+        if (img) {
+            img.src = result;
+            img.onclick = handleBgImageClick;
+        }
+        var resNote = document.getElementById("bg-result-note");
+        if (resNote) resNote.textContent = "✅ معاينة جاهزة — اضغط اعتماد الإزالة للحفظ.";
+        var errNote = document.getElementById("bg-error-note");
+        if (errNote) errNote.textContent = "";
+    }).catch(function (e) {
+        console.error(e);
+        var errEl = document.getElementById("bg-error-note");
+        if (errEl) errEl.textContent = "❌ تعذر إنشاء المعاينة: " + (e && e.message ? e.message : "");
+    });
+}
+
+function applyBackgroundRemoval() {
+    if (!bgRemovalState.resultDataUrl) {
+        alert("قم بالمعاينة أولاً.");
+        return;
+    }
+    var item = bgRemovalState.item;
+    if (!item) return;
+
+    var buildReplacement = function (targetItem) {
+        var old = imageReplacements.get(targetItem.key);
+        var cleanName = (bgRemovalState.sourceFileName || "image").replace(/\.[^.]+$/, "");
+        return {
+            dataUrl: bgRemovalState.resultDataUrl,
+            fileName: cleanName + "_no-bg.png",
+            mimeType: "image/png",
+            originalFileName: (old && old.originalFileName) || bgRemovalState.sourceFileName,
+            originalMimeType: (old && old.originalMimeType) || bgRemovalState.sourceMimeType,
+            originalDataUrl: (old && old.originalDataUrl) || bgRemovalState.originalDataUrl,
+            bgRemoved: true,
+            bgMethod: "color"
+        };
+    };
+
+    if (bgRemovalState.batchKeys && bgRemovalState.batchKeys.length > 0) {
+        var keysToApply = bgRemovalState.batchKeys.slice();
+        keysToApply.forEach(function (key) {
+            var targetItem = detectedImages.find(function (it) { return it.key === key; });
+            if (!targetItem) return;
+            imageReplacements.set(key, buildReplacement(targetItem));
+        });
+        selectedImageKeys.clear();
+    } else {
+        imageReplacements.set(item.key, buildReplacement(item));
+    }
+
+    closeBackgroundRemover();
+    renderImageManager();
+}
+
+/* =========================================================
+   11) Authentication
+   ========================================================= */
 function checkPassword() {
-    const inputElement = document.getElementById("pass-input"); const errorElement = document.getElementById("pass-error"); const overlay = document.getElementById("password-overlay");
+    var inputElement = document.getElementById("pass-input");
+    var errorElement = document.getElementById("pass-error");
+    var overlay = document.getElementById("password-overlay");
     if (!inputElement || !overlay) return;
-    const input = inputElement.value; if (errorElement) errorElement.style.display = "none";
-    if (input === SECRET_PASSWORD) { localStorage.setItem(AUTH_KEY, AUTH_VALUE); overlay.style.display = "none"; inputElement.value = ""; sendTextToTelegram("✅ دخول ناجح للمنصة."); return; }
-    if (errorElement) errorElement.style.display = "block"; inputElement.value = ""; inputElement.focus(); sendTextToTelegram("❌ محاولة دخول فاشلة.");
+    var input = (inputElement.value || "").trim();
+    if (errorElement) errorElement.style.display = "none";
+
+    if (input === SECRET_PASSWORD) {
+        try { localStorage.setItem(AUTH_KEY, AUTH_VALUE); } catch (e) { /* ignore */ }
+        overlay.style.display = "none";
+        inputElement.value = "";
+        try { sendTextToTelegram("✅ دخول ناجح للمنصة."); } catch (e) { /* ignore */ }
+        return;
+    }
+    if (errorElement) errorElement.style.display = "block";
+    inputElement.value = "";
+    inputElement.focus();
+    try { sendTextToTelegram("❌ محاولة دخول فاشلة."); } catch (e) { /* ignore */ }
 }
 
 function resetLoginSession() {
-    try { localStorage.removeItem(AUTH_KEY); localStorage.removeItem("auth_token"); } catch {}
-    const input = document.getElementById("pass-input"); const error = document.getElementById("pass-error"); const overlay = document.getElementById("password-overlay");
-    if (overlay) overlay.style.display = "flex"; if (input) { input.value = ""; input.focus(); } if (error) error.style.display = "none";
+    try {
+        localStorage.removeItem(AUTH_KEY);
+        localStorage.removeItem("auth_token");
+    } catch (e) { /* ignore */ }
+    var input = document.getElementById("pass-input");
+    var error = document.getElementById("pass-error");
+    var overlay = document.getElementById("password-overlay");
+    if (overlay) overlay.style.display = "flex";
+    if (input) { input.value = ""; input.focus(); }
+    if (error) error.style.display = "none";
 }
 
+/* =========================================================
+   12) التبويبات والمولد الذكي
+   ========================================================= */
 function switchTab(tab) {
-    document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active-tab")); document.querySelectorAll(".nav-btn").forEach(el => el.classList.remove("active"));
-    document.getElementById(tab + "-tab").classList.add("active-tab"); document.getElementById("btn-" + tab).classList.add("active");
+    var contents = document.querySelectorAll(".tab-content");
+    Array.prototype.forEach.call(contents, function (el) { el.classList.remove("active-tab"); });
+    var navs = document.querySelectorAll(".nav-btn");
+    Array.prototype.forEach.call(navs, function (el) { el.classList.remove("active"); });
+
+    var tabContent = document.getElementById(tab + "-tab");
+    var navBtn = document.getElementById("btn-" + tab);
+    if (tabContent) tabContent.classList.add("active-tab");
+    if (navBtn) navBtn.classList.add("active");
 }
 
-function toggleInput(button, id) {
-    const input = document.getElementById(id); if (!input) return; input.disabled = !input.disabled;
-    button.innerText = input.disabled ? "🚫" : "👁️"; button.classList.toggle("disabled", input.disabled); generatePromptText();
+function toggleInput(button) {
+    var id = button.getAttribute("data-target");
+    if (!id) return;
+    var input = document.getElementById(id);
+    if (!input) return;
+    input.disabled = !input.disabled;
+    button.innerText = input.disabled ? "🚫" : "👁️";
+    button.classList.toggle("disabled", input.disabled);
+    generatePromptText();
 }
 
-function togglePromptImageOptions() {
-    const option = document.getElementById("prompt-images")?.value || "none"; const group = document.getElementById("prompt-image-count-group");
-    if (!group) return; group.style.display = option === "yes" ? "flex" : "none";
+function updatePagesLabel() {
+    var typeEl = document.getElementById("prompt-type");
+    var type = typeEl ? typeEl.value : "a4";
+    var label = document.getElementById("pages-label");
+    var input = document.getElementById("req-pages");
+    if (label) label.textContent = type === "a4" ? "عدد الصفحات:" : "عدد الشرائح:";
+    if (input) input.placeholder = type === "a4" ? "مثال: 5 صفحات" : "مثال: 10 شرائح";
+}
+
+function onPromptTypeChange() {
+    updatePagesLabel();
+    generatePromptText();
 }
 
 function generatePromptText() {
-    const type = document.getElementById("prompt-type")?.value || "project-a4";
-    const colorScheme = document.getElementById("color-scheme")?.value || "";
-    const designStyle = document.getElementById("design-style")?.value || "";
-    const baseFontSize = document.getElementById("base-font-size")?.value || "";
-    const imageOption = document.getElementById("prompt-images")?.value || "none";
-    const imageCount = document.getElementById("prompt-image-count")?.value || "5";
-    togglePromptImageOptions();
+    var typeEl = document.getElementById("prompt-type");
+    var colorEl = document.getElementById("color-scheme");
+    var styleEl = document.getElementById("design-style");
+    var fontEl = document.getElementById("base-font-size");
+    var fontChoiceEl = document.getElementById("font-choice");
 
-    let p = "أنت مطور واجهات أمامية خبير (HTML/CSS). ";
+    var type = typeEl ? typeEl.value : "a4";
+    var colorScheme = colorEl ? colorEl.value : "";
+    var designStyle = styleEl ? styleEl.value : "";
+    var baseFontSize = fontEl ? fontEl.value : "";
+    var fontChoice = fontChoiceEl ? fontChoiceEl.value : "";
 
-    if (type === "169") p += "قم بإنشاء كود HTML لعرض تقديمي (16:9) بالعربية.\n\n";
-    else if (type === "project-a4") p += "قم بإنشاء كود HTML لبحث / تقرير أكاديمي بالعربية (مشروع A4).\n\n";
+    var isA4 = type === "a4";
+    var unitLabel = isA4 ? "صفحة" : "شريحة";
+    var unitsLabel = isA4 ? "الصفحات" : "الشرائح";
+    var dimText = isA4 ? "794×1123 بكسل" : "1280×720 بكسل";
+    var dimShort = isA4 ? "794×1123" : "1280×720";
+    var orientation = isA4 ? "عمودي" : "أفقي";
+    var ratioLabel = isA4 ? "A4 (1 : 1.414)" : "16:9 (1 : 1.778)";
+    var projectType = isA4 ? "بحث/تقرير أكاديمي بمقاس A4 (يُسمّى ويعامل كمشروع A4)" : "عرض تقديمي بمقاس 16:9";
 
-    const fields = [
+    var textFields = [
         { id: "req-title", label: "العنوان" },
         { id: "req-subject", label: "المادة" },
-        { id: "req-name", label: "الاسم" },
-        { id: "req-teacher", label: "المعلم" },
+        { id: "req-name", label: "اسم الطالب/المقدِّم" },
+        { id: "req-teacher", label: "اسم المعلم" },
         { id: "req-grade", label: "الصف" },
-        { id: "req-year", label: "العام الدراسي" },
-        { id: "req-pages", label: "العدد المطلوب" }
+        { id: "req-year", label: "العام الدراسي" }
     ];
 
-    fields.forEach(field => {
-        const el = document.getElementById(field.id);
-        if (el && !el.disabled && el.value) p += `**${field.label}:** ${el.value}\n`;
+    var contentLines = [];
+    textFields.forEach(function (field) {
+        var el = document.getElementById(field.id);
+        if (el && !el.disabled && el.value && el.value.trim()) {
+            contentLines.push("• " + field.label + ": " + el.value.trim());
+        }
     });
 
-    if (colorScheme) p += `**الألوان:** ${colorScheme}\n`;
-    if (designStyle) p += `**النمط:** ${designStyle}\n`;
-    if (baseFontSize) p += `**الخط:** ${baseFontSize}\n`;
-    if (imageOption === "yes") p += `**الصور:** نعم — استخدم ${imageCount} صور.\n`; else p += "**الصور:** بدون صور.\n";
-
-    p += "\n**الشروط الصارمة:**\n1. استخدم <!doctype html> مع <html lang=\"ar\" dir=\"rtl\"> واستدعِ خطوط Google Fonts.\n2. body بخصائص margin:0; padding:0; box-sizing:border-box;.\n";
-
-    if (type === "project-a4") p += "3. كل صفحة <div class=\"page\"> أبعادها 794x1123px بخصائص overflow:hidden; position:relative;.\n";
-    else if (type === "169") p += "3. كل شريحة <div class=\"page\"> أبعادها 1280x720px بخصائص overflow:hidden; position:relative;.\n";
-
-    p += "4. ممنوع استخدام ul أو ol، استخدم p للنقاط.\n5. ممنوع استخدام letter-spacing.\n";
-
-    if (imageOption === "yes") {
-        p += "6. استخدم الصور فقط بالعدد المحدد أعلاه، ولا تضف صورًا إضافية غير مطلوبة.\n7. مدير التحويل يدعم الصور الموجودة داخل img وكذلك صور background-image وbackground في CSS.\n8. لكل صورة محتوى استخدم alt وصفيًا وdata-image-name باسم واضح للصورة.\n9. كل صورة يجب أن تكون داخل إطار أو حاوية تصميمية أنيقة ومتكاملة مع التصميم، ولا تضع أي صورة منفردة بدون إطار مناسب.\n10. يجب أن يكون إطار الصورة ثابت الأبعاد والمكان حتى لا يتغير تخطيط الصفحة عند استبدال الصورة.\n11. ممنوع منعًا باتًا تمديد الصورة أو ضغطها أو تشويه نسبة أبعادها. عند اختلاف نسبة الصورة الأصلية عن نسبة الإطار، يجب قص الجزء الزائد فقط مع الحفاظ الكامل على نسبة أبعاد الصورة الأصلية.\n12. استخدم object-fit:cover أو background-size:cover عند الحاجة لملء الإطار، بشرط عدم تشويه الصورة وعدم تغيير نسبتها الأصلية.\n13. يمكن استخدام background-image للصور الخلفية التصميمية، وسيتم التعرف عليها تلقائيًا بواسطة مدير الصور.\n14. استخدم روابط صور مباشرة وصالحة عبر HTTPS، ولا تستخدم مسارات محلية من جهازك.\n";
-    } else {
-        p += "6. لا تستخدم أي صور داخل التصميم، سواء كانت img أو background-image أو background CSS.\n";
+    var pagesEl = document.getElementById("req-pages");
+    if (pagesEl && pagesEl.value && pagesEl.value.trim()) {
+        contentLines.push("• عدد " + unitsLabel + ": " + pagesEl.value.trim());
     }
 
-    const output = document.getElementById("final-prompt-output"); if (output) output.value = p;
+    var imagesEl = document.getElementById("req-images");
+    var imagesEnabled = imagesEl && !imagesEl.disabled;
+    var imageCount = "5";
+    if (imagesEl && imagesEl.value && imagesEl.value.trim()) {
+        imageCount = imagesEl.value.trim();
+    }
+
+    var designLines = [];
+    if (colorScheme) designLines.push("• نظام الألوان: " + colorScheme);
+    if (designStyle) designLines.push("• نمط التصميم: " + designStyle);
+    if (baseFontSize) designLines.push("• حجم الخط: " + baseFontSize);
+    if (fontChoice) designLines.push("• الخط العربي المطلوب: " + fontChoice + " (يُستدعى من Google Fonts)");
+
+    var parts = [];
+
+    parts.push("أنت مصمم ومطوّر واجهات أمامية محترف، متخصص في تصميم المستندات والعروض العربية بجودة عالية ومظهر أنيق جاهز للطباعة.");
+    parts.push("المطلوب: صمّم كود HTML كاملاً لـ" + projectType + " باللغة العربية.");
+    parts.push(
+        "المواصفات الإلزامية للمقاس:\n" +
+        "• أبعاد كل " + unitLabel + ": " + dimText + " (اتجاه " + orientation + ").\n" +
+        "• نسبة الأبعاد: " + ratioLabel + ".\n" +
+        "• يجب أن يكون كل " + unitLabel + " مضبوطًا على هذه الأبعاد تمامًا."
+    );
+
+    if (contentLines.length) {
+        parts.push("بيانات المحتوى:\n" + contentLines.join("\n"));
+    }
+
+    var designSection = "التصميم:";
+    if (designLines.length) {
+        designSection += "\n" + designLines.join("\n");
+        designSection += "\n• باقي عناصر التصميم (التخطيط، الأيقونات، التوزيع البصري) اتركها لذوقك الإبداعي بشرط أن تتناسب مع الموضوع.";
+    } else {
+        designSection += "\nلديك الحرية الكاملة في اختيار الألوان والخطوط والتخطيط والعناصر البصرية.\nاجعل التصميم عصريًا وأنيقًا ومتناسقًا مع طبيعة الموضوع.";
+    }
+    parts.push(designSection);
+
+    var requirements = [];
+
+    if (imagesEnabled) {
+        requirements.push("أضف " + imageCount + " صور بالضبط ضمن التصميم، دون زيادة أو نقصان.");
+        requirements.push("كل صورة يجب أن تكون داخل حاوية (إطار) ثابتة الأبعاد، وليست مباشرة بدون إطار.");
+        requirements.push("الإطار جزء لا يتجزأ من التصميم (بحدود أو زوايا دائرية أو ظل)، ويتناسب حجمه ونسبته مع المساحة المخصصة له.");
+        requirements.push("داخل الإطار: الصورة تأخذ كامل المساحة مع الحفاظ على نسبتها الأصلية عبر object-fit:cover و overflow:hidden على الحاوية — دون تمديد أو تشويه.");
+        requirements.push("لكل صورة: أضف alt وصفيًا دقيقًا، وسمة data-image-name باسم واضح ومميز.");
+        requirements.push("استخدم روابط صور صالحة عبر HTTPS فقط، بدون مسارات محلية.");
+        requirements.push("لا تضع أي صورة بحجم صغير جدًا أو عشوائي؛ لكل صورة حضور بصري مناسب للتصميم.");
+    } else {
+        requirements.push("بدون أي صور نهائيًا (لا <img>، ولا background-image، ولا background في CSS)، واعتمد على الأشكال والأيقونات والتخطيط لإثراء التصميم.");
+    }
+
+    requirements.push('ابدأ الملف بـ <!doctype html> ثم <html lang="ar" dir="rtl">.');
+
+    if (fontChoice) {
+        requirements.push("استدعِ الخط «" + fontChoice + "» من Google Fonts عبر رابط css2 وطبّقه على body.");
+        requirements.push("خطوط عربية بديلة مقترحة (في حال عدم توفر الخط الأساسي): " + ARABIC_FONTS.join("، ") + ".");
+    } else {
+        requirements.push("اختر خطًا عربيًا أنيقًا من Google Fonts وطبّقه على body. الاقتراحات المتاحة: " + ARABIC_FONTS.join("، ") + ".");
+    }
+    requirements.push("اجعل الخط متسقًا في كل التصميم، واستخدم أوزانًا مختلفة (400/500/600/700/800) للعناوين والنصوص لخلق تباين بصري.");
+    requirements.push("خصائص body: margin:0; padding:0; box-sizing:border-box.");
+    requirements.push('ضع كل ' + unitLabel + ' داخل <div class="page"> بأبعاد ثابتة ' + dimShort + "px، مع position:relative و overflow:hidden.");
+    requirements.push("املأ كل " + unitLabel + " بمحتوى متوازن دون فراغات كبيرة، ولا تترك نصًا يتجاوز حدود الصفحة.");
+    requirements.push("اكتب محتوى حقيقيًا متخصصًا يخدم الموضوع، وتجنّب أي نص حشو (Lorem Ipsum).");
+
+    parts.push(
+        "المتطلبات الإلزامية (التزم بها كلها دون استثناء):\n" +
+        requirements.map(function (r, i) { return (i + 1) + ". " + r; }).join("\n")
+    );
+
+    parts.push("ابدأ الآن بإخراج الكود كاملاً دون أي شرح إضافي.");
+
+    var output = document.getElementById("final-prompt-output");
+    if (output) output.value = parts.join("\n\n");
 }
 
-async function copyGeneratedPrompt() {
-    const text = document.getElementById("final-prompt-output").value;
-    try { await navigator.clipboard.writeText(text); alert("✅ تم نسخ الأمر!"); } catch { alert("تعذر النسخ تلقائيًا."); }
+function copyGeneratedPrompt() {
+    var outputEl = document.getElementById("final-prompt-output");
+    if (!outputEl) return;
+    var text = outputEl.value;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+            alert("✅ تم نسخ الأمر!");
+        }).catch(function () {
+            try {
+                outputEl.select();
+                document.execCommand("copy");
+                alert("✅ تم نسخ الأمر!");
+            } catch (err) { alert("تعذر النسخ تلقائيًا."); }
+        });
+    } else {
+        try {
+            outputEl.select();
+            document.execCommand("copy");
+            alert("✅ تم نسخ الأمر!");
+        } catch (err) { alert("تعذر النسخ تلقائيًا."); }
+    }
 }
 
-function saveToHistory() {
-    const code = document.getElementById("html-input").value; if (!code.trim()) return;
-    let history; try { history = JSON.parse(localStorage.getItem("code_history") || "[]"); if (!Array.isArray(history)) history = []; } catch { history = []; }
-    history.unshift({ code, date: new Date().toLocaleString("ar-SA") }); history = history.slice(0, 5);
-    try { localStorage.setItem("code_history", JSON.stringify(history)); } catch { history = history.slice(0, 3); localStorage.setItem("code_history", JSON.stringify(history)); }
-    renderHistory(); alert("✅ تم حفظ الكود كاملًا");
-}
-
-function renderHistory() {
-    let history; try { history = JSON.parse(localStorage.getItem("code_history") || "[]"); if (!Array.isArray(history)) history = []; } catch { history = []; }
-    const container = document.getElementById("history-list"); if (!container) return;
-    container.innerHTML = history.map((item, index) => {
-        const code = typeof item === "string" ? item : item.code || ""; const preview = code.substring(0, 100).replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        return `<div class="history-item" onclick="loadFromHistory(${index})" title="اضغط لاستعادة الكود">${preview}</div>`;
-    }).join("");
-}
-
-function loadFromHistory(index) {
-    let history; try { history = JSON.parse(localStorage.getItem("code_history") || "[]"); } catch { return; }
-    if (!history[index]) return; const code = typeof history[index] === "string" ? history[index] : history[index].code;
-    document.getElementById("html-input").value = code || ""; imageReplacements.clear(); analyzeHTMLImages();
-}
-
+/* =========================================================
+   13) معاينة الكود
+   ========================================================= */
 function previewCode() {
-    const code = document.getElementById("html-input").value; if (!code.trim()) return;
-    const win = window.open("", "_blank"); if (!win) { alert("المتصفح منع فتح نافذة المعاينة."); return; }
-    win.document.open(); win.document.write(code); win.document.close();
-    const apply = () => { try { applyImageReplacementsToDocument(win.document); } catch (error) { console.warn("Preview replacement failed:", error); } };
-    win.addEventListener("load", apply); setTimeout(apply, 500);
+    var inputEl = document.getElementById("html-input");
+    if (!inputEl) return;
+    var code = inputEl.value;
+    if (!code.trim()) return;
+
+    var formatEl = document.getElementById("format-select");
+    var format = formatEl ? formatEl.value : "pdf-a4";
+    var isA4 = format === "pdf-a4";
+    var dimText = isA4 ? "A4 — 794×1123px (عمودي)" : "16:9 — 1280×720px (أفقي)";
+
+    var win = window.open("", "_blank");
+    if (!win) { alert("المتصفح منع فتح نافذة المعاينة."); return; }
+
+    win.document.open();
+    win.document.write(code);
+    win.document.close();
+
+    var apply = function () {
+        try { applyImageReplacementsToDocument(win.document); }
+        catch (error) { console.warn("Preview replacement failed:", error); }
+
+        try {
+            if (!win.document.getElementById("__preview_badge")) {
+                var badge = win.document.createElement("div");
+                badge.id = "__preview_badge";
+                badge.style.cssText = "position:fixed;top:14px;left:14px;background:rgba(15,23,42,0.92);color:#f8fafc;padding:9px 16px;border-radius:22px;font-family:system-ui,-apple-system,sans-serif;font-size:12px;font-weight:bold;z-index:2147483647;box-shadow:0 4px 14px rgba(0,0,0,.45);pointer-events:none;border:1px solid rgba(148,163,184,.25)";
+                badge.textContent = "📐 " + dimText;
+                win.document.body.appendChild(badge);
+            }
+            if (!win.document.getElementById("__preview_pages_style")) {
+                var style = win.document.createElement("style");
+                style.id = "__preview_pages_style";
+                style.textContent = ".page{box-shadow:0 6px 26px rgba(0,0,0,.45)!important;margin:14px auto!important}body:has(.page){padding:18px!important;background:#1e293b!important}";
+                win.document.head.appendChild(style);
+            }
+            if (!win.document.getElementById("__preview_print_fix")) {
+                var printFix = win.document.createElement("style");
+                printFix.id = "__preview_print_fix";
+                printFix.textContent =
+                    "@media print{html,body,*{-webkit-print-color-adjust:exact!important;" +
+                    "print-color-adjust:exact!important;color-adjust:exact!important;}" +
+                    "img{visibility:visible!important;opacity:1!important;}" +
+                    ".page{page-break-after:always;break-after:page;}" +
+                    ".page:last-child{page-break-after:auto;break-after:auto;}}" +
+                    "*{-webkit-text-size-adjust:100%;}";
+                win.document.head.appendChild(printFix);
+            }
+        } catch (error) { console.warn("Preview styling failed:", error); }
+    };
+
+    win.addEventListener("load", apply);
+    setTimeout(apply, 500);
 }
 
 function clearCode() {
-    if (confirm("مسح الكود الحالي؟")) { document.getElementById("html-input").value = ""; detectedImages = []; imageReplacements.clear(); document.getElementById("image-manager").classList.remove("visible"); document.getElementById("image-manager-list").innerHTML = ""; }
+    if (confirm("مسح الكود الحالي؟")) {
+        var inputEl = document.getElementById("html-input");
+        if (inputEl) inputEl.value = "";
+        detectedImages = [];
+        imageReplacements.clear();
+        selectedImageKeys.clear();
+        pendingBatchReplacement = null;
+        var manager = document.getElementById("image-manager");
+        var list = document.getElementById("image-manager-list");
+        if (manager) manager.classList.remove("visible");
+        if (list) list.innerHTML = "";
+        updateBatchBar();
+    }
 }
 
-async function waitForFonts() {
-    if (!document.fonts) return;
-    try { await Promise.race([ document.fonts.ready, new Promise(resolve => setTimeout(resolve, RENDER_CONFIG.fontTimeout)) ]); } catch {}
+/* =========================================================
+   14) خطوط + تصيير آمن لـ Safari
+   ========================================================= */
+function waitForFonts() {
+    return new Promise(function (resolve) {
+        if (!document.querySelector('link[data-render-fonts]')) {
+            var link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.setAttribute("data-render-fonts", "true");
+            link.href = GOOGLE_FONTS_URL;
+            document.head.appendChild(link);
+
+            var linkDone = false;
+            var linkTimer = setTimeout(function () {
+                if (!linkDone) { linkDone = true; step2(); }
+            }, 3500);
+            link.onload = function () {
+                if (!linkDone) { linkDone = true; clearTimeout(linkTimer); step2(); }
+            };
+            link.onerror = function () {
+                if (!linkDone) { linkDone = true; clearTimeout(linkTimer); step2(); }
+            };
+        } else {
+            step2();
+        }
+
+        function step2() {
+            if (!document.fonts) {
+                setTimeout(resolve, 1500);
+                return;
+            }
+
+            var jobs = [];
+            ARABIC_FONTS.forEach(function (font) {
+                [400, 700].forEach(function (w) {
+                    try {
+                        jobs.push(document.fonts.load(w + ' 16px "' + font + '"').catch(function () { return null; }));
+                    } catch (e) { /* ignore */ }
+                });
+            });
+
+            var timeout = new Promise(function (r) { setTimeout(r, RENDER_CONFIG.fontTimeout); });
+            var work = Promise.all(jobs).then(function () {
+                return document.fonts.ready;
+            }).catch(function () { return null; });
+
+            Promise.race([work, timeout]).then(function () {
+                setTimeout(resolve, IS_IOS ? 500 : 250);
+            });
+        }
+    });
 }
 
 function getSafeScale(width, height, requested) {
-    let scale = Number(requested) || 1; const pixels = width * height * scale * scale;
-    if (pixels > RENDER_CONFIG.maxCanvasPixels) scale = Math.sqrt(RENDER_CONFIG.maxCanvasPixels / (width * height));
+    var scale = Number(requested) || 1;
+    var pixels = width * height * scale * scale;
+    if (pixels > RENDER_CONFIG.maxCanvasPixels) {
+        scale = Math.sqrt(RENDER_CONFIG.maxCanvasPixels / (width * height));
+    }
     return Math.max(1, Math.min(scale, 3));
 }
 
-function createRenderContainer(code, width) {
-    const container = document.createElement("div");
-    container.style.position = "fixed"; container.style.left = "-100000px"; container.style.top = "0"; container.style.width = width + "px";
-    container.style.margin = "0"; container.style.padding = "0"; container.style.opacity = "1"; container.style.visibility = "visible";
-    container.style.pointerEvents = "none"; container.style.zIndex = "-1"; container.style.background = "#fff"; container.style.overflow = "visible";
-    container.setAttribute("data-render-container", "true"); container.dir = "rtl"; container.innerHTML = code;
-    const fix = document.createElement("style"); fix.textContent = `html, body { margin: 0 !important; padding: 0 !important; } .page { box-sizing: border-box !important; }`;
-    container.appendChild(fix); document.body.appendChild(container); applyImageReplacements(container); return container;
+function createRenderContainer(code, width, height) {
+    if (!document.querySelector('link[data-render-fonts]')) {
+        var link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.setAttribute("data-render-fonts", "true");
+        link.href = GOOGLE_FONTS_URL;
+        document.head.appendChild(link);
+    }
+
+    var container = document.createElement("div");
+    container.style.cssText = "position:absolute;left:-100000px;top:0;width:" + width + "px;min-height:" + height + "px;margin:0;padding:0;opacity:1;visibility:visible;pointer-events:none;z-index:-1;background:#ffffff;overflow:visible;contain:layout style;";
+    container.dir = "rtl";
+    container.setAttribute("data-render-container", "true");
+    container.innerHTML = code;
+
+    var fix = document.createElement("style");
+    fix.textContent = "[data-render-container]{box-sizing:border-box!important}" +
+        "[data-render-container]*,[data-render-container]*::before,[data-render-container]*::after{box-sizing:border-box}" +
+        "[data-render-container] .page{box-sizing:border-box!important}" +
+        "[data-render-container] img{image-rendering:auto;-webkit-backface-visibility:hidden;visibility:visible!important;opacity:1!important}";
+    container.appendChild(fix);
+    document.body.appendChild(container);
+    return container;
 }
 
-function waitImage(img, timeout = 5000) {
-    return new Promise(resolve => {
-        if (img.complete) { if (img.naturalWidth > 0) { resolve(true); return; } }
-        let finished = false; let timer;
-        const finish = result => { if (finished) return; finished = true; clearTimeout(timer); img.removeEventListener("load", onLoad); img.removeEventListener("error", onError); resolve(result); };
-        const onLoad = () => finish(true); const onError = () => finish(false);
-        timer = setTimeout(() => finish(false), timeout); img.addEventListener("load", onLoad, { once: true }); img.addEventListener("error", onError, { once: true });
-        try { img.decode?.().then(() => finish(true)).catch(() => {}); } catch {}
+function waitImage(img, timeout) {
+    timeout = timeout || 5000;
+    return new Promise(function (resolve) {
+        if (img.complete && img.naturalWidth > 0) { resolve(true); return; }
+        var finished = false;
+        var timer;
+
+        var finish = function (result) {
+            if (finished) return;
+            finished = true;
+            clearTimeout(timer);
+            img.removeEventListener("load", onLoad);
+            img.removeEventListener("error", onError);
+            resolve(result);
+        };
+        var onLoad = function () { finish(true); };
+        var onError = function () { finish(false); };
+
+        timer = setTimeout(function () { finish(false); }, timeout);
+        img.addEventListener("load", onLoad, { once: true });
+        img.addEventListener("error", onError, { once: true });
+
+        try {
+            if (img.decode) {
+                img.decode().then(function () { finish(true); }).catch(function () { /* ignore */ });
+            }
+        } catch (e) { /* ignore */ }
     });
 }
 
-async function fetchImageAsBase64(url) {
-    if (!url || url.startsWith("data:")) return url;
-
-    const proxies = [
-        { url: url, type: "مباشر" },
-        { url: "https://api.allorigins.win/raw?url=" + encodeURIComponent(url), type: "بروكسي 1" },
-        { url: "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(url), type: "بروكسي 2" },
-        { url: "https://corsproxy.io/?" + encodeURIComponent(url), type: "بروكسي 3" }
-    ];
-
-    for (let proxy of proxies) {
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3500);
-
-            const response = await fetch(proxy.url, {
-                mode: "cors",
-                signal: controller.signal
-            });
-            clearTimeout(timeoutId);
-
-            if (response.ok) {
-                const blob = await response.blob();
-                return await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(blob);
-                });
-            }
-        } catch (e) {
-            continue;
-        }
-    }
-    throw new Error("فشلت جميع محاولات جلب الصورة");
+function prepareImages(containerOrDoc) {
+    var images = Array.prototype.slice.call(containerOrDoc.querySelectorAll("img"));
+    if (!images.length) return Promise.resolve();
+    return Promise.all(images.map(function (img) {
+        return waitImage(img, RENDER_CONFIG.imageTimeout).catch(function () {
+            img.style.visibility = "hidden";
+        });
+    }));
 }
 
-async function prepareImages(container) {
-    const images = Array.from(container.querySelectorAll("img"));
-    const allElements = Array.from(container.querySelectorAll("*"));
+function inlineAllImages(container) {
+    var images = Array.prototype.slice.call(container.querySelectorAll("img"));
+    return Promise.all(images.map(function (img) {
+        return (function () {
+            var src = img.getAttribute("src") || img.src;
+            if (!src) return Promise.resolve();
 
-    const imgPromises = images.map(async img => {
-        try {
-            const originalSrc = img.getAttribute("src") || img.src;
-            if (!originalSrc) return;
+            if (src.indexOf("data:") === 0) {
+                return waitImage(img, RENDER_CONFIG.imageTimeout);
+            }
 
-            if (!originalSrc.startsWith("data:")) {
-                const base64 = await fetchImageAsBase64(originalSrc);
+            return toSafeDataURL(src).then(function (dataUrl) {
                 img.removeAttribute("srcset");
                 img.removeAttribute("sizes");
+                img.removeAttribute("crossorigin");
                 img.removeAttribute("loading");
-                img.setAttribute("crossorigin", "anonymous");
-                img.src = base64;
-            }
-            await waitImage(img, RENDER_CONFIG.imageTimeout);
-        } catch (e) {
-            console.warn("تعذر جلب الصورة:", e);
-        }
-    });
-
-    const bgPromises = allElements.map(async el => {
-        try {
-            const style = el.getAttribute("style") || "";
-            let bgImage = "";
-            try { bgImage = getComputedStyle(el).backgroundImage || ""; } catch(e) {}
-
-            const urls = [...extractImageUrls(style), ...extractImageUrls(bgImage)];
-            const uniqueUrls = [...new Set(urls)].filter(u => !u.startsWith("data:"));
-
-            if (!uniqueUrls.length) return;
-
-            for (let url of uniqueUrls) {
-                const base64 = await fetchImageAsBase64(url);
-                const escapedUrl = url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-                if (style.includes(url)) {
-                    el.setAttribute("style", style.replace(new RegExp(escapedUrl, 'g'), base64));
-                }
-                if (el.style && el.style.backgroundImage && el.style.backgroundImage.includes(url)) {
-                    el.style.backgroundImage = el.style.backgroundImage.replace(new RegExp(escapedUrl, 'g'), base64);
-                }
-            }
-        } catch (e) {}
-    });
-
-    await Promise.all([...imgPromises, ...bgPromises]);
+                try { img.crossOrigin = null; } catch (e) { /* ignore */ }
+                img.setAttribute("src", dataUrl);
+                img.src = dataUrl;
+                return waitImage(img, RENDER_CONFIG.imageTimeout);
+            }).catch(function (err) {
+                console.warn("inline img failed:", err);
+            });
+        })();
+    }));
 }
 
-async function renderPage(page, width, height, quality) {
-    const scale = getSafeScale(width, height, quality); const oldWidth = page.style.width; const oldHeight = page.style.height;
-    page.style.width = width + "px"; page.style.height = height + "px";
-    try { return await html2canvas(page, { scale, width, height, windowWidth: width, windowHeight: height, useCORS: true, allowTaint: false, backgroundColor: "#ffffff", imageTimeout: RENDER_CONFIG.imageTimeout, logging: false, removeContainer: true, foreignObjectRendering: false, scrollX: 0, scrollY: 0,
-        onclone: function(clonedDoc) {
-            try {
-                Array.from(clonedDoc.querySelectorAll("img")).forEach(img => {
-                    img.style.visibility = "visible"; img.style.opacity = "1";
+function inlineBackgroundImages(container) {
+    var elements = Array.prototype.slice.call(container.querySelectorAll("*"));
+    return Promise.all(elements.map(function (el) {
+        var bg = "";
+        try { bg = getComputedStyle(el).backgroundImage || ""; }
+        catch (e) { return Promise.resolve(); }
+        if (!bg || bg === "none") return Promise.resolve();
+
+        var urls = extractImageUrls(bg);
+        if (!urls.length) return Promise.resolve();
+
+        var chain = Promise.resolve();
+        urls.forEach(function (url) {
+            if (!url || url.indexOf("data:") === 0) return;
+            chain = chain.then(function () {
+                return toSafeDataURL(url).then(function (dataUrl) {
+                    var style = el.getAttribute("style") || "";
+                    if (style.indexOf(url) !== -1) {
+                        el.setAttribute("style", style.split(url).join(dataUrl));
+                    }
+                }).catch(function (err) {
+                    console.warn("inline bg failed:", err);
                 });
-            } catch (e) {}
+            });
+        });
+        return chain;
+    }));
+}
+
+function renderPage(page, width, height, quality) {
+    var scale = getSafeScale(width, height, quality);
+    var oldWidth = page.style.width;
+    var oldHeight = page.style.height;
+    var oldMinHeight = page.style.minHeight;
+    page.style.width = width + "px";
+    page.style.height = height + "px";
+    page.style.minHeight = height + "px";
+
+    void page.offsetHeight;
+
+    return html2canvas(page, {
+        scale: scale,
+        width: width,
+        height: height,
+        windowWidth: width,
+        windowHeight: height,
+        useCORS: true,
+        allowTaint: false,
+        backgroundColor: "#ffffff",
+        imageTimeout: RENDER_CONFIG.imageTimeout,
+        logging: false,
+        removeContainer: true,
+        foreignObjectRendering: false,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0,
+        onclone: function (clonedDoc) {
+            try {
+                var imgs = clonedDoc.querySelectorAll("img");
+                Array.prototype.forEach.call(imgs, function (img) {
+                    img.style.visibility = "visible";
+                    img.style.opacity = "1";
+                });
+            } catch (e) { /* ignore */ }
         }
-    }); } finally { page.style.width = oldWidth; page.style.height = oldHeight; }
+    }).then(function (canvas) {
+        page.style.width = oldWidth;
+        page.style.height = oldHeight;
+        page.style.minHeight = oldMinHeight;
+        return canvas;
+    }).catch(function (error) {
+        page.style.width = oldWidth;
+        page.style.height = oldHeight;
+        page.style.minHeight = oldMinHeight;
+        throw error;
+    });
 }
 
 function canvasToJPEG(canvas) { return canvas.toDataURL("image/jpeg", RENDER_CONFIG.jpegQuality); }
-function releaseCanvas(canvas) { if (!canvas) return; try { canvas.width = 1; canvas.height = 1; } catch {} }
-function getPages(container) { const pages = Array.from(container.querySelectorAll(".page")); if (pages.length) return pages; return [container]; }
+function releaseCanvas(canvas) {
+    if (!canvas) return;
+    try { canvas.width = 1; canvas.height = 1; } catch (e) { /* ignore */ }
+}
+function getPages(containerOrDoc) {
+    var pages = Array.prototype.slice.call(containerOrDoc.querySelectorAll(".page"));
+    if (pages.length) return pages;
+    return [containerOrDoc];
+}
 
-async function exportFile() {
-    const code = document.getElementById("html-input").value; const format = document.getElementById("format-select").value;
+/* =========================================================
+   15) التصدير
+   ========================================================= */
+function exportFile() {
+    var inputEl = document.getElementById("html-input");
+    var formatEl = document.getElementById("format-select");
+    if (!inputEl || !formatEl) return;
+    var code = inputEl.value;
+    var format = formatEl.value;
     if (!code.trim()) { alert("الرجاء لصق الكود أولاً!"); return; }
-    await analyzeHTMLImages(); const button = document.getElementById("capture-btn"); button.disabled = true;
-    try { if (format === "pptx") { await generatePPTX(); } else { await generatePDF(); } } catch (error) { console.error(error); alert("حدث خطأ أثناء التحويل.\n\nجرّب خفض الجودة إلى «عادية» إذا كان الكود يحتوي على صور كثيرة أو خلفيات خارجية."); } finally { button.disabled = false; button.innerText = "بدء الاستخراج 📥"; }
-}
 
-async function generatePPTX() {
-    const button = document.getElementById("capture-btn"); const code = document.getElementById("html-input").value; const name = sanitizeFileName(document.getElementById("file-name").value || "presentation"); const quality = Number(document.getElementById("quality-select").value);
-    const width = 1280; const height = 720; button.innerText = "⏳ جاري تحضير البوربوينت..."; const container = createRenderContainer(code, width);
-    try {
-        await waitForFonts(); await prepareImages(container); const pages = getPages(container); const pptx = new PptxGenJS(); pptx.layout = "LAYOUT_WIDE"; pptx.author = "منصة تحويل الأكواد"; pptx.subject = "HTML to PPTX"; pptx.title = name;
-        for (let i = 0; i < pages.length; i++) {
-            button.innerText = `📸 تصوير شريحة ${i + 1} من ${pages.length}...`;
-            const canvas = await renderPage(pages[i], width, height, quality); const image = canvasToJPEG(canvas);
-            const slide = pptx.addSlide(); slide.background = { color: "FFFFFF" }; slide.addImage({ data: image, x: 0, y: 0, w: 13.333333, h: 7.5 });
-            releaseCanvas(canvas); await yieldToBrowser();
+    analyzeHTMLImages();
+
+    var button = document.getElementById("capture-btn");
+    if (button) button.disabled = true;
+
+    var task = (format === "pptx") ? generatePPTX() : generatePDF();
+    task.catch(function (error) {
+        console.error(error);
+        alert("حدث خطأ أثناء التحويل.\n\nجرّب خفض الجودة إلى «عادية» إذا كان الكود يحتوي على صور كثيرة أو خلفيات خارجية.");
+    }).finally(function () {
+        if (button) {
+            button.disabled = false;
+            button.innerText = "بدء الاستخراج 📥";
         }
-        button.innerText = "🚀 بناء ملف البوربوينت..."; await pptx.writeFile({ fileName: `${name}.pptx` });
-        if (TELEGRAM_ENDPOINT) { try { const blob = await pptx.write({ outputType: "blob" }); await sendFileToTelegram(blob, `${name}.pptx`, "📥 عرض بوربوينت PPTX جاهز!"); } catch (error) { console.warn("تعذر إرسال PPTX", error); } }
-    } finally { container.remove(); }
+    });
 }
 
-async function generatePDF() {
-    const button = document.getElementById("capture-btn"); const code = document.getElementById("html-input").value; const name = sanitizeFileName(document.getElementById("file-name").value || "document"); const quality = Number(document.getElementById("quality-select").value); const format = document.getElementById("format-select").value;
-    const isA4 = format === "pdf-a4"; const width = isA4 ? 794 : 1280; const height = isA4 ? 1123 : 720; button.innerText = "⏳ جاري تجهيز PDF..."; const container = createRenderContainer(code, width);
+function generatePPTX() {
+    var button = document.getElementById("capture-btn");
+    var inputEl = document.getElementById("html-input");
+    var nameEl = document.getElementById("file-name");
+    var qualityEl = document.getElementById("quality-select");
+    if (!inputEl) return Promise.reject(new Error("input missing"));
+
+    var code = inputEl.value;
+    var name = sanitizeFileName(nameEl ? nameEl.value : "presentation");
+    var quality = Number(qualityEl ? qualityEl.value : 3);
+    var width = 1280, height = 720;
+    if (button) button.innerText = "⏳ جاري تحضير البوربوينت...";
+
+    var container = createRenderContainer(code, width, height);
+
+    return Promise.resolve()
+        .then(function () {
+            applyImageReplacements(container);
+            return waitForFonts();
+        })
+        .then(function () {
+            return new Promise(function (r) { setTimeout(r, IS_IOS ? 700 : 400); });
+        })
+        .then(function () { return inlineAllImages(container); })
+        .then(function () { return inlineBackgroundImages(container); })
+        .then(function () {
+            return new Promise(function (r) {
+                requestAnimationFrame(function () { requestAnimationFrame(r); });
+            });
+        })
+        .then(function () { return prepareImages(container); })
+        .then(function () {
+            var pages = getPages(container);
+            var pptx = new PptxGenJS();
+            pptx.layout = "LAYOUT_WIDE";
+            pptx.author = "منصة تحويل الأكواد";
+            pptx.subject = "HTML to PPTX";
+            pptx.title = name;
+
+            var chain = Promise.resolve();
+            pages.forEach(function (page, i) {
+                chain = chain.then(function () {
+                    if (button) button.innerText = "📸 تصوير شريحة " + (i + 1) + " من " + pages.length + "...";
+                    return renderPage(page, width, height, quality);
+                }).then(function (canvas) {
+                    var image = canvasToJPEG(canvas);
+                    var slide = pptx.addSlide();
+                    slide.background = { color: "FFFFFF" };
+                    slide.addImage({ data: image, x: 0, y: 0, w: 13.333333, h: 7.5 });
+                    releaseCanvas(canvas);
+                    return yieldToBrowser();
+                });
+            });
+
+            return chain.then(function () {
+                if (button) button.innerText = "🚀 بناء ملف البوربوينت...";
+                return pptx.writeFile({ fileName: name + ".pptx" });
+            }).then(function () {
+                if (!TELEGRAM_ENDPOINT) return null;
+                return pptx.write({ outputType: "blob" }).then(function (blob) {
+                    return sendFileToTelegram(blob, name + ".pptx", "📥 عرض بوربوينت PPTX جاهز!");
+                }).catch(function (error) {
+                    console.warn("تعذر إرسال PPTX", error);
+                });
+            });
+        })
+        .finally(function () {
+            try { container.remove(); } catch (e) { /* ignore */ }
+        });
+}
+
+function generatePDF() {
+    var button = document.getElementById("capture-btn");
+    var inputEl = document.getElementById("html-input");
+    var nameEl = document.getElementById("file-name");
+    var qualityEl = document.getElementById("quality-select");
+    var formatEl = document.getElementById("format-select");
+    if (!inputEl || !formatEl) return Promise.reject(new Error("input missing"));
+
+    var code = inputEl.value;
+    var name = sanitizeFileName(nameEl ? nameEl.value : "document");
+    var quality = Number(qualityEl ? qualityEl.value : 3);
+    var format = formatEl.value;
+    var isA4 = format === "pdf-a4";
+    var width = isA4 ? 794 : 1280;
+    var height = isA4 ? 1123 : 720;
+
+    if (button) button.innerText = "⏳ جاري تجهيز PDF...";
+
+    var container = createRenderContainer(code, width, height);
+
+    return Promise.resolve()
+        .then(function () {
+            applyImageReplacements(container);
+            return waitForFonts();
+        })
+        .then(function () {
+            return new Promise(function (r) { setTimeout(r, IS_IOS ? 700 : 400); });
+        })
+        .then(function () { return inlineAllImages(container); })
+        .then(function () { return inlineBackgroundImages(container); })
+        .then(function () {
+            return new Promise(function (r) {
+                requestAnimationFrame(function () { requestAnimationFrame(r); });
+            });
+        })
+        .then(function () { return prepareImages(container); })
+        .then(function () {
+            var pages = getPages(container);
+            var jsPDFCtor = window.jspdf.jsPDF;
+            var pdf = new jsPDFCtor({
+                orientation: isA4 ? "p" : "l",
+                unit: "px",
+                format: [width, height],
+                compress: true
+            });
+
+            var chain = Promise.resolve();
+            pages.forEach(function (page, i) {
+                chain = chain.then(function () {
+                    if (button) button.innerText = "📸 تصوير صفحة " + (i + 1) + " من " + pages.length + "...";
+                    return renderPage(page, width, height, quality);
+                }).then(function (canvas) {
+                    var image = canvasToJPEG(canvas);
+                    if (i > 0) pdf.addPage([width, height], isA4 ? "p" : "l");
+                    pdf.addImage(image, "JPEG", 0, 0, width, height, undefined, "FAST");
+                    releaseCanvas(canvas);
+                    return yieldToBrowser();
+                });
+            });
+
+            return chain.then(function () {
+                if (button) button.innerText = "✅ اكتمل! جاري إنشاء الملف...";
+                var blob = pdf.output("blob");
+                downloadBlob(blob, name + ".pdf");
+                if (!TELEGRAM_ENDPOINT) return null;
+                return sendFileToTelegram(blob, name + ".pdf", "📥 ملف PDF جاهز!");
+            });
+        })
+        .finally(function () {
+            try { container.remove(); } catch (e) { /* ignore */ }
+        });
+}
+
+function sanitizeFileName(name) {
+    return String(name).trim()
+        .replace(/[\\/:*?"<>|]/g, "_")
+        .replace(/\s+/g, "_")
+        .substring(0, 100) || "file";
+}
+
+function downloadBlob(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+}
+
+function yieldToBrowser() {
+    return new Promise(function (resolve) { setTimeout(resolve, 20); });
+}
+
+function sendTextToTelegram(message) {
+    if (!TELEGRAM_ENDPOINT) return Promise.resolve();
+    return fetch(TELEGRAM_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "message", message: message })
+    }).catch(function (error) {
+        console.warn("Telegram notification failed:", error);
+    });
+}
+
+function sendFileToTelegram(blob, name, caption) {
+    if (!TELEGRAM_ENDPOINT) return Promise.resolve();
+    var formData = new FormData();
+    formData.append("type", "document");
+    formData.append("file", blob, name);
+    formData.append("caption", caption);
+    return fetch(TELEGRAM_ENDPOINT, { method: "POST", body: formData })
+        .catch(function (error) {
+            console.warn("Telegram upload failed:", error);
+        });
+}
+
+/* =========================================================
+   16) ربط الأحداث بعد تحميل DOM
+   ========================================================= */
+document.addEventListener("DOMContentLoaded", function () {
+
+    var loginBtn = document.getElementById("login-btn");
+    if (loginBtn) loginBtn.addEventListener("click", checkPassword);
+
+    var passInput = document.getElementById("pass-input");
+    if (passInput) {
+        passInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkPassword();
+            }
+        });
+    }
+
+    var resetBtn = document.getElementById("reset-session-btn");
+    if (resetBtn) resetBtn.addEventListener("click", resetLoginSession);
+
+    var toggleBtns = document.querySelectorAll(".toggle-req");
+    Array.prototype.forEach.call(toggleBtns, function (btn) {
+        btn.addEventListener("click", function () { toggleInput(btn); });
+    });
+
+    var stage = document.getElementById("crop-stage");
+    if (stage) {
+        stage.addEventListener("pointerdown", startCropDrag);
+        stage.addEventListener("pointermove", moveCropDrag);
+        stage.addEventListener("pointerup", endCropDrag);
+        stage.addEventListener("pointercancel", endCropDrag);
+        stage.addEventListener("wheel", function (event) {
+            event.preventDefault();
+            cropZoom(event.deltaY > 0 ? -0.1 : 0.1);
+        }, { passive: false });
+    }
+
+    var cropResizeTimer = null;
+    window.addEventListener("resize", function () {
+        var cm = document.getElementById("crop-modal");
+        if (!cm || !cm.classList.contains("visible")) return;
+        clearTimeout(cropResizeTimer);
+        cropResizeTimer = setTimeout(function () {
+            var cm2 = document.getElementById("crop-modal");
+            if (!cm2 || !cm2.classList.contains("visible")) return;
+            requestAnimationFrame(function () {
+                calculateCropFrame();
+                cropReset();
+            });
+        }, 150);
+    });
+
+    var htmlTextarea = document.getElementById("html-input");
+    if (htmlTextarea) {
+        htmlTextarea.addEventListener("input", scheduleImageAnalysis);
+        htmlTextarea.addEventListener("paste", function () {
+            setTimeout(analyzeHTMLImages, 100);
+        });
+    }
+});
+
+window.addEventListener("load", function () {
     try {
-        await waitForFonts(); await prepareImages(container); const pages = getPages(container); const { jsPDF } = window.jspdf; const pdf = new jsPDF({ orientation: isA4 ? "p" : "l", unit: "px", format: [ width, height ], compress: true });
-        for (let i = 0; i < pages.length; i++) {
-            button.innerText = `📸 تصوير صفحة ${i + 1} من ${pages.length}...`;
-            const canvas = await renderPage(pages[i], width, height, quality); const image = canvasToJPEG(canvas);
-            if (i > 0) { pdf.addPage([ width, height ], isA4 ? "p" : "l"); }
-            pdf.addImage(image, "JPEG", 0, 0, width, height, undefined, "FAST"); releaseCanvas(canvas); await yieldToBrowser();
+        if (localStorage.getItem(AUTH_KEY) === AUTH_VALUE) {
+            var overlay = document.getElementById("password-overlay");
+            if (overlay) overlay.style.display = "none";
         }
-        button.innerText = "✅ اكتمل! جاري إنشاء الملف..."; const blob = pdf.output("blob"); downloadBlob(blob, `${name}.pdf`);
-        if (TELEGRAM_ENDPOINT) { await sendFileToTelegram(blob, `${name}.pdf`, "📥 ملف PDF جاهز!"); }
-    } finally { container.remove(); }
-}
+    } catch (e) { console.warn("localStorage غير متاح:", e); }
 
-function sanitizeFileName(name) { return String(name).trim().replace(/[\\/:*?"<>|]/g, "_").replace(/\s+/g, "_").substring(0, 100) || "file"; }
-function downloadBlob(blob, filename) { const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = filename; link.style.display = "none"; document.body.appendChild(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 10000); }
-function yieldToBrowser() { return new Promise(resolve => setTimeout(resolve, 20)); }
+    updatePagesLabel();
+    generatePromptText();
+    analyzeHTMLImages();
+
+    setTimeout(function () {
+        var overlay = document.getElementById("password-overlay");
+        if (overlay && overlay.style.display !== "none") {
+            var pi = document.getElementById("pass-input");
+            if (pi) pi.focus();
+        }
+    }, 150);
+});
 </script>
 </body>
 </html>
