@@ -11,9 +11,7 @@
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif;
@@ -28,17 +26,8 @@
             overflow-x: hidden;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 15px;
-            width: 100%;
-        }
-
-        .header h2 {
-            margin: 0;
-            color: #f8fafc;
-            font-size: 24px;
-        }
+        .header { text-align: center; margin-bottom: 15px; width: 100%; }
+        .header h2 { margin: 0; color: #f8fafc; font-size: 24px; }
 
         .top-nav {
             display: flex;
@@ -63,23 +52,10 @@
             text-align: center;
         }
 
-        .nav-btn.active {
-            background: #2563eb;
-            color: #fff;
-            border-color: #2563eb;
-        }
+        .nav-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        .nav-btn:hover:not(.active) { background: #334155; color: #f8fafc; }
 
-        .nav-btn:hover:not(.active) {
-            background: #334155;
-            color: #f8fafc;
-        }
-
-        .main-container {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-        }
+        .main-container { width: 100%; max-width: 600px; display: flex; flex-direction: column; }
 
         .box-panel {
             background: #1e293b;
@@ -97,16 +73,9 @@
             width: 100%;
         }
 
-        label {
-            margin-bottom: 8px;
-            font-weight: bold;
-            font-size: 13px;
-            color: #94a3b8;
-        }
+        label { margin-bottom: 8px; font-weight: bold; font-size: 13px; color: #94a3b8; }
 
-        input,
-        select,
-        textarea {
+        input, select, textarea {
             width: 100%;
             padding: 12px;
             background: #0f172a;
@@ -118,16 +87,13 @@
             transition: .2s;
         }
 
-        input:focus,
-        select:focus,
-        textarea:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59,130,246,.2);
         }
 
-        input:disabled,
-        select:disabled {
+        input:disabled, select:disabled {
             opacity: .5;
             cursor: not-allowed;
             text-decoration: line-through;
@@ -141,9 +107,7 @@
             width: 100%;
         }
 
-        .req-row input[type="text"] {
-            flex: 1;
-        }
+        .req-row input[type="text"] { flex: 1; }
 
         .toggle-req {
             background: #334155;
@@ -159,10 +123,7 @@
             flex-shrink: 0;
         }
 
-        .toggle-req.disabled {
-            background: #7f1d1d;
-            color: #fca5a5;
-        }
+        .toggle-req.disabled { background: #7f1d1d; color: #fca5a5; }
 
         .textarea-header {
             display: flex;
@@ -196,19 +157,9 @@
             white-space: nowrap;
         }
 
-        .action-btns button.clear-btn {
-            background: #7f1d1d;
-            color: #fca5a5;
-        }
-
-        .action-btns button:hover {
-            background: #475569;
-        }
-
-        .action-btns button.clear-btn:hover {
-            background: #991b1b;
-            color: #fef2f2;
-        }
+        .action-btns button.clear-btn { background: #7f1d1d; color: #fca5a5; }
+        .action-btns button:hover { background: #475569; }
+        .action-btns button.clear-btn:hover { background: #991b1b; color: #fef2f2; }
 
         textarea {
             min-height: 200px;
@@ -220,16 +171,8 @@
             line-height: 1.6;
         }
 
-        .row {
-            display: flex;
-            gap: 12px;
-            width: 100%;
-        }
-
-        .row .form-group {
-            flex: 1;
-            min-width: 0;
-        }
+        .row { display: flex; gap: 12px; width: 100%; }
+        .row .form-group { flex: 1; min-width: 0; }
 
         .export-btn {
             background: #2563eb;
@@ -245,98 +188,11 @@
             width: 100%;
         }
 
-        .export-btn:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px);
-        }
+        .export-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
+        .export-btn:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; transform: none; }
 
-        .export-btn:disabled {
-            background: #475569;
-            color: #94a3b8;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active-tab {
-            display: flex;
-        }
-
-        .ai-prompts {
-            background: #022c22;
-            border: 1px dashed #059669;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-
-        .ai-prompts p {
-            margin: 0 0 10px;
-            font-size: 13px;
-            color: #34d399;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .prompt-btns {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .prompt-btn {
-            flex: 1 1 calc(33.333% - 8px);
-            background: #1e293b;
-            border: 1px solid #059669;
-            color: #34d399;
-            padding: 10px 5px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: .2s;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .prompt-btn:hover {
-            background: #059669;
-            color: #fff;
-        }
-
-        .sample-row {
-            margin-top: 10px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            width: 100%;
-            justify-content: space-between;
-        }
-
-        .sample-btn {
-            flex: 1 1 calc(50% - 8px);
-            background: #1e293b;
-            border: 1px solid #475569;
-            color: #cbd5e1;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: .2s;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .sample-btn:hover {
-            background: #2563eb;
-            border-color: #2563eb;
-            color: #fff;
-        }
+        .tab-content { display: none; }
+        .tab-content.active-tab { display: flex; }
 
         .history-box {
             background: #0f172a;
@@ -361,15 +217,9 @@
             text-overflow: ellipsis;
         }
 
-        .history-item:hover {
-            background: #334155;
-            color: #f8fafc;
-        }
+        .history-item:hover { background: #334155; color: #f8fafc; }
 
-        /* =====================================================
-           مدير الصور
-           ===================================================== */
-
+        /* مدير الصور */
         .html-image-manager {
             display: none;
             margin-top: 15px;
@@ -379,9 +229,7 @@
             border-radius: 10px;
         }
 
-        .html-image-manager.visible {
-            display: block;
-        }
+        .html-image-manager.visible { display: block; }
 
         .image-manager-header {
             display: flex;
@@ -391,34 +239,11 @@
             margin-bottom: 12px;
         }
 
-        .image-manager-title {
-            color: #f8fafc;
-            font-size: 14px;
-            font-weight: bold;
-            margin: 0;
-        }
+        .image-manager-title { color: #f8fafc; font-size: 14px; font-weight: bold; margin: 0; }
+        .image-manager-count { background: #2563eb; color: #fff; padding: 4px 9px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .image-manager-description { color: #94a3b8; font-size: 11px; line-height: 1.7; margin: 0 0 12px; }
 
-        .image-manager-count {
-            background: #2563eb;
-            color: #fff;
-            padding: 4px 9px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .image-manager-description {
-            color: #94a3b8;
-            font-size: 11px;
-            line-height: 1.7;
-            margin: 0 0 12px;
-        }
-
-        .image-manager-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .image-manager-list { display: flex; flex-direction: column; gap: 10px; }
 
         .html-image-card {
             background: #1e293b;
@@ -428,16 +253,9 @@
             overflow: hidden;
         }
 
-        .html-image-card.replaced {
-            border-color: #059669;
-            background: #0f2923;
-        }
+        .html-image-card.replaced { border-color: #059669; background: #0f2923; }
 
-        .html-image-card-top {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
+        .html-image-card-top { display: flex; align-items: flex-start; gap: 10px; }
 
         .html-image-thumb {
             width: 82px;
@@ -452,17 +270,9 @@
             justify-content: center;
         }
 
-        .html-image-thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
+        .html-image-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
-        .html-image-info {
-            min-width: 0;
-            flex: 1;
-        }
+        .html-image-info { min-width: 0; flex: 1; }
 
         .html-image-name {
             color: #f8fafc;
@@ -474,11 +284,7 @@
             white-space: nowrap;
         }
 
-        .html-image-meta {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px 8px;
-        }
+        .html-image-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; }
 
         .html-image-meta-item {
             color: #94a3b8;
@@ -489,9 +295,7 @@
             white-space: nowrap;
         }
 
-        .html-image-meta-item strong {
-            color: #cbd5e1;
-        }
+        .html-image-meta-item strong { color: #cbd5e1; }
 
         .html-image-url {
             margin-top: 8px;
@@ -507,11 +311,7 @@
             text-overflow: ellipsis;
         }
 
-        .html-image-actions {
-            display: flex;
-            gap: 7px;
-            margin-top: 9px;
-        }
+        .html-image-actions { display: flex; gap: 7px; margin-top: 9px; }
 
         .html-image-action {
             flex: 1;
@@ -524,32 +324,12 @@
             transition: .2s;
         }
 
-        .html-image-action.keep {
-            background: #334155;
-            color: #e2e8f0;
-        }
-
-        .html-image-action.keep:hover {
-            background: #475569;
-        }
-
-        .html-image-action.replace {
-            background: #2563eb;
-            color: #fff;
-        }
-
-        .html-image-action.replace:hover {
-            background: #1d4ed8;
-        }
-
-        .html-image-action.crop-edit {
-            background: #7c3aed;
-            color: #fff;
-        }
-
-        .html-image-action.crop-edit:hover {
-            background: #6d28d9;
-        }
+        .html-image-action.keep { background: #334155; color: #e2e8f0; }
+        .html-image-action.keep:hover { background: #475569; }
+        .html-image-action.replace { background: #2563eb; color: #fff; }
+        .html-image-action.replace:hover { background: #1d4ed8; }
+        .html-image-action.crop-edit { background: #7c3aed; color: #fff; }
+        .html-image-action.crop-edit:hover { background: #6d28d9; }
 
         .html-image-status {
             margin-top: 7px;
@@ -559,9 +339,7 @@
             color: #64748b;
         }
 
-        .html-image-card.replaced .html-image-status {
-            color: #34d399;
-        }
+        .html-image-card.replaced .html-image-status { color: #34d399; }
 
         .image-manager-refresh {
             width: 100%;
@@ -576,22 +354,11 @@
             font-weight: bold;
         }
 
-        .image-manager-refresh:hover {
-            background: #1e293b;
-            color: #f8fafc;
-        }
+        .image-manager-refresh:hover { background: #1e293b; color: #f8fafc; }
 
-        .image-empty {
-            text-align: center;
-            color: #64748b;
-            font-size: 12px;
-            padding: 12px;
-        }
+        .image-empty { text-align: center; color: #64748b; font-size: 12px; padding: 12px; }
 
-        /* =====================================================
-           محرر قص الصور
-           ===================================================== */
-
+        /* محرر قص الصور */
         .crop-modal-overlay {
             position: fixed;
             inset: 0;
@@ -603,9 +370,7 @@
             padding: 12px;
         }
 
-        .crop-modal-overlay.visible {
-            display: flex;
-        }
+        .crop-modal-overlay.visible { display: flex; }
 
         .crop-modal {
             width: min(760px, 100%);
@@ -626,11 +391,7 @@
             margin-bottom: 8px;
         }
 
-        .crop-modal-header h3 {
-            margin: 0;
-            color: #f8fafc;
-            font-size: 18px;
-        }
+        .crop-modal-header h3 { margin: 0; color: #f8fafc; font-size: 18px; }
 
         .crop-close {
             width: 38px;
@@ -643,9 +404,7 @@
             cursor: pointer;
         }
 
-        .crop-close:hover {
-            background: #475569;
-        }
+        .crop-close:hover { background: #475569; }
 
         .crop-target-info {
             color: #94a3b8;
@@ -660,11 +419,7 @@
             width: 100%;
             height: min(58vh, 480px);
             min-height: 280px;
-            background:
-                repeating-conic-gradient(
-                    #111827 0% 25%,
-                    #0b1220 0% 50%
-                ) 50% / 20px 20px;
+            background: repeating-conic-gradient(#111827 0% 25%, #0b1220 0% 50%) 50% / 20px 20px;
             border: 1px solid #475569;
             border-radius: 10px;
             overflow: hidden;
@@ -689,9 +444,7 @@
             position: absolute;
             z-index: 3;
             border: 2px solid #fff;
-            box-shadow:
-                0 0 0 9999px rgba(0,0,0,.58),
-                0 0 0 1px rgba(255,255,255,.25);
+            box-shadow: 0 0 0 9999px rgba(0,0,0,.58), 0 0 0 1px rgba(255,255,255,.25);
             pointer-events: none;
         }
 
@@ -699,35 +452,11 @@
             position: absolute;
             inset: 0;
             background:
-                linear-gradient(
-                    to right,
-                    transparent 33.333%,
-                    rgba(255,255,255,.35) 33.333%,
-                    rgba(255,255,255,.35) calc(33.333% + 1px),
-                    transparent calc(33.333% + 1px),
-                    transparent 66.666%,
-                    rgba(255,255,255,.35) 66.666%,
-                    rgba(255,255,255,.35) calc(66.666% + 1px),
-                    transparent calc(66.666% + 1px)
-                ),
-                linear-gradient(
-                    to bottom,
-                    transparent 33.333%,
-                    rgba(255,255,255,.35) 33.333%,
-                    rgba(255,255,255,.35) calc(33.333% + 1px),
-                    transparent calc(33.333% + 1px),
-                    transparent 66.666%,
-                    rgba(255,255,255,.35) 66.666%,
-                    rgba(255,255,255,.35) calc(66.666% + 1px),
-                    transparent calc(66.666% + 1px)
-                );
+                linear-gradient(to right, transparent 33.333%, rgba(255,255,255,.35) 33.333%, rgba(255,255,255,.35) calc(33.333% + 1px), transparent calc(33.333% + 1px), transparent 66.666%, rgba(255,255,255,.35) 66.666%, rgba(255,255,255,.35) calc(66.666% + 1px), transparent calc(66.666% + 1px)),
+                linear-gradient(to bottom, transparent 33.333%, rgba(255,255,255,.35) 33.333%, rgba(255,255,255,.35) calc(33.333% + 1px), transparent calc(33.333% + 1px), transparent 66.666%, rgba(255,255,255,.35) 66.666%, rgba(255,255,255,.35) calc(66.666% + 1px), transparent calc(66.666% + 1px));
         }
 
-        .crop-controls {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
+        .crop-controls { display: flex; gap: 8px; margin-top: 10px; }
 
         .crop-control {
             flex: 1;
@@ -741,9 +470,7 @@
             font-weight: bold;
         }
 
-        .crop-control:hover {
-            background: #475569;
-        }
+        .crop-control:hover { background: #475569; }
 
         .crop-preview-wrap {
             display: none;
@@ -754,17 +481,9 @@
             padding: 10px;
         }
 
-        .crop-preview-wrap.visible {
-            display: block;
-        }
+        .crop-preview-wrap.visible { display: block; }
 
-        .crop-preview-title {
-            color: #94a3b8;
-            font-size: 11px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            text-align: center;
-        }
+        .crop-preview-title { color: #94a3b8; font-size: 11px; font-weight: bold; margin-bottom: 8px; text-align: center; }
 
         .crop-preview {
             display: block;
@@ -778,11 +497,7 @@
             background: #020617;
         }
 
-        .crop-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
+        .crop-actions { display: flex; gap: 8px; margin-top: 12px; }
 
         .crop-action {
             flex: 1;
@@ -794,28 +509,10 @@
             font-weight: bold;
         }
 
-        .crop-action.cancel {
-            background: #334155;
-            color: #e2e8f0;
-        }
-
-        .crop-action.preview {
-            background: #0f766e;
-            color: #fff;
-        }
-
-        .crop-action.apply {
-            background: #2563eb;
-            color: #fff;
-        }
-
-        .crop-action:hover {
-            filter: brightness(1.1);
-        }
-
-        /* =====================================================
-           شاشة كلمة المرور
-           ===================================================== */
+        .crop-action.cancel { background: #334155; color: #e2e8f0; }
+        .crop-action.preview { background: #0f766e; color: #fff; }
+        .crop-action.apply { background: #2563eb; color: #fff; }
+        .crop-action:hover { filter: brightness(1.1); }
 
         .password-reset-btn {
             width: 100%;
@@ -831,126 +528,37 @@
             transition: .2s;
         }
 
-        .password-reset-btn:hover {
-            background: #334155;
-            color: #f8fafc;
-        }
+        .password-reset-btn:hover { background: #334155; color: #f8fafc; }
 
         @media (max-width: 600px) {
-
-            .row {
-                flex-direction: column;
-                gap: 0;
-            }
-
-            .prompt-btn {
-                flex: 1 1 calc(50% - 8px);
-            }
-
-            .action-btns {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .action-btns button {
-                padding: 10px;
-            }
-
-            .html-image-meta {
-                grid-template-columns: 1fr;
-            }
-
-            .html-image-thumb {
-                width: 72px;
-                flex-basis: 72px;
-                height: 65px;
-            }
-
-            .html-image-actions {
-                flex-wrap: wrap;
-            }
-
-            .html-image-action {
-                min-width: calc(50% - 4px);
-            }
-
-            .crop-modal {
-                padding: 10px;
-                border-radius: 12px;
-            }
-
-            .crop-stage {
-                height: 52vh;
-                min-height: 260px;
-            }
-
-            .crop-controls,
-            .crop-actions {
-                gap: 6px;
-            }
-
-            .crop-control,
-            .crop-action {
-                padding: 11px 5px;
-                font-size: 11px;
-            }
+            .row { flex-direction: column; gap: 0; }
+            .action-btns { width: 100%; justify-content: space-between; }
+            .action-btns button { padding: 10px; }
+            .html-image-meta { grid-template-columns: 1fr; }
+            .html-image-thumb { width: 72px; flex-basis: 72px; height: 65px; }
+            .html-image-actions { flex-wrap: wrap; }
+            .html-image-action { min-width: calc(50% - 4px); }
+            .crop-modal { padding: 10px; border-radius: 12px; }
+            .crop-stage { height: 52vh; min-height: 260px; }
+            .crop-controls, .crop-actions { gap: 6px; }
+            .crop-control, .crop-action { padding: 11px 5px; font-size: 11px; }
         }
     </style>
 </head>
 
 <body>
 
-<!-- =========================================================
-     شاشة كلمة المرور
-     ========================================================= -->
-
-<div id="password-overlay"
-     style="position:fixed;inset:0;background:#0f172a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
-
+<!-- شاشة كلمة المرور -->
+<div id="password-overlay" style="position:fixed;inset:0;background:#0f172a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
     <div style="background:#1e293b;padding:30px;border-radius:12px;box-shadow:0 10px 25px -5px rgba(0,0,0,.5);border:1px solid #334155;text-align:center;width:100%;max-width:350px;">
-
-        <h3 style="margin-top:0;color:#f8fafc;font-size:22px;">
-            🔒 حماية المنصة
-        </h3>
-
-        <p style="font-size:13px;color:#94a3b8;margin-bottom:25px;">
-            الرجاء إدخال كلمة المرور للوصول.
-        </p>
-
+        <h3 style="margin-top:0;color:#f8fafc;font-size:22px;">🔒 حماية المنصة</h3>
+        <p style="font-size:13px;color:#94a3b8;margin-bottom:25px;">الرجاء إدخال كلمة المرور للوصول.</p>
         <div class="form-group" style="margin-bottom:20px;">
-
-            <input
-                type="password"
-                id="pass-input"
-                placeholder="كلمة المرور..."
-                autocomplete="off"
-                autocapitalize="none"
-                spellcheck="false"
-                style="text-align:center;letter-spacing:3px;font-size:16px;"
-                onkeydown="if(event.key==='Enter'){event.preventDefault();checkPassword();}">
-
+            <input type="password" id="pass-input" placeholder="كلمة المرور..." autocomplete="off" autocapitalize="none" spellcheck="false" style="text-align:center;letter-spacing:3px;font-size:16px;" onkeydown="if(event.key==='Enter'){event.preventDefault();checkPassword();}">
         </div>
-
-        <button
-            onclick="checkPassword()"
-            class="export-btn"
-            style="margin-top:0;">
-            تسجيل الدخول
-        </button>
-
-        <p
-            id="pass-error"
-            style="color:#ef4444;font-size:13px;display:none;margin-top:15px;font-weight:bold;margin-bottom:0;">
-            ❌ كلمة المرور غير صحيحة!
-        </p>
-
-        <button
-            type="button"
-            class="password-reset-btn"
-            onclick="resetLoginSession()">
-            🔄 مسح جلسة الدخول
-        </button>
-
+        <button onclick="checkPassword()" class="export-btn" style="margin-top:0;">تسجيل الدخول</button>
+        <p id="pass-error" style="color:#ef4444;font-size:13px;display:none;margin-top:15px;font-weight:bold;margin-bottom:0;">❌ كلمة المرور غير صحيحة!</p>
+        <button type="button" class="password-reset-btn" onclick="resetLoginSession()">🔄 مسح جلسة الدخول</button>
     </div>
 </div>
 
@@ -959,740 +567,221 @@
 </div>
 
 <div class="top-nav">
-
-    <button
-        class="nav-btn active"
-        id="btn-converter"
-        onclick="switchTab('converter')">
-        ⚙️ منصة التحويل
-    </button>
-
-    <button
-        class="nav-btn"
-        id="btn-prompts"
-        onclick="switchTab('prompts')">
-        🧠 المولد الذكي
-    </button>
-
+    <button class="nav-btn active" id="btn-converter" onclick="switchTab('converter')">⚙️ منصة التحويل</button>
+    <button class="nav-btn" id="btn-prompts" onclick="switchTab('prompts')">🧠 المولد الذكي</button>
 </div>
 
-<div
-    id="converter-tab"
-    class="main-container tab-content active-tab">
-
+<div id="converter-tab" class="main-container tab-content active-tab">
     <div class="box-panel">
 
-        <div class="ai-prompts">
-
-            <p>🤖 أوامر جاهزة للذكاء الاصطناعي:</p>
-
-            <div class="prompt-btns">
-
-                <button
-                    class="prompt-btn"
-                    onclick="copyQuickPrompt('a4',this)">
-                    📄 بحث أكاديمي
-                </button>
-
-                <button
-                    class="prompt-btn"
-                    onclick="copyQuickPrompt('169',this)">
-                    🖥️ عرض شاشات
-                </button>
-
-                <button
-                    class="prompt-btn"
-                    onclick="copyQuickPrompt('mobile',this)">
-                    📱 عرض جوال
-                </button>
-
-                <button
-                    class="prompt-btn"
-                    onclick="copyQuickPrompt('project',this)">
-                    🎨 مشروع 16:9
-                </button>
-
-                <button
-                    class="prompt-btn"
-                    onclick="copyQuickPrompt('mindmap',this)">
-                    🧠 خريطة مفاهيم
-                </button>
-
-                <button
-                    class="prompt-btn"
-                    onclick="copyQuickPrompt('project-a4',this)">
-                    📋 مشروع A4
-                </button>
-
-            </div>
-        </div>
-
         <div class="form-group">
-
             <label>اسم الملف المستخرج:</label>
-
-            <input
-                type="text"
-                id="file-name"
-                value="مستند_جديد"
-                placeholder="اكتب اسم الملف هنا...">
-
+            <input type="text" id="file-name" value="مستند_جديد" placeholder="اكتب اسم الملف هنا...">
         </div>
 
         <div class="row">
-
             <div class="form-group">
-
-                <label>نوع الاستخراج:</label>
-
+                <label>نوع الملف المطلوب:</label>
                 <select id="format-select">
-
-                    <optgroup label="مستندات">
-
-                        <option value="pdf-a4">
-                            ملف PDF (مقاس A4)
-                        </option>
-
-                        <option value="pdf-169">
-                            ملف PDF (مقاس 16:9)
-                        </option>
-
-                        <option value="pptx">
-                            بوربوينت PPTX (مقاس 16:9)
-                        </option>
-
-                    </optgroup>
-
+                    <option value="pdf-169">🖥️ عرض</option>
+                    <option value="pdf-a4">📄 بحث / تقرير (مشروع A4)</option>
                 </select>
-
             </div>
 
             <div class="form-group">
-
                 <label>الجودة:</label>
-
                 <select id="quality-select">
-
-                    <option value="1">
-                        عادية (سريعة جداً)
-                    </option>
-
-                    <option value="2" selected>
-                        عالية (متوازنة)
-                    </option>
-
-                    <option value="3">
-                        ممتازة (للصور الدقيقة)
-                    </option>
-
+                    <option value="1">عادية (سريعة جداً)</option>
+                    <option value="2" selected>عالية (متوازنة)</option>
+                    <option value="3">ممتازة (للصور الدقيقة)</option>
                 </select>
-
             </div>
-
         </div>
 
         <div class="form-group">
-
             <div class="textarea-header">
-
-                <label style="margin:0;">
-                    كود الـ HTML:
-                </label>
-
+                <label style="margin:0;">كود الـ HTML:</label>
                 <div class="action-btns">
-
-                    <button
-                        class="clear-btn"
-                        onclick="clearCode()">
-                        🗑️ مسح
-                    </button>
-
-                    <button onclick="previewCode()">
-                        👁️ معاينة
-                    </button>
-
-                    <button onclick="saveToHistory()">
-                        💾 حفظ
-                    </button>
-
+                    <button class="clear-btn" onclick="clearCode()">🗑️ مسح</button>
+                    <button onclick="previewCode()">👁️ معاينة</button>
                 </div>
-
             </div>
 
-            <textarea
-                id="html-input"
-                placeholder="الصق الكود هنا..."></textarea>
+            <textarea id="html-input" placeholder="الصق الكود هنا..."></textarea>
 
-            <!-- =================================================
-                 مدير الصور
-                 ================================================= -->
-
-            <div
-                id="image-manager"
-                class="html-image-manager">
-
+            <!-- مدير الصور -->
+            <div id="image-manager" class="html-image-manager">
                 <div class="image-manager-header">
-
-                    <h3 class="image-manager-title">
-                        🖼️ الصور الموجودة في الكود
-                    </h3>
-
-                    <span
-                        id="image-manager-count"
-                        class="image-manager-count">
-                        0 صورة
-                    </span>
-
+                    <h3 class="image-manager-title">🖼️ الصور الموجودة في الكود</h3>
+                    <span id="image-manager-count" class="image-manager-count">0 صورة</span>
                 </div>
-
                 <p class="image-manager-description">
                     يتم التعرف على صور img وصور CSS الخلفية تلقائيًا،
                     سواء كانت داخل style أو داخل قواعد CSS.
                     يمكنك الاحتفاظ بالصورة أو اختيار صورة جديدة ثم قصها يدويًا
                     حسب إطار الصورة الحالية. لن يتم تمديد الصورة أو ضغطها أو تغيير نسبتها.
                 </p>
-
-                <div
-                    id="image-manager-list"
-                    class="image-manager-list">
-                </div>
-
-                <button
-                    class="image-manager-refresh"
-                    onclick="analyzeHTMLImages()">
-                    🔄 تحديث قائمة الصور
-                </button>
-
+                <div id="image-manager-list" class="image-manager-list"></div>
+                <button class="image-manager-refresh" onclick="analyzeHTMLImages()">🔄 تحديث قائمة الصور</button>
             </div>
 
-            <div class="sample-row">
-
-                <button
-                    class="sample-btn"
-                    onclick="loadSample('a4')">
-                    📄 تجربة بحث
-                </button>
-
-                <button
-                    class="sample-btn"
-                    onclick="loadSample('169')">
-                    🖥️ تجربة عرض
-                </button>
-
-                <button
-                    class="sample-btn"
-                    onclick="loadSample('mindmap')">
-                    🧠 خريطة مفاهيم
-                </button>
-
-                <button
-                    class="sample-btn"
-                    onclick="loadSample('project-a4')">
-                    📋 مشروع A4
-                </button>
-
+            <div id="history-container" style="margin-top:15px;">
+                <label style="font-size:12px;color:#94a3b8;">📂 آخر الأكواد المحفوظة:</label>
+                <div id="history-list" class="history-box"></div>
             </div>
-
-            <div
-                id="history-container"
-                style="margin-top:15px;">
-
-                <label
-                    style="font-size:12px;color:#94a3b8;">
-                    📂 آخر الأكواد المحفوظة:
-                </label>
-
-                <div
-                    id="history-list"
-                    class="history-box">
-                </div>
-
-            </div>
-
         </div>
 
-        <button
-            id="capture-btn"
-            class="export-btn"
-            onclick="exportFile()">
-            بدء الاستخراج 📥
-        </button>
-
+        <button id="capture-btn" class="export-btn" onclick="exportFile()">بدء الاستخراج 📥</button>
     </div>
 </div>
 
-<div
-    id="prompts-tab"
-    class="main-container tab-content">
-
+<div id="prompts-tab" class="main-container tab-content">
     <div class="box-panel">
 
         <div class="form-group">
-
-            <label>
-                نوع الملف المطلوب تصميم كوده:
-            </label>
-
-            <select
-                id="prompt-type"
-                onchange="generatePromptText()">
-
-                <option value="a4">
-                    📄 بحث / تقرير (مقاس A4)
-                </option>
-
-                <option value="169">
-                    🖥️ عرض تقديم (مقاس 16:9)
-                </option>
-
-                <option value="916">
-                    📱 عرض جوال / تيك توك (مقاس 9:16)
-                </option>
-
-                <option value="project">
-                    🎨 مشروع (صفحة واحدة 16:9)
-                </option>
-
-                <option value="mindmap">
-                    🧠 خريطة مفاهيم (A4)
-                </option>
-
-                <option value="project-a4">
-                    📋 مشروع A4 (صفحة واحدة)
-                </option>
-
+            <label>نوع الملف المطلوب تصميم كوده:</label>
+            <select id="prompt-type" onchange="generatePromptText()">
+                <option value="169">🖥️ عرض</option>
+                <option value="project-a4">📄 بحث / تقرير (مشروع A4)</option>
             </select>
-
         </div>
 
         <div class="row">
-
             <div class="form-group">
-
                 <label>نظام الألوان:</label>
-
-                <select
-                    id="color-scheme"
-                    onchange="generatePromptText()">
-
-                    <option value="">
-                        دَع الذكاء يختار
-                    </option>
-
-                    <option value="blue">
-                        أزرق محترف
-                    </option>
-
-                    <option value="green">
-                        أخضر طبيعي
-                    </option>
-
-                    <option value="purple">
-                        بنفسجي إبداعي
-                    </option>
-
-                    <option value="warm">
-                        ألوان دافئة
-                    </option>
-
+                <select id="color-scheme" onchange="generatePromptText()">
+                    <option value="">دَع الذكاء يختار</option>
+                    <option value="blue">أزرق محترف</option>
+                    <option value="green">أخضر طبيعي</option>
+                    <option value="purple">بنفسجي إبداعي</option>
+                    <option value="warm">ألوان دافئة</option>
                 </select>
-
             </div>
 
             <div class="form-group">
-
                 <label>النمط:</label>
-
-                <select
-                    id="design-style"
-                    onchange="generatePromptText()">
-
-                    <option value="">
-                        كلاسيكي حديث
-                    </option>
-
-                    <option value="glassmorphism">
-                        زجاجي شفّاف
-                    </option>
-
-                    <option value="minimalist">
-                        بسيط وأنيق
-                    </option>
-
-                    <option value="bold">
-                        جريء وملون
-                    </option>
-
+                <select id="design-style" onchange="generatePromptText()">
+                    <option value="">كلاسيكي حديث</option>
+                    <option value="glassmorphism">زجاجي شفّاف</option>
+                    <option value="minimalist">بسيط وأنيق</option>
+                    <option value="bold">جريء وملون</option>
                 </select>
-
             </div>
 
             <div class="form-group">
-
                 <label>حجم الخط:</label>
-
-                <select
-                    id="base-font-size"
-                    onchange="generatePromptText()">
-
-                    <option value="">
-                        افتراضي
-                    </option>
-
-                    <option value="large">
-                        كبير (للعروض)
-                    </option>
-
-                    <option value="small">
-                        صغير (للتفاصيل)
-                    </option>
-
+                <select id="base-font-size" onchange="generatePromptText()">
+                    <option value="">افتراضي</option>
+                    <option value="large">كبير (للعروض)</option>
+                    <option value="small">صغير (للتفاصيل)</option>
                 </select>
-
             </div>
-
         </div>
-
-        <!-- =====================================================
-             إعدادات الصور للمولد
-             ===================================================== -->
 
         <div class="row">
-
             <div class="form-group">
-
-                <label>
-                    الصور:
-                </label>
-
-                <select
-                    id="prompt-images"
-                    onchange="togglePromptImageOptions(); generatePromptText();">
-
-                    <option value="none">
-                        بدون صور
-                    </option>
-
-                    <option value="yes">
-                        إضافة صور
-                    </option>
-
+                <label>الصور:</label>
+                <select id="prompt-images" onchange="togglePromptImageOptions(); generatePromptText();">
+                    <option value="none">بدون صور</option>
+                    <option value="yes">إضافة صور</option>
                 </select>
-
             </div>
 
-            <div
-                class="form-group"
-                id="prompt-image-count-group"
-                style="display:none;">
-
-                <label>
-                    عدد الصور:
-                </label>
-
-                <select
-                    id="prompt-image-count"
-                    onchange="generatePromptText()">
-
-                    <option value="1">
-                        1 صورة
-                    </option>
-
-                    <option value="2">
-                        2 صور
-                    </option>
-
-                    <option value="3">
-                        3 صور
-                    </option>
-
-                    <option value="4">
-                        4 صور
-                    </option>
-
-                    <option value="5" selected>
-                        5 صور
-                    </option>
-
-                    <option value="6">
-                        6 صور
-                    </option>
-
-                    <option value="7">
-                        7 صور
-                    </option>
-
-                    <option value="8">
-                        8 صور
-                    </option>
-
-                    <option value="9">
-                        9 صور
-                    </option>
-
-                    <option value="10">
-                        10 صور
-                    </option>
-
+            <div class="form-group" id="prompt-image-count-group" style="display:none;">
+                <label>عدد الصور:</label>
+                <select id="prompt-image-count" onchange="generatePromptText()">
+                    <option value="1">1 صورة</option>
+                    <option value="2">2 صور</option>
+                    <option value="3">3 صور</option>
+                    <option value="4">4 صور</option>
+                    <option value="5" selected>5 صور</option>
+                    <option value="6">6 صور</option>
+                    <option value="7">7 صور</option>
+                    <option value="8">8 صور</option>
+                    <option value="9">9 صور</option>
+                    <option value="10">10 صور</option>
                 </select>
-
             </div>
-
         </div>
 
-        <label style="margin-top:10px;">
-            المتطلبات (اضغط 👁️ لشطب المتطلب):
-        </label>
+        <label style="margin-top:10px;">المتطلبات (اضغط 👁️ لشطب المتطلب):</label>
 
         <div class="req-row">
-
-            <button
-                class="toggle-req"
-                onclick="toggleInput(this,'req-title')">
-                👁️
-            </button>
-
-            <input
-                type="text"
-                id="req-title"
-                placeholder="عنوان البحث أو العرض"
-                oninput="generatePromptText()">
-
+            <button class="toggle-req" onclick="toggleInput(this,'req-title')">👁️</button>
+            <input type="text" id="req-title" placeholder="عنوان البحث أو العرض" oninput="generatePromptText()">
         </div>
 
         <div class="req-row">
-
-            <button
-                class="toggle-req"
-                onclick="toggleInput(this,'req-subject')">
-                👁️
-            </button>
-
-            <input
-                type="text"
-                id="req-subject"
-                placeholder="المادة"
-                oninput="generatePromptText()">
-
+            <button class="toggle-req" onclick="toggleInput(this,'req-subject')">👁️</button>
+            <input type="text" id="req-subject" placeholder="المادة" oninput="generatePromptText()">
         </div>
 
         <div class="req-row">
-
-            <button
-                class="toggle-req"
-                onclick="toggleInput(this,'req-name')">
-                👁️
-            </button>
-
-            <input
-                type="text"
-                id="req-name"
-                placeholder="اسم الطالب / المقدِّم"
-                oninput="generatePromptText()">
-
+            <button class="toggle-req" onclick="toggleInput(this,'req-name')">👁️</button>
+            <input type="text" id="req-name" placeholder="اسم الطالب / المقدِّم" oninput="generatePromptText()">
         </div>
 
         <div class="req-row">
-
-            <button
-                class="toggle-req"
-                onclick="toggleInput(this,'req-teacher')">
-                👁️
-            </button>
-
-            <input
-                type="text"
-                id="req-teacher"
-                placeholder="اسم المعلم"
-                oninput="generatePromptText()">
-
+            <button class="toggle-req" onclick="toggleInput(this,'req-teacher')">👁️</button>
+            <input type="text" id="req-teacher" placeholder="اسم المعلم" oninput="generatePromptText()">
         </div>
 
         <div class="req-row">
-
-            <button
-                class="toggle-req"
-                onclick="toggleInput(this,'req-grade')">
-                👁️
-            </button>
-
-            <input
-                type="text"
-                id="req-grade"
-                placeholder="الصف"
-                oninput="generatePromptText()">
-
+            <button class="toggle-req" onclick="toggleInput(this,'req-grade')">👁️</button>
+            <input type="text" id="req-grade" placeholder="الصف" oninput="generatePromptText()">
         </div>
 
         <div class="req-row">
-
-            <button
-                class="toggle-req"
-                onclick="toggleInput(this,'req-year')">
-                👁️
-            </button>
-
-            <input
-                type="text"
-                id="req-year"
-                placeholder="العام الدراسي"
-                oninput="generatePromptText()">
-
+            <button class="toggle-req" onclick="toggleInput(this,'req-year')">👁️</button>
+            <input type="text" id="req-year" placeholder="العام الدراسي" oninput="generatePromptText()">
         </div>
 
         <div class="req-row">
-
-            <button
-                class="toggle-req"
-                onclick="toggleInput(this,'req-pages')">
-                👁️
-            </button>
-
-            <input
-                type="text"
-                id="req-pages"
-                placeholder="عدد الصفحات / الشرائح"
-                oninput="generatePromptText()">
-
+            <button class="toggle-req" onclick="toggleInput(this,'req-pages')">👁️</button>
+            <input type="text" id="req-pages" placeholder="عدد الصفحات / الشرائح" oninput="generatePromptText()">
         </div>
 
-        <label style="margin-top:15px;">
-            ✨ الأمر النهائي للذكاء الاصطناعي:
-        </label>
+        <label style="margin-top:15px;">✨ الأمر النهائي للذكاء الاصطناعي:</label>
 
-        <textarea
-            id="final-prompt-output"
-            readonly
-            style="min-height:180px;margin-bottom:10px;">
-        </textarea>
+        <textarea id="final-prompt-output" readonly style="min-height:180px;margin-bottom:10px;"></textarea>
 
-        <button
-            class="export-btn"
-            style="background:#059669;"
-            onclick="copyGeneratedPrompt()">
-            نسخ الأمر 📋
-        </button>
-
+        <button class="export-btn" style="background:#059669;" onclick="copyGeneratedPrompt()">نسخ الأمر 📋</button>
     </div>
 </div>
 
-<!-- =========================================================
-     نافذة قص الصور
-     ========================================================= -->
-
-<div
-    id="crop-modal"
-    class="crop-modal-overlay"
-    aria-hidden="true">
-
+<!-- نافذة قص الصور -->
+<div id="crop-modal" class="crop-modal-overlay" aria-hidden="true">
     <div class="crop-modal">
-
         <div class="crop-modal-header">
-
-            <h3>
-                قص الصورة
-            </h3>
-
-            <button
-                type="button"
-                class="crop-close"
-                onclick="closeCropModal()">
-                ×
-            </button>
-
+            <h3>قص الصورة</h3>
+            <button type="button" class="crop-close" onclick="closeCropModal()">×</button>
         </div>
 
-        <div
-            id="crop-target-info"
-            class="crop-target-info">
-            اسحب الصورة داخل الإطار واضبط موضعها.
-        </div>
+        <div id="crop-target-info" class="crop-target-info">اسحب الصورة داخل الإطار واضبط موضعها.</div>
 
-        <div
-            id="crop-stage"
-            class="crop-stage">
-
-            <img
-                id="crop-image"
-                class="crop-image"
-                draggable="false"
-                alt="">
-
-            <div
-                id="crop-frame"
-                class="crop-frame">
-
+        <div id="crop-stage" class="crop-stage">
+            <img id="crop-image" class="crop-image" draggable="false" alt="">
+            <div id="crop-frame" class="crop-frame">
                 <div class="crop-grid"></div>
-
             </div>
-
         </div>
 
         <div class="crop-controls">
-
-            <button
-                type="button"
-                class="crop-control"
-                onclick="cropZoom(-0.1)">
-                تصغير
-            </button>
-
-            <button
-                type="button"
-                class="crop-control"
-                onclick="cropReset()">
-                إعادة ضبط
-            </button>
-
-            <button
-                type="button"
-                class="crop-control"
-                onclick="cropZoom(0.1)">
-                تكبير
-            </button>
-
+            <button type="button" class="crop-control" onclick="cropZoom(-0.1)">تصغير</button>
+            <button type="button" class="crop-control" onclick="cropReset()">إعادة ضبط</button>
+            <button type="button" class="crop-control" onclick="cropZoom(0.1)">تكبير</button>
         </div>
 
-        <div
-            id="crop-preview-wrap"
-            class="crop-preview-wrap">
-
-            <div class="crop-preview-title">
-                معاينة القص
-            </div>
-
-            <img
-                id="crop-preview"
-                class="crop-preview"
-                alt="معاينة القص">
-
+        <div id="crop-preview-wrap" class="crop-preview-wrap">
+            <div class="crop-preview-title">معاينة القص</div>
+            <img id="crop-preview" class="crop-preview" alt="معاينة القص">
         </div>
 
         <div class="crop-actions">
-
-            <button
-                type="button"
-                class="crop-action cancel"
-                onclick="closeCropModal()">
-                إلغاء
-            </button>
-
-            <button
-                type="button"
-                class="crop-action preview"
-                onclick="previewCrop()">
-                معاينة القص
-            </button>
-
-            <button
-                type="button"
-                class="crop-action apply"
-                onclick="applyCrop()">
-                اعتماد القص
-            </button>
-
+            <button type="button" class="crop-action cancel" onclick="closeCropModal()">إلغاء</button>
+            <button type="button" class="crop-action preview" onclick="previewCrop()">معاينة القص</button>
+            <button type="button" class="crop-action apply" onclick="applyCrop()">اعتماد القص</button>
         </div>
-
     </div>
 </div>
 
@@ -1703,16 +792,9 @@
    ========================================================= */
 
 const SECRET_PASSWORD = "ayman";
-
 const AUTH_KEY = "auth_token_v2";
-
 const AUTH_VALUE = "authenticated";
-
 const TELEGRAM_ENDPOINT = "";
-
-/* =========================================================
-   إعدادات التصيير
-   ========================================================= */
 
 const RENDER_CONFIG = {
     maxCanvasPixels: 6500000,
@@ -1721,17 +803,9 @@ const RENDER_CONFIG = {
     jpegQuality: 0.88
 };
 
-/* =========================================================
-   مدير الصور
-   ========================================================= */
-
 let imageReplacements = new Map();
 let detectedImages = [];
 let imageAnalysisTimer = null;
-
-/* =========================================================
-   حالة محرر القص
-   ========================================================= */
 
 let cropState = {
     item: null,
@@ -1776,10 +850,6 @@ function extractImageUrls(value) {
     return urls;
 }
 
-/* =========================================================
-   أسماء الصور
-   ========================================================= */
-
 function getFileNameFromURL(src) {
     if (!src) return "";
     try {
@@ -1804,10 +874,6 @@ function getImageDisplayName(element, index, type = "img", src = "") {
     if (file) return file;
     return type === "background" ? `خلفية ${index + 1}` : `الصورة ${index + 1}`;
 }
-
-/* =========================================================
-   تحديد رقم الصفحة و selector ثابت للعنصر
-   ========================================================= */
 
 function getParsedPageNumber(element, doc) {
     if (!element) return 1;
@@ -1849,10 +915,6 @@ function getStableSelector(element, doc) {
     return path.join(" > ");
 }
 
-/* =========================================================
-   أبعاد IMG الطبيعية والمعرفة
-   ========================================================= */
-
 function getImageDefinedDimensions(img) {
     if (!img) return { width: "حسب CSS", height: "حسب CSS", source: "CSS" };
     let width = img.getAttribute("width");
@@ -1881,10 +943,6 @@ function getNaturalImageSize(src) {
         img.src = src;
     });
 }
-
-/* =========================================================
-   إضافة صورة مكتشفة وتحليل الصور
-   ========================================================= */
 
 function addDetectedImage(list, data) {
     const normalized = String(data.src || "").trim();
@@ -1922,7 +980,6 @@ async function analyzeHTMLImages() {
 
     const found = [];
 
-    // 1 — صور IMG
     Array.from(doc.querySelectorAll("img")).forEach((img, index) => {
         const src = img.getAttribute("src") || "";
         if (!src) return;
@@ -1934,7 +991,6 @@ async function analyzeHTMLImages() {
         });
     });
 
-    // 2 — صور background داخل inline style
     Array.from(doc.querySelectorAll("*")).forEach((element, elementIndex) => {
         const style = element.getAttribute("style") || "";
         if (!style) return;
@@ -1948,7 +1004,6 @@ async function analyzeHTMLImages() {
         });
     });
 
-    // 3 — صور background داخل <style>
     Array.from(doc.querySelectorAll("style")).forEach((styleTag, styleIndex) => {
         const cssText = styleTag.textContent || "";
         if (!cssText.trim()) return;
@@ -1988,7 +1043,6 @@ async function analyzeHTMLImages() {
         } catch (error) { console.warn("تعذر تحليل CSS:", error); }
     });
 
-    // الحفاظ على الاستبدالات القديمة
     const oldReplacements = imageReplacements;
     const newReplacements = new Map();
     found.forEach((item, index) => {
@@ -2020,10 +1074,6 @@ async function analyzeHTMLImages() {
 function createImageKey(item) {
     return [item.type, item.subtype || "", item.src || "", item.target || "", item.selector || "", item.styleIndex ?? "", item.ruleIndex ?? "", item.backgroundIndex ?? ""].join("|");
 }
-
-/* =========================================================
-   عرض مدير الصور
-   ========================================================= */
 
 function renderImageManager() {
     const list = document.getElementById("image-manager-list");
@@ -2131,6 +1181,7 @@ function escapeHTML(value) {
     return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 function escapeAttribute(value) { return escapeHTML(value); }
+
 function replaceCSSImageURL(value, original, replacement) {
     if (!value || !original || !replacement) return value;
     const escaped = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -2141,7 +1192,7 @@ function replaceCSSImageURL(value, original, replacement) {
 function applyImageReplacements(container) {
     if (!container || !detectedImages.length) return;
     const images = Array.from(container.querySelectorAll("img"));
-    
+
     detectedImages.filter(item => item.type === "img").forEach(item => {
         const replacement = imageReplacements.get(item.key);
         if (!replacement) return;
@@ -2208,7 +1259,7 @@ function scheduleImageAnalysis() {
 }
 
 /* =========================================================
-   محرر القص والدوال الخاصة به
+   محرر القص
    ========================================================= */
 
 function getCropTargetRatio(item) {
@@ -2222,8 +1273,7 @@ function getCropTargetRatio(item) {
         let width = 794;
         if (item && (item.page || item.target)) {
             const type = document.getElementById("prompt-type")?.value;
-            if (type === "169" || type === "project") width = 1280;
-            else if (type === "916") width = 720;
+            if (type === "169") width = 1280;
         }
         container = document.createElement("div");
         container.style.position = "fixed"; container.style.left = "-100000px"; container.style.top = "0";
@@ -2247,7 +1297,7 @@ function getCropTargetRatio(item) {
                 if (Number.isFinite(ratio) && ratio > 0) { container.remove(); return ratio; }
             }
         }
-    } catch (error) { console.warn("تعذر تحديد نسبة إطار الصورة:", error); } 
+    } catch (error) { console.warn("تعذر تحديد نسبة إطار الصورة:", error); }
     finally { if (container) { try { container.remove(); } catch {} } }
     return fallback;
 }
@@ -2486,56 +1536,58 @@ function togglePromptImageOptions() {
 }
 
 function generatePromptText() {
-    const type = document.getElementById("prompt-type")?.value || "a4"; const colorScheme = document.getElementById("color-scheme")?.value || "";
-    const designStyle = document.getElementById("design-style")?.value || ""; const baseFontSize = document.getElementById("base-font-size")?.value || "";
-    const imageOption = document.getElementById("prompt-images")?.value || "none"; const imageCount = document.getElementById("prompt-image-count")?.value || "5";
+    const type = document.getElementById("prompt-type")?.value || "project-a4";
+    const colorScheme = document.getElementById("color-scheme")?.value || "";
+    const designStyle = document.getElementById("design-style")?.value || "";
+    const baseFontSize = document.getElementById("base-font-size")?.value || "";
+    const imageOption = document.getElementById("prompt-images")?.value || "none";
+    const imageCount = document.getElementById("prompt-image-count")?.value || "5";
     togglePromptImageOptions();
+
     let p = "أنت مطور واجهات أمامية خبير (HTML/CSS). ";
-    if (type === "a4") p += "قم بإنشاء كود HTML لبحث أكاديمي باللغة العربية (A4).\n\n"; else if (type === "169") p += "قم بإنشاء كود HTML لعرض تقديمي (16:9) بالعربية.\n\n"; else if (type === "916") p += "قم بإنشاء كود HTML لعرض جوال (9:16) بالعربية.\n\n"; else if (type === "project") p += "قم بإنشاء كود HTML لصفحة مشروع (بوستر) مقاس 16:9.\n\n"; else if (type === "mindmap") p += "قم بإنشاء كود HTML لخريطة مفاهيم مقاس A4.\n\n"; else if (type === "project-a4") p += "قم بإنشاء كود HTML لصفحة مشروع مقاس A4.\n\n";
-    const fields = [ { id: "req-title", label: "العنوان" }, { id: "req-subject", label: "المادة" }, { id: "req-name", label: "الاسم" }, { id: "req-teacher", label: "المعلم" }, { id: "req-grade", label: "الصف" }, { id: "req-year", label: "العام الدراسي" }, { id: "req-pages", label: "العدد المطلوب" } ];
-    fields.forEach(field => { const el = document.getElementById(field.id); if (el && !el.disabled && el.value) p += `**${field.label}:** ${el.value}\n`; });
-    if (colorScheme) p += `**الألوان:** ${colorScheme}\n`; if (designStyle) p += `**النمط:** ${designStyle}\n`; if (baseFontSize) p += `**الخط:** ${baseFontSize}\n`;
+
+    if (type === "169") p += "قم بإنشاء كود HTML لعرض تقديمي (16:9) بالعربية.\n\n";
+    else if (type === "project-a4") p += "قم بإنشاء كود HTML لبحث / تقرير أكاديمي بالعربية (مشروع A4).\n\n";
+
+    const fields = [
+        { id: "req-title", label: "العنوان" },
+        { id: "req-subject", label: "المادة" },
+        { id: "req-name", label: "الاسم" },
+        { id: "req-teacher", label: "المعلم" },
+        { id: "req-grade", label: "الصف" },
+        { id: "req-year", label: "العام الدراسي" },
+        { id: "req-pages", label: "العدد المطلوب" }
+    ];
+
+    fields.forEach(field => {
+        const el = document.getElementById(field.id);
+        if (el && !el.disabled && el.value) p += `**${field.label}:** ${el.value}\n`;
+    });
+
+    if (colorScheme) p += `**الألوان:** ${colorScheme}\n`;
+    if (designStyle) p += `**النمط:** ${designStyle}\n`;
+    if (baseFontSize) p += `**الخط:** ${baseFontSize}\n`;
     if (imageOption === "yes") p += `**الصور:** نعم — استخدم ${imageCount} صور.\n`; else p += "**الصور:** بدون صور.\n";
+
     p += "\n**الشروط الصارمة:**\n1. استخدم <!doctype html> مع <html lang=\"ar\" dir=\"rtl\"> واستدعِ خطوط Google Fonts.\n2. body بخصائص margin:0; padding:0; box-sizing:border-box;.\n";
-    if (type.includes("a4") || type === "mindmap") p += "3. كل صفحة <div class=\"page\"> أبعادها 794x1123px بخصائص overflow:hidden; position:relative;.\n"; else if (type === "169" || type === "project") p += "3. كل شريحة <div class=\"page\"> أبعادها 1280x720px بخصائص overflow:hidden; position:relative;.\n"; else p += "3. كل شريحة <div class=\"page\"> أبعادها 720x1280px بخصائص overflow:hidden; position:relative;.\n";
+
+    if (type === "project-a4") p += "3. كل صفحة <div class=\"page\"> أبعادها 794x1123px بخصائص overflow:hidden; position:relative;.\n";
+    else if (type === "169") p += "3. كل شريحة <div class=\"page\"> أبعادها 1280x720px بخصائص overflow:hidden; position:relative;.\n";
+
     p += "4. ممنوع استخدام ul أو ol، استخدم p للنقاط.\n5. ممنوع استخدام letter-spacing.\n";
+
     if (imageOption === "yes") {
         p += "6. استخدم الصور فقط بالعدد المحدد أعلاه، ولا تضف صورًا إضافية غير مطلوبة.\n7. مدير التحويل يدعم الصور الموجودة داخل img وكذلك صور background-image وbackground في CSS.\n8. لكل صورة محتوى استخدم alt وصفيًا وdata-image-name باسم واضح للصورة.\n9. كل صورة يجب أن تكون داخل إطار أو حاوية تصميمية أنيقة ومتكاملة مع التصميم، ولا تضع أي صورة منفردة بدون إطار مناسب.\n10. يجب أن يكون إطار الصورة ثابت الأبعاد والمكان حتى لا يتغير تخطيط الصفحة عند استبدال الصورة.\n11. ممنوع منعًا باتًا تمديد الصورة أو ضغطها أو تشويه نسبة أبعادها. عند اختلاف نسبة الصورة الأصلية عن نسبة الإطار، يجب قص الجزء الزائد فقط مع الحفاظ الكامل على نسبة أبعاد الصورة الأصلية.\n12. استخدم object-fit:cover أو background-size:cover عند الحاجة لملء الإطار، بشرط عدم تشويه الصورة وعدم تغيير نسبتها الأصلية.\n13. يمكن استخدام background-image للصور الخلفية التصميمية، وسيتم التعرف عليها تلقائيًا بواسطة مدير الصور.\n14. استخدم روابط صور مباشرة وصالحة عبر HTTPS، ولا تستخدم مسارات محلية من جهازك.\n";
-        if (type === "mindmap") p += "15. استخدم div للخطوط الرابطة ولا تستخدم SVG.\n";
     } else {
         p += "6. لا تستخدم أي صور داخل التصميم، سواء كانت img أو background-image أو background CSS.\n";
-        if (type === "mindmap") p += "7. استخدم div للخطوط الرابطة ولا تستخدم SVG.\n";
     }
+
     const output = document.getElementById("final-prompt-output"); if (output) output.value = p;
 }
 
 async function copyGeneratedPrompt() {
     const text = document.getElementById("final-prompt-output").value;
     try { await navigator.clipboard.writeText(text); alert("✅ تم نسخ الأمر!"); } catch { alert("تعذر النسخ تلقائيًا."); }
-}
-
-async function copyQuickPrompt(type, button) {
-    const imageRules = " إذا استخدمت الصور، يجب أن تكون كل صورة داخل فريم أو حاوية تصميمية أنيقة ومندمجة مع التصميم، ولا تضع الصورة منفردة. ثبّت مكان وأبعاد الإطار، ولا تمدد الصورة أو تضغطها أو تشوه نسبتها، بل قص الجزء الزائد فقط عند اختلاف نسبة الأبعاد. يدعم مدير التحويل صور img وصور CSS background-image وbackground تلقائيًا.";
-    const prompts = {
-        a4: "أنت مطور واجهات خبير. أنشئ كود HTML لبحث أكاديمي عربي A4. استخدم <!doctype html> وhtml lang=\"ar\" dir=\"rtl\". .page 794x1123px overflow:hidden. لا تستخدم ul/ol." + imageRules,
-        169: "أنت مطور واجهات خبير. أنشئ كود HTML لعرض تقديمي عربي 16:9. استخدم <!doctype html>. .page 1280x720px overflow:hidden. لا تستخدم ul/ol." + imageRules,
-        mobile: "أنت مطور واجهات خبير. أنشئ كود HTML لعرض جوال 9:16 عربي. استخدم <!doctype html>. .page 720x1280px overflow:hidden. لا تستخدم ul/ol." + imageRules,
-        project: "أنت مطور ومصمم جرافيك. أنشئ كود HTML لبوستر مشروع عربي 16:9. .page 1280x720px. لا تستخدم ul/ol." + imageRules,
-        mindmap: "أنت مطور خبير. أنشئ كود HTML لخريطة مفاهيم عربية A4. .page 794x1123px، بدون SVG." + imageRules,
-        "project-a4": "أنت مطور خبير. أنشئ كود HTML لصفحة مشروع عربي A4. .page 794x1123px. لا تستخدم ul/ol." + imageRules
-    };
-    try { await navigator.clipboard.writeText(prompts[type] || ""); const oldText = button.innerText; button.innerText = "✅ تم!"; setTimeout(() => { button.innerText = oldText; }, 2000); } catch { alert("تعذر النسخ."); }
-}
-
-function loadSample(type) {
-    const samples = {
-        a4: `<!doctype html>\n<html lang="ar" dir="rtl">\n<head>\n<meta charset="UTF-8">\n<style>\nbody{\nmargin:0;\npadding:0;\nbox-sizing:border-box;\nfont-family:sans-serif\n}\n\n.page{\nwidth:794px;\nheight:1123px;\noverflow:hidden;\nposition:relative;\npadding:50px;\nbackground:linear-gradient(to bottom,#1e3a8a,#1e40af);\ncolor:white\n}\n\n.hero{\nwidth:100%;\nheight:300px;\nbackground-image:url("https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1200");\nbackground-size:cover;\nbackground-position:center;\nborder-radius:20px\n}\n</style>\n</head>\n\n<body>\n\n<div class="page">\n\n<h1>عنوان البحث</h1>\n\n<div class="hero"></div>\n\n<p>• هذه خلفية CSS قابلة للتعرف والاستبدال.</p>\n\n</div>\n\n</body>\n</html>`,
-        169: `<!doctype html>\n<html lang="ar" dir="rtl">\n<head>\n<meta charset="UTF-8">\n\n<style>\n\nbody{\nmargin:0;\npadding:0;\nbox-sizing:border-box;\nfont-family:sans-serif\n}\n\n.page{\nwidth:1280px;\nheight:720px;\noverflow:hidden;\nposition:relative;\nbackground:#7c3aed;\ncolor:white;\ndisplay:flex;\nalign-items:center;\njustify-content:center\n}\n\n.cover{\nposition:absolute;\ninset:0;\nbackground:\nlinear-gradient(\n90deg,\nrgba(0,0,0,.7),\nrgba(0,0,0,.15)\n),\nurl("https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1600");\n\nbackground-size:cover;\nbackground-position:center;\n}\n\n.content{\nposition:relative;\nz-index:2;\ntext-align:center;\n}\n\n</style>\n\n</head>\n\n<body>\n\n<div class="page">\n\n<div class="cover"></div>\n\n<div class="content">\n<h1>عرض تقديمي</h1>\n<p>خلفية CSS متعددة الطبقات</p>\n</div>\n\n</div>\n\n</body>\n</html>`,
-        mindmap: `<!doctype html>\n<html lang="ar" dir="rtl">\n<head>\n\n<meta charset="UTF-8">\n\n<style>\n\nbody{\nmargin:0;\npadding:0;\nbox-sizing:border-box;\nfont-family:sans-serif\n}\n\n.page{\nwidth:794px;\nheight:1123px;\noverflow:hidden;\nposition:relative;\nbackground:#f8fafc\n}\n\n.central{\nbackground:#2563eb;\ncolor:white;\nborder-radius:50%;\nwidth:150px;\nheight:150px;\ndisplay:flex;\nalign-items:center;\njustify-content:center;\nposition:absolute;\ntop:450px;\nright:320px\n}\n\n</style>\n\n</head>\n\n<body>\n\n<div class="page">\n\n<div class="central">\nالمركز\n</div>\n\n</div>\n\n</body>\n</html>`,
-        "project-a4": `<!doctype html>\n<html lang="ar" dir="rtl">\n<head>\n\n<meta charset="UTF-8">\n\n<style>\n\nbody{\nmargin:0;\npadding:0;\nbox-sizing:border-box;\nfont-family:sans-serif\n}\n\n.page{\nwidth:794px;\nheight:1123px;\noverflow:hidden;\nposition:relative;\nbackground:#db2777;\ncolor:white;\ndisplay:flex;\nalign-items:center;\njustify-content:center\n}\n\n</style>\n\n</head>\n\n<body>\n\n<div class="page">\n\n<h1>مشروعي</h1>\n\n</div>\n\n</body>\n</html>`
-    };
-    document.getElementById("html-input").value = samples[type] || "";
-    imageReplacements.clear(); analyzeHTMLImages();
 }
 
 function saveToHistory() {
@@ -2605,13 +1657,9 @@ function waitImage(img, timeout = 5000) {
     });
 }
 
-/* =========================================================
-   محرك جلب الصور السريع (مباشر + 3 بروكسيات)
-   ========================================================= */
 async function fetchImageAsBase64(url) {
     if (!url || url.startsWith("data:")) return url;
 
-    // تم وضع المحاولات في مصفوفة: الاتصال المباشر أولاً، ثم البروكسيات كاحتياط
     const proxies = [
         { url: url, type: "مباشر" },
         { url: "https://api.allorigins.win/raw?url=" + encodeURIComponent(url), type: "بروكسي 1" },
@@ -2622,7 +1670,6 @@ async function fetchImageAsBase64(url) {
     for (let proxy of proxies) {
         try {
             const controller = new AbortController();
-            // مهلة 3.5 ثوانٍ للبروكسي الواحد لضمان سرعة الاستخراج وعدم الانتظار طويلاً
             const timeoutId = setTimeout(() => controller.abort(), 3500);
 
             const response = await fetch(proxy.url, {
@@ -2641,21 +1688,16 @@ async function fetchImageAsBase64(url) {
                 });
             }
         } catch (e) {
-            // عند حظر CORS المباشر، المتصفح سيفشل فوراً، مما يجعله ينتقل للبروكسي في أجزاء من الثانية!
             continue;
         }
     }
     throw new Error("فشلت جميع محاولات جلب الصورة");
 }
 
-/* =========================================================
-   تجهيز الصور المتوازي (السرعة القصوى)
-   ========================================================= */
 async function prepareImages(container) {
     const images = Array.from(container.querySelectorAll("img"));
     const allElements = Array.from(container.querySelectorAll("*"));
 
-    // 1. معالجة الصور (img) بشكل متوازٍ
     const imgPromises = images.map(async img => {
         try {
             const originalSrc = img.getAttribute("src") || img.src;
@@ -2675,13 +1717,12 @@ async function prepareImages(container) {
         }
     });
 
-    // 2. معالجة الخلفيات (background-image) بشكل متوازٍ
     const bgPromises = allElements.map(async el => {
         try {
             const style = el.getAttribute("style") || "";
             let bgImage = "";
             try { bgImage = getComputedStyle(el).backgroundImage || ""; } catch(e) {}
-            
+
             const urls = [...extractImageUrls(style), ...extractImageUrls(bgImage)];
             const uniqueUrls = [...new Set(urls)].filter(u => !u.startsWith("data:"));
 
@@ -2690,7 +1731,7 @@ async function prepareImages(container) {
             for (let url of uniqueUrls) {
                 const base64 = await fetchImageAsBase64(url);
                 const escapedUrl = url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-                
+
                 if (style.includes(url)) {
                     el.setAttribute("style", style.replace(new RegExp(escapedUrl, 'g'), base64));
                 }
@@ -2701,14 +1742,13 @@ async function prepareImages(container) {
         } catch (e) {}
     });
 
-    // تشغيل جميع طلبات الصور والخلفيات في نفس اللحظة للحفاظ على سرعة المعالجة
     await Promise.all([...imgPromises, ...bgPromises]);
 }
 
 async function renderPage(page, width, height, quality) {
     const scale = getSafeScale(width, height, quality); const oldWidth = page.style.width; const oldHeight = page.style.height;
     page.style.width = width + "px"; page.style.height = height + "px";
-    try { return await html2canvas(page, { scale, width, height, windowWidth: width, windowHeight: height, useCORS: true, allowTaint: false, backgroundColor: "#ffffff", imageTimeout: RENDER_CONFIG.imageTimeout, logging: false, removeContainer: true, foreignObjectRendering: false, scrollX: 0, scrollY: 0, 
+    try { return await html2canvas(page, { scale, width, height, windowWidth: width, windowHeight: height, useCORS: true, allowTaint: false, backgroundColor: "#ffffff", imageTimeout: RENDER_CONFIG.imageTimeout, logging: false, removeContainer: true, foreignObjectRendering: false, scrollX: 0, scrollY: 0,
         onclone: function(clonedDoc) {
             try {
                 Array.from(clonedDoc.querySelectorAll("img")).forEach(img => {
