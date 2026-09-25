@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>منصة تحويل الأكواد الذكية v2.4 (PDF / PPTX)</title>
+<title>منصة تحويل الأكواد الذكية v2.5 (PDF / PPTX)</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -193,7 +193,7 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
     </div>
 </div>
 
-<div class="header"><h2>🛠️ منصة تحويل الأكواد <span class="version-badge">v2.4</span></h2></div>
+<div class="header"><h2>🛠️ منصة تحويل الأكواد <span class="version-badge">v2.5</span></h2></div>
 
 <div class="top-nav">
     <button type="button" class="nav-btn active" id="btn-converter" onclick="switchTab('converter')">⚙️ منصة التحويل</button>
@@ -444,9 +444,10 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
 
 <script>
 /* =========================================================
-   PLATFORM VERSION 2.4
+   PLATFORM VERSION 2.5
+   ★ إصلاح: الشفافية في الصور (PNG) لم تعد تتحول إلى أسود
    ========================================================= */
-var PLATFORM_VERSION = "2.4";
+var PLATFORM_VERSION = "2.5";
 console.log("%c🚀 منصة التحويل - إصدار " + PLATFORM_VERSION + " ", "background:#059669;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;");
 
 var SECRET_PASSWORD = "ayman";
@@ -2337,10 +2338,6 @@ function createRenderContainer(code, width, height) {
     return container;
 }
 
-/* =========================================================
-   ★★★ V2.4: تحويل نسيج SVG (feTurbulence) إلى PNG ★★★
-   الإصلاح الجذري: regex يقرأ الرابط كاملاً حتى مع وجود علامات تنصيص داخلية
-   ========================================================= */
 function rasterizeSVGAtNative(sourceSvgDataUrl, tileW, tileH, scale) {
     return new Promise(function (resolve) {
         var img = new Image();
@@ -2374,14 +2371,13 @@ function rasterizeNoiseTextures(container, renderScale) {
     var converted = 0;
     var scale = Number(renderScale) || 3;
 
-    console.log("🔍 V2.4: فحص " + styles.length + " وسم style للبحث عن نسيج SVG");
+    console.log("🔍 فحص " + styles.length + " وسم style للبحث عن نسيج SVG");
 
     styles.forEach(function (styleTag) {
         var cssText = styleTag.textContent || "";
         if (!cssText) return;
         if (cssText.indexOf("feTurbulence") === -1 && cssText.indexOf("fractalNoise") === -1) return;
 
-        /* ★★★ الإصلاح: regex يقرأ الرابط كاملاً حتى لو احتوى على علامات تنصيص داخلية ★★★ */
         var urlRegex = /url\(\s*(["'])([\s\S]*?)\1\s*\)/gi;
         var matches = [];
         var m;
@@ -2392,7 +2388,7 @@ function rasterizeNoiseTextures(container, renderScale) {
         }
 
         if (!matches.length) return;
-        console.log("🔍 V2.4: وُجد " + matches.length + " رابط نسيج SVG");
+        console.log("🔍 وُجد " + matches.length + " رابط نسيج SVG");
 
         var sizeMatch = cssText.match(/background-size\s*:\s*(\d+)\s*px\s+(\d+)\s*px/i);
         var tileW = sizeMatch ? parseInt(sizeMatch[1], 10) : 180;
@@ -2402,14 +2398,14 @@ function rasterizeNoiseTextures(container, renderScale) {
             jobs.push(
                 rasterizeSVGAtNative(match.url, tileW, tileH, scale).then(function (pngUrl) {
                     if (!pngUrl) {
-                        console.warn("⚠️ V2.4: فشل تحويل نسيج SVG إلى PNG");
+                        console.warn("⚠️ فشل تحويل نسيج SVG إلى PNG");
                         return;
                     }
                     var currentCss = styleTag.textContent;
                     var newCss = currentCss.replace(match.full, 'url("' + pngUrl + '")');
                     styleTag.textContent = newCss;
                     converted++;
-                    console.log("🎨 V2.4: نسيج SVG → PNG " + (tileW * scale) + "×" + (tileH * scale) + "px");
+                    console.log("🎨 نسيج SVG → PNG " + (tileW * scale) + "×" + (tileH * scale) + "px");
                 })
             );
         });
@@ -2417,9 +2413,7 @@ function rasterizeNoiseTextures(container, renderScale) {
 
     return Promise.all(jobs).then(function () {
         if (converted > 0) {
-            console.log("✅ V2.4: تم تحويل " + converted + " نسيج — النتيجة مطابقة للمعاينة");
-        } else {
-            console.warn("⚠️ V2.4: لم يُحوَّل أي نسيج — تحقق من وجود .page::before");
+            console.log("✅ تم تحويل " + converted + " نسيج — النتيجة مطابقة للمعاينة");
         }
     });
 }
@@ -2525,7 +2519,7 @@ function prepareCoverImages(container) {
                 }
                 var result = cropAndResizeCover(probe, targetW, targetH);
                 if (result) {
-                    console.log("📸 V2.4: غلاف مُحضّر " + probe.naturalWidth + "×" + probe.naturalHeight + " → " + targetW + "×" + targetH);
+                    console.log("📸 غلاف مُحضّر " + probe.naturalWidth + "×" + probe.naturalHeight + " → " + targetW + "×" + targetH);
                 }
                 resolve(result || src);
             };
@@ -2584,6 +2578,11 @@ function bakeStyledImages(container) {
     }));
 }
 
+/* =========================================================
+   ★★★ V2.5 — إصلاح جذري: الحفاظ على الشفافية ★★★
+   حُذفت كتلة flatten التي كانت تفرض alpha=255
+   (كانت السبب في تحوّل خلفية PNG الشفافة إلى أسود)
+   ========================================================= */
 function bakeStyledImage(img, maskStr, filterStr, opacityVal) {
     return new Promise(function (resolve) {
         var w = img.naturalWidth, h = img.naturalHeight;
@@ -2599,26 +2598,27 @@ function bakeStyledImage(img, maskStr, filterStr, opacityVal) {
         canvas.height = outH;
         var ctx = canvas.getContext("2d");
 
+        /* مسح كامل — الحفاظ على الشفافية */
         ctx.clearRect(0, 0, outW, outH);
 
+        /* تطبيق الفلتر (إن وُجد) أثناء الرسم */
         if (filterStr && filterStr !== "none") {
-            try { ctx.filter = filterStr; } catch (e) {}
+            try { ctx.filter = filterStr; } catch (e) { /* ignore */ }
         }
         ctx.drawImage(img, 0, 0, outW, outH);
-        try { ctx.filter = "none"; } catch (e) {}
+        try { ctx.filter = "none"; } catch (e) { /* ignore */ }
 
-        try {
-            var flat = ctx.getImageData(0, 0, outW, outH);
-            var fd = flat.data;
-            for (var i = 3; i < fd.length; i += 4) { fd[i] = 255; }
-            ctx.putImageData(flat, 0, 0);
-        } catch (e) { console.warn("opaque flatten failed:", e); }
+        /* ✅ V2.5: تم حذف كتلة flatten التي كانت تفرض alpha=255
+           كانت تحوّل البكسلات الشفافة (0,0,0,0) إلى أسود (0,0,0,255)
+           الآن الشفافية محفوظة كما هي وتُدمج طبيعيًا مع خلفية الورق */
 
+        /* تطبيق القناع الشعاعي (إن وُجد) */
         if (maskStr && maskStr.indexOf("radial-gradient") !== -1) {
             try { applyRadialMask(ctx, maskStr, outW, outH); }
             catch (e) { console.warn("mask failed:", e); }
         }
 
+        /* تطبيق الشفافية العامة (opacity) على قناة alpha فقط */
         if (!isNaN(opacityVal) && opacityVal < 1) {
             try {
                 var d2 = ctx.getImageData(0, 0, outW, outH);
@@ -2631,7 +2631,7 @@ function bakeStyledImage(img, maskStr, filterStr, opacityVal) {
         }
 
         var out = null;
-        try { out = canvas.toDataURL("image/png"); } catch (e) {}
+        try { out = canvas.toDataURL("image/png"); } catch (e) { /* ignore */ }
         canvas.width = 1; canvas.height = 1;
         resolve(out);
     });
