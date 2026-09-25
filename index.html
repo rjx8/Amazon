@@ -213,6 +213,7 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
                 <select id="format-select">
                     <option value="pdf-169">🖥️ عرض</option>
                     <option value="pdf-a4">📄 بحث / تقرير (مشروع A4)</option>
+                    <option value="pptx">📊 عرض تقديمي (PowerPoint PPTX)</option>
                 </select>
             </div>
             <div class="form-group">
@@ -664,6 +665,16 @@ function resolveImgSrc(img) {
     return src;
 }
 
+/* ★★★ دالة مساعدة جديدة لحماية أسماء الملفات من تضخم Base64 ★★★ */
+function getSafeImageBaseName(sourceFileName, item) {
+    var name = String(sourceFileName == null ? "" : sourceFileName).trim();
+    if (!name || name.indexOf("data:") === 0 || name.length > 50) {
+        var idx = (item && typeof item.index === "number") ? (item.index + 1) : 1;
+        return "image_" + idx;
+    }
+    return name.replace(/\.[^.]+$/, "");
+}
+
 /* =========================================================
    3) تحويل مصادر الصور إلى data URL آمن
    ========================================================= */
@@ -781,15 +792,37 @@ function analyzeHTMLImages() {
         });
     });
 
+    /* ★★★ التعديل 2: عزل فحص CSS داخل iframe مخفي لمنع تسريب الأنماط ★★★ */
     var styleTags = Array.prototype.slice.call(doc.querySelectorAll("style"));
     styleTags.forEach(function (styleTag, styleIndex) {
         var cssText = styleTag.textContent || "";
         if (!cssText.trim()) return;
+
+        var isolatedFrame = document.createElement("iframe");
+        isolatedFrame.setAttribute("aria-hidden", "true");
+        isolatedFrame.style.cssText = "position:absolute;left:-99999px;top:0;width:0;height:0;border:0;visibility:hidden;pointer-events:none;opacity:0;";
+
+        var cssRules = [];
         try {
-            var tempStyle = document.createElement("style");
-            tempStyle.textContent = cssText;
-            document.head.appendChild(tempStyle);
-            var cssRules = Array.prototype.slice.call((tempStyle.sheet && tempStyle.sheet.cssRules) || []);
+            document.body.appendChild(isolatedFrame);
+            var frameDoc = isolatedFrame.contentDocument || (isolatedFrame.contentWindow && isolatedFrame.contentWindow.document);
+            if (frameDoc) {
+                frameDoc.open();
+                frameDoc.write(
+                    "<!doctype html><html><head><style>" +
+                    String(cssText).replace(/<\/style/gi, "<\\/style") +
+                    "</style></head><body></body></html>"
+                );
+                frameDoc.close();
+                var sheet = frameDoc.styleSheets && frameDoc.styleSheets[0];
+                cssRules = Array.prototype.slice.call((sheet && sheet.cssRules) || []);
+            }
+        } catch (error) {
+            console.warn("تعذر تحليل CSS في iframe معزول:", error);
+            cssRules = [];
+        }
+
+        try {
             cssRules.forEach(function (rule, ruleIndex) {
                 if (!rule.selectorText || !rule.style) return;
                 var cssValue = [rule.style.backgroundImage, rule.style.background].filter(Boolean).join(";");
@@ -828,8 +861,9 @@ function analyzeHTMLImages() {
                     }
                 });
             });
-            tempStyle.remove();
-        } catch (error) { console.warn("تعذر تحليل CSS:", error); }
+        } finally {
+            try { isolatedFrame.remove(); } catch (e) { /* ignore */ }
+        }
     });
 
     var oldReplacements = imageReplacements;
@@ -1547,17 +1581,17 @@ function applyCrop() {
     var item = cropState.item;
     if (!item) return;
 
+    /* ★★★ التعديل 4: استخدام getSafeImageBaseName لحماية اسم الملف ★★★ */
     var buildReplacement = function (targetItem) {
         var old = imageReplacements.get(targetItem.key);
         var extension = result.mimeType === "image/jpeg" ? ".jpg"
             : result.mimeType === "image/webp" ? ".webp" : ".png";
-        var originalName = cropState.sourceFileName || "image";
-        var cleanName = originalName.replace(/\.[^.]+$/, "");
+        var cleanName = getSafeImageBaseName(cropState.sourceFileName, targetItem);
         return {
             dataUrl: result.dataUrl,
             fileName: cleanName + "_cropped" + extension,
             mimeType: result.mimeType,
-            originalFileName: (old && old.originalFileName) || originalName,
+            originalFileName: (old && old.originalFileName) || cropState.sourceFileName,
             originalMimeType: (old && old.originalMimeType) || cropState.sourceMimeType,
             originalDataUrl: cropState.originalDataUrl,
             cropped: true,
@@ -1923,9 +1957,10 @@ function applyBackgroundRemoval() {
     var item = bgRemovalState.item;
     if (!item) return;
 
+    /* ★★★ التعديل 4: استخدام getSafeImageBaseName لحماية اسم الملف ★★★ */
     var buildReplacement = function (targetItem) {
         var old = imageReplacements.get(targetItem.key);
-        var cleanName = (bgRemovalState.sourceFileName || "image").replace(/\.[^.]+$/, "");
+        var cleanName = getSafeImageBaseName(bgRemovalState.sourceFileName, targetItem);
         return {
             dataUrl: bgRemovalState.resultDataUrl,
             fileName: cleanName + "_no-bg.png",
@@ -2310,7 +2345,6 @@ function getSafeScale(width, height, requested) {
     return Math.max(1, Math.min(scale, 3));
 }
 
-/* ★★★ التعديل 1: letter-spacing:0 لحل تفكك الحروف ★★★ */
 function createRenderContainer(code, width, height) {
     if (!document.querySelector('link[data-render-fonts]')) {
         var link = document.createElement("link");
@@ -2344,8 +2378,6 @@ function createRenderContainer(code, width, height) {
     document.body.appendChild(container);
     return container;
 }
-
-/* ★★★ التعديل 2: دوال جديدة قبل prepareImages ★★★ */
 
 /* تحويل صور object-fit:cover إلى div بـ background-image */
 function convertCoverImagesToBackgrounds(container) {
@@ -2721,9 +2753,9 @@ function generatePPTX() {
         })
         .then(function () { return inlineAllImages(container); })
         .then(function () { return inlineBackgroundImages(container); })
-        /* ★★★ التعديل 3: استخدام الدوال الجديدة ★★★ */
-        .then(function () { convertCoverImagesToBackgrounds(container); return Promise.resolve(); })
+        /* ★★★ التعديل 3: bake أولاً ثم convert لمنع سباق خط الأنابيب ★★★ */
         .then(function () { return bakeStyledImages(container); })
+        .then(function () { convertCoverImagesToBackgrounds(container); return Promise.resolve(); })
         .then(function () {
             return new Promise(function (r) {
                 requestAnimationFrame(function () { requestAnimationFrame(r); });
@@ -2800,9 +2832,9 @@ function generatePDF() {
         })
         .then(function () { return inlineAllImages(container); })
         .then(function () { return inlineBackgroundImages(container); })
-        /* ★★★ التعديل 3: استخدام الدوال الجديدة ★★★ */
-        .then(function () { convertCoverImagesToBackgrounds(container); return Promise.resolve(); })
+        /* ★★★ التعديل 3: bake أولاً ثم convert لمنع سباق خط الأنابيب ★★★ */
         .then(function () { return bakeStyledImages(container); })
+        .then(function () { convertCoverImagesToBackgrounds(container); return Promise.resolve(); })
         .then(function () {
             return new Promise(function (r) {
                 requestAnimationFrame(function () { requestAnimationFrame(r); });
