@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>منصة تحويل الأكواد الذكية v2.3 (PDF / PPTX)</title>
+<title>منصة تحويل الأكواد الذكية v2.4 (PDF / PPTX)</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -180,7 +180,6 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
 </head>
 <body>
 
-<!-- ============ شاشة كلمة المرور ============ -->
 <div id="password-overlay" style="position:fixed;inset:0;background:#0f172a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
     <div style="background:#1e293b;padding:30px;border-radius:12px;box-shadow:0 10px 25px -5px rgba(0,0,0,.5);border:1px solid #334155;text-align:center;width:100%;max-width:350px;">
         <h3 style="margin-top:0;color:#f8fafc;font-size:22px;">🔒 حماية المنصة</h3>
@@ -194,14 +193,13 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
     </div>
 </div>
 
-<div class="header"><h2>🛠️ منصة تحويل الأكواد <span class="version-badge">v2.3</span></h2></div>
+<div class="header"><h2>🛠️ منصة تحويل الأكواد <span class="version-badge">v2.4</span></h2></div>
 
 <div class="top-nav">
     <button type="button" class="nav-btn active" id="btn-converter" onclick="switchTab('converter')">⚙️ منصة التحويل</button>
     <button type="button" class="nav-btn" id="btn-prompts" onclick="switchTab('prompts')">🧠 المولد الذكي</button>
 </div>
 
-<!-- ============ تبويب التحويل ============ -->
 <div id="converter-tab" class="main-container tab-content active-tab">
     <div class="box-panel">
         <div class="form-group">
@@ -259,7 +257,6 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
     </div>
 </div>
 
-<!-- ============ تبويب المولد الذكي ============ -->
 <div id="prompts-tab" class="main-container tab-content">
     <div class="box-panel">
         <div class="form-group">
@@ -364,7 +361,6 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
     </div>
 </div>
 
-<!-- ============ نافذة القص ============ -->
 <div id="crop-modal" class="crop-modal-overlay" aria-hidden="true">
     <div class="crop-modal">
         <div class="crop-modal-header">
@@ -393,7 +389,6 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
     </div>
 </div>
 
-<!-- ============ نافذة إزالة الخلفية ============ -->
 <div id="bg-remove-modal" class="crop-modal-overlay" aria-hidden="true">
     <div class="crop-modal">
         <div class="crop-modal-header">
@@ -449,14 +444,11 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
 
 <script>
 /* =========================================================
-   PLATFORM VERSION 2.3
+   PLATFORM VERSION 2.4
    ========================================================= */
-var PLATFORM_VERSION = "2.3";
+var PLATFORM_VERSION = "2.4";
 console.log("%c🚀 منصة التحويل - إصدار " + PLATFORM_VERSION + " ", "background:#059669;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;");
 
-/* =========================================================
-   1) الإعدادات العامة
-   ========================================================= */
 var SECRET_PASSWORD = "ayman";
 var AUTH_KEY = "auth_token_v2";
 var AUTH_VALUE = "authenticated";
@@ -525,9 +517,6 @@ var bgRemovalState = {
     targetColor: null, tolerance: 30, feather: 2, resultDataUrl: null, batchKeys: null
 };
 
-/* =========================================================
-   2) أدوات عامة
-   ========================================================= */
 function escapeHTML(value) {
     return String(value == null ? "" : value)
         .replace(/&/g, "&amp;")
@@ -683,9 +672,6 @@ function getSafeImageBaseName(sourceFileName, item) {
     return name.replace(/\.[^.]+$/, "");
 }
 
-/* =========================================================
-   3) تحويل مصادر الصور
-   ========================================================= */
 function blobToDataURL(blob) {
     return new Promise(function (resolve, reject) {
         var r = new FileReader();
@@ -737,9 +723,6 @@ function readFileAsDataURL(file) {
     });
 }
 
-/* =========================================================
-   4) تحليل الصور
-   ========================================================= */
 function analyzeHTMLImages() {
     var textarea = document.getElementById("html-input");
     var manager = document.getElementById("image-manager");
@@ -918,9 +901,6 @@ function createImageKey(item) {
     ].join("|");
 }
 
-/* =========================================================
-   5) عرض مدير الصور
-   ========================================================= */
 function renderImageManager() {
     var list = document.getElementById("image-manager-list");
     if (!list) return;
@@ -1000,9 +980,6 @@ function renderImageManager() {
     updateBatchBar();
 }
 
-/* =========================================================
-   6) التحديد المتعدد
-   ========================================================= */
 function toggleImageSelection(checkbox) {
     var key = checkbox.getAttribute("data-image-key");
     if (!key) return;
@@ -1081,9 +1058,6 @@ function replaceSelectedImages() {
     input.click();
 }
 
-/* =========================================================
-   7) اختيار صورة بديلة
-   ========================================================= */
 function chooseReplacementImage(index) {
     var item = detectedImages[index];
     if (!item) return;
@@ -1138,9 +1112,6 @@ function keepOriginalImage(index) {
     renderImageManager();
 }
 
-/* =========================================================
-   8) استبدال URL داخل CSS
-   ========================================================= */
 function replaceCSSImageURL(value, original, replacement) {
     if (!value || !original || !replacement) return value;
     var escaped = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -1239,9 +1210,6 @@ function scheduleImageAnalysis() {
     imageAnalysisTimer = setTimeout(function () { analyzeHTMLImages(); }, 300);
 }
 
-/* =========================================================
-   9) محرر القص
-   ========================================================= */
 function getCropTargetRatio(item) {
     return new Promise(function (resolve) {
         var fallback = (item && item.naturalWidth && item.naturalHeight)
@@ -1655,9 +1623,6 @@ function closeCropModal() {
     };
 }
 
-/* =========================================================
-   10) إزالة الخلفية
-   ========================================================= */
 function openBackgroundRemover(index) {
     var item = detectedImages[index];
     if (!item) return;
@@ -1994,9 +1959,6 @@ function applyBackgroundRemoval() {
     renderImageManager();
 }
 
-/* =========================================================
-   11) Authentication
-   ========================================================= */
 function checkPassword() {
     var inputElement = document.getElementById("pass-input");
     var errorElement = document.getElementById("pass-error");
@@ -2031,9 +1993,6 @@ function resetLoginSession() {
     if (error) error.style.display = "none";
 }
 
-/* =========================================================
-   12) التبويبات والمولد الذكي
-   ========================================================= */
 function switchTab(tab) {
     var contents = document.querySelectorAll(".tab-content");
     Array.prototype.forEach.call(contents, function (el) { el.classList.remove("active-tab"); });
@@ -2214,9 +2173,6 @@ function copyGeneratedPrompt() {
     }
 }
 
-/* =========================================================
-   13) معاينة الكود
-   ========================================================= */
 function previewCode() {
     var inputEl = document.getElementById("html-input");
     if (!inputEl) return;
@@ -2288,9 +2244,6 @@ function clearCode() {
     }
 }
 
-/* =========================================================
-   14) خطوط + تصيير آمن
-   ========================================================= */
 function waitForFonts() {
     return new Promise(function (resolve) {
         if (!document.querySelector('link[data-render-fonts]')) {
@@ -2385,7 +2338,8 @@ function createRenderContainer(code, width, height) {
 }
 
 /* =========================================================
-   ★★★ V2.3: تحويل نسيج SVG (feTurbulence) إلى PNG ★★★
+   ★★★ V2.4: تحويل نسيج SVG (feTurbulence) إلى PNG ★★★
+   الإصلاح الجذري: regex يقرأ الرابط كاملاً حتى مع وجود علامات تنصيص داخلية
    ========================================================= */
 function rasterizeSVGAtNative(sourceSvgDataUrl, tileW, tileH, scale) {
     return new Promise(function (resolve) {
@@ -2420,35 +2374,42 @@ function rasterizeNoiseTextures(container, renderScale) {
     var converted = 0;
     var scale = Number(renderScale) || 3;
 
+    console.log("🔍 V2.4: فحص " + styles.length + " وسم style للبحث عن نسيج SVG");
+
     styles.forEach(function (styleTag) {
         var cssText = styleTag.textContent || "";
         if (!cssText) return;
+        if (cssText.indexOf("feTurbulence") === -1 && cssText.indexOf("fractalNoise") === -1) return;
 
-        var noiseRegex = /url\(\s*(['"]?)(data:image\/svg\+xml[^)'"]*?)\1\s*\)/gi;
-        var foundUrls = [];
+        /* ★★★ الإصلاح: regex يقرأ الرابط كاملاً حتى لو احتوى على علامات تنصيص داخلية ★★★ */
+        var urlRegex = /url\(\s*(["'])([\s\S]*?)\1\s*\)/gi;
+        var matches = [];
         var m;
-        while ((m = noiseRegex.exec(cssText)) !== null) {
+        while ((m = urlRegex.exec(cssText)) !== null) {
             var url = m[2];
             if (url.indexOf("feTurbulence") === -1 && url.indexOf("fractalNoise") === -1) continue;
-            foundUrls.push(url);
+            matches.push({ full: m[0], url: url });
         }
-        if (!foundUrls.length) return;
+
+        if (!matches.length) return;
+        console.log("🔍 V2.4: وُجد " + matches.length + " رابط نسيج SVG");
 
         var sizeMatch = cssText.match(/background-size\s*:\s*(\d+)\s*px\s+(\d+)\s*px/i);
         var tileW = sizeMatch ? parseInt(sizeMatch[1], 10) : 180;
         var tileH = sizeMatch ? parseInt(sizeMatch[2], 10) : 180;
 
-        var uniqueUrls = foundUrls.filter(function (v, i, a) { return a.indexOf(v) === i; });
-
-        uniqueUrls.forEach(function (svgUrl) {
+        matches.forEach(function (match) {
             jobs.push(
-                rasterizeSVGAtNative(svgUrl, tileW, tileH, scale).then(function (pngUrl) {
-                    if (pngUrl) {
-                        var newCss = styleTag.textContent.split(svgUrl).join(pngUrl);
-                        styleTag.textContent = newCss;
-                        converted++;
-                        console.log("🎨 V2.3: نسيج SVG → PNG " + (tileW * scale) + "×" + (tileH * scale) + "px");
+                rasterizeSVGAtNative(match.url, tileW, tileH, scale).then(function (pngUrl) {
+                    if (!pngUrl) {
+                        console.warn("⚠️ V2.4: فشل تحويل نسيج SVG إلى PNG");
+                        return;
                     }
+                    var currentCss = styleTag.textContent;
+                    var newCss = currentCss.replace(match.full, 'url("' + pngUrl + '")');
+                    styleTag.textContent = newCss;
+                    converted++;
+                    console.log("🎨 V2.4: نسيج SVG → PNG " + (tileW * scale) + "×" + (tileH * scale) + "px");
                 })
             );
         });
@@ -2456,14 +2417,13 @@ function rasterizeNoiseTextures(container, renderScale) {
 
     return Promise.all(jobs).then(function () {
         if (converted > 0) {
-            console.log("✅ V2.3: تم تحويل " + converted + " نسيج — النتيجة مطابقة للمعاينة");
+            console.log("✅ V2.4: تم تحويل " + converted + " نسيج — النتيجة مطابقة للمعاينة");
+        } else {
+            console.warn("⚠️ V2.4: لم يُحوَّل أي نسيج — تحقق من وجود .page::before");
         }
     });
 }
 
-/* =========================================================
-   ★★★ V2.3: قص + تصغير صورة الغلاف مع الحفاظ على النسبة ★★★
-   ========================================================= */
 function cropAndResizeCover(sourceImg, targetW, targetH) {
     try {
         var srcW = sourceImg.naturalWidth;
@@ -2533,9 +2493,6 @@ function cropAndResizeCover(sourceImg, targetW, targetH) {
     }
 }
 
-/* =========================================================
-   ★★★ V2.3: تجهيز صور object-fit:cover كـ <img> محضّر ★★★
-   ========================================================= */
 function prepareCoverImages(container) {
     var imgs = Array.prototype.slice.call(container.querySelectorAll("img"));
     var jobs = [];
@@ -2568,7 +2525,7 @@ function prepareCoverImages(container) {
                 }
                 var result = cropAndResizeCover(probe, targetW, targetH);
                 if (result) {
-                    console.log("📸 V2.3: غلاف مُحضّر " + probe.naturalWidth + "×" + probe.naturalHeight + " → " + targetW + "×" + targetH);
+                    console.log("📸 V2.4: غلاف مُحضّر " + probe.naturalWidth + "×" + probe.naturalHeight + " → " + targetW + "×" + targetH);
                 }
                 resolve(result || src);
             };
@@ -2898,9 +2855,6 @@ function getPages(containerOrDoc) {
     return [containerOrDoc];
 }
 
-/* =========================================================
-   15) التصدير
-   ========================================================= */
 function exportFile() {
     var inputEl = document.getElementById("html-input");
     var formatEl = document.getElementById("format-select");
@@ -3126,9 +3080,6 @@ function sendFileToTelegram(blob, name, caption) {
         });
 }
 
-/* =========================================================
-   16) ربط الأحداث
-   ========================================================= */
 document.addEventListener("DOMContentLoaded", function () {
 
     var loginBtn = document.getElementById("login-btn");
