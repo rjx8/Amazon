@@ -458,14 +458,12 @@ var IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 var IS_SAFARI = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-/* ✅ إعدادات محسّنة لآيفون + قيم الخبز والتصغير */
 var RENDER_CONFIG = {
-    maxCanvasPixels: IS_IOS ? 3000000 : 6500000,
+    maxCanvasPixels: IS_IOS ? 3200000 : 6500000,
     fontTimeout: IS_IOS ? 9000 : 5000,
-    imageTimeout: IS_IOS ? 14000 : 7000,
-    jpegQuality: IS_IOS ? 0.80 : 0.88,
-    bakeMaxSize: IS_IOS ? 900 : 1400,
-    uploadMaxSide: IS_IOS ? 1800 : 2400
+    imageTimeout: IS_IOS ? 12000 : 7000,
+    jpegQuality: IS_IOS ? 0.82 : 0.88,
+    bakeMaxSize: IS_IOS ? 900 : 1400
 };
 
 var ARABIC_FONTS = [
@@ -711,42 +709,12 @@ function toSafeDataURL(src) {
     });
 }
 
-/* ✅ حل HEIC + تصغير الصور الكبيرة قبل الاستخدام */
 function readFileAsDataURL(file) {
     return new Promise(function (resolve, reject) {
         var reader = new FileReader();
-        reader.onload = function () {
-            normalizeToJPEG(reader.result)
-                .then(resolve)
-                .catch(function () { resolve(reader.result); });
-        };
+        reader.onload = function () { resolve(reader.result); };
         reader.onerror = function () { reject(reader.error || new Error("FileReader failed")); };
         reader.readAsDataURL(file);
-    });
-}
-
-function normalizeToJPEG(dataUrl) {
-    return new Promise(function (resolve, reject) {
-        var img = new Image();
-        img.onload = function () {
-            try {
-                var maxSide = RENDER_CONFIG.uploadMaxSide;
-                var w = img.naturalWidth, h = img.naturalHeight;
-                var ratio = Math.min(1, maxSide / Math.max(w, h));
-                var canvas = document.createElement("canvas");
-                canvas.width = Math.round(w * ratio);
-                canvas.height = Math.round(h * ratio);
-                var ctx = canvas.getContext("2d");
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = "high";
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                var out = canvas.toDataURL("image/jpeg", 0.9);
-                canvas.width = 1; canvas.height = 1;
-                resolve(out);
-            } catch (e) { reject(e); }
-        };
-        img.onerror = function () { reject(new Error("تعذر فك تشفير الصورة")); };
-        img.src = dataUrl;
     });
 }
 
@@ -1052,14 +1020,14 @@ function replaceSelectedImages() {
                 keys: keysArray,
                 dataUrl: dataUrl,
                 fileName: file.name,
-                mimeType: "image/jpeg"
+                mimeType: file.type
             };
 
             openCropEditor({
                 item: firstItem,
                 sourceDataUrl: dataUrl,
                 sourceFileName: file.name,
-                sourceMimeType: "image/jpeg",
+                sourceMimeType: file.type,
                 originalDataUrl: dataUrl
             }).finally(function () { input.remove(); });
         }).catch(function (error) {
@@ -1095,7 +1063,7 @@ function chooseReplacementImage(index) {
             pendingBatchReplacement = null;
             return openCropEditor({
                 item: item, sourceDataUrl: dataUrl,
-                sourceFileName: file.name, sourceMimeType: "image/jpeg",
+                sourceFileName: file.name, sourceMimeType: file.type,
                 originalDataUrl: dataUrl
             });
         }).catch(function (error) {
@@ -1557,7 +1525,7 @@ function createCroppedDataURL() {
     var mime = cropState.sourceMimeType;
     if (["image/png", "image/jpeg", "image/webp"].indexOf(mime) === -1) mime = "image/png";
     var dataUrl;
-    try { dataUrl = canvas.toDataURL(mime, 0.92); }
+    try { dataUrl = canvas.toDataURL(mime, 1.0); }
     catch (e) { mime = "image/png"; dataUrl = canvas.toDataURL(mime); }
 
     return { dataUrl: dataUrl, mimeType: mime, width: outputWidth, height: outputHeight, crop: crop };
@@ -1914,9 +1882,7 @@ function computeChromaKey(sourceImg, color, tolerance, feather) {
                 }
             }
             ctx.putImageData(imageData, 0, 0);
-            var out = canvas.toDataURL("image/png");
-            canvas.width = 1; canvas.height = 1;
-            resolve(out);
+            resolve(canvas.toDataURL("image/png"));
         } catch (e) { reject(e); }
     });
 }
@@ -2344,7 +2310,7 @@ function getSafeScale(width, height, requested) {
     return Math.max(1, Math.min(scale, 3));
 }
 
-/* ✅ createRenderContainer محسّن: أضفنا font-feature-settings وحذفنا opacity:1!important */
+/* ★★★ التعديل 1: letter-spacing:0 لحل تفكك الحروف ★★★ */
 function createRenderContainer(code, width, height) {
     if (!document.querySelector('link[data-render-fonts]')) {
         var link = document.createElement("link");
@@ -2365,7 +2331,9 @@ function createRenderContainer(code, width, height) {
         "[data-render-container]{box-sizing:border-box!important;text-rendering:geometricPrecision!important}" +
         "[data-render-container]*,[data-render-container]*::before,[data-render-container]*::after{" +
             "box-sizing:border-box;" +
-            "-webkit-font-feature-settings:'liga' 1,'calt' 1,'rlig' 1,'init' 1,'medi' 1,'fina' 1,'isol' 1;" +
+            "letter-spacing:0!important;" +
+            "word-spacing:0!important;" +
+            "-webkit-font-feature-settings:'liga' 1,'calt' 1,'rlig' 1;" +
             "font-feature-settings:'liga' 1,'calt' 1,'rlig' 1;" +
             "-webkit-font-smoothing:antialiased;" +
             "-webkit-text-size-adjust:100%;" +
@@ -2375,6 +2343,157 @@ function createRenderContainer(code, width, height) {
     container.appendChild(fix);
     document.body.appendChild(container);
     return container;
+}
+
+/* ★★★ التعديل 2: دوال جديدة قبل prepareImages ★★★ */
+
+/* تحويل صور object-fit:cover إلى div بـ background-image */
+function convertCoverImagesToBackgrounds(container) {
+    var imgs = Array.prototype.slice.call(container.querySelectorAll("img"));
+    imgs.forEach(function (img) {
+        var cs;
+        try { cs = window.getComputedStyle(img); } catch (e) { return; }
+        if (cs.objectFit !== "cover") return;
+
+        var src = img.getAttribute("src") || img.src;
+        if (!src) return;
+
+        var div = document.createElement("div");
+        if (img.className) div.className = img.className;
+        div.setAttribute("style", img.getAttribute("style") || "");
+        div.style.backgroundImage = "url('" + src + "')";
+        div.style.backgroundSize = "cover";
+        div.style.backgroundPosition = "center center";
+        div.style.backgroundRepeat = "no-repeat";
+
+        if (img.parentNode) img.parentNode.replaceChild(div, img);
+    });
+}
+
+/* خبز mask-image + filter + opacity داخل الصورة */
+function bakeStyledImages(container) {
+    var imgs = Array.prototype.slice.call(container.querySelectorAll("img"));
+    if (!imgs.length) return Promise.resolve();
+
+    return Promise.all(imgs.map(function (img) {
+        var cs;
+        try { cs = window.getComputedStyle(img); } catch (e) { return Promise.resolve(); }
+
+        var maskStr = cs.webkitMaskImage || cs.maskImage || "";
+        var hasMask = maskStr && maskStr !== "none";
+        var hasFilter = cs.filter && cs.filter !== "none";
+        var op = parseFloat(cs.opacity);
+        var hasOpacity = !isNaN(op) && op < 1;
+
+        if (!hasMask && !hasFilter && !hasOpacity) return Promise.resolve();
+
+        return waitImage(img, RENDER_CONFIG.imageTimeout).then(function () {
+            return bakeStyledImage(img, maskStr, cs.filter, op);
+        }).then(function (dataUrl) {
+            if (!dataUrl) return;
+            img.removeAttribute("srcset");
+            img.removeAttribute("sizes");
+            img.setAttribute("src", dataUrl);
+            img.src = dataUrl;
+            img.style.webkitMaskImage = "none";
+            img.style.maskImage = "none";
+            img.style.webkitMask = "none";
+            img.style.mask = "none";
+            img.style.filter = "none";
+            img.style.opacity = "1";
+            return waitImage(img, 3000);
+        }).catch(function (e) { console.warn("bake failed:", e); });
+    }));
+}
+
+function bakeStyledImage(img, maskStr, filterStr, opacityVal) {
+    return new Promise(function (resolve) {
+        var w = img.naturalWidth, h = img.naturalHeight;
+        if (!w || !h) { resolve(null); return; }
+
+        var maxBake = RENDER_CONFIG.bakeMaxSize;
+        var r = Math.min(1, maxBake / Math.max(w, h));
+        var outW = Math.max(1, Math.round(w * r));
+        var outH = Math.max(1, Math.round(h * r));
+
+        var canvas = document.createElement("canvas");
+        canvas.width = outW;
+        canvas.height = outH;
+        var ctx = canvas.getContext("2d");
+
+        if (filterStr && filterStr !== "none") {
+            try { ctx.filter = filterStr; } catch (e) {}
+        }
+        ctx.drawImage(img, 0, 0, outW, outH);
+        try { ctx.filter = "none"; } catch (e) {}
+
+        if (maskStr && maskStr.indexOf("radial-gradient") !== -1) {
+            try { applyRadialMask(ctx, maskStr, outW, outH); }
+            catch (e) { console.warn("mask failed:", e); }
+        }
+
+        if (!isNaN(opacityVal) && opacityVal < 1) {
+            try {
+                var data = ctx.getImageData(0, 0, outW, outH);
+                var px = data.data;
+                for (var i = 3; i < px.length; i += 4) {
+                    px[i] = Math.round(px[i] * opacityVal);
+                }
+                ctx.putImageData(data, 0, 0);
+            } catch (e) { console.warn("opacity failed:", e); }
+        }
+
+        var out = null;
+        try { out = canvas.toDataURL("image/png"); } catch (e) {}
+        canvas.width = 1; canvas.height = 1;
+        resolve(out);
+    });
+}
+
+function applyRadialMask(ctx, maskStr, w, h) {
+    var tokens = maskStr.match(/rgba?\([^)]+\)|#[0-9a-f]{3,8}|[\d.]+%/gi) || [];
+    var stops = [];
+    var pendingColor = null;
+
+    tokens.forEach(function (tok) {
+        if (/%$/.test(tok)) {
+            var pos = parseFloat(tok) / 100;
+            if (pendingColor) {
+                stops.push({ color: pendingColor, pos: pos });
+                pendingColor = null;
+            }
+        } else {
+            pendingColor = tok;
+        }
+    });
+
+    if (!stops.length) return;
+    stops.sort(function (a, b) { return a.pos - b.pos; });
+
+    var cx = w / 2, cy = h / 2;
+    var maxR = Math.sqrt(w * w + h * h) / 2;
+    var innerR = maxR * stops[0].pos;
+    var outerR = maxR * stops[stops.length - 1].pos;
+    if (outerR <= innerR) outerR = innerR + 1;
+
+    var grad = ctx.createRadialGradient(cx, cy, innerR, cx, cy, outerR);
+    stops.forEach(function (s) {
+        var c = s.color;
+        if (c.charAt(0) === "#") {
+            var hex = c.slice(1);
+            if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+            var r = parseInt(hex.slice(0, 2), 16);
+            var g = parseInt(hex.slice(2, 4), 16);
+            var b = parseInt(hex.slice(4, 6), 16);
+            c = "rgba(" + r + "," + g + "," + b + ",1)";
+        }
+        grad.addColorStop(Math.max(0, Math.min(1, s.pos)), c);
+    });
+
+    ctx.globalCompositeOperation = "destination-in";
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = "source-over";
 }
 
 function waitImage(img, timeout) {
@@ -2473,146 +2592,6 @@ function inlineBackgroundImages(container) {
     }));
 }
 
-/* =========================================================
-   ✅ دوال الخبز الجديدة — تعويض تأثيرات CSS داخل الصور
-   ========================================================= */
-function bakeRadialMaskedImage(imgEl, opts) {
-    opts = opts || {};
-    var w = imgEl.naturalWidth, h = imgEl.naturalHeight;
-    if (!w || !h) return Promise.resolve(imgEl.src);
-
-    var maxBake = RENDER_CONFIG.bakeMaxSize;
-    var ratio = Math.min(1, maxBake / Math.max(w, h));
-    var outW = Math.round(w * ratio);
-    var outH = Math.round(h * ratio);
-
-    var canvas = document.createElement("canvas");
-    canvas.width = outW;
-    canvas.height = outH;
-    var ctx = canvas.getContext("2d");
-
-    if (opts.cssFilter) {
-        try { ctx.filter = opts.cssFilter; } catch (e) { /* ignore */ }
-    }
-    ctx.drawImage(imgEl, 0, 0, outW, outH);
-    try { ctx.filter = "none"; } catch (e) { /* ignore */ }
-
-    if (opts.radialMask) {
-        var cx = outW / 2, cy = outH / 2;
-        var innerR = Math.min(outW, outH) * 0.40;
-        var outerR = Math.min(outW, outH) * 0.72;
-        var grad = ctx.createRadialGradient(cx, cy, innerR, cx, cy, outerR);
-        grad.addColorStop(0, "rgba(0,0,0,0.9)");
-        grad.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.globalCompositeOperation = "destination-in";
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, outW, outH);
-        ctx.globalCompositeOperation = "source-over";
-    }
-
-    if (opts.opacity != null) {
-        try {
-            var data = ctx.getImageData(0, 0, outW, outH);
-            var px = data.data;
-            for (var i = 3; i < px.length; i += 4) {
-                px[i] = Math.round(px[i] * opts.opacity);
-            }
-            ctx.putImageData(data, 0, 0);
-        } catch (e) {
-            console.warn("getImageData فشل (ذاكرة ممتلئة على iOS؟):", e);
-        }
-    }
-
-    var out;
-    try { out = canvas.toDataURL("image/png"); }
-    catch (e) { out = imgEl.src; }
-    canvas.width = 1; canvas.height = 1;
-    return Promise.resolve(out);
-}
-
-function bakeAllEmblems(container) {
-    var emblems = Array.prototype.slice.call(container.querySelectorAll("img.emblem"));
-    if (!emblems.length) return Promise.resolve();
-
-    return Promise.all(emblems.map(function (img) {
-        return waitImage(img, RENDER_CONFIG.imageTimeout).then(function () {
-            return bakeRadialMaskedImage(img, {
-                cssFilter: "sepia(0.25) saturate(0.7)",
-                radialMask: true,
-                opacity: 0.5
-            });
-        }).then(function (dataUrl) {
-            img.removeAttribute("srcset");
-            img.removeAttribute("sizes");
-            img.setAttribute("src", dataUrl);
-            img.src = dataUrl;
-            img.style.mask = "none";
-            img.style.webkitMask = "none";
-            img.style.filter = "none";
-            img.style.opacity = "1";
-            return waitImage(img, 3000);
-        }).catch(function (e) {
-            console.warn("bake emblem failed:", e);
-        });
-    }));
-}
-
-function bakeCoverImage(imgEl) {
-    return waitImage(imgEl, RENDER_CONFIG.imageTimeout).then(function () {
-        var rect = imgEl.getBoundingClientRect();
-        if (rect.width < 1 || rect.height < 1) return null;
-        if (!imgEl.naturalWidth || !imgEl.naturalHeight) return null;
-
-        var dpr = Math.min(window.devicePixelRatio || 1, IS_IOS ? 1.5 : 2);
-        var canvas = document.createElement("canvas");
-        canvas.width = Math.round(rect.width * dpr);
-        canvas.height = Math.round(rect.height * dpr);
-        var ctx = canvas.getContext("2d");
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
-
-        var imgRatio = imgEl.naturalWidth / imgEl.naturalHeight;
-        var targetRatio = rect.width / rect.height;
-        var dw, dh, dx, dy;
-        if (imgRatio > targetRatio) {
-            dh = canvas.height;
-            dw = dh * imgRatio;
-            dx = (canvas.width - dw) / 2;
-            dy = 0;
-        } else {
-            dw = canvas.width;
-            dh = dw / imgRatio;
-            dx = 0;
-            dy = (canvas.height - dh) / 2;
-        }
-        ctx.drawImage(imgEl, dx, dy, dw, dh);
-
-        var out = canvas.toDataURL("image/jpeg", 0.9);
-        canvas.width = 1; canvas.height = 1;
-        return out;
-    }).then(function (dataUrl) {
-        if (!dataUrl) return;
-        imgEl.setAttribute("src", dataUrl);
-        imgEl.src = dataUrl;
-        imgEl.style.objectFit = "fill";
-        imgEl.removeAttribute("srcset");
-        imgEl.removeAttribute("sizes");
-    }).catch(function (e) { console.warn("bake cover failed:", e); });
-}
-
-function bakeAllCoverImages(container) {
-    var all = Array.prototype.slice.call(container.querySelectorAll("img"));
-    var covers = all.filter(function (img) {
-        try { return window.getComputedStyle(img).objectFit === "cover"; }
-        catch (e) { return false; }
-    });
-    if (!covers.length) return Promise.resolve();
-    return Promise.all(covers.map(bakeCoverImage));
-}
-
-/* =========================================================
-   ✅ renderPage مع fallback تلقائي
-   ========================================================= */
 function renderPage(page, width, height, quality) {
     var useForeign = !IS_IOS && !IS_SAFARI;
     return attemptRender(page, width, height, quality, useForeign)
@@ -2673,7 +2652,6 @@ function attemptRender(page, width, height, quality, useForeign) {
 
 function canvasToJPEG(canvas) { return canvas.toDataURL("image/jpeg", RENDER_CONFIG.jpegQuality); }
 
-/* ✅ releaseCanvas محسّن */
 function releaseCanvas(canvas) {
     if (!canvas) return;
     try {
@@ -2743,8 +2721,9 @@ function generatePPTX() {
         })
         .then(function () { return inlineAllImages(container); })
         .then(function () { return inlineBackgroundImages(container); })
-        .then(function () { return bakeAllCoverImages(container); })
-        .then(function () { return bakeAllEmblems(container); })
+        /* ★★★ التعديل 3: استخدام الدوال الجديدة ★★★ */
+        .then(function () { convertCoverImagesToBackgrounds(container); return Promise.resolve(); })
+        .then(function () { return bakeStyledImages(container); })
         .then(function () {
             return new Promise(function (r) {
                 requestAnimationFrame(function () { requestAnimationFrame(r); });
@@ -2821,8 +2800,9 @@ function generatePDF() {
         })
         .then(function () { return inlineAllImages(container); })
         .then(function () { return inlineBackgroundImages(container); })
-        .then(function () { return bakeAllCoverImages(container); })
-        .then(function () { return bakeAllEmblems(container); })
+        /* ★★★ التعديل 3: استخدام الدوال الجديدة ★★★ */
+        .then(function () { convertCoverImagesToBackgrounds(container); return Promise.resolve(); })
+        .then(function () { return bakeStyledImages(container); })
         .then(function () {
             return new Promise(function (r) {
                 requestAnimationFrame(function () { requestAnimationFrame(r); });
@@ -2873,31 +2853,11 @@ function sanitizeFileName(name) {
         .substring(0, 100) || "file";
 }
 
-/* ✅ downloadBlob مع دعم iOS Web Share */
 function downloadBlob(blob, filename) {
-    if (IS_IOS && navigator.canShare && navigator.share) {
-        try {
-            var file = new File([blob], filename, { type: blob.type || "application/pdf" });
-            if (navigator.canShare({ files: [file] })) {
-                navigator.share({
-                    files: [file],
-                    title: filename
-                }).catch(function () {
-                    fallbackDownload(blob, filename);
-                });
-                return;
-            }
-        } catch (e) { /* يتابع للـ fallback */ }
-    }
-    fallbackDownload(blob, filename);
-}
-
-function fallbackDownload(blob, filename) {
     var url = URL.createObjectURL(blob);
     var link = document.createElement("a");
     link.href = url;
     link.download = filename;
-    link.rel = "noopener";
     link.style.display = "none";
     document.body.appendChild(link);
     link.click();
@@ -2905,7 +2865,6 @@ function fallbackDownload(blob, filename) {
     setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
 }
 
-/* ✅ yieldToBrowser محسّن لـ iOS */
 function yieldToBrowser() {
     return new Promise(function (resolve) { setTimeout(resolve, IS_IOS ? 180 : 20); });
 }
