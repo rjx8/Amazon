@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>منصة تحويل الأكواد الذكية v2.8 (PDF / PPTX)</title>
+<title>منصة تحويل الأكواد الذكية v2.9 (PDF / PPTX)</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -194,7 +194,7 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
     </div>
 </div>
 
-<div class="header"><h2>🛠️ منصة تحويل الأكواد <span class="version-badge">v2.8</span></h2></div>
+<div class="header"><h2>🛠️ منصة تحويل الأكواد <span class="version-badge">v2.9</span></h2></div>
 
 <div class="top-nav">
     <button type="button" class="nav-btn active" id="btn-converter" onclick="switchTab('converter')">⚙️ منصة التحويل</button>
@@ -446,13 +446,12 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
 
 <script>
 /* =========================================================
-   PLATFORM VERSION 2.8
-   ★ محرّكان: html2canvas (افتراضي) و SnapDOM
-   ★ إصلاح الفلاتر والشفافية (bakeStyledImage خطوتان)
-   ★ إصلاح النص بالتدرّج (bakeGradientTextElements)
+   PLATFORM VERSION 2.9
+   ★ محرّكان: html2canvas (افتراضي) / SnapDOM
+   ★ إصلاح V2.9: استخراج صحيح للتدرّج + إزالة قاطعة للأنماط
    ========================================================= */
-var PLATFORM_VERSION = "2.8";
-console.log("%c🚀 منصة التحويل - إصدار " + PLATFORM_VERSION + " ", "background:#0891b2;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;");
+var PLATFORM_VERSION = "2.9";
+console.log("%c🚀 منصة التحويل - إصدار " + PLATFORM_VERSION + " ", "background:#059669;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;");
 
 var SECRET_PASSWORD = "ayman";
 var AUTH_KEY = "auth_token_v2";
@@ -522,7 +521,6 @@ var bgRemovalState = {
     targetColor: null, tolerance: 30, feather: 2, resultDataUrl: null, batchKeys: null
 };
 
-/* ★★ V2.8: محرّك التصدير ★★ */
 function getRendererChoice() {
     var el = document.getElementById("renderer-select");
     return el ? el.value : "html2canvas";
@@ -2172,6 +2170,7 @@ function waitImage(img, timeout) {
     });
 }
 
+/* ★★★ V2.9: إزالة الأنماط بشكل قاطع مع !important ★★★ */
 function bakeStyledImages(container) {
     var imgs = Array.prototype.slice.call(container.querySelectorAll("img"));
     if (!imgs.length) return Promise.resolve();
@@ -2189,11 +2188,19 @@ function bakeStyledImages(container) {
             return bakeStyledImage(img, maskStr, cs.filter, op);
         }).then(function (dataUrl) {
             if (!dataUrl) return;
-            img.removeAttribute("srcset"); img.removeAttribute("sizes");
-            img.setAttribute("src", dataUrl); img.src = dataUrl;
-            img.style.webkitMaskImage = "none"; img.style.maskImage = "none";
-            img.style.webkitMask = "none"; img.style.mask = "none";
-            img.style.filter = "none"; img.style.opacity = "1";
+            img.removeAttribute("srcset");
+            img.removeAttribute("sizes");
+            img.setAttribute("src", dataUrl);
+            img.src = dataUrl;
+
+            /* ★ إزالة قاطعة بـ !important */
+            img.style.setProperty("-webkit-mask", "none", "important");
+            img.style.setProperty("mask", "none", "important");
+            img.style.setProperty("-webkit-mask-image", "none", "important");
+            img.style.setProperty("mask-image", "none", "important");
+            img.style.setProperty("filter", "none", "important");
+            img.style.setProperty("opacity", "1", "important");
+
             img.setAttribute("data-baked", "true");
             return waitImage(img, 3000);
         }).catch(function (e) { console.warn("bake failed:", e); });
@@ -2319,77 +2326,32 @@ function bakeGradientTextElements(container) {
     });
 }
 
-function bakeGradientTextElement(el, cs, rect) {
-    return new Promise(function (resolve) {
-        try {
-            var text = (el.textContent || "").trim();
-            if (!text) { resolve(); return; }
-            var fontSize = parseFloat(cs.fontSize) || 16;
-            var fontWeight = cs.fontWeight || "400";
-            var fontFamily = cs.fontFamily || "sans-serif";
-            var textAlign = cs.textAlign || "center";
-            var bgImage = cs.backgroundImage;
-            var grad = parseLinearGradient(bgImage);
-            if (!grad || grad.colors.length < 2) {
-                var solid = grad && grad.colors[0] ? grad.colors[0] : "#1f4e5f";
-                el.style.background = "none";
-                el.style.webkitBackgroundClip = "initial";
-                el.style.backgroundClip = "initial";
-                el.style.color = solid;
-                resolve();
-                return;
-            }
-            var scale = 3;
-            var w = Math.ceil(rect.width);
-            var h = Math.ceil(rect.height);
-            var canvas = document.createElement("canvas");
-            canvas.width = w * scale;
-            canvas.height = h * scale;
-            var ctx = canvas.getContext("2d");
-            ctx.scale(scale, scale);
-            var fill = makeCanvasLinearGradient(ctx, grad, w, h);
-            if (!fill) {
-                el.style.background = "none";
-                el.style.webkitBackgroundClip = "initial";
-                el.style.backgroundClip = "initial";
-                el.style.color = grad.colors[0] || "#1f4e5f";
-                resolve();
-                return;
-            }
-            ctx.fillStyle = fill;
-            ctx.font = fontWeight + " " + fontSize + "px " + fontFamily;
-            ctx.textAlign = textAlign === "right" ? "end" : textAlign === "left" ? "start" : "center";
-            ctx.textBaseline = "middle";
-            ctx.direction = "rtl";
-            var textX = textAlign === "right" ? w : textAlign === "left" ? 0 : w / 2;
-            var textY = h / 2;
-            ctx.fillText(text, textX, textY);
-            var dataUrl = canvas.toDataURL("image/png");
-            canvas.width = 1; canvas.height = 1;
-            el.innerHTML = "";
-            el.style.background = "none";
-            el.style.webkitBackgroundClip = "initial";
-            el.style.backgroundClip = "initial";
-            el.style.color = "transparent";
-            el.setAttribute("data-gradtext-baked", "true");
-            var img = document.createElement("img");
-            img.src = dataUrl;
-            img.style.cssText = "display:block;width:100%;height:100%;object-fit:contain";
-            img.setAttribute("data-gradtext-img", "true");
-            el.appendChild(img);
-            resolve();
-        } catch (e) {
-            console.warn("bakeGradientTextElement failed:", e);
-            resolve();
+/* ★★★ V2.9: إصلاح جذري — استخراج جسم التدرّج بشكل صحيح ★★★ */
+function extractGradientBody(bgImage) {
+    var key = "linear-gradient(";
+    var idx = bgImage.indexOf(key);
+    if (idx === -1) return null;
+    var start = idx + key.length;
+    var depth = 1;
+    var end = start;
+    while (end < bgImage.length && depth > 0) {
+        var ch = bgImage[end];
+        if (ch === "(") depth++;
+        else if (ch === ")") {
+            depth--;
+            if (depth === 0) break;
         }
-    });
+        end++;
+    }
+    if (depth !== 0) return null;
+    return bgImage.slice(start, end);
 }
 
 function parseLinearGradient(bgImage) {
     if (!bgImage || bgImage === "none") return null;
-    var m = bgImage.match(/linear-gradient\s*\(([^)]+)\)/i);
-    if (!m) return null;
-    var parts = splitTopLevel(m[1], ",");
+    var body = extractGradientBody(bgImage);
+    if (!body) return null;
+    var parts = splitTopLevel(body, ",");
     if (parts.length < 2) return null;
     var angle = 180;
     var colors = [];
@@ -2414,6 +2376,81 @@ function parseLinearGradient(bgImage) {
     }
     if (colors.length < 2) return null;
     return { angle: angle, colors: colors };
+}
+
+function bakeGradientTextElement(el, cs, rect) {
+    return new Promise(function (resolve) {
+        try {
+            var text = (el.textContent || "").trim();
+            if (!text) { resolve(); return; }
+            var fontSize = parseFloat(cs.fontSize) || 16;
+            var fontWeight = cs.fontWeight || "400";
+            var fontFamily = cs.fontFamily || "sans-serif";
+            var textAlign = cs.textAlign || "center";
+            var bgImage = cs.backgroundImage;
+            var grad = parseLinearGradient(bgImage);
+            if (!grad || grad.colors.length < 2) {
+                var solid = (grad && grad.colors[0]) || cs.color || "#1f4e5f";
+                el.style.setProperty("background", "none", "important");
+                el.style.setProperty("background-image", "none", "important");
+                el.style.setProperty("-webkit-background-clip", "initial", "important");
+                el.style.setProperty("background-clip", "initial", "important");
+                el.style.setProperty("-webkit-text-fill-color", "initial", "important");
+                el.style.setProperty("color", solid, "important");
+                resolve();
+                return;
+            }
+            var scale = 3;
+            var w = Math.ceil(rect.width);
+            var h = Math.ceil(rect.height);
+            var canvas = document.createElement("canvas");
+            canvas.width = w * scale;
+            canvas.height = h * scale;
+            var ctx = canvas.getContext("2d");
+            ctx.scale(scale, scale);
+            var fill = makeCanvasLinearGradient(ctx, grad, w, h);
+            if (!fill) {
+                el.style.setProperty("background", "none", "important");
+                el.style.setProperty("background-image", "none", "important");
+                el.style.setProperty("-webkit-background-clip", "initial", "important");
+                el.style.setProperty("background-clip", "initial", "important");
+                el.style.setProperty("-webkit-text-fill-color", "initial", "important");
+                el.style.setProperty("color", grad.colors[0] || "#1f4e5f", "important");
+                resolve();
+                return;
+            }
+            ctx.fillStyle = fill;
+            ctx.font = fontWeight + " " + fontSize + "px " + fontFamily;
+            ctx.textAlign = textAlign === "right" ? "end" : textAlign === "left" ? "start" : "center";
+            ctx.textBaseline = "middle";
+            ctx.direction = "rtl";
+            var textX = textAlign === "right" ? w : textAlign === "left" ? 0 : w / 2;
+            var textY = h / 2;
+            ctx.fillText(text, textX, textY);
+            var dataUrl = canvas.toDataURL("image/png");
+            canvas.width = 1; canvas.height = 1;
+
+            el.innerHTML = "";
+            /* ★ إزالة قاطعة بـ !important */
+            el.style.setProperty("background", "none", "important");
+            el.style.setProperty("background-image", "none", "important");
+            el.style.setProperty("-webkit-background-clip", "initial", "important");
+            el.style.setProperty("background-clip", "initial", "important");
+            el.style.setProperty("-webkit-text-fill-color", "initial", "important");
+            el.style.setProperty("color", "transparent", "important");
+            el.setAttribute("data-gradtext-baked", "true");
+
+            var img = document.createElement("img");
+            img.src = dataUrl;
+            img.style.cssText = "display:block;width:" + w + "px;height:" + h + "px;margin:0;padding:0;";
+            img.setAttribute("data-gradtext-img", "true");
+            el.appendChild(img);
+            resolve();
+        } catch (e) {
+            console.warn("bakeGradientTextElement failed:", e);
+            resolve();
+        }
+    });
 }
 
 function splitTopLevel(str, sep) {
@@ -2493,21 +2530,20 @@ function inlineBackgroundImages(container) {
                 return toSafeDataURL(url).then(function (dataUrl) {
                     var style = el.getAttribute("style") || "";
                     if (style.indexOf(url) !== -1) el.setAttribute("style", style.split(url).join(dataUrl));
-                }).catch(function (err) { console.warn("inline bg failed:", err); });
+                }). {catch(function (err) { console.warn("inline bg failed:", err); });
             });
         });
         return chain;
     }));
 }
 
-/* ★★ V2.8: تصوير بـ SnapDOM ★★ */
 function renderPageSnapDOM(page, width, height, quality) {
     return new Promise(function (resolve, reject) {
         if (!isSnapDOMAvailable()) { reject(new Error("SnapDOM غير محمّل")); return; }
-        var scale = getSafeScale(width, height, quality);
-        var oldWidth = page.style.width;
-        var oldHeight = page.style.height;
-        var oldMinHeight = page.style.minHeight;
+        var scale = alert getSafeScale(width, height, quality);
+       (" var oldWidth = page.style.widthال;
+        var oldرجHeight = page.style.height;
+        varاء oldMinHeight = page.style.minHeight;
         page.style.width = width + "px";
         page.style.height = height + "px";
         page.style.minHeight = height + "px";
@@ -2537,7 +2573,6 @@ function renderPageSnapDOM(page, width, height, quality) {
     });
 }
 
-/* ★★ V2.8: تصوير بـ html2canvas ★★ */
 function renderPageHtml2Canvas(page, width, height, quality) {
     var useForeign = !IS_IOS && !IS_SAFARI;
     return attemptRender(page, width, height, quality, useForeign)
@@ -2547,7 +2582,6 @@ function renderPageHtml2Canvas(page, width, height, quality) {
         });
 }
 
-/* ★★ V2.8: موحّد — يختار المحرّك حسب الاختيار ★★ */
 function renderPageUnified(page, width, height, quality, useSnapdom) {
     if (useSnapdom) {
         return renderPageSnapDOM(page, width, height, quality)
@@ -2622,7 +2656,7 @@ function exportFile() {
     if (!inputEl || !formatEl) return;
     var code = inputEl.value;
     var format = formatEl.value;
-    if (!code.trim()) { alert("الرجاء لصق الكود أولاً!"); return; }
+    if (!code.trim()) لصق الكود أولاً!"); return; }
     analyzeHTMLImages();
     var button = document.getElementById("capture-btn");
     if (button) button.disabled = true;
@@ -2638,7 +2672,6 @@ function exportFile() {
     });
 }
 
-/* ★★ V2.8: prepareContainerForRender — يتخطى bake عند SnapDOM ★★ */
 function prepareContainerForRender(container, quality, useSnapdom) {
     return Promise.resolve()
         .then(function () {
@@ -2649,7 +2682,6 @@ function prepareContainerForRender(container, quality, useSnapdom) {
         .then(function () { return new Promise(function (r) { setTimeout(r, IS_IOS ? 700 : 400); }); })
         .then(function () { return inlineAllImages(container); })
         .then(function () { return inlineBackgroundImages(container); })
-        /* html2canvas يحتاج bake يدوي، SnapDOM لا */
         .then(function () {
             if (useSnapdom) return;
             return bakeGradientTextElements(container)
@@ -2676,9 +2708,7 @@ function generatePPTX() {
     var width = 1280, height = 720;
     var rendererChoice = getRendererChoice();
     var useSnapdom = (rendererChoice === "snapdom") && isSnapDOMAvailable();
-    if (rendererChoice === "snapdom" && !useSnapdom) {
-        console.warn("SnapDOM غير محمّل — التحويل إلى html2canvas");
-    }
+    if (rendererChoice === "snapdom" && !useSnapdom) console.warn("SnapDOM غير محمّل — التحويل إلى html2canvas");
     if (button) button.innerText = "⏳ جاري تحضير البوربوينت...";
     var container = createRenderContainer(code, width, height);
     return prepareContainerForRender(container, quality, useSnapdom)
@@ -2736,9 +2766,7 @@ function generatePDF() {
     var height = isA4 ? 1123 : 720;
     var rendererChoice = getRendererChoice();
     var useSnapdom = (rendererChoice === "snapdom") && isSnapDOMAvailable();
-    if (rendererChoice === "snapdom" && !useSnapdom) {
-        console.warn("SnapDOM غير محمّل — التحويل إلى html2canvas");
-    }
+    if (rendererChoice === "snapdom" && !useSnapdom) console.warn("SnapDOM غير محمّل — التحويل إلى html2canvas");
     if (button) button.innerText = "⏳ جاري تجهيز PDF...";
     var container = createRenderContainer(code, width, height);
     return prepareContainerForRender(container, quality, useSnapdom)
