@@ -464,7 +464,8 @@ var RENDER_CONFIG = {
     fontTimeout: IS_IOS ? 9000 : 5000,
     imageTimeout: IS_IOS ? 12000 : 7000,
     jpegQuality: IS_IOS ? 0.82 : 0.88,
-    bakeMaxSize: IS_IOS ? 900 : 1400
+    /* ★★★ رُفع الحجم لتفادي الغباش في الصور الكبيرة ★★★ */
+    bakeMaxSize: IS_IOS ? 1400 : 2200
 };
 
 var ARABIC_FONTS = [
@@ -665,7 +666,6 @@ function resolveImgSrc(img) {
     return src;
 }
 
-/* ★★★ دالة مساعدة جديدة لحماية أسماء الملفات من تضخم Base64 ★★★ */
 function getSafeImageBaseName(sourceFileName, item) {
     var name = String(sourceFileName == null ? "" : sourceFileName).trim();
     if (!name || name.indexOf("data:") === 0 || name.length > 50) {
@@ -792,7 +792,6 @@ function analyzeHTMLImages() {
         });
     });
 
-    /* ★★★ التعديل 2: عزل فحص CSS داخل iframe مخفي لمنع تسريب الأنماط ★★★ */
     var styleTags = Array.prototype.slice.call(doc.querySelectorAll("style"));
     styleTags.forEach(function (styleTag, styleIndex) {
         var cssText = styleTag.textContent || "";
@@ -1581,7 +1580,6 @@ function applyCrop() {
     var item = cropState.item;
     if (!item) return;
 
-    /* ★★★ التعديل 4: استخدام getSafeImageBaseName لحماية اسم الملف ★★★ */
     var buildReplacement = function (targetItem) {
         var old = imageReplacements.get(targetItem.key);
         var extension = result.mimeType === "image/jpeg" ? ".jpg"
@@ -1957,7 +1955,6 @@ function applyBackgroundRemoval() {
     var item = bgRemovalState.item;
     if (!item) return;
 
-    /* ★★★ التعديل 4: استخدام getSafeImageBaseName لحماية اسم الملف ★★★ */
     var buildReplacement = function (targetItem) {
         var old = imageReplacements.get(targetItem.key);
         var cleanName = getSafeImageBaseName(bgRemovalState.sourceFileName, targetItem);
@@ -2379,9 +2376,62 @@ function createRenderContainer(code, width, height) {
     return container;
 }
 
-/* تحويل صور object-fit:cover إلى div بـ background-image */
+/* =========================================================
+   ★★★ دالة التقليص التدريجي عالي الجودة (لمنع الغباش/Moiré) ★★★
+   ========================================================= */
+function highQualityDownscale(sourceImg, targetW, targetH) {
+    try {
+        var w = sourceImg.naturalWidth;
+        var h = sourceImg.naturalHeight;
+        if (!w || !h) return null;
+
+        /* لا داعي للتقليص إذا كانت الصورة أصلاً بحجم مناسب */
+        if (w <= targetW * 1.3 && h <= targetH * 1.3) return null;
+
+        var canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(sourceImg, 0, 0);
+
+        /* تقليص تدريجي بالنصف حتى نقترب من الحجم الهدف */
+        while (w > targetW * 2 || h > targetH * 2) {
+            var nw = Math.max(1, Math.floor(w / 2));
+            var nh = Math.max(1, Math.floor(h / 2));
+            var next = document.createElement("canvas");
+            next.width = nw;
+            next.height = nh;
+            var nctx = next.getContext("2d");
+            nctx.imageSmoothingEnabled = true;
+            nctx.imageSmoothingQuality = "high";
+            nctx.drawImage(canvas, 0, 0, w, h, 0, 0, nw, nh);
+            canvas.width = 1; canvas.height = 1;
+            canvas = next;
+            w = nw; h = nh;
+        }
+
+        /* الخطوة الأخيرة بحجم الهدف */
+        var final = document.createElement("canvas");
+        final.width = targetW;
+        final.height = targetH;
+        var fctx = final.getContext("2d");
+        fctx.imageSmoothingEnabled = true;
+        fctx.imageSmoothingQuality = "high";
+        fctx.drawImage(canvas, 0, 0, w, h, 0, 0, targetW, targetH);
+        canvas.width = 1; canvas.height = 1;
+
+        return final.toDataURL("image/png");
+    } catch (e) {
+        console.warn("highQualityDownscale failed:", e);
+        return null;
+    }
+}
+
+/* ★★★ النسخة المُصلَحة: تعزل الأنماط + تصغّر الصورة قبل التحويل ★★★ */
 function convertCoverImagesToBackgrounds(container) {
     var imgs = Array.prototype.slice.call(container.querySelectorAll("img"));
+    var jobs = [];
+
     imgs.forEach(function (img) {
         var cs;
         try { cs = window.getComputedStyle(img); } catch (e) { return; }
@@ -2390,24 +2440,75 @@ function convertCoverImagesToBackgrounds(container) {
         var src = img.getAttribute("src") || img.src;
         if (!src) return;
 
-        var div = document.createElement("div");
-        if (img.className) div.className = img.className;
-        div.setAttribute("style", img.getAttribute("style") || "");
-        div.style.backgroundImage = "url('" + src + "')";
-        div.style.backgroundSize = "cover";
-        div.style.backgroundPosition = "center center";
-        div.style.backgroundRepeat = "no-repeat";
+        var elementWidth = parseFloat(cs.width) || img.clientWidth || 0;
+        var elementHeight = parseFloat(cs.height) || img.clientHeight || 0;
 
-        if (img.parentNode) img.parentNode.replaceChild(div, img);
+        var job = new Promise(function (resolve) {
+            /* إذا كانت الأبعاد غير معروفة أو ليست data: → لا تصغير */
+            if (!elementWidth || !elementHeight || src.indexOf("data:") !== 0) {
+                resolve(src);
+                return;
+            }
+
+            var probe = new Image();
+            probe.onload = function () {
+                /* نستهدف 3× حجم العرض النهائي لجودة عالية بدون moiré */
+                var targetW = Math.round(elementWidth * 3);
+                var targetH = Math.round(elementHeight * 3);
+                var optimized = highQualityDownscale(probe, targetW, targetH);
+                resolve(optimized || src);
+            };
+            probe.onerror = function () { resolve(src); };
+            probe.src = src;
+        }).then(function (finalSrc) {
+            var div = document.createElement("div");
+
+            /* ⚠️ لا ننسخ className (لتجنّب إعادة تطبيق الفلاتر/الأقنعة) */
+            var safeStyle = img.getAttribute("style") || "";
+            div.setAttribute("style", safeStyle);
+
+            /* نسخ الأنماط المرئية من computed style */
+            div.style.position = cs.position;
+            div.style.top = cs.top;
+            div.style.left = cs.left;
+            div.style.right = cs.right;
+            div.style.bottom = cs.bottom;
+            div.style.width = cs.width;
+            div.style.height = cs.height;
+            div.style.zIndex = cs.zIndex;
+            div.style.display = "block";
+
+            /* ⚠️ مهم: نُلغي أي فلاتر/أقنعة/شفافية قبل إضافة الصورة المُخبزة */
+            div.style.opacity = "1";
+            div.style.filter = "none";
+            div.style.webkitMaskImage = "none";
+            div.style.maskImage = "none";
+            div.style.webkitMask = "none";
+            div.style.mask = "none";
+
+            div.style.backgroundImage = "url('" + finalSrc + "')";
+            div.style.backgroundSize = "cover";
+            div.style.backgroundPosition = "center center";
+            div.style.backgroundRepeat = "no-repeat";
+
+            if (img.parentNode) img.parentNode.replaceChild(div, img);
+        });
+
+        jobs.push(job);
     });
+
+    return Promise.all(jobs);
 }
 
-/* خبز mask-image + filter + opacity داخل الصورة */
+/* ★★★ النسخة المُصلَحة: تثبيت الشفافية + منع التخبيز المزدوج ★★★ */
 function bakeStyledImages(container) {
     var imgs = Array.prototype.slice.call(container.querySelectorAll("img"));
     if (!imgs.length) return Promise.resolve();
 
     return Promise.all(imgs.map(function (img) {
+        /* تجاهل الصور المُخبزة مسبقًا */
+        if (img.getAttribute("data-baked") === "true") return Promise.resolve();
+
         var cs;
         try { cs = window.getComputedStyle(img); } catch (e) { return Promise.resolve(); }
 
@@ -2433,11 +2534,13 @@ function bakeStyledImages(container) {
             img.style.mask = "none";
             img.style.filter = "none";
             img.style.opacity = "1";
+            img.setAttribute("data-baked", "true");
             return waitImage(img, 3000);
         }).catch(function (e) { console.warn("bake failed:", e); });
     }));
 }
 
+/* ★★★ النسخة المُصلَحة: تجعل كل البكسلات معتمة قبل تطبيق القناع ★★★ */
 function bakeStyledImage(img, maskStr, filterStr, opacityVal) {
     return new Promise(function (resolve) {
         var w = img.naturalWidth, h = img.naturalHeight;
@@ -2453,11 +2556,22 @@ function bakeStyledImage(img, maskStr, filterStr, opacityVal) {
         canvas.height = outH;
         var ctx = canvas.getContext("2d");
 
+        ctx.clearRect(0, 0, outW, outH);
+
         if (filterStr && filterStr !== "none") {
             try { ctx.filter = filterStr; } catch (e) {}
         }
         ctx.drawImage(img, 0, 0, outW, outH);
         try { ctx.filter = "none"; } catch (e) {}
+
+        /* ★ الإصلاح الجذري: اجعل كل البكسلات معتمة تمامًا ★
+           (يجعل PNG تعامل مثل JPG بغض النظر عن شفافيتها الأصلية) */
+        try {
+            var flat = ctx.getImageData(0, 0, outW, outH);
+            var fd = flat.data;
+            for (var i = 3; i < fd.length; i += 4) { fd[i] = 255; }
+            ctx.putImageData(flat, 0, 0);
+        } catch (e) { console.warn("opaque flatten failed:", e); }
 
         if (maskStr && maskStr.indexOf("radial-gradient") !== -1) {
             try { applyRadialMask(ctx, maskStr, outW, outH); }
@@ -2466,12 +2580,12 @@ function bakeStyledImage(img, maskStr, filterStr, opacityVal) {
 
         if (!isNaN(opacityVal) && opacityVal < 1) {
             try {
-                var data = ctx.getImageData(0, 0, outW, outH);
-                var px = data.data;
-                for (var i = 3; i < px.length; i += 4) {
-                    px[i] = Math.round(px[i] * opacityVal);
+                var d2 = ctx.getImageData(0, 0, outW, outH);
+                var p2 = d2.data;
+                for (var j = 3; j < p2.length; j += 4) {
+                    p2[j] = Math.round(p2[j] * opacityVal);
                 }
-                ctx.putImageData(data, 0, 0);
+                ctx.putImageData(d2, 0, 0);
             } catch (e) { console.warn("opacity failed:", e); }
         }
 
@@ -2753,9 +2867,8 @@ function generatePPTX() {
         })
         .then(function () { return inlineAllImages(container); })
         .then(function () { return inlineBackgroundImages(container); })
-        /* ★★★ التعديل 3: bake أولاً ثم convert لمنع سباق خط الأنابيب ★★★ */
         .then(function () { return bakeStyledImages(container); })
-        .then(function () { convertCoverImagesToBackgrounds(container); return Promise.resolve(); })
+        .then(function () { return convertCoverImagesToBackgrounds(container); })
         .then(function () {
             return new Promise(function (r) {
                 requestAnimationFrame(function () { requestAnimationFrame(r); });
@@ -2832,9 +2945,8 @@ function generatePDF() {
         })
         .then(function () { return inlineAllImages(container); })
         .then(function () { return inlineBackgroundImages(container); })
-        /* ★★★ التعديل 3: bake أولاً ثم convert لمنع سباق خط الأنابيب ★★★ */
         .then(function () { return bakeStyledImages(container); })
-        .then(function () { convertCoverImagesToBackgrounds(container); return Promise.resolve(); })
+        .then(function () { return convertCoverImagesToBackgrounds(container); })
         .then(function () {
             return new Promise(function (r) {
                 requestAnimationFrame(function () { requestAnimationFrame(r); });
