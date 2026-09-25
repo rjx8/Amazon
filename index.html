@@ -2170,7 +2170,6 @@ function waitImage(img, timeout) {
     });
 }
 
-/* ★★★ V2.9: إزالة الأنماط بشكل قاطع مع !important ★★★ */
 function bakeStyledImages(container) {
     var imgs = Array.prototype.slice.call(container.querySelectorAll("img"));
     if (!imgs.length) return Promise.resolve();
@@ -2193,7 +2192,6 @@ function bakeStyledImages(container) {
             img.setAttribute("src", dataUrl);
             img.src = dataUrl;
 
-            /* ★ إزالة قاطعة بـ !important */
             img.style.setProperty("-webkit-mask", "none", "important");
             img.style.setProperty("mask", "none", "important");
             img.style.setProperty("-webkit-mask-image", "none", "important");
@@ -2326,7 +2324,6 @@ function bakeGradientTextElements(container) {
     });
 }
 
-/* ★★★ V2.9: إصلاح جذري — استخراج جسم التدرّج بشكل صحيح ★★★ */
 function extractGradientBody(bgImage) {
     var key = "linear-gradient(";
     var idx = bgImage.indexOf(key);
@@ -2431,7 +2428,6 @@ function bakeGradientTextElement(el, cs, rect) {
             canvas.width = 1; canvas.height = 1;
 
             el.innerHTML = "";
-            /* ★ إزالة قاطعة بـ !important */
             el.style.setProperty("background", "none", "important");
             el.style.setProperty("background-image", "none", "important");
             el.style.setProperty("-webkit-background-clip", "initial", "important");
@@ -2515,6 +2511,7 @@ function inlineAllImages(container) {
     }));
 }
 
+/* ✅ إصلاح 1: حذف { الزائدة قبل .catch */
 function inlineBackgroundImages(container) {
     var elements = Array.prototype.slice.call(container.querySelectorAll("*"));
     return Promise.all(elements.map(function (el) {
@@ -2530,20 +2527,21 @@ function inlineBackgroundImages(container) {
                 return toSafeDataURL(url).then(function (dataUrl) {
                     var style = el.getAttribute("style") || "";
                     if (style.indexOf(url) !== -1) el.setAttribute("style", style.split(url).join(dataUrl));
-                }). {catch(function (err) { console.warn("inline bg failed:", err); });
+                }).catch(function (err) { console.warn("inline bg failed:", err); });
             });
         });
         return chain;
     }));
 }
 
+/* ✅ إصلاح 2: حذف alert والحروف العربية الدخيلة */
 function renderPageSnapDOM(page, width, height, quality) {
     return new Promise(function (resolve, reject) {
         if (!isSnapDOMAvailable()) { reject(new Error("SnapDOM غير محمّل")); return; }
-        var scale = alert getSafeScale(width, height, quality);
-       (" var oldWidth = page.style.widthال;
-        var oldرجHeight = page.style.height;
-        varاء oldMinHeight = page.style.minHeight;
+        var scale = getSafeScale(width, height, quality);
+        var oldWidth = page.style.width;
+        var oldHeight = page.style.height;
+        var oldMinHeight = page.style.minHeight;
         page.style.width = width + "px";
         page.style.height = height + "px";
         page.style.minHeight = height + "px";
@@ -2650,13 +2648,14 @@ function getPages(containerOrDoc) {
     return [containerOrDoc];
 }
 
+/* ✅ إصلاح 3: استرجاع alert المقطوعة */
 function exportFile() {
     var inputEl = document.getElementById("html-input");
     var formatEl = document.getElementById("format-select");
     if (!inputEl || !formatEl) return;
     var code = inputEl.value;
     var format = formatEl.value;
-    if (!code.trim()) لصق الكود أولاً!"); return; }
+    if (!code.trim()) { alert("الرجاء لصق الكود أولاً!"); return; }
     analyzeHTMLImages();
     var button = document.getElementById("capture-btn");
     if (button) button.disabled = true;
