@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>منصة تحويل الأكواد الذكية v2.7 (PDF / PPTX)</title>
+<title>منصة تحويل الأكواد الذكية v2.8 (PDF / PPTX)</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -194,7 +194,7 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
     </div>
 </div>
 
-<div class="header"><h2>🛠️ منصة تحويل الأكواد <span class="version-badge">v2.7</span></h2></div>
+<div class="header"><h2>🛠️ منصة تحويل الأكواد <span class="version-badge">v2.8</span></h2></div>
 
 <div class="top-nav">
     <button type="button" class="nav-btn active" id="btn-converter" onclick="switchTab('converter')">⚙️ منصة التحويل</button>
@@ -224,6 +224,13 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
                     <option value="3" selected>ممتازة (أقصى جودة) ⭐</option>
                 </select>
             </div>
+        </div>
+        <div class="form-group">
+            <label>محرّك التصدير:</label>
+            <select id="renderer-select">
+                <option value="html2canvas" selected>🔧 html2canvas</option>
+                <option value="snapdom">⚡ SnapDOM</option>
+            </select>
         </div>
         <div class="form-group">
             <div class="textarea-header">
@@ -397,21 +404,17 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
             <button type="button" class="crop-close" onclick="closeBackgroundRemover()">×</button>
         </div>
         <div id="bg-target-info" class="crop-target-info">انقر على لون الخلفية في الصورة ثم اضبط الإعدادات.</div>
-
         <div class="bg-hint">
-            <strong>💡 كيف يعمل؟</strong> انقر على لون الخلفية في الصورة أدناه، ثم اضبط <strong>التسامح</strong> حتى تختفي الخلفية تمامًا مع بقاء العنصر الأساسي.
+            <strong>💡 كيف يعمل؟</strong> انقر على لون الخلفية في الصورة أدناه، ثم اضبط <strong>التسامح</strong> حتى تختفي الخلفية تمامًا.
         </div>
-
         <div id="bg-loading" class="bg-loader">
             <div class="bg-loader-spinner"></div>
             <div class="bg-loader-text">جاري تحضير الصورة للتحرير...</div>
         </div>
-
         <div id="bg-preview-wrap" class="bg-preview-wrap" style="display:none;">
             <img id="bg-preview-img" class="bg-preview-img" alt="">
             <div class="bg-preview-hint">👆 انقر على الخلفية</div>
         </div>
-
         <div id="bg-controls" style="display:none;">
             <div class="bg-color-row">
                 <div class="bg-color-swatch" id="bg-color-swatch">لم يُحدد</div>
@@ -431,10 +434,8 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
                 <span class="bg-slider-value" id="bg-feather-value">2</span>
             </div>
         </div>
-
         <div class="bg-result-note" id="bg-result-note"></div>
         <div class="bg-error-note" id="bg-error-note"></div>
-
         <div class="crop-actions">
             <button type="button" class="crop-action cancel" onclick="closeBackgroundRemover()">إلغاء</button>
             <button type="button" class="crop-action preview" onclick="previewBackgroundRemoval()">معاينة</button>
@@ -445,12 +446,12 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
 
 <script>
 /* =========================================================
-   PLATFORM VERSION 2.7
-   ★ الافتراضي: html2canvas
-   ★ إصلاح فلاتر الصور (SVG → canvas → filter → PNG)
-   ★ إصلاح النص بتدرّج (background-clip:text)
+   PLATFORM VERSION 2.8
+   ★ محرّكان: html2canvas (افتراضي) و SnapDOM
+   ★ إصلاح الفلاتر والشفافية (bakeStyledImage خطوتان)
+   ★ إصلاح النص بالتدرّج (bakeGradientTextElements)
    ========================================================= */
-var PLATFORM_VERSION = "2.7";
+var PLATFORM_VERSION = "2.8";
 console.log("%c🚀 منصة التحويل - إصدار " + PLATFORM_VERSION + " ", "background:#0891b2;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;");
 
 var SECRET_PASSWORD = "ayman";
@@ -521,6 +522,16 @@ var bgRemovalState = {
     targetColor: null, tolerance: 30, feather: 2, resultDataUrl: null, batchKeys: null
 };
 
+/* ★★ V2.8: محرّك التصدير ★★ */
+function getRendererChoice() {
+    var el = document.getElementById("renderer-select");
+    return el ? el.value : "html2canvas";
+}
+function isSnapDOMAvailable() {
+    return typeof window !== "undefined" && typeof window.snapdom !== "undefined" &&
+           typeof window.snapdom.toCanvas === "function";
+}
+
 function escapeHTML(value) {
     return String(value == null ? "" : value)
         .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -549,7 +560,7 @@ function getFileNameFromURL(src) {
         var parts = clean.split("/");
         var file = parts[parts.length - 1];
         if (file) return decodeURIComponent(file);
-    } catch (e) { /* ignore */ }
+    } catch (e) {}
     return "";
 }
 
@@ -682,7 +693,6 @@ function toSafeDataURL(src) {
     return new Promise(function (resolve, reject) {
         if (!src) { reject(new Error("مصدر فارغ")); return; }
         if (src.indexOf("data:") === 0) { resolve(src); return; }
-
         fetch(src, { mode: "cors", credentials: "omit" })
             .then(function (res) {
                 if (res.ok) return res.blob();
@@ -695,14 +705,11 @@ function toSafeDataURL(src) {
                 img.onload = function () {
                     try {
                         var canvas = document.createElement("canvas");
-                        canvas.width = img.naturalWidth;
-                        canvas.height = img.naturalHeight;
+                        canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
                         var ctx = canvas.getContext("2d");
                         ctx.drawImage(img, 0, 0);
                         resolve(canvas.toDataURL("image/png"));
-                    } catch (err) {
-                        reject(new Error("لا يمكن قراءة بكسلات الصورة (CORS)."));
-                    }
+                    } catch (err) { reject(new Error("لا يمكن قراءة بكسلات الصورة (CORS).")); }
                 };
                 img.onerror = function () { reject(new Error("تعذر تحميل الصورة")); };
                 img.src = src;
@@ -741,7 +748,6 @@ function analyzeHTMLImages() {
     catch (e) { detectedImages = []; manager.classList.remove("visible"); return; }
 
     var found = [];
-
     var images = Array.prototype.slice.call(doc.querySelectorAll("img"));
     images.forEach(function (img, index) {
         var src = resolveImgSrc(img);
@@ -781,11 +787,9 @@ function analyzeHTMLImages() {
     styleTags.forEach(function (styleTag, styleIndex) {
         var cssText = styleTag.textContent || "";
         if (!cssText.trim()) return;
-
         var isolatedFrame = document.createElement("iframe");
         isolatedFrame.setAttribute("aria-hidden", "true");
         isolatedFrame.style.cssText = "position:absolute;left:-99999px;top:0;width:0;height:0;border:0;visibility:hidden;pointer-events:none;opacity:0;";
-
         var cssRules = [];
         try {
             document.body.appendChild(isolatedFrame);
@@ -798,7 +802,6 @@ function analyzeHTMLImages() {
                 cssRules = Array.prototype.slice.call((sheet && sheet.cssRules) || []);
             }
         } catch (error) { cssRules = []; }
-
         try {
             cssRules.forEach(function (rule, ruleIndex) {
                 if (!rule.selectorText || !rule.style) return;
@@ -894,7 +897,6 @@ function renderImageManager() {
         updateBatchBar();
         return;
     }
-
     var html = detectedImages.map(function (item) {
         var replacement = imageReplacements.get(item.key);
         var isReplaced = !!replacement;
@@ -906,21 +908,16 @@ function renderImageManager() {
         var definedDimensions = item.width + " × " + item.height;
         var typeLabel = item.type === "img" ? "IMG" : "خلفية CSS";
         var sourceLabel = item.type === "img" ? "src" : item.subtype === "inline" ? "style" : "CSS rule";
-
         var thumbContent = previewSrc
             ? '<img src="' + escapeAttribute(previewSrc) + '" alt="">'
             : '<span style="color:#475569;font-size:20px;">🖼️</span>';
-
         var selectorHtml = item.selector
             ? '<div class="html-image-url" title="' + escapeAttribute(item.selector) + '">CSS: ' + escapeHTML(item.selector) + '</div>' : "";
-
         var cropEditHtml = isReplaced
             ? '<button type="button" class="html-image-action crop-edit" onclick="editReplacementCrop(' + item.index + ')">✂️ تعديل القص</button>' : "";
-
         var statusHtml = isReplaced
             ? '✅ سيتم استخدام: ' + escapeHTML(replacement.fileName)
             : 'الصورة الحالية مستخدمة';
-
         return '' +
             '<div class="html-image-card ' + (isReplaced ? "replaced " : "") + (isSelected ? "selected" : "") + '" data-image-card="' + item.index + '">' +
                 '<label class="html-image-select-row">' +
@@ -954,7 +951,6 @@ function renderImageManager() {
                 '<div class="html-image-status">' + statusHtml + '</div>' +
             '</div>';
     }).join("");
-
     list.innerHTML = html;
     updateBatchBar();
 }
@@ -1071,7 +1067,6 @@ function replaceCSSImageURL(value, original, replacement) {
 function applyImageReplacements(container) {
     if (!container || !detectedImages.length) return;
     var images = Array.prototype.slice.call(container.querySelectorAll("img"));
-
     detectedImages.filter(function (item) { return item.type === "img"; }).forEach(function (item) {
         var replacement = imageReplacements.get(item.key);
         if (!replacement) return;
@@ -1088,7 +1083,6 @@ function applyImageReplacements(container) {
         img.removeAttribute("srcset");
         img.removeAttribute("sizes");
     });
-
     detectedImages.filter(function (item) { return item.type === "background"; }).forEach(function (item) {
         var replacement = imageReplacements.get(item.key);
         if (!replacement) return;
@@ -1124,7 +1118,6 @@ function applyBackgroundReplacementToElement(element, original, replacement) {
 function applyImageReplacementsToDocument(doc) {
     if (!doc || !detectedImages.length) return;
     var images = Array.prototype.slice.call(doc.querySelectorAll("img"));
-
     detectedImages.filter(function (item) { return item.type === "img"; }).forEach(function (item) {
         var replacement = imageReplacements.get(item.key);
         if (!replacement) return;
@@ -1137,7 +1130,6 @@ function applyImageReplacementsToDocument(doc) {
         img.removeAttribute("srcset");
         img.removeAttribute("sizes");
     });
-
     detectedImages.filter(function (item) { return item.type === "background"; }).forEach(function (item) {
         var replacement = imageReplacements.get(item.key);
         if (!replacement) return;
@@ -1160,16 +1152,13 @@ function getCropTargetRatio(item) {
     return new Promise(function (resolve) {
         var fallback = (item && item.naturalWidth && item.naturalHeight)
             ? item.naturalWidth / item.naturalHeight : 1;
-
         var textarea = document.getElementById("html-input");
         if (!textarea) { resolve(fallback); return; }
         var code = textarea.value;
         if (!code.trim()) { resolve(fallback); return; }
-
         var width = 794;
         var formatEl = document.getElementById("format-select");
         if (formatEl && (formatEl.value === "pdf-169" || formatEl.value === "pptx")) width = 1280;
-
         var container = document.createElement("div");
         container.style.cssText = "position:absolute;left:-99999px;top:0;width:" + width + "px;height:auto;min-height:100vh;visibility:hidden;pointer-events:none;overflow:visible;contain:layout;";
         container.innerHTML = code;
@@ -1178,7 +1167,6 @@ function getCropTargetRatio(item) {
         container.setAttribute("data-crop-measure", "true");
         container.appendChild(fix);
         document.body.appendChild(container);
-
         requestAnimationFrame(function () {
             var ratio = fallback;
             try {
@@ -1221,28 +1209,20 @@ function calculateCropFrame() {
     var stageWidth = stage.clientWidth;
     var stageHeight = stage.clientHeight;
     if (stageWidth < 1 || stageHeight < 1) return;
-
     var maxWidth = stageWidth * 0.9;
     var maxHeight = stageHeight * 0.9;
     var frameWidth = maxWidth;
     var frameHeight = frameWidth / cropState.targetRatio;
-    if (frameHeight > maxHeight) {
-        frameHeight = maxHeight;
-        frameWidth = frameHeight * cropState.targetRatio;
-    }
+    if (frameHeight > maxHeight) { frameHeight = maxHeight; frameWidth = frameHeight * cropState.targetRatio; }
     frameWidth = Math.max(80, Math.min(frameWidth, maxWidth));
     frameHeight = Math.max(80, Math.min(frameHeight, maxHeight));
     var left = (stageWidth - frameWidth) / 2;
     var top = (stageHeight - frameHeight) / 2;
-
     cropState.frame = { left: left, top: top, width: frameWidth, height: frameHeight };
     frame.style.left = left + "px"; frame.style.top = top + "px";
     frame.style.width = frameWidth + "px"; frame.style.height = frameHeight + "px";
-
     if (cropState.image && cropState.naturalWidth && cropState.naturalHeight) {
-        var scaleX = frameWidth / cropState.naturalWidth;
-        var scaleY = frameHeight / cropState.naturalHeight;
-        cropState.baseScale = Math.max(scaleX, scaleY);
+        cropState.baseScale = Math.max(frameWidth / cropState.naturalWidth, frameHeight / cropState.naturalHeight);
         cropState.displayScale = cropState.baseScale * cropState.zoom;
     }
 }
@@ -1263,7 +1243,6 @@ function openCropEditor(options) {
         var imageElement = document.getElementById("crop-image");
         var previewWrap = document.getElementById("crop-preview-wrap");
         if (!modal || !imageElement) { resolve(false); return; }
-
         var item = options.item;
         getCropTargetRatio(item).then(function (targetRatio) {
             cropState = {
@@ -1280,18 +1259,15 @@ function openCropEditor(options) {
             };
             imageElement.src = options.sourceDataUrl;
             if (previewWrap) previewWrap.classList.remove("visible");
-
             var info = document.getElementById("crop-target-info");
             if (info) {
                 var isBatch = pendingBatchReplacement && pendingBatchReplacement.keys.length > 1;
                 var batchText = isBatch ? " ⚠️ سيُطبَّق على " + pendingBatchReplacement.keys.length + " صور محددة." : "";
                 info.textContent = "إطار الصورة الحالي بنسبة " + cropState.targetRatio.toFixed(3) + ":1 — اسحب الصورة." + batchText;
             }
-
             modal.classList.add("visible");
             modal.setAttribute("aria-hidden", "false");
             document.body.style.overflow = "hidden";
-
             loadCropImage(options.sourceDataUrl).then(function (loadedImage) {
                 cropState.image = loadedImage;
                 cropState.naturalWidth = loadedImage.naturalWidth;
@@ -1435,7 +1411,6 @@ function createCroppedDataURL() {
     context.imageSmoothingEnabled = true;
     context.imageSmoothingQuality = "high";
     context.drawImage(cropState.image, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, outputWidth, outputHeight);
-
     var mime = cropState.sourceMimeType;
     if (["image/png", "image/jpeg", "image/webp"].indexOf(mime) === -1) mime = "image/png";
     var dataUrl;
@@ -1459,7 +1434,6 @@ function applyCrop() {
     if (!result) { alert("تعذر اعتماد القص."); return; }
     var item = cropState.item;
     if (!item) return;
-
     var buildReplacement = function (targetItem) {
         var old = imageReplacements.get(targetItem.key);
         var extension = result.mimeType === "image/jpeg" ? ".jpg"
@@ -1477,7 +1451,6 @@ function applyCrop() {
             croppedWidth: result.width, croppedHeight: result.height
         };
     };
-
     if (pendingBatchReplacement && pendingBatchReplacement.keys.indexOf(item.key) !== -1) {
         pendingBatchReplacement.keys.slice().forEach(function (key) {
             var targetItem = detectedImages.find(function (it) { return it.key === key; });
@@ -1490,7 +1463,6 @@ function applyCrop() {
         pendingBatchReplacement = null;
         selectedImageKeys.delete(item.key);
     }
-
     closeCropModal();
     renderImageManager();
 }
@@ -1550,7 +1522,6 @@ function openBgRemoverInternal(opts) {
     var modal = document.getElementById("bg-remove-modal");
     var img = document.getElementById("bg-preview-img");
     if (!modal || !img) return;
-
     bgRemovalState = {
         item: opts.item, safeDataUrl: "",
         sourceFileName: opts.sourceFileName || "image",
@@ -1560,7 +1531,6 @@ function openBgRemoverInternal(opts) {
         targetColor: null, tolerance: 30, feather: 2,
         resultDataUrl: null, batchKeys: opts.batchKeys
     };
-
     var swatch = document.getElementById("bg-color-swatch");
     if (swatch) { swatch.textContent = "لم يُحدد"; swatch.style.background = "#020617"; }
     var colorInfo = document.getElementById("bg-color-info");
@@ -1574,7 +1544,6 @@ function openBgRemoverInternal(opts) {
     var pWrap = document.getElementById("bg-preview-wrap"); if (pWrap) pWrap.style.display = "none";
     var bControls = document.getElementById("bg-controls"); if (bControls) bControls.style.display = "none";
     var loader = document.getElementById("bg-loading"); if (loader) loader.classList.add("visible");
-
     var info = document.getElementById("bg-target-info");
     if (info) {
         var isBatch = opts.batchKeys && opts.batchKeys.length > 1;
@@ -1582,11 +1551,9 @@ function openBgRemoverInternal(opts) {
             ? "⚠️ سيُطبَّق على " + opts.batchKeys.length + " صور محددة."
             : "انقر على لون الخلفية في الصورة ثم اضبط الإعدادات.";
     }
-
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
-
     toSafeDataURL(opts.sourceDataUrl)
         .then(function (safeDataUrl) {
             bgRemovalState.safeDataUrl = safeDataUrl;
@@ -1628,13 +1595,11 @@ function handleBgImageClick(event) {
     var displayImg = event.currentTarget;
     var rect = displayImg.getBoundingClientRect();
     if (rect.width < 1 || rect.height < 1) return;
-
     var displayX = event.clientX - rect.left;
     var displayY = event.clientY - rect.top;
     var imgRatio = sourceImg.naturalWidth / sourceImg.naturalHeight;
     var boxRatio = rect.width / rect.height;
     var renderWidth, renderHeight, offsetX, offsetY;
-
     if (boxRatio > imgRatio) {
         renderHeight = rect.height; renderWidth = renderHeight * imgRatio;
         offsetX = (rect.width - renderWidth) / 2; offsetY = 0;
@@ -1642,14 +1607,11 @@ function handleBgImageClick(event) {
         renderWidth = rect.width; renderHeight = renderWidth / imgRatio;
         offsetX = 0; offsetY = (rect.height - renderHeight) / 2;
     }
-
     var relX = displayX - offsetX;
     var relY = displayY - offsetY;
     if (relX < 0 || relY < 0 || relX > renderWidth || relY > renderHeight) return;
-
     var px = Math.max(0, Math.min(sourceImg.naturalWidth - 1, Math.floor((relX / renderWidth) * sourceImg.naturalWidth)));
     var py = Math.max(0, Math.min(sourceImg.naturalHeight - 1, Math.floor((relY / renderHeight) * sourceImg.naturalHeight)));
-
     var color;
     try {
         var canvas = document.createElement("canvas");
@@ -1663,7 +1625,6 @@ function handleBgImageClick(event) {
         if (errEl) errEl.textContent = "❌ لا يمكن قراءة لون الصورة (CORS).";
         return;
     }
-
     bgRemovalState.targetColor = color;
     var swatch = document.getElementById("bg-color-swatch");
     if (swatch) { swatch.style.background = "rgb(" + color.r + "," + color.g + "," + color.b + ")"; swatch.textContent = ""; }
@@ -1705,13 +1666,11 @@ function computeChromaKey(sourceImg, color, tolerance, feather) {
             canvas.width = w; canvas.height = h;
             var ctx = canvas.getContext("2d");
             ctx.drawImage(sourceImg, 0, 0, w, h);
-
             var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             var data = imageData.data;
             var tr = color.r, tg = color.g, tb = color.b;
             var tol = tolerance * 2.55;
             var softEnd = tol + feather * 20;
-
             for (var i = 0; i < data.length; i += 4) {
                 var r = data[i], g = data[i + 1], b = data[i + 2];
                 var dr = r - tr, dg = g - tg, db = b - tb;
@@ -1748,7 +1707,6 @@ function applyBackgroundRemoval() {
     if (!bgRemovalState.resultDataUrl) { alert("قم بالمعاينة أولاً."); return; }
     var item = bgRemovalState.item;
     if (!item) return;
-
     var buildReplacement = function (targetItem) {
         var old = imageReplacements.get(targetItem.key);
         var cleanName = getSafeImageBaseName(bgRemovalState.sourceFileName, targetItem);
@@ -1762,7 +1720,6 @@ function applyBackgroundRemoval() {
             bgRemoved: true, bgMethod: "color"
         };
     };
-
     if (bgRemovalState.batchKeys && bgRemovalState.batchKeys.length > 0) {
         bgRemovalState.batchKeys.slice().forEach(function (key) {
             var targetItem = detectedImages.find(function (it) { return it.key === key; });
@@ -1857,7 +1814,6 @@ function generatePromptText() {
     var orientation = isA4 ? "عمودي" : "أفقي";
     var ratioLabel = isA4 ? "A4 (1 : 1.414)" : "16:9 (1 : 1.778)";
     var projectType = isA4 ? "بحث/تقرير أكاديمي بمقاس A4" : "عرض تقديمي بمقاس 16:9";
-
     var textFields = [
         { id: "req-title", label: "العنوان" },
         { id: "req-subject", label: "المادة" },
@@ -1875,18 +1831,15 @@ function generatePromptText() {
     });
     var pagesEl = document.getElementById("req-pages");
     if (pagesEl && pagesEl.value && pagesEl.value.trim()) contentLines.push("• عدد " + unitsLabel + ": " + pagesEl.value.trim());
-
     var imagesEl = document.getElementById("req-images");
     var imagesEnabled = imagesEl && !imagesEl.disabled;
     var imageCount = "5";
     if (imagesEl && imagesEl.value && imagesEl.value.trim()) imageCount = imagesEl.value.trim();
-
     var designLines = [];
     if (colorScheme) designLines.push("• نظام الألوان: " + colorScheme);
     if (designStyle) designLines.push("• نمط التصميم: " + designStyle);
     if (baseFontSize) designLines.push("• حجم الخط: " + baseFontSize);
     if (fontChoice) designLines.push("• الخط العربي المطلوب: " + fontChoice + " (يُستدعى من Google Fonts)");
-
     var parts = [];
     parts.push("أنت مصمم ومطوّر واجهات أمامية محترف، متخصص في تصميم المستندات والعروض العربية بجودة عالية ومظهر أنيق جاهز للطباعة.");
     parts.push("المطلوب: صمّم كود HTML كاملاً لـ" + projectType + " باللغة العربية.");
@@ -1895,39 +1848,27 @@ function generatePromptText() {
         "• نسبة الأبعاد: " + ratioLabel + ".\n" +
         "• يجب أن يكون كل " + unitLabel + " مضبوطًا على هذه الأبعاد تمامًا.");
     if (contentLines.length) parts.push("بيانات المحتوى:\n" + contentLines.join("\n"));
-
     var designSection = "التصميم:";
     if (designLines.length) {
         designSection += "\n" + designLines.join("\n");
         designSection += "\n• باقي عناصر التصميم اتركها لذوقك الإبداعي.";
-    } else {
-        designSection += "\nلديك الحرية الكاملة في اختيار الألوان والخطوط والتخطيط.";
-    }
+    } else designSection += "\nلديك الحرية الكاملة في اختيار الألوان والخطوط والتخطيط.";
     parts.push(designSection);
-
     var requirements = [];
     if (imagesEnabled) {
         requirements.push("أضف " + imageCount + " صور بالضبط ضمن التصميم.");
         requirements.push("كل صورة داخل حاوية ثابتة الأبعاد مع object-fit:cover.");
         requirements.push("لكل صورة: alt وصفي و data-image-name.");
         requirements.push("استخدم روابط HTTPS فقط.");
-    } else {
-        requirements.push("بدون أي صور نهائيًا (لا <img> ولا background-image).");
-    }
+    } else requirements.push("بدون أي صور نهائيًا (لا <img> ولا background-image).");
     requirements.push('ابدأ الملف بـ <!doctype html> ثم <html lang="ar" dir="rtl">.');
-
-    if (fontChoice) {
-        requirements.push("استدعِ الخط «" + fontChoice + "» من Google Fonts.");
-    } else {
-        requirements.push("اختر خطًا عربيًا من Google Fonts. الاقتراحات: " + ARABIC_FONTS.join("، ") + ".");
-    }
+    if (fontChoice) requirements.push("استدعِ الخط «" + fontChoice + "» من Google Fonts.");
+    else requirements.push("اختر خطًا عربيًا من Google Fonts. الاقتراحات: " + ARABIC_FONTS.join("، ") + ".");
     requirements.push("خصائص body: margin:0; padding:0; box-sizing:border-box.");
     requirements.push('ضع كل ' + unitLabel + ' داخل <div class="page"> بأبعاد ' + dimShort + "px، مع position:relative و overflow:hidden.");
     requirements.push("اكتب محتوى حقيقيًا متخصصًا يخدم الموضوع.");
-
     parts.push("المتطلبات الإلزامية:\n" + requirements.map(function (r, i) { return (i + 1) + ". " + r; }).join("\n"));
     parts.push("ابدأ الآن بإخراج الكود كاملاً دون أي شرح إضافي.");
-
     var output = document.getElementById("final-prompt-output");
     if (output) output.value = parts.join("\n\n");
 }
@@ -1949,16 +1890,13 @@ function previewCode() {
     if (!inputEl) return;
     var code = inputEl.value;
     if (!code.trim()) return;
-
     var formatEl = document.getElementById("format-select");
     var format = formatEl ? formatEl.value : "pdf-a4";
     var isA4 = format === "pdf-a4";
     var dimText = isA4 ? "A4 — 794×1123px" : "16:9 — 1280×720px";
-
     var win = window.open("", "_blank");
     if (!win) { alert("المتصفح منع فتح نافذة المعاينة."); return; }
     win.document.open(); win.document.write(code); win.document.close();
-
     var apply = function () {
         try { applyImageReplacementsToDocument(win.document); } catch (error) {}
         try {
@@ -2008,7 +1946,6 @@ function waitForFonts() {
             link.onload = function () { if (!linkDone) { linkDone = true; clearTimeout(linkTimer); step2(); } };
             link.onerror = function () { if (!linkDone) { linkDone = true; clearTimeout(linkTimer); step2(); } };
         } else step2();
-
         function step2() {
             if (!document.fonts) { setTimeout(resolve, 1500); return; }
             var jobs = [];
@@ -2064,7 +2001,6 @@ function createRenderContainer(code, width, height) {
     return container;
 }
 
-/* ★★ V2.7: rasterize نسيج SVG ★★ */
 function rasterizeSVGAtNative(sourceSvgDataUrl, tileW, tileH, scale) {
     return new Promise(function (resolve) {
         var img = new Image();
@@ -2093,12 +2029,10 @@ function rasterizeNoiseTextures(container, renderScale) {
     var jobs = [];
     var converted = 0;
     var scale = Number(renderScale) || 3;
-
     styles.forEach(function (styleTag) {
         var cssText = styleTag.textContent || "";
         if (!cssText) return;
         if (cssText.indexOf("feTurbulence") === -1 && cssText.indexOf("fractalNoise") === -1) return;
-
         var urlRegex = /url\(\s*(["'])([\s\S]*?)\1\s*\)/gi;
         var matches = [];
         var m;
@@ -2108,11 +2042,9 @@ function rasterizeNoiseTextures(container, renderScale) {
             matches.push({ full: m[0], url: url });
         }
         if (!matches.length) return;
-
         var sizeMatch = cssText.match(/background-size\s*:\s*(\d+)\s*px\s+(\d+)\s*px/i);
         var tileW = sizeMatch ? parseInt(sizeMatch[1], 10) : 180;
         var tileH = sizeMatch ? parseInt(sizeMatch[2], 10) : 180;
-
         matches.forEach(function (match) {
             jobs.push(rasterizeSVGAtNative(match.url, tileW, tileH, scale).then(function (pngUrl) {
                 if (!pngUrl) return;
@@ -2121,7 +2053,6 @@ function rasterizeNoiseTextures(container, renderScale) {
             }));
         });
     });
-
     return Promise.all(jobs).then(function () {
         if (converted > 0) console.log("🎨 " + converted + " نسيج SVG → PNG");
     });
@@ -2147,7 +2078,6 @@ function cropAndResizeCover(sourceImg, targetW, targetH) {
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = "high";
         ctx.drawImage(sourceImg, cropX, cropY, cropW, cropH, 0, 0, canvas.width, canvas.height);
-
         var cw = canvas.width, ch = canvas.height;
         while (cw > targetW * 2 && ch > targetH * 2) {
             var nw = Math.max(1, Math.floor(cw / 2));
@@ -2168,7 +2098,6 @@ function cropAndResizeCover(sourceImg, targetW, targetH) {
         fctx.imageSmoothingQuality = "high";
         fctx.drawImage(canvas, 0, 0, cw, ch, 0, 0, targetW, targetH);
         canvas.width = 1; canvas.height = 1;
-
         var hasAlpha = false;
         try {
             var data = fctx.getImageData(0, 0, targetW, targetH).data;
@@ -2193,7 +2122,6 @@ function prepareCoverImages(container) {
         var elementWidth = parseFloat(cs.width) || img.clientWidth || 0;
         var elementHeight = parseFloat(cs.height) || img.clientHeight || 0;
         if (!elementWidth || !elementHeight) return;
-
         var job = new Promise(function (resolve) {
             var probe = new Image();
             probe.crossOrigin = "anonymous";
@@ -2221,7 +2149,6 @@ function prepareCoverImages(container) {
     return Promise.all(jobs);
 }
 
-/* ★★ V2.7: bake الصور المُنمّقة ★★ */
 function waitImage(img, timeout) {
     timeout = timeout || 5000;
     return new Promise(function (resolve) {
@@ -2241,29 +2168,23 @@ function waitImage(img, timeout) {
         timer = setTimeout(function () { finish(false); }, timeout);
         img.addEventListener("load", onLoad, { once: true });
         img.addEventListener("error", onError, { once: true });
-        try {
-            if (img.decode) img.decode().then(function () { finish(true); }).catch(function () {});
-        } catch (e) {}
+        try { if (img.decode) img.decode().then(function () { finish(true); }).catch(function () {}); } catch (e) {}
     });
 }
 
 function bakeStyledImages(container) {
     var imgs = Array.prototype.slice.call(container.querySelectorAll("img"));
     if (!imgs.length) return Promise.resolve();
-
     return Promise.all(imgs.map(function (img) {
         if (img.getAttribute("data-baked") === "true") return Promise.resolve();
         var cs;
         try { cs = window.getComputedStyle(img); } catch (e) { return Promise.resolve(); }
-
         var maskStr = cs.webkitMaskImage || cs.maskImage || "";
         var hasMask = maskStr && maskStr !== "none";
         var hasFilter = cs.filter && cs.filter !== "none";
         var op = parseFloat(cs.opacity);
         var hasOpacity = !isNaN(op) && op < 1;
-
         if (!hasMask && !hasFilter && !hasOpacity) return Promise.resolve();
-
         return waitImage(img, RENDER_CONFIG.imageTimeout).then(function () {
             return bakeStyledImage(img, maskStr, cs.filter, op);
         }).then(function (dataUrl) {
@@ -2279,19 +2200,15 @@ function bakeStyledImages(container) {
     }));
 }
 
-/* ★ V2.7: تطبيق الفلتر على canvas ثانوي (يحفظ الشفافية) ★ */
 function bakeStyledImage(img, maskStr, filterStr, opacityVal) {
     return new Promise(function (resolve) {
         var w = img.naturalWidth, h = img.naturalHeight;
         if (!w || !h) { resolve(null); return; }
-
         var maxBake = RENDER_CONFIG.bakeMaxSize;
         var r = Math.min(1, maxBake / Math.max(w, h));
         var outW = Math.max(1, Math.round(w * r));
         var outH = Math.max(1, Math.round(h * r));
 
-        /* الخطوة 1: رسم الصورة الأصلية على canvas وسيطة بدون أي تأثيرات.
-           هذا يحوّل SVG data URLs إلى PNG فعلي. */
         var preCanvas = document.createElement("canvas");
         preCanvas.width = outW; preCanvas.height = outH;
         var preCtx = preCanvas.getContext("2d");
@@ -2303,7 +2220,6 @@ function bakeStyledImage(img, maskStr, filterStr, opacityVal) {
         try { preUrl = preCanvas.toDataURL("image/png"); }
         catch (e) { resolve(null); return; }
 
-        /* الخطوة 2: تحميل الـ PNG الوسيط ثم تطبيق الفلتر عليه */
         var probe = new Image();
         probe.onload = function () {
             try {
@@ -2311,18 +2227,14 @@ function bakeStyledImage(img, maskStr, filterStr, opacityVal) {
                 canvas.width = outW; canvas.height = outH;
                 var ctx = canvas.getContext("2d");
                 ctx.clearRect(0, 0, outW, outH);
-
                 if (filterStr && filterStr !== "none") {
                     try { ctx.filter = filterStr; } catch (e) {}
                 }
                 ctx.drawImage(probe, 0, 0, outW, outH);
                 try { ctx.filter = "none"; } catch (e) {}
-
                 if (maskStr && maskStr.indexOf("radial-gradient") !== -1) {
-                    try { applyRadialMask(ctx, maskStr, outW, outH); }
-                    catch (e) { console.warn("mask failed:", e); }
+                    try { applyRadialMask(ctx, maskStr, outW, outH); } catch (e) {}
                 }
-
                 if (!isNaN(opacityVal) && opacityVal < 1) {
                     try {
                         var d2 = ctx.getImageData(0, 0, outW, outH);
@@ -2333,14 +2245,12 @@ function bakeStyledImage(img, maskStr, filterStr, opacityVal) {
                         ctx.putImageData(d2, 0, 0);
                     } catch (e) {}
                 }
-
                 var out = null;
                 try { out = canvas.toDataURL("image/png"); } catch (e) {}
                 canvas.width = 1; canvas.height = 1;
                 preCanvas.width = 1; preCanvas.height = 1;
                 resolve(out);
             } catch (e) {
-                console.warn("filter apply failed:", e);
                 preCanvas.width = 1; preCanvas.height = 1;
                 resolve(null);
             }
@@ -2357,7 +2267,6 @@ function applyRadialMask(ctx, maskStr, w, h) {
     var tokens = maskStr.match(/rgba?\([^)]+\)|#[0-9a-f]{3,8}|[\d.]+%/gi) || [];
     var stops = [];
     var pendingColor = null;
-
     tokens.forEach(function (tok) {
         if (/%$/.test(tok)) {
             var pos = parseFloat(tok) / 100;
@@ -2369,13 +2278,11 @@ function applyRadialMask(ctx, maskStr, w, h) {
     });
     if (!stops.length) return;
     stops.sort(function (a, b) { return a.pos - b.pos; });
-
     var cx = w / 2, cy = h / 2;
     var maxR = Math.sqrt(w * w + h * h) / 2;
     var innerR = maxR * stops[0].pos;
     var outerR = maxR * stops[stops.length - 1].pos;
     if (outerR <= innerR) outerR = innerR + 1;
-
     var grad = ctx.createRadialGradient(cx, cy, innerR, cx, cy, outerR);
     stops.forEach(function (s) {
         var c = s.color;
@@ -2386,20 +2293,15 @@ function applyRadialMask(ctx, maskStr, w, h) {
         }
         grad.addColorStop(Math.max(0, Math.min(1, s.pos)), c);
     });
-
     ctx.globalCompositeOperation = "destination-in";
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
     ctx.globalCompositeOperation = "source-over";
 }
 
-/* =========================================================
-   ★★★ V2.7: bake النص ذو الخلفية المتدرجة (background-clip:text) ★★★
-   ========================================================= */
 function bakeGradientTextElements(container) {
     var all = Array.prototype.slice.call(container.querySelectorAll("*"));
     var jobs = [];
-
     all.forEach(function (el) {
         if (el.getAttribute("data-gradtext-baked") === "true") return;
         var cs;
@@ -2407,16 +2309,11 @@ function bakeGradientTextElements(container) {
         var clip = cs.webkitBackgroundClip || cs.backgroundClip || "";
         if (clip !== "text") return;
         if (!el.textContent || !el.textContent.trim()) return;
-
-        /* تجاهل العناصر الأب (لا نحتاج bake الأبناء إذا الأب مطبّق عليه) */
         if (el.querySelector("[data-gradtext-baked]")) return;
-
         var rect = el.getBoundingClientRect();
         if (rect.width < 1 || rect.height < 1) return;
-
         jobs.push(bakeGradientTextElement(el, cs, rect));
     });
-
     return Promise.all(jobs).then(function () {
         if (jobs.length) console.log("✨ تم bake " + jobs.length + " نص بتدرّج");
     });
@@ -2427,17 +2324,13 @@ function bakeGradientTextElement(el, cs, rect) {
         try {
             var text = (el.textContent || "").trim();
             if (!text) { resolve(); return; }
-
             var fontSize = parseFloat(cs.fontSize) || 16;
             var fontWeight = cs.fontWeight || "400";
             var fontFamily = cs.fontFamily || "sans-serif";
             var textAlign = cs.textAlign || "center";
             var bgImage = cs.backgroundImage;
-            var lineHeight = parseFloat(cs.lineHeight) || fontSize * 1.4;
-
             var grad = parseLinearGradient(bgImage);
             if (!grad || grad.colors.length < 2) {
-                /* fallback: لون صلب */
                 var solid = grad && grad.colors[0] ? grad.colors[0] : "#1f4e5f";
                 el.style.background = "none";
                 el.style.webkitBackgroundClip = "initial";
@@ -2446,7 +2339,6 @@ function bakeGradientTextElement(el, cs, rect) {
                 resolve();
                 return;
             }
-
             var scale = 3;
             var w = Math.ceil(rect.width);
             var h = Math.ceil(rect.height);
@@ -2455,7 +2347,6 @@ function bakeGradientTextElement(el, cs, rect) {
             canvas.height = h * scale;
             var ctx = canvas.getContext("2d");
             ctx.scale(scale, scale);
-
             var fill = makeCanvasLinearGradient(ctx, grad, w, h);
             if (!fill) {
                 el.style.background = "none";
@@ -2470,23 +2361,17 @@ function bakeGradientTextElement(el, cs, rect) {
             ctx.textAlign = textAlign === "right" ? "end" : textAlign === "left" ? "start" : "center";
             ctx.textBaseline = "middle";
             ctx.direction = "rtl";
-
             var textX = textAlign === "right" ? w : textAlign === "left" ? 0 : w / 2;
             var textY = h / 2;
             ctx.fillText(text, textX, textY);
-
             var dataUrl = canvas.toDataURL("image/png");
             canvas.width = 1; canvas.height = 1;
-
-            /* استبدال العنصر بصورة */
-            var oldBg = el.style.background;
             el.innerHTML = "";
             el.style.background = "none";
             el.style.webkitBackgroundClip = "initial";
             el.style.backgroundClip = "initial";
             el.style.color = "transparent";
             el.setAttribute("data-gradtext-baked", "true");
-
             var img = document.createElement("img");
             img.src = dataUrl;
             img.style.cssText = "display:block;width:100%;height:100%;object-fit:contain";
@@ -2506,12 +2391,10 @@ function parseLinearGradient(bgImage) {
     if (!m) return null;
     var parts = splitTopLevel(m[1], ",");
     if (parts.length < 2) return null;
-
     var angle = 180;
     var colors = [];
     var startIdx = 0;
     var first = parts[0].trim();
-
     if (/deg/i.test(first)) { angle = parseFloat(first); startIdx = 1; }
     else if (/rad/i.test(first)) { angle = parseFloat(first) * 180 / Math.PI; startIdx = 1; }
     else if (/grad/i.test(first)) { angle = parseFloat(first) * 0.9; startIdx = 1; }
@@ -2524,10 +2407,8 @@ function parseLinearGradient(bgImage) {
         else if (d.indexOf("bottom") !== -1) angle = 180;
         startIdx = 1;
     }
-
     for (var i = startIdx; i < parts.length; i++) {
         var c = parts[i].trim();
-        /* إزالة موضع اللون إن وُجد */
         c = c.replace(/\s+[\d.]+%(\s+[\d.]+%)?$/, "").trim();
         if (c) colors.push(c);
     }
@@ -2551,31 +2432,23 @@ function splitTopLevel(str, sep) {
 }
 
 function makeCanvasLinearGradient(ctx, grad, w, h) {
-    /* CSS 0deg = for الأسفل → للأعلى
-       canvas 0 = من اليسار لليمين
-       التحويل: cssAngle - 90 */
     var angle = (grad.angle - 90) * Math.PI / 180;
     var cx = w / 2, cy = h / 2;
     var len = Math.abs(w * Math.cos(angle)) + Math.abs(h * Math.sin(angle));
     if (len < 1) len = Math.max(w, h);
-
     var x0 = cx - Math.cos(angle) * len / 2;
     var y0 = cy - Math.sin(angle) * len / 2;
     var x1 = cx + Math.cos(angle) * len / 2;
     var y1 = cy + Math.sin(angle) * len / 2;
-
     var g;
     try { g = ctx.createLinearGradient(x0, y0, x1, y1); }
     catch (e) { return null; }
-
     for (var i = 0; i < grad.colors.length; i++) {
         var pos = grad.colors.length > 1 ? i / (grad.colors.length - 1) : 0;
         try { g.addColorStop(pos, grad.colors[i]); } catch (e) {}
     }
     return g;
 }
-
-/* ========================================================= */
 
 function prepareImages(containerOrDoc) {
     var images = Array.prototype.slice.call(containerOrDoc.querySelectorAll("img"));
@@ -2627,14 +2500,63 @@ function inlineBackgroundImages(container) {
     }));
 }
 
-/* ★★ V2.7: renderPage — html2canvas فقط ★★ */
-function renderPage(page, width, height, quality) {
+/* ★★ V2.8: تصوير بـ SnapDOM ★★ */
+function renderPageSnapDOM(page, width, height, quality) {
+    return new Promise(function (resolve, reject) {
+        if (!isSnapDOMAvailable()) { reject(new Error("SnapDOM غير محمّل")); return; }
+        var scale = getSafeScale(width, height, quality);
+        var oldWidth = page.style.width;
+        var oldHeight = page.style.height;
+        var oldMinHeight = page.style.minHeight;
+        page.style.width = width + "px";
+        page.style.height = height + "px";
+        page.style.minHeight = height + "px";
+        void page.offsetHeight;
+        var cleanup = function () {
+            page.style.width = oldWidth;
+            page.style.height = oldHeight;
+            page.style.minHeight = oldMinHeight;
+        };
+        Promise.resolve()
+            .then(function () {
+                return window.snapdom.toCanvas(page, {
+                    scale: scale,
+                    backgroundColor: "#ffffff",
+                    embedFonts: true
+                });
+            })
+            .then(function (canvas) {
+                cleanup();
+                if (!canvas || !canvas.width || !canvas.height) {
+                    reject(new Error("SnapDOM أعاد canvas فارغًا"));
+                    return;
+                }
+                resolve(canvas);
+            })
+            .catch(function (err) { cleanup(); reject(err); });
+    });
+}
+
+/* ★★ V2.8: تصوير بـ html2canvas ★★ */
+function renderPageHtml2Canvas(page, width, height, quality) {
     var useForeign = !IS_IOS && !IS_SAFARI;
     return attemptRender(page, width, height, quality, useForeign)
         .catch(function (err) {
-            console.warn("فشل الوضع الأول، إعادة المحاولة بالوضع البديل:", err);
+            console.warn("html2canvas: فشل الوضع الأول، إعادة المحاولة بالوضع البديل:", err);
             return attemptRender(page, width, height, quality, !useForeign);
         });
+}
+
+/* ★★ V2.8: موحّد — يختار المحرّك حسب الاختيار ★★ */
+function renderPageUnified(page, width, height, quality, useSnapdom) {
+    if (useSnapdom) {
+        return renderPageSnapDOM(page, width, height, quality)
+            .catch(function (err) {
+                console.warn("⚠️ SnapDOM فشل لصفحة، التحويل إلى html2canvas:", err);
+                return renderPageHtml2Canvas(page, width, height, quality);
+            });
+    }
+    return renderPageHtml2Canvas(page, width, height, quality);
 }
 
 function attemptRender(page, width, height, quality, useForeign) {
@@ -2646,7 +2568,6 @@ function attemptRender(page, width, height, quality, useForeign) {
     page.style.height = height + "px";
     page.style.minHeight = height + "px";
     void page.offsetHeight;
-
     return html2canvas(page, {
         scale: scale,
         width: width, height: height,
@@ -2702,16 +2623,13 @@ function exportFile() {
     var code = inputEl.value;
     var format = formatEl.value;
     if (!code.trim()) { alert("الرجاء لصق الكود أولاً!"); return; }
-
     analyzeHTMLImages();
-
     var button = document.getElementById("capture-btn");
     if (button) button.disabled = true;
-
     var task = (format === "pptx") ? generatePPTX() : generatePDF();
     task.catch(function (error) {
         console.error(error);
-        alert("حدث خطأ أثناء التحويل.\n\n" + (error && error.message ? "التفصيل: " + error.message : "جرّب خفض الجودة إلى «عادية»."));
+        alert("حدث خطأ أثناء التحويل.\n\n" + (error && error.message ? "التفصيل: " + error.message : "جرّب خفض الجودة."));
     }).finally(function () {
         if (button) {
             button.disabled = false;
@@ -2720,8 +2638,8 @@ function exportFile() {
     });
 }
 
-/* ★★ V2.7: pipeline موحّد ★★ */
-function prepareContainerForRender(container, quality) {
+/* ★★ V2.8: prepareContainerForRender — يتخطى bake عند SnapDOM ★★ */
+function prepareContainerForRender(container, quality, useSnapdom) {
     return Promise.resolve()
         .then(function () {
             applyImageReplacements(container);
@@ -2731,9 +2649,13 @@ function prepareContainerForRender(container, quality) {
         .then(function () { return new Promise(function (r) { setTimeout(r, IS_IOS ? 700 : 400); }); })
         .then(function () { return inlineAllImages(container); })
         .then(function () { return inlineBackgroundImages(container); })
-        .then(function () { return bakeGradientTextElements(container); })     /* ★ جديد */
-        .then(function () { return bakeStyledImages(container); })
-        .then(function () { return prepareCoverImages(container); })
+        /* html2canvas يحتاج bake يدوي، SnapDOM لا */
+        .then(function () {
+            if (useSnapdom) return;
+            return bakeGradientTextElements(container)
+                .then(function () { return bakeStyledImages(container); })
+                .then(function () { return prepareCoverImages(container); });
+        })
         .then(function () {
             return new Promise(function (r) {
                 requestAnimationFrame(function () { requestAnimationFrame(r); });
@@ -2748,16 +2670,18 @@ function generatePPTX() {
     var nameEl = document.getElementById("file-name");
     var qualityEl = document.getElementById("quality-select");
     if (!inputEl) return Promise.reject(new Error("input missing"));
-
     var code = inputEl.value;
     var name = sanitizeFileName(nameEl ? nameEl.value : "presentation");
     var quality = Number(qualityEl ? qualityEl.value : 3);
     var width = 1280, height = 720;
+    var rendererChoice = getRendererChoice();
+    var useSnapdom = (rendererChoice === "snapdom") && isSnapDOMAvailable();
+    if (rendererChoice === "snapdom" && !useSnapdom) {
+        console.warn("SnapDOM غير محمّل — التحويل إلى html2canvas");
+    }
     if (button) button.innerText = "⏳ جاري تحضير البوربوينت...";
-
     var container = createRenderContainer(code, width, height);
-
-    return prepareContainerForRender(container, quality)
+    return prepareContainerForRender(container, quality, useSnapdom)
         .then(function () {
             var pages = getPages(container);
             var pptx = new PptxGenJS();
@@ -2765,12 +2689,13 @@ function generatePPTX() {
             pptx.author = "منصة تحويل الأكواد v" + PLATFORM_VERSION;
             pptx.subject = "HTML to PPTX";
             pptx.title = name;
-
+            var engineLabel = useSnapdom ? "SnapDOM" : "html2canvas";
+            console.log("📊 بدء PPTX بـ " + engineLabel);
             var chain = Promise.resolve();
             pages.forEach(function (page, i) {
                 chain = chain.then(function () {
-                    if (button) button.innerText = "📸 تصوير شريحة " + (i + 1) + " من " + pages.length + "...";
-                    return renderPage(page, width, height, quality);
+                    if (button) button.innerText = "📸 شريحة " + (i + 1) + "/" + pages.length + " (" + engineLabel + ")";
+                    return renderPageUnified(page, width, height, quality, useSnapdom);
                 }).then(function (canvas) {
                     var image = canvasToJPEG(canvas);
                     var slide = pptx.addSlide();
@@ -2780,7 +2705,6 @@ function generatePPTX() {
                     return yieldToBrowser();
                 });
             });
-
             return chain.then(function () {
                 if (button) button.innerText = "🚀 بناء ملف البوربوينت...";
                 return pptx.writeFile({ fileName: name + ".pptx" });
@@ -2803,7 +2727,6 @@ function generatePDF() {
     var qualityEl = document.getElementById("quality-select");
     var formatEl = document.getElementById("format-select");
     if (!inputEl || !formatEl) return Promise.reject(new Error("input missing"));
-
     var code = inputEl.value;
     var name = sanitizeFileName(nameEl ? nameEl.value : "document");
     var quality = Number(qualityEl ? qualityEl.value : 3);
@@ -2811,12 +2734,14 @@ function generatePDF() {
     var isA4 = format === "pdf-a4";
     var width = isA4 ? 794 : 1280;
     var height = isA4 ? 1123 : 720;
-
+    var rendererChoice = getRendererChoice();
+    var useSnapdom = (rendererChoice === "snapdom") && isSnapDOMAvailable();
+    if (rendererChoice === "snapdom" && !useSnapdom) {
+        console.warn("SnapDOM غير محمّل — التحويل إلى html2canvas");
+    }
     if (button) button.innerText = "⏳ جاري تجهيز PDF...";
-
     var container = createRenderContainer(code, width, height);
-
-    return prepareContainerForRender(container, quality)
+    return prepareContainerForRender(container, quality, useSnapdom)
         .then(function () {
             var pages = getPages(container);
             var jsPDFCtor = window.jspdf.jsPDF;
@@ -2826,12 +2751,13 @@ function generatePDF() {
                 format: [width, height],
                 compress: true
             });
-
+            var engineLabel = useSnapdom ? "SnapDOM" : "html2canvas";
+            console.log("📄 بدء PDF بـ " + engineLabel);
             var chain = Promise.resolve();
             pages.forEach(function (page, i) {
                 chain = chain.then(function () {
-                    if (button) button.innerText = "📸 تصوير صفحة " + (i + 1) + " من " + pages.length + "...";
-                    return renderPage(page, width, height, quality);
+                    if (button) button.innerText = "📸 صفحة " + (i + 1) + "/" + pages.length + " (" + engineLabel + ")";
+                    return renderPageUnified(page, width, height, quality, useSnapdom);
                 }).then(function (canvas) {
                     var image = canvasToJPEG(canvas);
                     if (i > 0) pdf.addPage([width, height], isA4 ? "p" : "l");
@@ -2840,7 +2766,6 @@ function generatePDF() {
                     return yieldToBrowser();
                 });
             });
-
             return chain.then(function () {
                 if (button) button.innerText = "✅ اكتمل! جاري إنشاء الملف...";
                 var blob = pdf.output("blob");
@@ -2897,22 +2822,18 @@ function sendFileToTelegram(blob, name, caption) {
 document.addEventListener("DOMContentLoaded", function () {
     var loginBtn = document.getElementById("login-btn");
     if (loginBtn) loginBtn.addEventListener("click", checkPassword);
-
     var passInput = document.getElementById("pass-input");
     if (passInput) {
         passInput.addEventListener("keydown", function (event) {
             if (event.key === "Enter") { event.preventDefault(); checkPassword(); }
         });
     }
-
     var resetBtn = document.getElementById("reset-session-btn");
     if (resetBtn) resetBtn.addEventListener("click", resetLoginSession);
-
     var toggleBtns = document.querySelectorAll(".toggle-req");
     Array.prototype.forEach.call(toggleBtns, function (btn) {
         btn.addEventListener("click", function () { toggleInput(btn); });
     });
-
     var stage = document.getElementById("crop-stage");
     if (stage) {
         stage.addEventListener("pointerdown", startCropDrag);
@@ -2924,7 +2845,6 @@ document.addEventListener("DOMContentLoaded", function () {
             cropZoom(event.deltaY > 0 ? -0.1 : 0.1);
         }, { passive: false });
     }
-
     var cropResizeTimer = null;
     window.addEventListener("resize", function () {
         var cm = document.getElementById("crop-modal");
@@ -2936,7 +2856,6 @@ document.addEventListener("DOMContentLoaded", function () {
             requestAnimationFrame(function () { calculateCropFrame(); cropReset(); });
         }, 150);
     });
-
     var htmlTextarea = document.getElementById("html-input");
     if (htmlTextarea) {
         htmlTextarea.addEventListener("input", scheduleImageAnalysis);
@@ -2951,11 +2870,15 @@ window.addEventListener("load", function () {
             if (overlay) overlay.style.display = "none";
         }
     } catch (e) {}
-
     updatePagesLabel();
     generatePromptText();
     analyzeHTMLImages();
-
+    console.log(
+        "%c✅ محرّكات التصدير:\n" +
+        "  • html2canvas: " + (typeof window.html2canvas !== "undefined" ? "✓" : "✗") + "\n" +
+        "  • SnapDOM: " + (isSnapDOMAvailable() ? "✓" : "✗"),
+        "color:#34d399;font-size:12px;line-height:1.6;"
+    );
     setTimeout(function () {
         var overlay = document.getElementById("password-overlay");
         if (overlay && overlay.style.display !== "none") {
