@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>منصة تحويل الأكواد الذكية v2.9 (PDF / PPTX)</title>
+<title>منصة تحويل الأكواد الذكية v3.0 (PDF / PPTX)</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -155,7 +155,7 @@ textarea#final-prompt-output{min-height:260px;resize:vertical;direction:rtl;text
     print-color-adjust: exact !important;
     color-adjust: exact !important;
   }
-  [data-render-container] img { visibility: visible !important; }
+  [data-render-container] img { visibility: visible !important; opacity: 1 !important; }
   .page { page-break-after: always; break-after: page; }
   .page:last-child { page-break-after: auto; break-after: auto; }
 }
@@ -181,6 +181,7 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
 </head>
 <body>
 
+<!-- ============ شاشة كلمة المرور ============ -->
 <div id="password-overlay" style="position:fixed;inset:0;background:#0f172a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
     <div style="background:#1e293b;padding:30px;border-radius:12px;box-shadow:0 10px 25px -5px rgba(0,0,0,.5);border:1px solid #334155;text-align:center;width:100%;max-width:350px;">
         <h3 style="margin-top:0;color:#f8fafc;font-size:22px;">🔒 حماية المنصة</h3>
@@ -194,13 +195,14 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
     </div>
 </div>
 
-<div class="header"><h2>🛠️ منصة تحويل الأكواد <span class="version-badge">v2.9</span></h2></div>
+<div class="header"><h2>🛠️ منصة تحويل الأكواد <span class="version-badge">v3.0</span></h2></div>
 
 <div class="top-nav">
     <button type="button" class="nav-btn active" id="btn-converter" onclick="switchTab('converter')">⚙️ منصة التحويل</button>
     <button type="button" class="nav-btn" id="btn-prompts" onclick="switchTab('prompts')">🧠 المولد الذكي</button>
 </div>
 
+<!-- ============ تبويب التحويل ============ -->
 <div id="converter-tab" class="main-container tab-content active-tab">
     <div class="box-panel">
         <div class="form-group">
@@ -228,8 +230,8 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
         <div class="form-group">
             <label>محرّك التصدير:</label>
             <select id="renderer-select">
-                <option value="html2canvas" selected>🔧 html2canvas</option>
-                <option value="snapdom">⚡ SnapDOM</option>
+                <option value="html2canvas" selected>🔧 html2canvas (افتراضي)</option>
+                <option value="snapdom">⚡ SnapDOM (أسرع — يدعم الصور المدمجة)</option>
             </select>
         </div>
         <div class="form-group">
@@ -265,6 +267,7 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
     </div>
 </div>
 
+<!-- ============ تبويب المولد الذكي ============ -->
 <div id="prompts-tab" class="main-container tab-content">
     <div class="box-panel">
         <div class="form-group">
@@ -369,6 +372,7 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
     </div>
 </div>
 
+<!-- ============ نافذة القص ============ -->
 <div id="crop-modal" class="crop-modal-overlay" aria-hidden="true">
     <div class="crop-modal">
         <div class="crop-modal-header">
@@ -397,6 +401,7 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
     </div>
 </div>
 
+<!-- ============ نافذة إزالة الخلفية ============ -->
 <div id="bg-remove-modal" class="crop-modal-overlay" aria-hidden="true">
     <div class="crop-modal">
         <div class="crop-modal-header">
@@ -404,17 +409,21 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
             <button type="button" class="crop-close" onclick="closeBackgroundRemover()">×</button>
         </div>
         <div id="bg-target-info" class="crop-target-info">انقر على لون الخلفية في الصورة ثم اضبط الإعدادات.</div>
+
         <div class="bg-hint">
-            <strong>💡 كيف يعمل؟</strong> انقر على لون الخلفية في الصورة أدناه، ثم اضبط <strong>التسامح</strong> حتى تختفي الخلفية تمامًا.
+            <strong>💡 كيف يعمل؟</strong> انقر على لون الخلفية في الصورة أدناه، ثم اضبط <strong>التسامح</strong> حتى تختفي الخلفية تمامًا مع بقاء العنصر الأساسي.
         </div>
+
         <div id="bg-loading" class="bg-loader">
             <div class="bg-loader-spinner"></div>
             <div class="bg-loader-text">جاري تحضير الصورة للتحرير...</div>
         </div>
+
         <div id="bg-preview-wrap" class="bg-preview-wrap" style="display:none;">
             <img id="bg-preview-img" class="bg-preview-img" alt="">
             <div class="bg-preview-hint">👆 انقر على الخلفية</div>
         </div>
+
         <div id="bg-controls" style="display:none;">
             <div class="bg-color-row">
                 <div class="bg-color-swatch" id="bg-color-swatch">لم يُحدد</div>
@@ -434,8 +443,10 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
                 <span class="bg-slider-value" id="bg-feather-value">2</span>
             </div>
         </div>
+
         <div class="bg-result-note" id="bg-result-note"></div>
         <div class="bg-error-note" id="bg-error-note"></div>
+
         <div class="crop-actions">
             <button type="button" class="crop-action cancel" onclick="closeBackgroundRemover()">إلغاء</button>
             <button type="button" class="crop-action preview" onclick="previewBackgroundRemoval()">معاينة</button>
@@ -446,13 +457,17 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
 
 <script>
 /* =========================================================
-   PLATFORM VERSION 2.9
-   ★ محرّكان: html2canvas (افتراضي) / SnapDOM
-   ★ إصلاح V2.9: استخراج صحيح للتدرّج + إزالة قاطعة للأنماط
+   PLATFORM VERSION 3.0
+   - محرّكا تصدير: html2canvas (افتراضي) + SnapDOM
+   - دعم PPTX
+   - تحويل الصور لـ dataURL قبل التصيير لضمان ظهورها مع SnapDOM
    ========================================================= */
-var PLATFORM_VERSION = "2.9";
-console.log("%c🚀 منصة التحويل - إصدار " + PLATFORM_VERSION + " ", "background:#059669;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;");
+var PLATFORM_VERSION = "3.0";
+console.log("%c🚀 منصة التحويل - إصدار " + PLATFORM_VERSION, "background:#059669;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;");
 
+/* =========================================================
+   1) الإعدادات العامة وكشف بيئة iOS/Safari
+   ========================================================= */
 var SECRET_PASSWORD = "ayman";
 var AUTH_KEY = "auth_token_v2";
 var AUTH_VALUE = "authenticated";
@@ -466,10 +481,7 @@ var RENDER_CONFIG = {
     maxCanvasPixels: IS_IOS ? 3200000 : 6500000,
     fontTimeout: IS_IOS ? 9000 : 5000,
     imageTimeout: IS_IOS ? 12000 : 7000,
-    jpegQuality: IS_IOS ? 0.82 : 0.88,
-    bakeMaxSize: IS_IOS ? 1400 : 2200,
-    coverRenderScale: 3,
-    coverMaxSide: 3000
+    jpegQuality: IS_IOS ? 0.82 : 0.88
 };
 
 var ARABIC_FONTS = [
@@ -521,19 +533,30 @@ var bgRemovalState = {
     targetColor: null, tolerance: 30, feather: 2, resultDataUrl: null, batchKeys: null
 };
 
+/* =========================================================
+   1.b) دوال محرّك التصدير (SnapDOM / html2canvas)
+   ========================================================= */
 function getRendererChoice() {
     var el = document.getElementById("renderer-select");
     return el ? el.value : "html2canvas";
 }
+
 function isSnapDOMAvailable() {
-    return typeof window !== "undefined" && typeof window.snapdom !== "undefined" &&
+    return typeof window !== "undefined" &&
+           typeof window.snapdom !== "undefined" &&
            typeof window.snapdom.toCanvas === "function";
 }
 
+/* =========================================================
+   2) أدوات عامة
+   ========================================================= */
 function escapeHTML(value) {
     return String(value == null ? "" : value)
-        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 function escapeAttribute(value) { return escapeHTML(value); }
 
@@ -558,12 +581,13 @@ function getFileNameFromURL(src) {
         var parts = clean.split("/");
         var file = parts[parts.length - 1];
         if (file) return decodeURIComponent(file);
-    } catch (e) {}
+    } catch (e) { /* ignore */ }
     return "";
 }
 
 function getImageDisplayName(element, index, type, src) {
-    type = type || "img"; src = src || "";
+    type = type || "img";
+    src = src || "";
     if (element) {
         var customName = element.getAttribute("data-image-name");
         if (customName && customName.trim()) return customName.trim();
@@ -638,7 +662,8 @@ function getNaturalImageSize(src) {
             finished = true;
             resolve({ width: img.naturalWidth || null, height: img.naturalHeight || null });
         };
-        img.onload = done; img.onerror = done;
+        img.onload = done;
+        img.onerror = done;
         setTimeout(done, 3000);
         img.src = src;
     });
@@ -657,8 +682,10 @@ function addDetectedImage(list, data) {
 }
 
 function resolveImgSrc(img) {
-    var src = img.getAttribute("src") || img.getAttribute("data-src") ||
-              img.getAttribute("data-original") || img.getAttribute("data-lazy-src") || "";
+    var src = img.getAttribute("src") ||
+              img.getAttribute("data-src") ||
+              img.getAttribute("data-original") ||
+              img.getAttribute("data-lazy-src") || "";
     if (!src) {
         var srcset = img.getAttribute("srcset") || img.getAttribute("data-srcset") || "";
         if (srcset) {
@@ -669,15 +696,9 @@ function resolveImgSrc(img) {
     return src;
 }
 
-function getSafeImageBaseName(sourceFileName, item) {
-    var name = String(sourceFileName == null ? "" : sourceFileName).trim();
-    if (!name || name.indexOf("data:") === 0 || name.length > 50) {
-        var idx = (item && typeof item.index === "number") ? (item.index + 1) : 1;
-        return "image_" + idx;
-    }
-    return name.replace(/\.[^.]+$/, "");
-}
-
+/* =========================================================
+   3) تحويل مصادر الصور إلى data URL آمن
+   ========================================================= */
 function blobToDataURL(blob) {
     return new Promise(function (resolve, reject) {
         var r = new FileReader();
@@ -691,23 +712,28 @@ function toSafeDataURL(src) {
     return new Promise(function (resolve, reject) {
         if (!src) { reject(new Error("مصدر فارغ")); return; }
         if (src.indexOf("data:") === 0) { resolve(src); return; }
+
         fetch(src, { mode: "cors", credentials: "omit" })
             .then(function (res) {
                 if (res.ok) return res.blob();
                 throw new Error("fetch failed");
             })
-            .then(blobToDataURL).then(resolve)
+            .then(blobToDataURL)
+            .then(resolve)
             .catch(function () {
                 var img = new Image();
                 img.crossOrigin = "anonymous";
                 img.onload = function () {
                     try {
                         var canvas = document.createElement("canvas");
-                        canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+                        canvas.width = img.naturalWidth;
+                        canvas.height = img.naturalHeight;
                         var ctx = canvas.getContext("2d");
                         ctx.drawImage(img, 0, 0);
                         resolve(canvas.toDataURL("image/png"));
-                    } catch (err) { reject(new Error("لا يمكن قراءة بكسلات الصورة (CORS).")); }
+                    } catch (err) {
+                        reject(new Error("لا يمكن قراءة بكسلات الصورة (CORS)."));
+                    }
                 };
                 img.onerror = function () { reject(new Error("تعذر تحميل الصورة")); };
                 img.src = src;
@@ -724,6 +750,9 @@ function readFileAsDataURL(file) {
     });
 }
 
+/* =========================================================
+   4) تحليل الصور في كود HTML
+   ========================================================= */
 function analyzeHTMLImages() {
     var textarea = document.getElementById("html-input");
     var manager = document.getElementById("image-manager");
@@ -733,7 +762,9 @@ function analyzeHTMLImages() {
 
     var code = textarea.value;
     if (!code.trim()) {
-        detectedImages = []; imageReplacements.clear(); selectedImageKeys.clear();
+        detectedImages = [];
+        imageReplacements.clear();
+        selectedImageKeys.clear();
         pendingBatchReplacement = null;
         manager.classList.remove("visible");
         list.innerHTML = "";
@@ -746,6 +777,7 @@ function analyzeHTMLImages() {
     catch (e) { detectedImages = []; manager.classList.remove("visible"); return; }
 
     var found = [];
+
     var images = Array.prototype.slice.call(doc.querySelectorAll("img"));
     images.forEach(function (img, index) {
         var src = resolveImgSrc(img);
@@ -763,7 +795,7 @@ function analyzeHTMLImages() {
     });
 
     var allElements = Array.prototype.slice.call(doc.querySelectorAll("*"));
-    allElements.forEach(function (element) {
+    allElements.forEach(function (element, elementIndex) {
         var style = element.getAttribute("style") || "";
         if (!style) return;
         var urls = extractImageUrls(style);
@@ -772,7 +804,7 @@ function analyzeHTMLImages() {
                 type: "background", subtype: "inline",
                 index: found.length,
                 target: getStableSelector(element, doc),
-                backgroundIndex: bgIndex,
+                elementIndex: elementIndex, backgroundIndex: bgIndex,
                 page: getParsedPageNumber(element, doc),
                 name: getImageDisplayName(element, found.length, "background", src),
                 src: src, alt: "",
@@ -785,22 +817,11 @@ function analyzeHTMLImages() {
     styleTags.forEach(function (styleTag, styleIndex) {
         var cssText = styleTag.textContent || "";
         if (!cssText.trim()) return;
-        var isolatedFrame = document.createElement("iframe");
-        isolatedFrame.setAttribute("aria-hidden", "true");
-        isolatedFrame.style.cssText = "position:absolute;left:-99999px;top:0;width:0;height:0;border:0;visibility:hidden;pointer-events:none;opacity:0;";
-        var cssRules = [];
         try {
-            document.body.appendChild(isolatedFrame);
-            var frameDoc = isolatedFrame.contentDocument || (isolatedFrame.contentWindow && isolatedFrame.contentWindow.document);
-            if (frameDoc) {
-                frameDoc.open();
-                frameDoc.write("<!doctype html><html><head><style>" + String(cssText).replace(/<\/style/gi, "<\\/style") + "</style></head><body></body></html>");
-                frameDoc.close();
-                var sheet = frameDoc.styleSheets && frameDoc.styleSheets[0];
-                cssRules = Array.prototype.slice.call((sheet && sheet.cssRules) || []);
-            }
-        } catch (error) { cssRules = []; }
-        try {
+            var tempStyle = document.createElement("style");
+            tempStyle.textContent = cssText;
+            document.head.appendChild(tempStyle);
+            var cssRules = Array.prototype.slice.call((tempStyle.sheet && tempStyle.sheet.cssRules) || []);
             cssRules.forEach(function (rule, ruleIndex) {
                 if (!rule.selectorText || !rule.style) return;
                 var cssValue = [rule.style.backgroundImage, rule.style.background].filter(Boolean).join(";");
@@ -839,9 +860,8 @@ function analyzeHTMLImages() {
                     }
                 });
             });
-        } finally {
-            try { isolatedFrame.remove(); } catch (e) {}
-        }
+            tempStyle.remove();
+        } catch (error) { console.warn("تعذر تحليل CSS:", error); }
     });
 
     var oldReplacements = imageReplacements;
@@ -880,13 +900,18 @@ function analyzeHTMLImages() {
 }
 
 function createImageKey(item) {
-    return [item.type, item.subtype || "", item.src || "", item.target || "",
+    return [
+        item.type, item.subtype || "", item.src || "", item.target || "",
         item.selector || "",
         item.styleIndex != null ? item.styleIndex : "",
         item.ruleIndex != null ? item.ruleIndex : "",
-        item.backgroundIndex != null ? item.backgroundIndex : ""].join("|");
+        item.backgroundIndex != null ? item.backgroundIndex : ""
+    ].join("|");
 }
 
+/* =========================================================
+   5) عرض مدير الصور
+   ========================================================= */
 function renderImageManager() {
     var list = document.getElementById("image-manager-list");
     if (!list) return;
@@ -895,6 +920,7 @@ function renderImageManager() {
         updateBatchBar();
         return;
     }
+
     var html = detectedImages.map(function (item) {
         var replacement = imageReplacements.get(item.key);
         var isReplaced = !!replacement;
@@ -902,20 +928,31 @@ function renderImageManager() {
         var previewSrc = replacement ? replacement.dataUrl : item.src;
         var displayName = replacement ? replacement.fileName : item.name;
         var naturalDimensions = (item.naturalWidth && item.naturalHeight)
-            ? (item.naturalWidth + " × " + item.naturalHeight + "px") : "غير معروف";
+            ? (item.naturalWidth + " × " + item.naturalHeight + "px")
+            : "غير معروف";
         var definedDimensions = item.width + " × " + item.height;
         var typeLabel = item.type === "img" ? "IMG" : "خلفية CSS";
-        var sourceLabel = item.type === "img" ? "src" : item.subtype === "inline" ? "style" : "CSS rule";
-        var thumbContent = previewSrc
-            ? '<img src="' + escapeAttribute(previewSrc) + '" alt="">'
-            : '<span style="color:#475569;font-size:20px;">🖼️</span>';
-        var selectorHtml = item.selector
-            ? '<div class="html-image-url" title="' + escapeAttribute(item.selector) + '">CSS: ' + escapeHTML(item.selector) + '</div>' : "";
-        var cropEditHtml = isReplaced
-            ? '<button type="button" class="html-image-action crop-edit" onclick="editReplacementCrop(' + item.index + ')">✂️ تعديل القص</button>' : "";
+        var sourceLabel = item.type === "img" ? "src"
+            : item.subtype === "inline" ? "style" : "CSS rule";
+
+        var thumbContent;
+        if (previewSrc) thumbContent = '<img src="' + escapeAttribute(previewSrc) + '" alt="">';
+        else thumbContent = '<span style="color:#475569;font-size:20px;">🖼️</span>';
+
+        var selectorHtml = "";
+        if (item.selector) {
+            selectorHtml = '<div class="html-image-url" title="' + escapeAttribute(item.selector) + '">CSS: ' + escapeHTML(item.selector) + '</div>';
+        }
+
+        var cropEditHtml = "";
+        if (isReplaced) {
+            cropEditHtml = '<button type="button" class="html-image-action crop-edit" onclick="editReplacementCrop(' + item.index + ')">✂️ تعديل القص</button>';
+        }
+
         var statusHtml = isReplaced
             ? '✅ سيتم استخدام: ' + escapeHTML(replacement.fileName)
             : 'الصورة الحالية مستخدمة';
+
         return '' +
             '<div class="html-image-card ' + (isReplaced ? "replaced " : "") + (isSelected ? "selected" : "") + '" data-image-card="' + item.index + '">' +
                 '<label class="html-image-select-row">' +
@@ -949,10 +986,14 @@ function renderImageManager() {
                 '<div class="html-image-status">' + statusHtml + '</div>' +
             '</div>';
     }).join("");
+
     list.innerHTML = html;
     updateBatchBar();
 }
 
+/* =========================================================
+   6) التحديد المتعدد
+   ========================================================= */
 function toggleImageSelection(checkbox) {
     var key = checkbox.getAttribute("data-image-key");
     if (!key) return;
@@ -972,7 +1013,10 @@ function updateBatchBar() {
     bar.classList.toggle("visible", n > 0);
 }
 
-function clearImageSelection() { selectedImageKeys.clear(); renderImageManager(); }
+function clearImageSelection() {
+    selectedImageKeys.clear();
+    renderImageManager();
+}
 
 function keepSelectedImages() {
     selectedImageKeys.forEach(function (key) { imageReplacements.delete(key); });
@@ -981,26 +1025,45 @@ function keepSelectedImages() {
 }
 
 function replaceSelectedImages() {
-    if (selectedImageKeys.size === 0) { alert("الرجاء تحديد صورة واحدة على الأقل."); return; }
+    if (selectedImageKeys.size === 0) {
+        alert("الرجاء تحديد صورة واحدة على الأقل.");
+        return;
+    }
     var input = document.createElement("input");
-    input.type = "file"; input.accept = "image/*"; input.style.display = "none";
+    input.type = "file";
+    input.accept = "image/*";
+    input.style.display = "none";
     document.body.appendChild(input);
     input.addEventListener("change", function () {
         var file = input.files && input.files[0];
         if (!file) { input.remove(); return; }
         if (!file.type || file.type.indexOf("image/") !== 0) {
-            alert("الملف المحدد ليس صورة."); input.remove(); return;
+            alert("الملف المحدد ليس صورة.");
+            input.remove();
+            return;
         }
         readFileAsDataURL(file).then(function (dataUrl) {
             var keysArray = Array.from(selectedImageKeys);
-            var firstItem = detectedImages.find(function (it) { return it.key === keysArray[0]; });
+            var firstKey = keysArray[0];
+            var firstItem = detectedImages.find(function (it) { return it.key === firstKey; });
             if (!firstItem) { input.remove(); return; }
-            pendingBatchReplacement = { keys: keysArray, dataUrl: dataUrl, fileName: file.name, mimeType: file.type };
+
+            pendingBatchReplacement = {
+                keys: keysArray,
+                dataUrl: dataUrl,
+                fileName: file.name,
+                mimeType: file.type
+            };
+
             openCropEditor({
-                item: firstItem, sourceDataUrl: dataUrl,
-                sourceFileName: file.name, sourceMimeType: file.type, originalDataUrl: dataUrl
+                item: firstItem,
+                sourceDataUrl: dataUrl,
+                sourceFileName: file.name,
+                sourceMimeType: file.type,
+                originalDataUrl: dataUrl
             }).finally(function () { input.remove(); });
-        }).catch(function () {
+        }).catch(function (error) {
+            console.error(error);
             alert("تعذر قراءة الصورة.");
             pendingBatchReplacement = null;
             input.remove();
@@ -1009,26 +1072,36 @@ function replaceSelectedImages() {
     input.click();
 }
 
+/* =========================================================
+   7) اختيار صورة بديلة
+   ========================================================= */
 function chooseReplacementImage(index) {
     var item = detectedImages[index];
     if (!item) return;
     var input = document.createElement("input");
-    input.type = "file"; input.accept = "image/*"; input.style.display = "none";
+    input.type = "file";
+    input.accept = "image/*";
+    input.style.display = "none";
     document.body.appendChild(input);
     input.addEventListener("change", function () {
         var file = input.files && input.files[0];
         if (!file) { input.remove(); return; }
         if (!file.type || file.type.indexOf("image/") !== 0) {
-            alert("الملف المحدد ليس صورة."); input.remove(); return;
+            alert("الملف المحدد ليس صورة.");
+            input.remove();
+            return;
         }
         readFileAsDataURL(file).then(function (dataUrl) {
             pendingBatchReplacement = null;
             return openCropEditor({
                 item: item, sourceDataUrl: dataUrl,
-                sourceFileName: file.name, sourceMimeType: file.type, originalDataUrl: dataUrl
+                sourceFileName: file.name, sourceMimeType: file.type,
+                originalDataUrl: dataUrl
             });
-        }).catch(function () { alert("تعذر قراءة الصورة."); })
-          .finally(function () { input.remove(); });
+        }).catch(function (error) {
+            console.error(error);
+            alert("تعذر قراءة الصورة.");
+        }).finally(function () { input.remove(); });
     }, { once: true });
     input.click();
 }
@@ -1056,24 +1129,31 @@ function keepOriginalImage(index) {
     renderImageManager();
 }
 
+/* =========================================================
+   8) استبدال URL داخل CSS
+   ========================================================= */
 function replaceCSSImageURL(value, original, replacement) {
     if (!value || !original || !replacement) return value;
     var escaped = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    return value.replace(new RegExp(escaped, "g"), replacement);
+    var regex = new RegExp(escaped, "g");
+    return value.replace(regex, replacement);
 }
 
 function applyImageReplacements(container) {
     if (!container || !detectedImages.length) return;
+
     var images = Array.prototype.slice.call(container.querySelectorAll("img"));
+
     detectedImages.filter(function (item) { return item.type === "img"; }).forEach(function (item) {
         var replacement = imageReplacements.get(item.key);
         if (!replacement) return;
         var img = null;
         try {
+            var ownerDoc = container.ownerDocument || document;
             img = images.find(function (element) {
-                return getStableSelector(element, container.ownerDocument || document) === item.target;
+                return getStableSelector(element, ownerDoc) === item.target;
             }) || null;
-        } catch (e) {}
+        } catch (e) { /* ignore */ }
         if (!img) img = images[item.index] || null;
         if (!img) return;
         img.setAttribute("src", replacement.dataUrl);
@@ -1081,16 +1161,17 @@ function applyImageReplacements(container) {
         img.removeAttribute("srcset");
         img.removeAttribute("sizes");
     });
+
     detectedImages.filter(function (item) { return item.type === "background"; }).forEach(function (item) {
         var replacement = imageReplacements.get(item.key);
         if (!replacement) return;
         var elements = [];
         try {
             if (item.target) elements = Array.prototype.slice.call(container.querySelectorAll(item.target));
-        } catch (e) {}
+        } catch (e) { /* ignore */ }
         if (!elements.length && item.selector) {
             try { elements = Array.prototype.slice.call(container.querySelectorAll(item.selector)); }
-            catch (e) {}
+            catch (e) { /* ignore */ }
         }
         if (!elements.length) return;
         elements.forEach(function (element) {
@@ -1110,12 +1191,14 @@ function applyBackgroundReplacementToElement(element, original, replacement) {
         if (background && background.indexOf(original) !== -1) {
             element.style.background = replaceCSSImageURL(background, original, replacement);
         }
-    } catch (e) {}
+    } catch (e) { /* ignore */ }
 }
 
 function applyImageReplacementsToDocument(doc) {
     if (!doc || !detectedImages.length) return;
+
     var images = Array.prototype.slice.call(doc.querySelectorAll("img"));
+
     detectedImages.filter(function (item) { return item.type === "img"; }).forEach(function (item) {
         var replacement = imageReplacements.get(item.key);
         if (!replacement) return;
@@ -1128,13 +1211,14 @@ function applyImageReplacementsToDocument(doc) {
         img.removeAttribute("srcset");
         img.removeAttribute("sizes");
     });
+
     detectedImages.filter(function (item) { return item.type === "background"; }).forEach(function (item) {
         var replacement = imageReplacements.get(item.key);
         if (!replacement) return;
         var elements = [];
         try {
             if (item.target) elements = Array.prototype.slice.call(doc.querySelectorAll(item.target));
-        } catch (e) {}
+        } catch (e) { /* ignore */ }
         elements.forEach(function (element) {
             applyBackgroundReplacementToElement(element, item.src, replacement.dataUrl);
         });
@@ -1146,25 +1230,33 @@ function scheduleImageAnalysis() {
     imageAnalysisTimer = setTimeout(function () { analyzeHTMLImages(); }, 300);
 }
 
+/* =========================================================
+   9) محرر القص
+   ========================================================= */
 function getCropTargetRatio(item) {
     return new Promise(function (resolve) {
         var fallback = (item && item.naturalWidth && item.naturalHeight)
             ? item.naturalWidth / item.naturalHeight : 1;
+
         var textarea = document.getElementById("html-input");
         if (!textarea) { resolve(fallback); return; }
         var code = textarea.value;
         if (!code.trim()) { resolve(fallback); return; }
+
         var width = 794;
         var formatEl = document.getElementById("format-select");
         if (formatEl && (formatEl.value === "pdf-169" || formatEl.value === "pptx")) width = 1280;
+
         var container = document.createElement("div");
         container.style.cssText = "position:absolute;left:-99999px;top:0;width:" + width + "px;height:auto;min-height:100vh;visibility:hidden;pointer-events:none;overflow:visible;contain:layout;";
         container.innerHTML = code;
+
         var fix = document.createElement("style");
         fix.textContent = "[data-crop-measure] html,[data-crop-measure] body{margin:0!important;padding:0!important}[data-crop-measure] .page{box-sizing:border-box!important}";
         container.setAttribute("data-crop-measure", "true");
         container.appendChild(fix);
         document.body.appendChild(container);
+
         requestAnimationFrame(function () {
             var ratio = fallback;
             try {
@@ -1177,13 +1269,16 @@ function getCropTargetRatio(item) {
                                 return getParsedPageNumber(el, container.ownerDocument) === item.page;
                             }) || matches[0];
                         }
-                    } catch (e) {}
+                    } catch (e) { /* ignore */ }
                 }
                 if (!target && item.selector) {
-                    try { target = container.querySelector(item.selector); } catch (e) {}
+                    try { target = container.querySelector(item.selector); } catch (e) { /* ignore */ }
                 }
                 if (!target) {
-                    try { target = container.querySelector("img"); } catch (e) {}
+                    try {
+                        var firstImg = container.querySelector("img");
+                        if (firstImg) target = firstImg;
+                    } catch (e) { /* ignore */ }
                 }
                 if (target) {
                     var rect = target.getBoundingClientRect();
@@ -1192,8 +1287,10 @@ function getCropTargetRatio(item) {
                         if (isFinite(r) && r > 0) ratio = r;
                     }
                 }
-            } catch (error) {} finally {
-                try { container.remove(); } catch (e) {}
+            } catch (error) {
+                console.warn("تعذر تحديد نسبة إطار الصورة:", error);
+            } finally {
+                try { container.remove(); } catch (e) { /* ignore */ }
             }
             resolve(ratio);
         });
@@ -1207,20 +1304,30 @@ function calculateCropFrame() {
     var stageWidth = stage.clientWidth;
     var stageHeight = stage.clientHeight;
     if (stageWidth < 1 || stageHeight < 1) return;
+
     var maxWidth = stageWidth * 0.9;
     var maxHeight = stageHeight * 0.9;
     var frameWidth = maxWidth;
     var frameHeight = frameWidth / cropState.targetRatio;
-    if (frameHeight > maxHeight) { frameHeight = maxHeight; frameWidth = frameHeight * cropState.targetRatio; }
+    if (frameHeight > maxHeight) {
+        frameHeight = maxHeight;
+        frameWidth = frameHeight * cropState.targetRatio;
+    }
     frameWidth = Math.max(80, Math.min(frameWidth, maxWidth));
     frameHeight = Math.max(80, Math.min(frameHeight, maxHeight));
     var left = (stageWidth - frameWidth) / 2;
     var top = (stageHeight - frameHeight) / 2;
+
     cropState.frame = { left: left, top: top, width: frameWidth, height: frameHeight };
-    frame.style.left = left + "px"; frame.style.top = top + "px";
-    frame.style.width = frameWidth + "px"; frame.style.height = frameHeight + "px";
+    frame.style.left = left + "px";
+    frame.style.top = top + "px";
+    frame.style.width = frameWidth + "px";
+    frame.style.height = frameHeight + "px";
+
     if (cropState.image && cropState.naturalWidth && cropState.naturalHeight) {
-        cropState.baseScale = Math.max(frameWidth / cropState.naturalWidth, frameHeight / cropState.naturalHeight);
+        var scaleX = frameWidth / cropState.naturalWidth;
+        var scaleY = frameHeight / cropState.naturalHeight;
+        cropState.baseScale = Math.max(scaleX, scaleY);
         cropState.displayScale = cropState.baseScale * cropState.zoom;
     }
 }
@@ -1241,7 +1348,9 @@ function openCropEditor(options) {
         var imageElement = document.getElementById("crop-image");
         var previewWrap = document.getElementById("crop-preview-wrap");
         if (!modal || !imageElement) { resolve(false); return; }
+
         var item = options.item;
+
         getCropTargetRatio(item).then(function (targetRatio) {
             cropState = {
                 item: item, sourceDataUrl: options.sourceDataUrl,
@@ -1255,21 +1364,27 @@ function openCropEditor(options) {
                 displayScale: 1, dragging: false, pointerId: null,
                 startPointerX: 0, startPointerY: 0, startImageLeft: 0, startImageTop: 0
             };
+
             imageElement.src = options.sourceDataUrl;
             if (previewWrap) previewWrap.classList.remove("visible");
+
             var info = document.getElementById("crop-target-info");
             if (info) {
                 var isBatch = pendingBatchReplacement && pendingBatchReplacement.keys.length > 1;
                 var batchText = isBatch ? " ⚠️ سيُطبَّق على " + pendingBatchReplacement.keys.length + " صور محددة." : "";
-                info.textContent = "إطار الصورة الحالي بنسبة " + cropState.targetRatio.toFixed(3) + ":1 — اسحب الصورة." + batchText;
+                var ratioText = cropState.targetRatio.toFixed(3);
+                info.textContent = "إطار الصورة الحالي بنسبة " + ratioText + ":1 — اسحب الصورة واضبط الجزء المطلوب داخل الإطار." + batchText;
             }
+
             modal.classList.add("visible");
             modal.setAttribute("aria-hidden", "false");
             document.body.style.overflow = "hidden";
+
             loadCropImage(options.sourceDataUrl).then(function (loadedImage) {
                 cropState.image = loadedImage;
                 cropState.naturalWidth = loadedImage.naturalWidth;
                 cropState.naturalHeight = loadedImage.naturalHeight;
+
                 requestAnimationFrame(function () {
                     requestAnimationFrame(function () {
                         calculateCropFrame();
@@ -1277,7 +1392,8 @@ function openCropEditor(options) {
                         resolve(true);
                     });
                 });
-            }).catch(function () {
+            }).catch(function (error) {
+                console.error(error);
                 closeCropModal();
                 alert("تعذر فتح الصورة في محرر القص.");
                 resolve(false);
@@ -1290,8 +1406,11 @@ function cropReset() {
     if (!cropState.image || !cropState.naturalWidth || !cropState.naturalHeight) return;
     calculateCropFrame();
     var frame = cropState.frame;
-    cropState.baseScale = Math.max(frame.width / cropState.naturalWidth, frame.height / cropState.naturalHeight);
-    cropState.minZoom = 1; cropState.zoom = 1;
+    var scaleX = frame.width / cropState.naturalWidth;
+    var scaleY = frame.height / cropState.naturalHeight;
+    cropState.baseScale = Math.max(scaleX, scaleY);
+    cropState.minZoom = 1;
+    cropState.zoom = 1;
     cropState.displayScale = cropState.baseScale;
     cropState.imageLeft = frame.left + (frame.width - cropState.naturalWidth * cropState.displayScale) / 2;
     cropState.imageTop = frame.top + (frame.height - cropState.naturalHeight * cropState.displayScale) / 2;
@@ -1306,6 +1425,7 @@ function cropZoom(delta) {
     var oldZoom = cropState.zoom;
     var newZoom = Math.max(cropState.minZoom, Math.min(cropState.maxZoom, oldZoom + delta));
     if (Math.abs(newZoom - oldZoom) < 0.0001) return;
+
     var frame = cropState.frame;
     var centerX = frame.left + frame.width / 2;
     var centerY = frame.top + frame.height / 2;
@@ -1315,12 +1435,14 @@ function cropZoom(delta) {
     var oldImageCenterY = cropState.imageTop + cropState.naturalHeight * oldScale / 2;
     var ratioX = (centerX - oldImageCenterX) / oldScale;
     var ratioY = (centerY - oldImageCenterY) / oldScale;
+
     cropState.zoom = newZoom;
     cropState.displayScale = newScale;
     cropState.imageLeft = centerX - ratioX * newScale - cropState.naturalWidth * newScale / 2;
     cropState.imageTop = centerY - ratioY * newScale - cropState.naturalHeight * newScale / 2;
     constrainCropImage();
     updateCropImageElement();
+
     var wrap = document.getElementById("crop-preview-wrap");
     if (wrap) wrap.classList.remove("visible");
 }
@@ -1329,8 +1451,12 @@ function constrainCropImage() {
     var frame = cropState.frame;
     var imageWidth = cropState.naturalWidth * cropState.displayScale;
     var imageHeight = cropState.naturalHeight * cropState.displayScale;
-    cropState.imageLeft = Math.min(frame.left, Math.max(frame.left + frame.width - imageWidth, cropState.imageLeft));
-    cropState.imageTop = Math.min(frame.top, Math.max(frame.top + frame.height - imageHeight, cropState.imageTop));
+    var minLeft = frame.left + frame.width - imageWidth;
+    var maxLeft = frame.left;
+    var minTop = frame.top + frame.height - imageHeight;
+    var maxTop = frame.top;
+    cropState.imageLeft = Math.min(maxLeft, Math.max(minLeft, cropState.imageLeft));
+    cropState.imageTop = Math.min(maxTop, Math.max(minTop, cropState.imageTop));
 }
 
 function updateCropImageElement() {
@@ -1351,15 +1477,17 @@ function startCropDrag(event) {
     cropState.startImageLeft = cropState.imageLeft;
     cropState.startImageTop = cropState.imageTop;
     var stage = document.getElementById("crop-stage");
-    try { if (stage) stage.setPointerCapture(event.pointerId); } catch (e) {}
+    try { if (stage) stage.setPointerCapture(event.pointerId); } catch (e) { /* ignore */ }
     event.preventDefault();
 }
 
 function moveCropDrag(event) {
     if (!cropState.dragging) return;
     if (cropState.pointerId !== null && event.pointerId !== cropState.pointerId) return;
-    cropState.imageLeft = cropState.startImageLeft + (event.clientX - cropState.startPointerX);
-    cropState.imageTop = cropState.startImageTop + (event.clientY - cropState.startPointerY);
+    var dx = event.clientX - cropState.startPointerX;
+    var dy = event.clientY - cropState.startPointerY;
+    cropState.imageLeft = cropState.startImageLeft + dx;
+    cropState.imageTop = cropState.startImageTop + dy;
     constrainCropImage();
     updateCropImageElement();
     event.preventDefault();
@@ -1369,7 +1497,9 @@ function endCropDrag(event) {
     if (cropState.pointerId !== null && event && event.pointerId !== undefined && event.pointerId !== cropState.pointerId) return;
     cropState.dragging = false;
     var stage = document.getElementById("crop-stage");
-    try { if (cropState.pointerId !== null && stage) stage.releasePointerCapture(cropState.pointerId); } catch (e) {}
+    try {
+        if (cropState.pointerId !== null && stage) stage.releasePointerCapture(cropState.pointerId);
+    } catch (e) { /* ignore */ }
     cropState.pointerId = null;
 }
 
@@ -1377,25 +1507,37 @@ function getCropSourceRectangle() {
     var frame = cropState.frame;
     var scale = cropState.displayScale;
     if (!scale || !cropState.image) return null;
+
     var sx = (frame.left - cropState.imageLeft) / scale;
     var sy = (frame.top - cropState.imageTop) / scale;
     var sw = frame.width / scale;
     var sh = frame.height / scale;
+
     if (!isFinite(sx) || sx < 0) sx = 0;
     if (!isFinite(sy) || sy < 0) sy = 0;
+    if (sx > cropState.naturalWidth) sx = cropState.naturalWidth;
+    if (sy > cropState.naturalHeight) sy = cropState.naturalHeight;
+    if (!isFinite(sw) || sw <= 0) sw = cropState.naturalWidth - sx;
+    if (!isFinite(sh) || sh <= 0) sh = cropState.naturalHeight - sy;
+
     sw = Math.min(sw, cropState.naturalWidth - sx);
     sh = Math.min(sh, cropState.naturalHeight - sy);
-    sx = Math.max(0, sx); sy = Math.max(0, sy);
-    sw = Math.max(1, sw); sh = Math.max(1, sh);
+    sx = Math.max(0, sx);
+    sy = Math.max(0, sy);
+    sw = Math.max(1, sw);
+    sh = Math.max(1, sh);
+    if (sw <= 0 || sh <= 0) return null;
     return { sx: sx, sy: sy, sw: sw, sh: sh };
 }
 
 function createCroppedDataURL() {
     var crop = getCropSourceRectangle();
     if (!crop || !cropState.image) return null;
+
     var canvas = document.createElement("canvas");
     var outputWidth = Math.max(1, Math.round(crop.sw));
     var outputHeight = Math.max(1, Math.round(crop.sh));
+
     var totalPixels = outputWidth * outputHeight;
     var maxAllowed = RENDER_CONFIG.maxCanvasPixels;
     if (totalPixels > maxAllowed) {
@@ -1403,17 +1545,21 @@ function createCroppedDataURL() {
         outputWidth = Math.max(1, Math.round(outputWidth * ratio));
         outputHeight = Math.max(1, Math.round(outputHeight * ratio));
     }
-    canvas.width = outputWidth; canvas.height = outputHeight;
+
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
     var context = canvas.getContext("2d");
     if (!context) return null;
     context.imageSmoothingEnabled = true;
     context.imageSmoothingQuality = "high";
     context.drawImage(cropState.image, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, outputWidth, outputHeight);
+
     var mime = cropState.sourceMimeType;
     if (["image/png", "image/jpeg", "image/webp"].indexOf(mime) === -1) mime = "image/png";
     var dataUrl;
     try { dataUrl = canvas.toDataURL(mime, 1.0); }
     catch (e) { mime = "image/png"; dataUrl = canvas.toDataURL(mime); }
+
     return { dataUrl: dataUrl, mimeType: mime, width: outputWidth, height: outputHeight, crop: crop };
 }
 
@@ -1432,27 +1578,35 @@ function applyCrop() {
     if (!result) { alert("تعذر اعتماد القص."); return; }
     var item = cropState.item;
     if (!item) return;
+
     var buildReplacement = function (targetItem) {
         var old = imageReplacements.get(targetItem.key);
         var extension = result.mimeType === "image/jpeg" ? ".jpg"
             : result.mimeType === "image/webp" ? ".webp" : ".png";
-        var cleanName = getSafeImageBaseName(cropState.sourceFileName, targetItem);
+        var originalName = cropState.sourceFileName || "image";
+        var cleanName = originalName.replace(/\.[^.]+$/, "");
         return {
             dataUrl: result.dataUrl,
             fileName: cleanName + "_cropped" + extension,
             mimeType: result.mimeType,
-            originalFileName: (old && old.originalFileName) || cropState.sourceFileName,
+            originalFileName: (old && old.originalFileName) || originalName,
             originalMimeType: (old && old.originalMimeType) || cropState.sourceMimeType,
             originalDataUrl: cropState.originalDataUrl,
-            cropped: true, cropRatio: cropState.targetRatio,
-            originalWidth: cropState.naturalWidth, originalHeight: cropState.naturalHeight,
-            croppedWidth: result.width, croppedHeight: result.height
+            cropped: true,
+            cropRatio: cropState.targetRatio,
+            originalWidth: cropState.naturalWidth,
+            originalHeight: cropState.naturalHeight,
+            croppedWidth: result.width,
+            croppedHeight: result.height
         };
     };
+
     if (pendingBatchReplacement && pendingBatchReplacement.keys.indexOf(item.key) !== -1) {
-        pendingBatchReplacement.keys.slice().forEach(function (key) {
+        var keysToApply = pendingBatchReplacement.keys.slice();
+        keysToApply.forEach(function (key) {
             var targetItem = detectedImages.find(function (it) { return it.key === key; });
-            if (targetItem) imageReplacements.set(key, buildReplacement(targetItem));
+            if (!targetItem) return;
+            imageReplacements.set(key, buildReplacement(targetItem));
         });
         pendingBatchReplacement = null;
         selectedImageKeys.clear();
@@ -1461,6 +1615,7 @@ function applyCrop() {
         pendingBatchReplacement = null;
         selectedImageKeys.delete(item.key);
     }
+
     closeCropModal();
     renderImageManager();
 }
@@ -1471,7 +1626,13 @@ function closeCropModal() {
     var preview = document.getElementById("crop-preview");
     var previewWrap = document.getElementById("crop-preview-wrap");
     if (modal) { modal.classList.remove("visible"); modal.setAttribute("aria-hidden", "true"); }
-    if (image) { image.src = ""; image.style.width = ""; image.style.height = ""; image.style.left = ""; image.style.top = ""; }
+    if (image) {
+        image.src = "";
+        image.style.width = "";
+        image.style.height = "";
+        image.style.left = "";
+        image.style.top = "";
+    }
     if (preview) preview.src = "";
     if (previewWrap) previewWrap.classList.remove("visible");
     document.body.style.overflow = "";
@@ -1486,32 +1647,44 @@ function closeCropModal() {
     };
 }
 
+/* =========================================================
+   10) إزالة الخلفية
+   ========================================================= */
 function openBackgroundRemover(index) {
     var item = detectedImages[index];
     if (!item) return;
     var replacement = imageReplacements.get(item.key);
+    var sourceDataUrl = replacement ? replacement.dataUrl : item.src;
+    var sourceFileName = replacement ? replacement.fileName : (item.name || "image");
+    var sourceMimeType = replacement ? replacement.mimeType : "image/png";
     openBgRemoverInternal({
         item: item,
-        sourceDataUrl: replacement ? replacement.dataUrl : item.src,
-        sourceFileName: replacement ? replacement.fileName : (item.name || "image"),
-        sourceMimeType: replacement ? replacement.mimeType : "image/png",
-        originalDataUrl: replacement ? (replacement.originalDataUrl || replacement.dataUrl) : item.src,
+        sourceDataUrl: sourceDataUrl,
+        sourceFileName: sourceFileName,
+        sourceMimeType: sourceMimeType,
+        originalDataUrl: replacement ? (replacement.originalDataUrl || sourceDataUrl) : sourceDataUrl,
         batchKeys: null
     });
 }
 
 function removeBackgroundSelected() {
-    if (selectedImageKeys.size === 0) { alert("الرجاء تحديد صورة واحدة على الأقل."); return; }
+    if (selectedImageKeys.size === 0) {
+        alert("الرجاء تحديد صورة واحدة على الأقل.");
+        return;
+    }
     var keysArray = Array.from(selectedImageKeys);
     var firstItem = detectedImages.find(function (it) { return it.key === keysArray[0]; });
     if (!firstItem) return;
     var replacement = imageReplacements.get(firstItem.key);
+    var sourceDataUrl = replacement ? replacement.dataUrl : firstItem.src;
+    var sourceFileName = replacement ? replacement.fileName : (firstItem.name || "image");
+    var sourceMimeType = replacement ? replacement.mimeType : "image/png";
     openBgRemoverInternal({
         item: firstItem,
-        sourceDataUrl: replacement ? replacement.dataUrl : firstItem.src,
-        sourceFileName: replacement ? replacement.fileName : (firstItem.name || "image"),
-        sourceMimeType: replacement ? replacement.mimeType : "image/png",
-        originalDataUrl: replacement ? (replacement.originalDataUrl || replacement.dataUrl) : firstItem.src,
+        sourceDataUrl: sourceDataUrl,
+        sourceFileName: sourceFileName,
+        sourceMimeType: sourceMimeType,
+        originalDataUrl: replacement ? (replacement.originalDataUrl || sourceDataUrl) : sourceDataUrl,
         batchKeys: keysArray
     });
 }
@@ -1520,6 +1693,7 @@ function openBgRemoverInternal(opts) {
     var modal = document.getElementById("bg-remove-modal");
     var img = document.getElementById("bg-preview-img");
     if (!modal || !img) return;
+
     bgRemovalState = {
         item: opts.item, safeDataUrl: "",
         sourceFileName: opts.sourceFileName || "image",
@@ -1529,29 +1703,47 @@ function openBgRemoverInternal(opts) {
         targetColor: null, tolerance: 30, feather: 2,
         resultDataUrl: null, batchKeys: opts.batchKeys
     };
+
     var swatch = document.getElementById("bg-color-swatch");
-    if (swatch) { swatch.textContent = "لم يُحدد"; swatch.style.background = "#020617"; }
+    if (swatch) {
+        swatch.textContent = "لم يُحدد";
+        swatch.style.background = "#020617";
+    }
     var colorInfo = document.getElementById("bg-color-info");
-    if (colorInfo) colorInfo.innerHTML = "<strong>اللون المحدد:</strong> —<br><strong>RGB:</strong> —";
-    var tolEl = document.getElementById("bg-tolerance"); if (tolEl) tolEl.value = 30;
-    var tolValEl = document.getElementById("bg-tolerance-value"); if (tolValEl) tolValEl.textContent = "30";
-    var feathEl = document.getElementById("bg-feather"); if (feathEl) feathEl.value = 2;
-    var feathValEl = document.getElementById("bg-feather-value"); if (feathValEl) feathValEl.textContent = "2";
-    var resNote = document.getElementById("bg-result-note"); if (resNote) resNote.textContent = "";
-    var errNote = document.getElementById("bg-error-note"); if (errNote) errNote.textContent = "";
-    var pWrap = document.getElementById("bg-preview-wrap"); if (pWrap) pWrap.style.display = "none";
-    var bControls = document.getElementById("bg-controls"); if (bControls) bControls.style.display = "none";
-    var loader = document.getElementById("bg-loading"); if (loader) loader.classList.add("visible");
+    if (colorInfo) {
+        colorInfo.innerHTML = "<strong>اللون المحدد:</strong> —<br><strong>RGB:</strong> —";
+    }
+    var tolEl = document.getElementById("bg-tolerance");
+    if (tolEl) tolEl.value = 30;
+    var tolValEl = document.getElementById("bg-tolerance-value");
+    if (tolValEl) tolValEl.textContent = "30";
+    var feathEl = document.getElementById("bg-feather");
+    if (feathEl) feathEl.value = 2;
+    var feathValEl = document.getElementById("bg-feather-value");
+    if (feathValEl) feathValEl.textContent = "2";
+    var resNote = document.getElementById("bg-result-note");
+    if (resNote) resNote.textContent = "";
+    var errNote = document.getElementById("bg-error-note");
+    if (errNote) errNote.textContent = "";
+    var pWrap = document.getElementById("bg-preview-wrap");
+    if (pWrap) pWrap.style.display = "none";
+    var bControls = document.getElementById("bg-controls");
+    if (bControls) bControls.style.display = "none";
+    var loader = document.getElementById("bg-loading");
+    if (loader) loader.classList.add("visible");
+
     var info = document.getElementById("bg-target-info");
     if (info) {
         var isBatch = opts.batchKeys && opts.batchKeys.length > 1;
         info.textContent = isBatch
-            ? "⚠️ سيُطبَّق على " + opts.batchKeys.length + " صور محددة."
+            ? "⚠️ سيُطبَّق على " + opts.batchKeys.length + " صور محددة. انقر على لون الخلفية ثم اعتمد."
             : "انقر على لون الخلفية في الصورة ثم اضبط الإعدادات.";
     }
+
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
+
     toSafeDataURL(opts.sourceDataUrl)
         .then(function (safeDataUrl) {
             bgRemovalState.safeDataUrl = safeDataUrl;
@@ -1561,6 +1753,7 @@ function openBgRemoverInternal(opts) {
             bgRemovalState.imageEl = loadedImage;
             bgRemovalState.naturalWidth = loadedImage.naturalWidth;
             bgRemovalState.naturalHeight = loadedImage.naturalHeight;
+
             img.src = bgRemovalState.safeDataUrl;
             img.onclick = handleBgImageClick;
             if (loader) loader.classList.remove("visible");
@@ -1568,15 +1761,21 @@ function openBgRemoverInternal(opts) {
             if (bControls) bControls.style.display = "block";
         })
         .catch(function (error) {
+            console.error(error);
             if (loader) loader.classList.remove("visible");
             var errEl = document.getElementById("bg-error-note");
-            if (errEl) errEl.textContent = "❌ " + (error && error.message ? error.message : "تعذر تحميل الصورة للتحرير.");
+            if (errEl) {
+                errEl.textContent = "❌ " + (error && error.message ? error.message : "تعذر تحميل الصورة للتحرير.");
+            }
         });
 }
 
 function closeBackgroundRemover() {
     var modal = document.getElementById("bg-remove-modal");
-    if (modal) { modal.classList.remove("visible"); modal.setAttribute("aria-hidden", "true"); }
+    if (modal) {
+        modal.classList.remove("visible");
+        modal.setAttribute("aria-hidden", "true");
+    }
     var img = document.getElementById("bg-preview-img");
     if (img) { img.src = ""; img.onclick = null; }
     document.body.style.overflow = "";
@@ -1589,50 +1788,77 @@ function closeBackgroundRemover() {
 
 function handleBgImageClick(event) {
     var sourceImg = bgRemovalState.imageEl;
-    if (!sourceImg || !bgRemovalState.safeDataUrl) { alert("الصورة لم تُحمَّل بعد."); return; }
+    if (!sourceImg || !bgRemovalState.safeDataUrl) {
+        alert("الصورة لم تُحمَّل بعد، انتظر لحظة.");
+        return;
+    }
     var displayImg = event.currentTarget;
     var rect = displayImg.getBoundingClientRect();
     if (rect.width < 1 || rect.height < 1) return;
+
     var displayX = event.clientX - rect.left;
     var displayY = event.clientY - rect.top;
+
     var imgRatio = sourceImg.naturalWidth / sourceImg.naturalHeight;
     var boxRatio = rect.width / rect.height;
     var renderWidth, renderHeight, offsetX, offsetY;
+
     if (boxRatio > imgRatio) {
-        renderHeight = rect.height; renderWidth = renderHeight * imgRatio;
-        offsetX = (rect.width - renderWidth) / 2; offsetY = 0;
+        renderHeight = rect.height;
+        renderWidth = renderHeight * imgRatio;
+        offsetX = (rect.width - renderWidth) / 2;
+        offsetY = 0;
     } else {
-        renderWidth = rect.width; renderHeight = renderWidth / imgRatio;
-        offsetX = 0; offsetY = (rect.height - renderHeight) / 2;
+        renderWidth = rect.width;
+        renderHeight = renderWidth / imgRatio;
+        offsetX = 0;
+        offsetY = (rect.height - renderHeight) / 2;
     }
+
     var relX = displayX - offsetX;
     var relY = displayY - offsetY;
     if (relX < 0 || relY < 0 || relX > renderWidth || relY > renderHeight) return;
+
     var px = Math.max(0, Math.min(sourceImg.naturalWidth - 1, Math.floor((relX / renderWidth) * sourceImg.naturalWidth)));
     var py = Math.max(0, Math.min(sourceImg.naturalHeight - 1, Math.floor((relY / renderHeight) * sourceImg.naturalHeight)));
+
     var color;
     try {
         var canvas = document.createElement("canvas");
-        canvas.width = 1; canvas.height = 1;
+        canvas.width = 1;
+        canvas.height = 1;
         var ctx = canvas.getContext("2d");
         ctx.drawImage(sourceImg, px, py, 1, 1, 0, 0, 1, 1);
         var data = ctx.getImageData(0, 0, 1, 1).data;
         color = { r: data[0], g: data[1], b: data[2] };
     } catch (err) {
+        console.error(err);
         var errEl = document.getElementById("bg-error-note");
-        if (errEl) errEl.textContent = "❌ لا يمكن قراءة لون الصورة (CORS).";
+        if (errEl) {
+            errEl.textContent = "❌ لا يمكن قراءة لون الصورة (CORS). جرّب رفعها من جهازك عبر «اختيار من الاستوديو».";
+        }
         return;
     }
+
     bgRemovalState.targetColor = color;
+
     var swatch = document.getElementById("bg-color-swatch");
-    if (swatch) { swatch.style.background = "rgb(" + color.r + "," + color.g + "," + color.b + ")"; swatch.textContent = ""; }
+    if (swatch) {
+        swatch.style.background = "rgb(" + color.r + "," + color.g + "," + color.b + ")";
+        swatch.textContent = "";
+    }
+
     var colorInfo = document.getElementById("bg-color-info");
     if (colorInfo) {
-        colorInfo.innerHTML = "<strong>اللون المحدد:</strong> " +
+        colorInfo.innerHTML =
+            "<strong>اللون المحدد:</strong> " +
             "<span style='color:rgb(" + color.r + "," + color.g + "," + color.b + ");font-weight:bold;'>■</span><br>" +
             "<strong>RGB:</strong> " + color.r + "، " + color.g + "، " + color.b;
     }
-    var errNote = document.getElementById("bg-error-note"); if (errNote) errNote.textContent = "";
+
+    var errNote = document.getElementById("bg-error-note");
+    if (errNote) errNote.textContent = "";
+
     previewBackgroundRemoval();
 }
 
@@ -1642,6 +1868,7 @@ function updateBgTolerance(value) {
     if (el) el.textContent = value;
     if (bgRemovalState.targetColor) previewBackgroundRemoval();
 }
+
 function updateBgFeather(value) {
     bgRemovalState.feather = Number(value);
     var el = document.getElementById("bg-feather-value");
@@ -1653,7 +1880,9 @@ function computeChromaKey(sourceImg, color, tolerance, feather) {
     return new Promise(function (resolve, reject) {
         try {
             var canvas = document.createElement("canvas");
-            var w = sourceImg.naturalWidth, h = sourceImg.naturalHeight;
+            var w = sourceImg.naturalWidth;
+            var h = sourceImg.naturalHeight;
+
             var totalPixels = w * h;
             var maxAllowed = RENDER_CONFIG.maxCanvasPixels;
             if (totalPixels > maxAllowed) {
@@ -1661,20 +1890,25 @@ function computeChromaKey(sourceImg, color, tolerance, feather) {
                 w = Math.max(1, Math.round(w * ratio));
                 h = Math.max(1, Math.round(h * ratio));
             }
-            canvas.width = w; canvas.height = h;
+
+            canvas.width = w;
+            canvas.height = h;
             var ctx = canvas.getContext("2d");
             ctx.drawImage(sourceImg, 0, 0, w, h);
+
             var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             var data = imageData.data;
             var tr = color.r, tg = color.g, tb = color.b;
             var tol = tolerance * 2.55;
             var softEnd = tol + feather * 20;
+
             for (var i = 0; i < data.length; i += 4) {
                 var r = data[i], g = data[i + 1], b = data[i + 2];
                 var dr = r - tr, dg = g - tg, db = b - tb;
                 var dist = Math.sqrt(dr * dr + dg * dg + db * db);
-                if (dist <= tol) data[i + 3] = 0;
-                else if (dist < softEnd) {
+                if (dist <= tol) {
+                    data[i + 3] = 0;
+                } else if (dist < softEnd) {
                     var factor = (dist - tol) / (softEnd - tol);
                     data[i + 3] = Math.round(data[i + 3] * factor);
                 }
@@ -1686,28 +1920,44 @@ function computeChromaKey(sourceImg, color, tolerance, feather) {
 }
 
 function previewBackgroundRemoval() {
-    if (!bgRemovalState.imageEl || !bgRemovalState.targetColor) { alert("انقر على لون الخلفية أولاً."); return; }
-    computeChromaKey(bgRemovalState.imageEl, bgRemovalState.targetColor, bgRemovalState.tolerance, bgRemovalState.feather)
-        .then(function (result) {
-            bgRemovalState.resultDataUrl = result;
-            var img = document.getElementById("bg-preview-img");
-            if (img) { img.src = result; img.onclick = handleBgImageClick; }
-            var resNote = document.getElementById("bg-result-note");
-            if (resNote) resNote.textContent = "✅ معاينة جاهزة.";
-            var errNote = document.getElementById("bg-error-note"); if (errNote) errNote.textContent = "";
-        }).catch(function (e) {
-            var errEl = document.getElementById("bg-error-note");
-            if (errEl) errEl.textContent = "❌ تعذر إنشاء المعاينة.";
-        });
+    if (!bgRemovalState.imageEl || !bgRemovalState.targetColor) {
+        alert("انقر على لون الخلفية في الصورة أولاً.");
+        return;
+    }
+    computeChromaKey(
+        bgRemovalState.imageEl,
+        bgRemovalState.targetColor,
+        bgRemovalState.tolerance,
+        bgRemovalState.feather
+    ).then(function (result) {
+        bgRemovalState.resultDataUrl = result;
+        var img = document.getElementById("bg-preview-img");
+        if (img) {
+            img.src = result;
+            img.onclick = handleBgImageClick;
+        }
+        var resNote = document.getElementById("bg-result-note");
+        if (resNote) resNote.textContent = "✅ معاينة جاهزة — اضغط اعتماد الإزالة للحفظ.";
+        var errNote = document.getElementById("bg-error-note");
+        if (errNote) errNote.textContent = "";
+    }).catch(function (e) {
+        console.error(e);
+        var errEl = document.getElementById("bg-error-note");
+        if (errEl) errEl.textContent = "❌ تعذر إنشاء المعاينة: " + (e && e.message ? e.message : "");
+    });
 }
 
 function applyBackgroundRemoval() {
-    if (!bgRemovalState.resultDataUrl) { alert("قم بالمعاينة أولاً."); return; }
+    if (!bgRemovalState.resultDataUrl) {
+        alert("قم بالمعاينة أولاً.");
+        return;
+    }
     var item = bgRemovalState.item;
     if (!item) return;
+
     var buildReplacement = function (targetItem) {
         var old = imageReplacements.get(targetItem.key);
-        var cleanName = getSafeImageBaseName(bgRemovalState.sourceFileName, targetItem);
+        var cleanName = (bgRemovalState.sourceFileName || "image").replace(/\.[^.]+$/, "");
         return {
             dataUrl: bgRemovalState.resultDataUrl,
             fileName: cleanName + "_no-bg.png",
@@ -1715,22 +1965,30 @@ function applyBackgroundRemoval() {
             originalFileName: (old && old.originalFileName) || bgRemovalState.sourceFileName,
             originalMimeType: (old && old.originalMimeType) || bgRemovalState.sourceMimeType,
             originalDataUrl: (old && old.originalDataUrl) || bgRemovalState.originalDataUrl,
-            bgRemoved: true, bgMethod: "color"
+            bgRemoved: true,
+            bgMethod: "color"
         };
     };
+
     if (bgRemovalState.batchKeys && bgRemovalState.batchKeys.length > 0) {
-        bgRemovalState.batchKeys.slice().forEach(function (key) {
+        var keysToApply = bgRemovalState.batchKeys.slice();
+        keysToApply.forEach(function (key) {
             var targetItem = detectedImages.find(function (it) { return it.key === key; });
-            if (targetItem) imageReplacements.set(key, buildReplacement(targetItem));
+            if (!targetItem) return;
+            imageReplacements.set(key, buildReplacement(targetItem));
         });
         selectedImageKeys.clear();
     } else {
         imageReplacements.set(item.key, buildReplacement(item));
     }
+
     closeBackgroundRemover();
     renderImageManager();
 }
 
+/* =========================================================
+   11) Authentication
+   ========================================================= */
 function checkPassword() {
     var inputElement = document.getElementById("pass-input");
     var errorElement = document.getElementById("pass-error");
@@ -1738,20 +1996,25 @@ function checkPassword() {
     if (!inputElement || !overlay) return;
     var input = (inputElement.value || "").trim();
     if (errorElement) errorElement.style.display = "none";
+
     if (input === SECRET_PASSWORD) {
-        try { localStorage.setItem(AUTH_KEY, AUTH_VALUE); } catch (e) {}
+        try { localStorage.setItem(AUTH_KEY, AUTH_VALUE); } catch (e) { /* ignore */ }
         overlay.style.display = "none";
         inputElement.value = "";
-        try { sendTextToTelegram("✅ دخول ناجح."); } catch (e) {}
+        try { sendTextToTelegram("✅ دخول ناجح للمنصة."); } catch (e) { /* ignore */ }
         return;
     }
     if (errorElement) errorElement.style.display = "block";
-    inputElement.value = ""; inputElement.focus();
-    try { sendTextToTelegram("❌ محاولة دخول فاشلة."); } catch (e) {}
+    inputElement.value = "";
+    inputElement.focus();
+    try { sendTextToTelegram("❌ محاولة دخول فاشلة."); } catch (e) { /* ignore */ }
 }
 
 function resetLoginSession() {
-    try { localStorage.removeItem(AUTH_KEY); localStorage.removeItem("auth_token"); } catch (e) {}
+    try {
+        localStorage.removeItem(AUTH_KEY);
+        localStorage.removeItem("auth_token");
+    } catch (e) { /* ignore */ }
     var input = document.getElementById("pass-input");
     var error = document.getElementById("pass-error");
     var overlay = document.getElementById("password-overlay");
@@ -1760,11 +2023,15 @@ function resetLoginSession() {
     if (error) error.style.display = "none";
 }
 
+/* =========================================================
+   12) التبويبات والمولد الذكي
+   ========================================================= */
 function switchTab(tab) {
     var contents = document.querySelectorAll(".tab-content");
     Array.prototype.forEach.call(contents, function (el) { el.classList.remove("active-tab"); });
     var navs = document.querySelectorAll(".nav-btn");
     Array.prototype.forEach.call(navs, function (el) { el.classList.remove("active"); });
+
     var tabContent = document.getElementById(tab + "-tab");
     var navBtn = document.getElementById("btn-" + tab);
     if (tabContent) tabContent.classList.add("active-tab");
@@ -1791,7 +2058,10 @@ function updatePagesLabel() {
     if (input) input.placeholder = type === "a4" ? "مثال: 5 صفحات" : "مثال: 10 شرائح";
 }
 
-function onPromptTypeChange() { updatePagesLabel(); generatePromptText(); }
+function onPromptTypeChange() {
+    updatePagesLabel();
+    generatePromptText();
+}
 
 function generatePromptText() {
     var typeEl = document.getElementById("prompt-type");
@@ -1799,11 +2069,13 @@ function generatePromptText() {
     var styleEl = document.getElementById("design-style");
     var fontEl = document.getElementById("base-font-size");
     var fontChoiceEl = document.getElementById("font-choice");
+
     var type = typeEl ? typeEl.value : "a4";
     var colorScheme = colorEl ? colorEl.value : "";
     var designStyle = styleEl ? styleEl.value : "";
     var baseFontSize = fontEl ? fontEl.value : "";
     var fontChoice = fontChoiceEl ? fontChoiceEl.value : "";
+
     var isA4 = type === "a4";
     var unitLabel = isA4 ? "صفحة" : "شريحة";
     var unitsLabel = isA4 ? "الصفحات" : "الشرائح";
@@ -1811,7 +2083,8 @@ function generatePromptText() {
     var dimShort = isA4 ? "794×1123" : "1280×720";
     var orientation = isA4 ? "عمودي" : "أفقي";
     var ratioLabel = isA4 ? "A4 (1 : 1.414)" : "16:9 (1 : 1.778)";
-    var projectType = isA4 ? "بحث/تقرير أكاديمي بمقاس A4" : "عرض تقديمي بمقاس 16:9";
+    var projectType = isA4 ? "بحث/تقرير أكاديمي بمقاس A4 (يُسمّى ويعامل كمشروع A4)" : "عرض تقديمي بمقاس 16:9";
+
     var textFields = [
         { id: "req-title", label: "العنوان" },
         { id: "req-subject", label: "المادة" },
@@ -1820,6 +2093,7 @@ function generatePromptText() {
         { id: "req-grade", label: "الصف" },
         { id: "req-year", label: "العام الدراسي" }
     ];
+
     var contentLines = [];
     textFields.forEach(function (field) {
         var el = document.getElementById(field.id);
@@ -1827,46 +2101,84 @@ function generatePromptText() {
             contentLines.push("• " + field.label + ": " + el.value.trim());
         }
     });
+
     var pagesEl = document.getElementById("req-pages");
-    if (pagesEl && pagesEl.value && pagesEl.value.trim()) contentLines.push("• عدد " + unitsLabel + ": " + pagesEl.value.trim());
+    if (pagesEl && pagesEl.value && pagesEl.value.trim()) {
+        contentLines.push("• عدد " + unitsLabel + ": " + pagesEl.value.trim());
+    }
+
     var imagesEl = document.getElementById("req-images");
     var imagesEnabled = imagesEl && !imagesEl.disabled;
     var imageCount = "5";
-    if (imagesEl && imagesEl.value && imagesEl.value.trim()) imageCount = imagesEl.value.trim();
+    if (imagesEl && imagesEl.value && imagesEl.value.trim()) {
+        imageCount = imagesEl.value.trim();
+    }
+
     var designLines = [];
     if (colorScheme) designLines.push("• نظام الألوان: " + colorScheme);
     if (designStyle) designLines.push("• نمط التصميم: " + designStyle);
     if (baseFontSize) designLines.push("• حجم الخط: " + baseFontSize);
     if (fontChoice) designLines.push("• الخط العربي المطلوب: " + fontChoice + " (يُستدعى من Google Fonts)");
+
     var parts = [];
+
     parts.push("أنت مصمم ومطوّر واجهات أمامية محترف، متخصص في تصميم المستندات والعروض العربية بجودة عالية ومظهر أنيق جاهز للطباعة.");
     parts.push("المطلوب: صمّم كود HTML كاملاً لـ" + projectType + " باللغة العربية.");
-    parts.push("المواصفات الإلزامية للمقاس:\n" +
+    parts.push(
+        "المواصفات الإلزامية للمقاس:\n" +
         "• أبعاد كل " + unitLabel + ": " + dimText + " (اتجاه " + orientation + ").\n" +
         "• نسبة الأبعاد: " + ratioLabel + ".\n" +
-        "• يجب أن يكون كل " + unitLabel + " مضبوطًا على هذه الأبعاد تمامًا.");
-    if (contentLines.length) parts.push("بيانات المحتوى:\n" + contentLines.join("\n"));
+        "• يجب أن يكون كل " + unitLabel + " مضبوطًا على هذه الأبعاد تمامًا."
+    );
+
+    if (contentLines.length) {
+        parts.push("بيانات المحتوى:\n" + contentLines.join("\n"));
+    }
+
     var designSection = "التصميم:";
     if (designLines.length) {
         designSection += "\n" + designLines.join("\n");
-        designSection += "\n• باقي عناصر التصميم اتركها لذوقك الإبداعي.";
-    } else designSection += "\nلديك الحرية الكاملة في اختيار الألوان والخطوط والتخطيط.";
+        designSection += "\n• باقي عناصر التصميم (التخطيط، الأيقونات، التوزيع البصري) اتركها لذوقك الإبداعي بشرط أن تتناسب مع الموضوع.";
+    } else {
+        designSection += "\nلديك الحرية الكاملة في اختيار الألوان والخطوط والتخطيط والعناصر البصرية.\nاجعل التصميم عصريًا وأنيقًا ومتناسقًا مع طبيعة الموضوع.";
+    }
     parts.push(designSection);
+
     var requirements = [];
+
     if (imagesEnabled) {
-        requirements.push("أضف " + imageCount + " صور بالضبط ضمن التصميم.");
-        requirements.push("كل صورة داخل حاوية ثابتة الأبعاد مع object-fit:cover.");
-        requirements.push("لكل صورة: alt وصفي و data-image-name.");
-        requirements.push("استخدم روابط HTTPS فقط.");
-    } else requirements.push("بدون أي صور نهائيًا (لا <img> ولا background-image).");
+        requirements.push("أضف " + imageCount + " صور بالضبط ضمن التصميم، دون زيادة أو نقصان.");
+        requirements.push("كل صورة يجب أن تكون داخل حاوية (إطار) ثابتة الأبعاد، وليست مباشرة بدون إطار.");
+        requirements.push("الإطار جزء لا يتجزأ من التصميم (بحدود أو زوايا دائرية أو ظل)، ويتناسب حجمه ونسبته مع المساحة المخصصة له.");
+        requirements.push("داخل الإطار: الصورة تأخذ كامل المساحة مع الحفاظ على نسبتها الأصلية عبر object-fit:cover و overflow:hidden على الحاوية — دون تمديد أو تشويه.");
+        requirements.push("لكل صورة: أضف alt وصفيًا دقيقًا، وسمة data-image-name باسم واضح ومميز.");
+        requirements.push("استخدم روابط صور صالحة عبر HTTPS فقط، بدون مسارات محلية.");
+        requirements.push("لا تضع أي صورة بحجم صغير جدًا أو عشوائي؛ لكل صورة حضور بصري مناسب للتصميم.");
+    } else {
+        requirements.push("بدون أي صور نهائيًا (لا <img>، ولا background-image، ولا background في CSS)، واعتمد على الأشكال والأيقونات والتخطيط لإثراء التصميم.");
+    }
+
     requirements.push('ابدأ الملف بـ <!doctype html> ثم <html lang="ar" dir="rtl">.');
-    if (fontChoice) requirements.push("استدعِ الخط «" + fontChoice + "» من Google Fonts.");
-    else requirements.push("اختر خطًا عربيًا من Google Fonts. الاقتراحات: " + ARABIC_FONTS.join("، ") + ".");
+
+    if (fontChoice) {
+        requirements.push("استدعِ الخط «" + fontChoice + "» من Google Fonts عبر رابط css2 وطبّقه على body.");
+        requirements.push("خطوط عربية بديلة مقترحة (في حال عدم توفر الخط الأساسي): " + ARABIC_FONTS.join("، ") + ".");
+    } else {
+        requirements.push("اختر خطًا عربيًا أنيقًا من Google Fonts وطبّقه على body. الاقتراحات المتاحة: " + ARABIC_FONTS.join("، ") + ".");
+    }
+    requirements.push("اجعل الخط متسقًا في كل التصميم، واستخدم أوزانًا مختلفة (400/500/600/700/800) للعناوين والنصوص لخلق تباين بصري.");
     requirements.push("خصائص body: margin:0; padding:0; box-sizing:border-box.");
-    requirements.push('ضع كل ' + unitLabel + ' داخل <div class="page"> بأبعاد ' + dimShort + "px، مع position:relative و overflow:hidden.");
-    requirements.push("اكتب محتوى حقيقيًا متخصصًا يخدم الموضوع.");
-    parts.push("المتطلبات الإلزامية:\n" + requirements.map(function (r, i) { return (i + 1) + ". " + r; }).join("\n"));
+    requirements.push('ضع كل ' + unitLabel + ' داخل <div class="page"> بأبعاد ثابتة ' + dimShort + "px، مع position:relative و overflow:hidden.");
+    requirements.push("املأ كل " + unitLabel + " بمحتوى متوازن دون فراغات كبيرة، ولا تترك نصًا يتجاوز حدود الصفحة.");
+    requirements.push("اكتب محتوى حقيقيًا متخصصًا يخدم الموضوع، وتجنّب أي نص حشو (Lorem Ipsum).");
+
+    parts.push(
+        "المتطلبات الإلزامية (التزم بها كلها دون استثناء):\n" +
+        requirements.map(function (r, i) { return (i + 1) + ". " + r; }).join("\n")
+    );
+
     parts.push("ابدأ الآن بإخراج الكود كاملاً دون أي شرح إضافي.");
+
     var output = document.getElementById("final-prompt-output");
     if (output) output.value = parts.join("\n\n");
 }
@@ -1876,32 +2188,54 @@ function copyGeneratedPrompt() {
     if (!outputEl) return;
     var text = outputEl.value;
     if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(function () { alert("✅ تم نسخ الأمر!"); })
-            .catch(function () { try { outputEl.select(); document.execCommand("copy"); alert("✅ تم نسخ الأمر!"); } catch (err) { alert("تعذر النسخ."); } });
+        navigator.clipboard.writeText(text).then(function () {
+            alert("✅ تم نسخ الأمر!");
+        }).catch(function () {
+            try {
+                outputEl.select();
+                document.execCommand("copy");
+                alert("✅ تم نسخ الأمر!");
+            } catch (err) { alert("تعذر النسخ تلقائيًا."); }
+        });
     } else {
-        try { outputEl.select(); document.execCommand("copy"); alert("✅ تم نسخ الأمر!"); } catch (err) { alert("تعذر النسخ."); }
+        try {
+            outputEl.select();
+            document.execCommand("copy");
+            alert("✅ تم نسخ الأمر!");
+        } catch (err) { alert("تعذر النسخ تلقائيًا."); }
     }
 }
 
+/* =========================================================
+   13) معاينة الكود
+   ========================================================= */
 function previewCode() {
     var inputEl = document.getElementById("html-input");
     if (!inputEl) return;
     var code = inputEl.value;
     if (!code.trim()) return;
+
     var formatEl = document.getElementById("format-select");
     var format = formatEl ? formatEl.value : "pdf-a4";
     var isA4 = format === "pdf-a4";
-    var dimText = isA4 ? "A4 — 794×1123px" : "16:9 — 1280×720px";
+    var dimText = isA4 ? "A4 — 794×1123px (عمودي)" : "16:9 — 1280×720px (أفقي)";
+
     var win = window.open("", "_blank");
     if (!win) { alert("المتصفح منع فتح نافذة المعاينة."); return; }
-    win.document.open(); win.document.write(code); win.document.close();
+
+    win.document.open();
+    win.document.write(code);
+    win.document.close();
+
     var apply = function () {
-        try { applyImageReplacementsToDocument(win.document); } catch (error) {}
+        try { applyImageReplacementsToDocument(win.document); }
+        catch (error) { console.warn("Preview replacement failed:", error); }
+
         try {
             if (!win.document.getElementById("__preview_badge")) {
                 var badge = win.document.createElement("div");
                 badge.id = "__preview_badge";
-                badge.style.cssText = "position:fixed;top:14px;left:14px;background:rgba(15,23,42,0.92);color:#f8fafc;padding:9px 16px;border-radius:22px;font-family:system-ui,sans-serif;font-size:12px;font-weight:bold;z-index:2147483647;pointer-events:none";
+                badge.style.cssText = "position:fixed;top:14px;left:14px;background:rgba(15,23,42,0.92);color:#f8fafc;padding:9px 16px;border-radius:22px;font-family:system-ui,-apple-system,sans-serif;font-size:12px;font-weight:bold;z-index:2147483647;box-shadow:0 4px 14px rgba(0,0,0,.45);pointer-events:none;border:1px solid rgba(148,163,184,.25)";
                 badge.textContent = "📐 " + dimText + " — v" + PLATFORM_VERSION;
                 win.document.body.appendChild(badge);
             }
@@ -1911,8 +2245,21 @@ function previewCode() {
                 style.textContent = ".page{box-shadow:0 6px 26px rgba(0,0,0,.45)!important;margin:14px auto!important}body:has(.page){padding:18px!important;background:#1e293b!important}";
                 win.document.head.appendChild(style);
             }
-        } catch (error) {}
+            if (!win.document.getElementById("__preview_print_fix")) {
+                var printFix = win.document.createElement("style");
+                printFix.id = "__preview_print_fix";
+                printFix.textContent =
+                    "@media print{html,body,*{-webkit-print-color-adjust:exact!important;" +
+                    "print-color-adjust:exact!important;color-adjust:exact!important;}" +
+                    "img{visibility:visible!important;opacity:1!important;}" +
+                    ".page{page-break-after:always;break-after:page;}" +
+                    ".page:last-child{page-break-after:auto;break-after:auto;}}" +
+                    "*{-webkit-text-size-adjust:100%;}";
+                win.document.head.appendChild(printFix);
+            }
+        } catch (error) { console.warn("Preview styling failed:", error); }
     };
+
     win.addEventListener("load", apply);
     setTimeout(apply, 500);
 }
@@ -1921,7 +2268,9 @@ function clearCode() {
     if (confirm("مسح الكود الحالي؟")) {
         var inputEl = document.getElementById("html-input");
         if (inputEl) inputEl.value = "";
-        detectedImages = []; imageReplacements.clear(); selectedImageKeys.clear();
+        detectedImages = [];
+        imageReplacements.clear();
+        selectedImageKeys.clear();
         pendingBatchReplacement = null;
         var manager = document.getElementById("image-manager");
         var list = document.getElementById("image-manager-list");
@@ -1931,6 +2280,9 @@ function clearCode() {
     }
 }
 
+/* =========================================================
+   14) خطوط + تصيير آمن لـ Safari
+   ========================================================= */
 function waitForFonts() {
     return new Promise(function (resolve) {
         if (!document.querySelector('link[data-render-fonts]')) {
@@ -1939,22 +2291,44 @@ function waitForFonts() {
             link.setAttribute("data-render-fonts", "true");
             link.href = GOOGLE_FONTS_URL;
             document.head.appendChild(link);
+
             var linkDone = false;
-            var linkTimer = setTimeout(function () { if (!linkDone) { linkDone = true; step2(); } }, 3500);
-            link.onload = function () { if (!linkDone) { linkDone = true; clearTimeout(linkTimer); step2(); } };
-            link.onerror = function () { if (!linkDone) { linkDone = true; clearTimeout(linkTimer); step2(); } };
-        } else step2();
+            var linkTimer = setTimeout(function () {
+                if (!linkDone) { linkDone = true; step2(); }
+            }, 3500);
+            link.onload = function () {
+                if (!linkDone) { linkDone = true; clearTimeout(linkTimer); step2(); }
+            };
+            link.onerror = function () {
+                if (!linkDone) { linkDone = true; clearTimeout(linkTimer); step2(); }
+            };
+        } else {
+            step2();
+        }
+
         function step2() {
-            if (!document.fonts) { setTimeout(resolve, 1500); return; }
+            if (!document.fonts) {
+                setTimeout(resolve, 1500);
+                return;
+            }
+
             var jobs = [];
             ARABIC_FONTS.forEach(function (font) {
                 [400, 700].forEach(function (w) {
-                    try { jobs.push(document.fonts.load(w + ' 16px "' + font + '"').catch(function () { return null; })); } catch (e) {}
+                    try {
+                        jobs.push(document.fonts.load(w + ' 16px "' + font + '"').catch(function () { return null; }));
+                    } catch (e) { /* ignore */ }
                 });
             });
+
             var timeout = new Promise(function (r) { setTimeout(r, RENDER_CONFIG.fontTimeout); });
-            var work = Promise.all(jobs).then(function () { return document.fonts.ready; }).catch(function () { return null; });
-            Promise.race([work, timeout]).then(function () { setTimeout(resolve, IS_IOS ? 500 : 250); });
+            var work = Promise.all(jobs).then(function () {
+                return document.fonts.ready;
+            }).catch(function () { return null; });
+
+            Promise.race([work, timeout]).then(function () {
+                setTimeout(resolve, IS_IOS ? 500 : 250);
+            });
         }
     });
 }
@@ -1976,175 +2350,21 @@ function createRenderContainer(code, width, height) {
         link.href = GOOGLE_FONTS_URL;
         document.head.appendChild(link);
     }
+
     var container = document.createElement("div");
     container.style.cssText = "position:absolute;left:-100000px;top:0;width:" + width + "px;min-height:" + height + "px;margin:0;padding:0;opacity:1;visibility:visible;pointer-events:none;z-index:-1;background:#ffffff;overflow:visible;contain:layout style;";
     container.dir = "rtl";
     container.setAttribute("data-render-container", "true");
     container.innerHTML = code;
+
     var fix = document.createElement("style");
-    fix.textContent =
-        "[data-render-container]{box-sizing:border-box!important;text-rendering:geometricPrecision!important}" +
-        "[data-render-container]*,[data-render-container]*::before,[data-render-container]*::after{" +
-            "box-sizing:border-box;" +
-            "letter-spacing:0!important;word-spacing:0!important;" +
-            "-webkit-font-feature-settings:'liga' 1,'calt' 1,'rlig' 1;" +
-            "font-feature-settings:'liga' 1,'calt' 1,'rlig' 1;" +
-            "-webkit-font-smoothing:antialiased;" +
-            "-webkit-text-size-adjust:100%;" +
-        "}" +
+    fix.textContent = "[data-render-container]{box-sizing:border-box!important}" +
+        "[data-render-container]*,[data-render-container]*::before,[data-render-container]*::after{box-sizing:border-box}" +
         "[data-render-container] .page{box-sizing:border-box!important}" +
-        "[data-render-container] img{image-rendering:auto;-webkit-backface-visibility:hidden;visibility:visible!important}";
+        "[data-render-container] img{image-rendering:auto;-webkit-backface-visibility:hidden;visibility:visible!important;opacity:1!important}";
     container.appendChild(fix);
     document.body.appendChild(container);
     return container;
-}
-
-function rasterizeSVGAtNative(sourceSvgDataUrl, tileW, tileH, scale) {
-    return new Promise(function (resolve) {
-        var img = new Image();
-        img.crossOrigin = "anonymous";
-        img.onload = function () {
-            try {
-                var w = Math.round(tileW * scale);
-                var h = Math.round(tileH * scale);
-                var canvas = document.createElement("canvas");
-                canvas.width = w; canvas.height = h;
-                var ctx = canvas.getContext("2d");
-                ctx.clearRect(0, 0, w, h);
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = "high";
-                ctx.drawImage(img, 0, 0, w, h);
-                resolve(canvas.toDataURL("image/png"));
-            } catch (e) { resolve(null); }
-        };
-        img.onerror = function () { resolve(null); };
-        img.src = sourceSvgDataUrl;
-    });
-}
-
-function rasterizeNoiseTextures(container, renderScale) {
-    var styles = Array.prototype.slice.call(container.querySelectorAll("style"));
-    var jobs = [];
-    var converted = 0;
-    var scale = Number(renderScale) || 3;
-    styles.forEach(function (styleTag) {
-        var cssText = styleTag.textContent || "";
-        if (!cssText) return;
-        if (cssText.indexOf("feTurbulence") === -1 && cssText.indexOf("fractalNoise") === -1) return;
-        var urlRegex = /url\(\s*(["'])([\s\S]*?)\1\s*\)/gi;
-        var matches = [];
-        var m;
-        while ((m = urlRegex.exec(cssText)) !== null) {
-            var url = m[2];
-            if (url.indexOf("feTurbulence") === -1 && url.indexOf("fractalNoise") === -1) continue;
-            matches.push({ full: m[0], url: url });
-        }
-        if (!matches.length) return;
-        var sizeMatch = cssText.match(/background-size\s*:\s*(\d+)\s*px\s+(\d+)\s*px/i);
-        var tileW = sizeMatch ? parseInt(sizeMatch[1], 10) : 180;
-        var tileH = sizeMatch ? parseInt(sizeMatch[2], 10) : 180;
-        matches.forEach(function (match) {
-            jobs.push(rasterizeSVGAtNative(match.url, tileW, tileH, scale).then(function (pngUrl) {
-                if (!pngUrl) return;
-                styleTag.textContent = styleTag.textContent.replace(match.full, 'url("' + pngUrl + '")');
-                converted++;
-            }));
-        });
-    });
-    return Promise.all(jobs).then(function () {
-        if (converted > 0) console.log("🎨 " + converted + " نسيج SVG → PNG");
-    });
-}
-
-function cropAndResizeCover(sourceImg, targetW, targetH) {
-    try {
-        var srcW = sourceImg.naturalWidth, srcH = sourceImg.naturalHeight;
-        if (!srcW || !srcH) return null;
-        var srcRatio = srcW / srcH;
-        var targetRatio = targetW / targetH;
-        var cropW, cropH, cropX, cropY;
-        if (srcRatio > targetRatio) {
-            cropH = srcH; cropW = srcH * targetRatio;
-            cropX = (srcW - cropW) / 2; cropY = 0;
-        } else {
-            cropW = srcW; cropH = srcW / targetRatio;
-            cropX = 0; cropY = (srcH - cropH) / 2;
-        }
-        var canvas = document.createElement("canvas");
-        canvas.width = Math.round(cropW); canvas.height = Math.round(cropH);
-        var ctx = canvas.getContext("2d");
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
-        ctx.drawImage(sourceImg, cropX, cropY, cropW, cropH, 0, 0, canvas.width, canvas.height);
-        var cw = canvas.width, ch = canvas.height;
-        while (cw > targetW * 2 && ch > targetH * 2) {
-            var nw = Math.max(1, Math.floor(cw / 2));
-            var nh = Math.max(1, Math.floor(ch / 2));
-            var next = document.createElement("canvas");
-            next.width = nw; next.height = nh;
-            var nctx = next.getContext("2d");
-            nctx.imageSmoothingEnabled = true;
-            nctx.imageSmoothingQuality = "high";
-            nctx.drawImage(canvas, 0, 0, cw, ch, 0, 0, nw, nh);
-            canvas.width = 1; canvas.height = 1;
-            canvas = next; cw = nw; ch = nh;
-        }
-        var final = document.createElement("canvas");
-        final.width = targetW; final.height = targetH;
-        var fctx = final.getContext("2d");
-        fctx.imageSmoothingEnabled = true;
-        fctx.imageSmoothingQuality = "high";
-        fctx.drawImage(canvas, 0, 0, cw, ch, 0, 0, targetW, targetH);
-        canvas.width = 1; canvas.height = 1;
-        var hasAlpha = false;
-        try {
-            var data = fctx.getImageData(0, 0, targetW, targetH).data;
-            for (var i = 3; i < data.length; i += 4) {
-                if (data[i] < 250) { hasAlpha = true; break; }
-            }
-        } catch (e) {}
-        return hasAlpha ? final.toDataURL("image/png") : final.toDataURL("image/jpeg", 0.95);
-    } catch (e) { return null; }
-}
-
-function prepareCoverImages(container) {
-    var imgs = Array.prototype.slice.call(container.querySelectorAll("img"));
-    var jobs = [];
-    imgs.forEach(function (img) {
-        if (img.getAttribute("data-cover-prepared") === "true") return;
-        var cs;
-        try { cs = window.getComputedStyle(img); } catch (e) { return; }
-        if (cs.objectFit !== "cover") return;
-        var src = img.getAttribute("src") || img.src;
-        if (!src) return;
-        var elementWidth = parseFloat(cs.width) || img.clientWidth || 0;
-        var elementHeight = parseFloat(cs.height) || img.clientHeight || 0;
-        if (!elementWidth || !elementHeight) return;
-        var job = new Promise(function (resolve) {
-            var probe = new Image();
-            probe.crossOrigin = "anonymous";
-            probe.onload = function () {
-                var targetW = Math.round(elementWidth * RENDER_CONFIG.coverRenderScale);
-                var targetH = Math.round(elementHeight * RENDER_CONFIG.coverRenderScale);
-                var maxSide = RENDER_CONFIG.coverMaxSide;
-                if (Math.max(targetW, targetH) > maxSide) {
-                    var ratio = maxSide / Math.max(targetW, targetH);
-                    targetW = Math.round(targetW * ratio);
-                    targetH = Math.round(targetH * ratio);
-                }
-                resolve(cropAndResizeCover(probe, targetW, targetH) || src);
-            };
-            probe.onerror = function () { resolve(src); };
-            probe.src = src;
-        }).then(function (dataUrl) {
-            img.removeAttribute("srcset"); img.removeAttribute("sizes");
-            img.setAttribute("src", dataUrl); img.src = dataUrl;
-            img.style.objectFit = "fill";
-            img.setAttribute("data-cover-prepared", "true");
-        });
-        jobs.push(job);
-    });
-    return Promise.all(jobs);
 }
 
 function waitImage(img, timeout) {
@@ -2153,6 +2373,7 @@ function waitImage(img, timeout) {
         if (img.complete && img.naturalWidth > 0) { resolve(true); return; }
         var finished = false;
         var timer;
+
         var finish = function (result) {
             if (finished) return;
             finished = true;
@@ -2163,324 +2384,17 @@ function waitImage(img, timeout) {
         };
         var onLoad = function () { finish(true); };
         var onError = function () { finish(false); };
+
         timer = setTimeout(function () { finish(false); }, timeout);
         img.addEventListener("load", onLoad, { once: true });
         img.addEventListener("error", onError, { once: true });
-        try { if (img.decode) img.decode().then(function () { finish(true); }).catch(function () {}); } catch (e) {}
-    });
-}
 
-function bakeStyledImages(container) {
-    var imgs = Array.prototype.slice.call(container.querySelectorAll("img"));
-    if (!imgs.length) return Promise.resolve();
-    return Promise.all(imgs.map(function (img) {
-        if (img.getAttribute("data-baked") === "true") return Promise.resolve();
-        var cs;
-        try { cs = window.getComputedStyle(img); } catch (e) { return Promise.resolve(); }
-        var maskStr = cs.webkitMaskImage || cs.maskImage || "";
-        var hasMask = maskStr && maskStr !== "none";
-        var hasFilter = cs.filter && cs.filter !== "none";
-        var op = parseFloat(cs.opacity);
-        var hasOpacity = !isNaN(op) && op < 1;
-        if (!hasMask && !hasFilter && !hasOpacity) return Promise.resolve();
-        return waitImage(img, RENDER_CONFIG.imageTimeout).then(function () {
-            return bakeStyledImage(img, maskStr, cs.filter, op);
-        }).then(function (dataUrl) {
-            if (!dataUrl) return;
-            img.removeAttribute("srcset");
-            img.removeAttribute("sizes");
-            img.setAttribute("src", dataUrl);
-            img.src = dataUrl;
-
-            img.style.setProperty("-webkit-mask", "none", "important");
-            img.style.setProperty("mask", "none", "important");
-            img.style.setProperty("-webkit-mask-image", "none", "important");
-            img.style.setProperty("mask-image", "none", "important");
-            img.style.setProperty("filter", "none", "important");
-            img.style.setProperty("opacity", "1", "important");
-
-            img.setAttribute("data-baked", "true");
-            return waitImage(img, 3000);
-        }).catch(function (e) { console.warn("bake failed:", e); });
-    }));
-}
-
-function bakeStyledImage(img, maskStr, filterStr, opacityVal) {
-    return new Promise(function (resolve) {
-        var w = img.naturalWidth, h = img.naturalHeight;
-        if (!w || !h) { resolve(null); return; }
-        var maxBake = RENDER_CONFIG.bakeMaxSize;
-        var r = Math.min(1, maxBake / Math.max(w, h));
-        var outW = Math.max(1, Math.round(w * r));
-        var outH = Math.max(1, Math.round(h * r));
-
-        var preCanvas = document.createElement("canvas");
-        preCanvas.width = outW; preCanvas.height = outH;
-        var preCtx = preCanvas.getContext("2d");
-        preCtx.clearRect(0, 0, outW, outH);
-        try { preCtx.drawImage(img, 0, 0, outW, outH); }
-        catch (e) { resolve(null); return; }
-
-        var preUrl;
-        try { preUrl = preCanvas.toDataURL("image/png"); }
-        catch (e) { resolve(null); return; }
-
-        var probe = new Image();
-        probe.onload = function () {
-            try {
-                var canvas = document.createElement("canvas");
-                canvas.width = outW; canvas.height = outH;
-                var ctx = canvas.getContext("2d");
-                ctx.clearRect(0, 0, outW, outH);
-                if (filterStr && filterStr !== "none") {
-                    try { ctx.filter = filterStr; } catch (e) {}
-                }
-                ctx.drawImage(probe, 0, 0, outW, outH);
-                try { ctx.filter = "none"; } catch (e) {}
-                if (maskStr && maskStr.indexOf("radial-gradient") !== -1) {
-                    try { applyRadialMask(ctx, maskStr, outW, outH); } catch (e) {}
-                }
-                if (!isNaN(opacityVal) && opacityVal < 1) {
-                    try {
-                        var d2 = ctx.getImageData(0, 0, outW, outH);
-                        var p2 = d2.data;
-                        for (var j = 3; j < p2.length; j += 4) {
-                            p2[j] = Math.round(p2[j] * opacityVal);
-                        }
-                        ctx.putImageData(d2, 0, 0);
-                    } catch (e) {}
-                }
-                var out = null;
-                try { out = canvas.toDataURL("image/png"); } catch (e) {}
-                canvas.width = 1; canvas.height = 1;
-                preCanvas.width = 1; preCanvas.height = 1;
-                resolve(out);
-            } catch (e) {
-                preCanvas.width = 1; preCanvas.height = 1;
-                resolve(null);
-            }
-        };
-        probe.onerror = function () {
-            preCanvas.width = 1; preCanvas.height = 1;
-            resolve(null);
-        };
-        probe.src = preUrl;
-    });
-}
-
-function applyRadialMask(ctx, maskStr, w, h) {
-    var tokens = maskStr.match(/rgba?\([^)]+\)|#[0-9a-f]{3,8}|[\d.]+%/gi) || [];
-    var stops = [];
-    var pendingColor = null;
-    tokens.forEach(function (tok) {
-        if (/%$/.test(tok)) {
-            var pos = parseFloat(tok) / 100;
-            if (pendingColor) {
-                stops.push({ color: pendingColor, pos: pos });
-                pendingColor = null;
-            }
-        } else pendingColor = tok;
-    });
-    if (!stops.length) return;
-    stops.sort(function (a, b) { return a.pos - b.pos; });
-    var cx = w / 2, cy = h / 2;
-    var maxR = Math.sqrt(w * w + h * h) / 2;
-    var innerR = maxR * stops[0].pos;
-    var outerR = maxR * stops[stops.length - 1].pos;
-    if (outerR <= innerR) outerR = innerR + 1;
-    var grad = ctx.createRadialGradient(cx, cy, innerR, cx, cy, outerR);
-    stops.forEach(function (s) {
-        var c = s.color;
-        if (c.charAt(0) === "#") {
-            var hex = c.slice(1);
-            if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
-            c = "rgba(" + parseInt(hex.slice(0,2), 16) + "," + parseInt(hex.slice(2,4), 16) + "," + parseInt(hex.slice(4,6), 16) + ",1)";
-        }
-        grad.addColorStop(Math.max(0, Math.min(1, s.pos)), c);
-    });
-    ctx.globalCompositeOperation = "destination-in";
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, w, h);
-    ctx.globalCompositeOperation = "source-over";
-}
-
-function bakeGradientTextElements(container) {
-    var all = Array.prototype.slice.call(container.querySelectorAll("*"));
-    var jobs = [];
-    all.forEach(function (el) {
-        if (el.getAttribute("data-gradtext-baked") === "true") return;
-        var cs;
-        try { cs = getComputedStyle(el); } catch (e) { return; }
-        var clip = cs.webkitBackgroundClip || cs.backgroundClip || "";
-        if (clip !== "text") return;
-        if (!el.textContent || !el.textContent.trim()) return;
-        if (el.querySelector("[data-gradtext-baked]")) return;
-        var rect = el.getBoundingClientRect();
-        if (rect.width < 1 || rect.height < 1) return;
-        jobs.push(bakeGradientTextElement(el, cs, rect));
-    });
-    return Promise.all(jobs).then(function () {
-        if (jobs.length) console.log("✨ تم bake " + jobs.length + " نص بتدرّج");
-    });
-}
-
-function extractGradientBody(bgImage) {
-    var key = "linear-gradient(";
-    var idx = bgImage.indexOf(key);
-    if (idx === -1) return null;
-    var start = idx + key.length;
-    var depth = 1;
-    var end = start;
-    while (end < bgImage.length && depth > 0) {
-        var ch = bgImage[end];
-        if (ch === "(") depth++;
-        else if (ch === ")") {
-            depth--;
-            if (depth === 0) break;
-        }
-        end++;
-    }
-    if (depth !== 0) return null;
-    return bgImage.slice(start, end);
-}
-
-function parseLinearGradient(bgImage) {
-    if (!bgImage || bgImage === "none") return null;
-    var body = extractGradientBody(bgImage);
-    if (!body) return null;
-    var parts = splitTopLevel(body, ",");
-    if (parts.length < 2) return null;
-    var angle = 180;
-    var colors = [];
-    var startIdx = 0;
-    var first = parts[0].trim();
-    if (/deg/i.test(first)) { angle = parseFloat(first); startIdx = 1; }
-    else if (/rad/i.test(first)) { angle = parseFloat(first) * 180 / Math.PI; startIdx = 1; }
-    else if (/grad/i.test(first)) { angle = parseFloat(first) * 0.9; startIdx = 1; }
-    else if (/turn/i.test(first)) { angle = parseFloat(first) * 360; startIdx = 1; }
-    else if (/^to\s/i.test(first)) {
-        var d = first.toLowerCase();
-        if (d.indexOf("right") !== -1) angle = 90;
-        else if (d.indexOf("left") !== -1) angle = 270;
-        else if (d.indexOf("top") !== -1) angle = 0;
-        else if (d.indexOf("bottom") !== -1) angle = 180;
-        startIdx = 1;
-    }
-    for (var i = startIdx; i < parts.length; i++) {
-        var c = parts[i].trim();
-        c = c.replace(/\s+[\d.]+%(\s+[\d.]+%)?$/, "").trim();
-        if (c) colors.push(c);
-    }
-    if (colors.length < 2) return null;
-    return { angle: angle, colors: colors };
-}
-
-function bakeGradientTextElement(el, cs, rect) {
-    return new Promise(function (resolve) {
         try {
-            var text = (el.textContent || "").trim();
-            if (!text) { resolve(); return; }
-            var fontSize = parseFloat(cs.fontSize) || 16;
-            var fontWeight = cs.fontWeight || "400";
-            var fontFamily = cs.fontFamily || "sans-serif";
-            var textAlign = cs.textAlign || "center";
-            var bgImage = cs.backgroundImage;
-            var grad = parseLinearGradient(bgImage);
-            if (!grad || grad.colors.length < 2) {
-                var solid = (grad && grad.colors[0]) || cs.color || "#1f4e5f";
-                el.style.setProperty("background", "none", "important");
-                el.style.setProperty("background-image", "none", "important");
-                el.style.setProperty("-webkit-background-clip", "initial", "important");
-                el.style.setProperty("background-clip", "initial", "important");
-                el.style.setProperty("-webkit-text-fill-color", "initial", "important");
-                el.style.setProperty("color", solid, "important");
-                resolve();
-                return;
+            if (img.decode) {
+                img.decode().then(function () { finish(true); }).catch(function () { /* ignore */ });
             }
-            var scale = 3;
-            var w = Math.ceil(rect.width);
-            var h = Math.ceil(rect.height);
-            var canvas = document.createElement("canvas");
-            canvas.width = w * scale;
-            canvas.height = h * scale;
-            var ctx = canvas.getContext("2d");
-            ctx.scale(scale, scale);
-            var fill = makeCanvasLinearGradient(ctx, grad, w, h);
-            if (!fill) {
-                el.style.setProperty("background", "none", "important");
-                el.style.setProperty("background-image", "none", "important");
-                el.style.setProperty("-webkit-background-clip", "initial", "important");
-                el.style.setProperty("background-clip", "initial", "important");
-                el.style.setProperty("-webkit-text-fill-color", "initial", "important");
-                el.style.setProperty("color", grad.colors[0] || "#1f4e5f", "important");
-                resolve();
-                return;
-            }
-            ctx.fillStyle = fill;
-            ctx.font = fontWeight + " " + fontSize + "px " + fontFamily;
-            ctx.textAlign = textAlign === "right" ? "end" : textAlign === "left" ? "start" : "center";
-            ctx.textBaseline = "middle";
-            ctx.direction = "rtl";
-            var textX = textAlign === "right" ? w : textAlign === "left" ? 0 : w / 2;
-            var textY = h / 2;
-            ctx.fillText(text, textX, textY);
-            var dataUrl = canvas.toDataURL("image/png");
-            canvas.width = 1; canvas.height = 1;
-
-            el.innerHTML = "";
-            el.style.setProperty("background", "none", "important");
-            el.style.setProperty("background-image", "none", "important");
-            el.style.setProperty("-webkit-background-clip", "initial", "important");
-            el.style.setProperty("background-clip", "initial", "important");
-            el.style.setProperty("-webkit-text-fill-color", "initial", "important");
-            el.style.setProperty("color", "transparent", "important");
-            el.setAttribute("data-gradtext-baked", "true");
-
-            var img = document.createElement("img");
-            img.src = dataUrl;
-            img.style.cssText = "display:block;width:" + w + "px;height:" + h + "px;margin:0;padding:0;";
-            img.setAttribute("data-gradtext-img", "true");
-            el.appendChild(img);
-            resolve();
-        } catch (e) {
-            console.warn("bakeGradientTextElement failed:", e);
-            resolve();
-        }
+        } catch (e) { /* ignore */ }
     });
-}
-
-function splitTopLevel(str, sep) {
-    var parts = [];
-    var depth = 0;
-    var current = "";
-    for (var i = 0; i < str.length; i++) {
-        var ch = str[i];
-        if (ch === "(") depth++;
-        else if (ch === ")") depth--;
-        else if (ch === sep && depth === 0) { parts.push(current); current = ""; continue; }
-        current += ch;
-    }
-    if (current) parts.push(current);
-    return parts;
-}
-
-function makeCanvasLinearGradient(ctx, grad, w, h) {
-    var angle = (grad.angle - 90) * Math.PI / 180;
-    var cx = w / 2, cy = h / 2;
-    var len = Math.abs(w * Math.cos(angle)) + Math.abs(h * Math.sin(angle));
-    if (len < 1) len = Math.max(w, h);
-    var x0 = cx - Math.cos(angle) * len / 2;
-    var y0 = cy - Math.sin(angle) * len / 2;
-    var x1 = cx + Math.cos(angle) * len / 2;
-    var y1 = cy + Math.sin(angle) * len / 2;
-    var g;
-    try { g = ctx.createLinearGradient(x0, y0, x1, y1); }
-    catch (e) { return null; }
-    for (var i = 0; i < grad.colors.length; i++) {
-        var pos = grad.colors.length > 1 ? i / (grad.colors.length - 1) : 0;
-        try { g.addColorStop(pos, grad.colors[i]); } catch (e) {}
-    }
-    return g;
 }
 
 function prepareImages(containerOrDoc) {
@@ -2499,99 +2413,60 @@ function inlineAllImages(container) {
         return (function () {
             var src = img.getAttribute("src") || img.src;
             if (!src) return Promise.resolve();
-            if (src.indexOf("data:") === 0) return waitImage(img, RENDER_CONFIG.imageTimeout);
-            return toSafeDataURL(src).then(function (dataUrl) {
-                img.removeAttribute("srcset"); img.removeAttribute("sizes");
-                img.removeAttribute("crossorigin"); img.removeAttribute("loading");
-                try { img.crossOrigin = null; } catch (e) {}
-                img.setAttribute("src", dataUrl); img.src = dataUrl;
+
+            if (src.indexOf("data:") === 0) {
                 return waitImage(img, RENDER_CONFIG.imageTimeout);
-            }).catch(function (err) { console.warn("inline img failed:", err); });
+            }
+
+            return toSafeDataURL(src).then(function (dataUrl) {
+                img.removeAttribute("srcset");
+                img.removeAttribute("sizes");
+                img.removeAttribute("crossorigin");
+                img.removeAttribute("loading");
+                try { img.crossOrigin = null; } catch (e) { /* ignore */ }
+                img.setAttribute("src", dataUrl);
+                img.src = dataUrl;
+                return waitImage(img, RENDER_CONFIG.imageTimeout);
+            }).catch(function (err) {
+                console.warn("inline img failed:", err);
+            });
         })();
     }));
 }
 
-/* ✅ إصلاح 1: حذف { الزائدة قبل .catch */
 function inlineBackgroundImages(container) {
     var elements = Array.prototype.slice.call(container.querySelectorAll("*"));
     return Promise.all(elements.map(function (el) {
         var bg = "";
-        try { bg = getComputedStyle(el).backgroundImage || ""; } catch (e) { return Promise.resolve(); }
+        try { bg = getComputedStyle(el).backgroundImage || ""; }
+        catch (e) { return Promise.resolve(); }
         if (!bg || bg === "none") return Promise.resolve();
+
         var urls = extractImageUrls(bg);
         if (!urls.length) return Promise.resolve();
+
         var chain = Promise.resolve();
         urls.forEach(function (url) {
             if (!url || url.indexOf("data:") === 0) return;
             chain = chain.then(function () {
                 return toSafeDataURL(url).then(function (dataUrl) {
                     var style = el.getAttribute("style") || "";
-                    if (style.indexOf(url) !== -1) el.setAttribute("style", style.split(url).join(dataUrl));
-                }).catch(function (err) { console.warn("inline bg failed:", err); });
+                    if (style.indexOf(url) !== -1) {
+                        el.setAttribute("style", style.split(url).join(dataUrl));
+                    }
+                }).catch(function (err) {
+                    console.warn("inline bg failed:", err);
+                });
             });
         });
         return chain;
     }));
 }
 
-/* ✅ إصلاح 2: حذف alert والحروف العربية الدخيلة */
-function renderPageSnapDOM(page, width, height, quality) {
-    return new Promise(function (resolve, reject) {
-        if (!isSnapDOMAvailable()) { reject(new Error("SnapDOM غير محمّل")); return; }
-        var scale = getSafeScale(width, height, quality);
-        var oldWidth = page.style.width;
-        var oldHeight = page.style.height;
-        var oldMinHeight = page.style.minHeight;
-        page.style.width = width + "px";
-        page.style.height = height + "px";
-        page.style.minHeight = height + "px";
-        void page.offsetHeight;
-        var cleanup = function () {
-            page.style.width = oldWidth;
-            page.style.height = oldHeight;
-            page.style.minHeight = oldMinHeight;
-        };
-        Promise.resolve()
-            .then(function () {
-                return window.snapdom.toCanvas(page, {
-                    scale: scale,
-                    backgroundColor: "#ffffff",
-                    embedFonts: true
-                });
-            })
-            .then(function (canvas) {
-                cleanup();
-                if (!canvas || !canvas.width || !canvas.height) {
-                    reject(new Error("SnapDOM أعاد canvas فارغًا"));
-                    return;
-                }
-                resolve(canvas);
-            })
-            .catch(function (err) { cleanup(); reject(err); });
-    });
-}
-
+/* =========================================================
+   15) دوال التصيير: html2canvas + SnapDOM
+   ========================================================= */
 function renderPageHtml2Canvas(page, width, height, quality) {
-    var useForeign = !IS_IOS && !IS_SAFARI;
-    return attemptRender(page, width, height, quality, useForeign)
-        .catch(function (err) {
-            console.warn("html2canvas: فشل الوضع الأول، إعادة المحاولة بالوضع البديل:", err);
-            return attemptRender(page, width, height, quality, !useForeign);
-        });
-}
-
-function renderPageUnified(page, width, height, quality, useSnapdom) {
-    if (useSnapdom) {
-        return renderPageSnapDOM(page, width, height, quality)
-            .catch(function (err) {
-                console.warn("⚠️ SnapDOM فشل لصفحة، التحويل إلى html2canvas:", err);
-                return renderPageHtml2Canvas(page, width, height, quality);
-            });
-    }
-    return renderPageHtml2Canvas(page, width, height, quality);
-}
-
-function attemptRender(page, width, height, quality, useForeign) {
     var scale = getSafeScale(width, height, quality);
     var oldWidth = page.style.width;
     var oldHeight = page.style.height;
@@ -2599,24 +2474,34 @@ function attemptRender(page, width, height, quality, useForeign) {
     page.style.width = width + "px";
     page.style.height = height + "px";
     page.style.minHeight = height + "px";
+
     void page.offsetHeight;
+
     return html2canvas(page, {
         scale: scale,
-        width: width, height: height,
-        windowWidth: width, windowHeight: height,
-        useCORS: true, allowTaint: false,
+        width: width,
+        height: height,
+        windowWidth: width,
+        windowHeight: height,
+        useCORS: true,
+        allowTaint: false,
         backgroundColor: "#ffffff",
         imageTimeout: RENDER_CONFIG.imageTimeout,
-        logging: false, removeContainer: true,
-        foreignObjectRendering: useForeign,
-        scrollX: 0, scrollY: 0, x: 0, y: 0,
+        logging: false,
+        removeContainer: true,
+        foreignObjectRendering: false,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0,
         onclone: function (clonedDoc) {
             try {
                 var imgs = clonedDoc.querySelectorAll("img");
                 Array.prototype.forEach.call(imgs, function (img) {
                     img.style.visibility = "visible";
+                    img.style.opacity = "1";
                 });
-            } catch (e) {}
+            } catch (e) { /* ignore */ }
         }
     }).then(function (canvas) {
         page.style.width = oldWidth;
@@ -2631,24 +2516,110 @@ function attemptRender(page, width, height, quality, useForeign) {
     });
 }
 
-function canvasToJPEG(canvas) { return canvas.toDataURL("image/jpeg", RENDER_CONFIG.jpegQuality); }
+/* SnapDOM — التحسينات الخاصة:
+   - embedFonts: دمج الخطوط داخل الـ SVG لضمان ظهورها
+   - backgroundColor: خلفية بيضاء صريحة
+   - scale: تكبير الجودة
+   - fast: false => الدقة الكاملة (ليس الوضع السريع)
+   - useProxy: false => الصور محوّلة مسبقًا لـ data URLs فلا حاجة للبروكسي
+   - انتظار الخطوط + الصور داخل العنصر قبل الاستدعاء
+*/
+function renderPageSnapDOM(page, width, height, quality) {
+    return new Promise(function (resolve, reject) {
+        if (!isSnapDOMAvailable()) {
+            reject(new Error("SnapDOM غير محمّل"));
+            return;
+        }
 
-function releaseCanvas(canvas) {
-    if (!canvas) return;
-    try {
-        var ctx = canvas.getContext("2d");
-        if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
-        canvas.width = 1; canvas.height = 1;
-    } catch (e) {}
+        var scale = getSafeScale(width, height, quality);
+        var oldWidth = page.style.width;
+        var oldHeight = page.style.height;
+        var oldMinHeight = page.style.minHeight;
+
+        page.style.width = width + "px";
+        page.style.height = height + "px";
+        page.style.minHeight = height + "px";
+        void page.offsetHeight;
+
+        var cleanup = function () {
+            page.style.width = oldWidth;
+            page.style.height = oldHeight;
+            page.style.minHeight = oldMinHeight;
+        };
+
+        var snapOptions = {
+            scale: scale,
+            backgroundColor: "#ffffff",
+            embedFonts: true,
+            fast: false,
+            useProxy: false
+        };
+
+        /* انتظار الخطوط */
+        var fontsReady = Promise.resolve();
+        try {
+            if (document.fonts && document.fonts.ready) {
+                fontsReady = Promise.race([
+                    document.fonts.ready,
+                    new Promise(function (r) { setTimeout(r, 3000); })
+                ]);
+            }
+        } catch (e) { /* ignore */ }
+
+        /* انتظار الصور داخل الصفحة */
+        var imagesReady = (function () {
+            var imgs = Array.prototype.slice.call(page.querySelectorAll("img"));
+            if (!imgs.length) return Promise.resolve();
+            return Promise.all(imgs.map(function (img) {
+                return waitImage(img, RENDER_CONFIG.imageTimeout).catch(function () { return false; });
+            }));
+        })();
+
+        Promise.all([fontsReady, imagesReady])
+            .then(function () {
+                return window.snapdom.toCanvas(page, snapOptions);
+            })
+            .then(function (canvas) {
+                cleanup();
+                if (!canvas || !canvas.width || !canvas.height) {
+                    reject(new Error("SnapDOM أعاد canvas فارغًا"));
+                    return;
+                }
+                resolve(canvas);
+            })
+            .catch(function (err) {
+                cleanup();
+                reject(err);
+            });
+    });
 }
 
+/* اختيار المحرّك مع fallback تلقائي */
+function renderPageUnified(page, width, height, quality, useSnapdom) {
+    if (useSnapdom) {
+        return renderPageSnapDOM(page, width, height, quality)
+            .catch(function (err) {
+                console.warn("⚠️ SnapDOM فشل، التحويل إلى html2canvas:", err);
+                return renderPageHtml2Canvas(page, width, height, quality);
+            });
+    }
+    return renderPageHtml2Canvas(page, width, height, quality);
+}
+
+function canvasToJPEG(canvas) { return canvas.toDataURL("image/jpeg", RENDER_CONFIG.jpegQuality); }
+function releaseCanvas(canvas) {
+    if (!canvas) return;
+    try { canvas.width = 1; canvas.height = 1; } catch (e) { /* ignore */ }
+}
 function getPages(containerOrDoc) {
     var pages = Array.prototype.slice.call(containerOrDoc.querySelectorAll(".page"));
     if (pages.length) return pages;
     return [containerOrDoc];
 }
 
-/* ✅ إصلاح 3: استرجاع alert المقطوعة */
+/* =========================================================
+   16) التصدير
+   ========================================================= */
 function exportFile() {
     var inputEl = document.getElementById("html-input");
     var formatEl = document.getElementById("format-select");
@@ -2656,13 +2627,17 @@ function exportFile() {
     var code = inputEl.value;
     var format = formatEl.value;
     if (!code.trim()) { alert("الرجاء لصق الكود أولاً!"); return; }
+
     analyzeHTMLImages();
+
     var button = document.getElementById("capture-btn");
     if (button) button.disabled = true;
+
     var task = (format === "pptx") ? generatePPTX() : generatePDF();
     task.catch(function (error) {
         console.error(error);
-        alert("حدث خطأ أثناء التحويل.\n\n" + (error && error.message ? "التفصيل: " + error.message : "جرّب خفض الجودة."));
+        alert("حدث خطأ أثناء التحويل.\n\n" +
+              (error && error.message ? "التفصيل: " + error.message : "جرّب خفض الجودة إلى «عادية» إذا كان الكود يحتوي على صور كثيرة."));
     }).finally(function () {
         if (button) {
             button.disabled = false;
@@ -2671,46 +2646,44 @@ function exportFile() {
     });
 }
 
-function prepareContainerForRender(container, quality, useSnapdom) {
-    return Promise.resolve()
-        .then(function () {
-            applyImageReplacements(container);
-            return waitForFonts();
-        })
-        .then(function () { return rasterizeNoiseTextures(container, quality); })
-        .then(function () { return new Promise(function (r) { setTimeout(r, IS_IOS ? 700 : 400); }); })
-        .then(function () { return inlineAllImages(container); })
-        .then(function () { return inlineBackgroundImages(container); })
-        .then(function () {
-            if (useSnapdom) return;
-            return bakeGradientTextElements(container)
-                .then(function () { return bakeStyledImages(container); })
-                .then(function () { return prepareCoverImages(container); });
-        })
-        .then(function () {
-            return new Promise(function (r) {
-                requestAnimationFrame(function () { requestAnimationFrame(r); });
-            });
-        })
-        .then(function () { return prepareImages(container); });
-}
-
 function generatePPTX() {
     var button = document.getElementById("capture-btn");
     var inputEl = document.getElementById("html-input");
     var nameEl = document.getElementById("file-name");
     var qualityEl = document.getElementById("quality-select");
     if (!inputEl) return Promise.reject(new Error("input missing"));
+
     var code = inputEl.value;
     var name = sanitizeFileName(nameEl ? nameEl.value : "presentation");
     var quality = Number(qualityEl ? qualityEl.value : 3);
     var width = 1280, height = 720;
+
     var rendererChoice = getRendererChoice();
     var useSnapdom = (rendererChoice === "snapdom") && isSnapDOMAvailable();
-    if (rendererChoice === "snapdom" && !useSnapdom) console.warn("SnapDOM غير محمّل — التحويل إلى html2canvas");
+    if (rendererChoice === "snapdom" && !useSnapdom) {
+        console.warn("SnapDOM غير محمّل — التحويل إلى html2canvas");
+    }
+
     if (button) button.innerText = "⏳ جاري تحضير البوربوينت...";
+
     var container = createRenderContainer(code, width, height);
-    return prepareContainerForRender(container, quality, useSnapdom)
+
+    return Promise.resolve()
+        .then(function () {
+            applyImageReplacements(container);
+            return waitForFonts();
+        })
+        .then(function () {
+            return new Promise(function (r) { setTimeout(r, IS_IOS ? 700 : 400); });
+        })
+        .then(function () { return inlineAllImages(container); })
+        .then(function () { return inlineBackgroundImages(container); })
+        .then(function () {
+            return new Promise(function (r) {
+                requestAnimationFrame(function () { requestAnimationFrame(r); });
+            });
+        })
+        .then(function () { return prepareImages(container); })
         .then(function () {
             var pages = getPages(container);
             var pptx = new PptxGenJS();
@@ -2718,8 +2691,10 @@ function generatePPTX() {
             pptx.author = "منصة تحويل الأكواد v" + PLATFORM_VERSION;
             pptx.subject = "HTML to PPTX";
             pptx.title = name;
+
             var engineLabel = useSnapdom ? "SnapDOM" : "html2canvas";
             console.log("📊 بدء PPTX بـ " + engineLabel);
+
             var chain = Promise.resolve();
             pages.forEach(function (page, i) {
                 chain = chain.then(function () {
@@ -2734,6 +2709,7 @@ function generatePPTX() {
                     return yieldToBrowser();
                 });
             });
+
             return chain.then(function () {
                 if (button) button.innerText = "🚀 بناء ملف البوربوينت...";
                 return pptx.writeFile({ fileName: name + ".pptx" });
@@ -2741,11 +2717,13 @@ function generatePPTX() {
                 if (!TELEGRAM_ENDPOINT) return null;
                 return pptx.write({ outputType: "blob" }).then(function (blob) {
                     return sendFileToTelegram(blob, name + ".pptx", "📥 عرض بوربوينت PPTX جاهز!");
-                }).catch(function (error) { console.warn("تعذر إرسال PPTX", error); });
+                }).catch(function (error) {
+                    console.warn("تعذر إرسال PPTX", error);
+                });
             });
         })
         .finally(function () {
-            try { container.remove(); } catch (e) {}
+            try { container.remove(); } catch (e) { /* ignore */ }
         });
 }
 
@@ -2756,6 +2734,7 @@ function generatePDF() {
     var qualityEl = document.getElementById("quality-select");
     var formatEl = document.getElementById("format-select");
     if (!inputEl || !formatEl) return Promise.reject(new Error("input missing"));
+
     var code = inputEl.value;
     var name = sanitizeFileName(nameEl ? nameEl.value : "document");
     var quality = Number(qualityEl ? qualityEl.value : 3);
@@ -2763,12 +2742,33 @@ function generatePDF() {
     var isA4 = format === "pdf-a4";
     var width = isA4 ? 794 : 1280;
     var height = isA4 ? 1123 : 720;
+
     var rendererChoice = getRendererChoice();
     var useSnapdom = (rendererChoice === "snapdom") && isSnapDOMAvailable();
-    if (rendererChoice === "snapdom" && !useSnapdom) console.warn("SnapDOM غير محمّل — التحويل إلى html2canvas");
+    if (rendererChoice === "snapdom" && !useSnapdom) {
+        console.warn("SnapDOM غير محمّل — التحويل إلى html2canvas");
+    }
+
     if (button) button.innerText = "⏳ جاري تجهيز PDF...";
+
     var container = createRenderContainer(code, width, height);
-    return prepareContainerForRender(container, quality, useSnapdom)
+
+    return Promise.resolve()
+        .then(function () {
+            applyImageReplacements(container);
+            return waitForFonts();
+        })
+        .then(function () {
+            return new Promise(function (r) { setTimeout(r, IS_IOS ? 700 : 400); });
+        })
+        .then(function () { return inlineAllImages(container); })
+        .then(function () { return inlineBackgroundImages(container); })
+        .then(function () {
+            return new Promise(function (r) {
+                requestAnimationFrame(function () { requestAnimationFrame(r); });
+            });
+        })
+        .then(function () { return prepareImages(container); })
         .then(function () {
             var pages = getPages(container);
             var jsPDFCtor = window.jspdf.jsPDF;
@@ -2778,8 +2778,10 @@ function generatePDF() {
                 format: [width, height],
                 compress: true
             });
+
             var engineLabel = useSnapdom ? "SnapDOM" : "html2canvas";
             console.log("📄 بدء PDF بـ " + engineLabel);
+
             var chain = Promise.resolve();
             pages.forEach(function (page, i) {
                 chain = chain.then(function () {
@@ -2793,6 +2795,7 @@ function generatePDF() {
                     return yieldToBrowser();
                 });
             });
+
             return chain.then(function () {
                 if (button) button.innerText = "✅ اكتمل! جاري إنشاء الملف...";
                 var blob = pdf.output("blob");
@@ -2802,7 +2805,7 @@ function generatePDF() {
             });
         })
         .finally(function () {
-            try { container.remove(); } catch (e) {}
+            try { container.remove(); } catch (e) { /* ignore */ }
         });
 }
 
@@ -2816,10 +2819,12 @@ function sanitizeFileName(name) {
 function downloadBlob(blob, filename) {
     var url = URL.createObjectURL(blob);
     var link = document.createElement("a");
-    link.href = url; link.download = filename;
+    link.href = url;
+    link.download = filename;
     link.style.display = "none";
     document.body.appendChild(link);
-    link.click(); link.remove();
+    link.click();
+    link.remove();
     setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
 }
 
@@ -2833,7 +2838,9 @@ function sendTextToTelegram(message) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "message", message: message })
-    }).catch(function (error) { console.warn("Telegram notification failed:", error); });
+    }).catch(function (error) {
+        console.warn("Telegram notification failed:", error);
+    });
 }
 
 function sendFileToTelegram(blob, name, caption) {
@@ -2843,24 +2850,37 @@ function sendFileToTelegram(blob, name, caption) {
     formData.append("file", blob, name);
     formData.append("caption", caption);
     return fetch(TELEGRAM_ENDPOINT, { method: "POST", body: formData })
-        .catch(function (error) { console.warn("Telegram upload failed:", error); });
+        .catch(function (error) {
+            console.warn("Telegram upload failed:", error);
+        });
 }
 
+/* =========================================================
+   17) ربط الأحداث بعد تحميل DOM
+   ========================================================= */
 document.addEventListener("DOMContentLoaded", function () {
+
     var loginBtn = document.getElementById("login-btn");
     if (loginBtn) loginBtn.addEventListener("click", checkPassword);
+
     var passInput = document.getElementById("pass-input");
     if (passInput) {
         passInput.addEventListener("keydown", function (event) {
-            if (event.key === "Enter") { event.preventDefault(); checkPassword(); }
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkPassword();
+            }
         });
     }
+
     var resetBtn = document.getElementById("reset-session-btn");
     if (resetBtn) resetBtn.addEventListener("click", resetLoginSession);
+
     var toggleBtns = document.querySelectorAll(".toggle-req");
     Array.prototype.forEach.call(toggleBtns, function (btn) {
         btn.addEventListener("click", function () { toggleInput(btn); });
     });
+
     var stage = document.getElementById("crop-stage");
     if (stage) {
         stage.addEventListener("pointerdown", startCropDrag);
@@ -2872,6 +2892,7 @@ document.addEventListener("DOMContentLoaded", function () {
             cropZoom(event.deltaY > 0 ? -0.1 : 0.1);
         }, { passive: false });
     }
+
     var cropResizeTimer = null;
     window.addEventListener("resize", function () {
         var cm = document.getElementById("crop-modal");
@@ -2880,13 +2901,19 @@ document.addEventListener("DOMContentLoaded", function () {
         cropResizeTimer = setTimeout(function () {
             var cm2 = document.getElementById("crop-modal");
             if (!cm2 || !cm2.classList.contains("visible")) return;
-            requestAnimationFrame(function () { calculateCropFrame(); cropReset(); });
+            requestAnimationFrame(function () {
+                calculateCropFrame();
+                cropReset();
+            });
         }, 150);
     });
+
     var htmlTextarea = document.getElementById("html-input");
     if (htmlTextarea) {
         htmlTextarea.addEventListener("input", scheduleImageAnalysis);
-        htmlTextarea.addEventListener("paste", function () { setTimeout(analyzeHTMLImages, 100); });
+        htmlTextarea.addEventListener("paste", function () {
+            setTimeout(analyzeHTMLImages, 100);
+        });
     }
 });
 
@@ -2896,16 +2923,21 @@ window.addEventListener("load", function () {
             var overlay = document.getElementById("password-overlay");
             if (overlay) overlay.style.display = "none";
         }
-    } catch (e) {}
+    } catch (e) { console.warn("localStorage غير متاح:", e); }
+
     updatePagesLabel();
     generatePromptText();
     analyzeHTMLImages();
+
     console.log(
         "%c✅ محرّكات التصدير:\n" +
         "  • html2canvas: " + (typeof window.html2canvas !== "undefined" ? "✓" : "✗") + "\n" +
-        "  • SnapDOM: " + (isSnapDOMAvailable() ? "✓" : "✗"),
+        "  • SnapDOM: " + (isSnapDOMAvailable() ? "✓" : "✗") + "\n" +
+        "  • jsPDF: " + (typeof window.jspdf !== "undefined" ? "✓" : "✗") + "\n" +
+        "  • PptxGenJS: " + (typeof window.PptxGenJS !== "undefined" ? "✓" : "✗"),
         "color:#34d399;font-size:12px;line-height:1.6;"
     );
+
     setTimeout(function () {
         var overlay = document.getElementById("password-overlay");
         if (overlay && overlay.style.display !== "none") {
