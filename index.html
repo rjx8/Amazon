@@ -223,7 +223,8 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
                 <select id="quality-select">
                     <option value="1">عادية (سريعة)</option>
                     <option value="2">عالية (متوازنة)</option>
-                    <option value="3" selected>ممتازة (أقصى جودة) ⭐</option>
+                    <option value="3" selected>ممتازة (جودة عالية جدًا) ⭐</option>
+                    <option value="4">فائقة (أقصى جودة — أبطأ)</option>
                 </select>
             </div>
         </div>
@@ -529,11 +530,12 @@ var IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
 
 /* ✅ جودة أعلى + حد بكسل أكبر لضمان دقة الصور */
 var RENDER_CONFIG = {
-    maxCanvasPixels: IS_IOS ? 6000000 : 14000000,
-    fontTimeout: IS_IOS ? 9000 : 6000,
+    maxCanvasPixels: IS_IOS ? 8000000 : 26000000,
+    maxScale: IS_IOS ? 3 : 4,
+    fontTimeout: IS_IOS ? 14000 : 10000,
     imageTimeout: IS_IOS ? 12000 : 8000,
-    jpegQuality: IS_IOS ? 0.92 : 0.96,
-    snapdomTimeout: IS_IOS ? 45000 : 35000
+    jpegQuality: IS_IOS ? 0.95 : 0.98,
+    snapdomTimeout: IS_IOS ? 60000 : 45000
 };
 
 var ARABIC_FONTS = [
@@ -2579,16 +2581,168 @@ function waitForFonts() {
     });
 }
 
+/* =========================================================
+   ✅ ضمان تحميل الخطوط المستخدمة فعليًا (من أول تصدير)
+   - يقرأ الخطوط الفعلية من الصفحات (computed style) وليس قائمة ثابتة
+   - يحمّل الخط بنفس نصّ الصفحة، حتى يُحمَّل جزء العربية (unicode-range)
+   - يضيف خطوط Google غير المعروفة تلقائيًا (مثل IBM Plex Sans Arabic)
+   ========================================================= */
+var SYSTEM_FONTS = ["serif","sans-serif","monospace","cursive","fantasy","system-ui","ui-sans-serif","ui-serif","ui-monospace","ui-rounded","emoji","math","fangsong","inherit","initial","unset","-apple-system","blinkmacsystemfont","segoe ui","helvetica","helvetica neue","arial","tahoma","times new roman","times","georgia","verdana","courier new","courier","apple color emoji","segoe ui emoji","noto color emoji","geeza pro","sf pro text","sf pro display","roboto flex"];
+var snapdomWarmed = false;
+
+function fontDelay(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+function collectUsedFonts(root) {
+    var used = {};
+    var nodes = [root].concat(Array.prototype.slice.call(root.querySelectorAll("*")));
+    nodes.forEach(function (el) {
+        var own = "";
+        for (var i = 0; i < el.childNodes.length; i++) {
+            if (el.childNodes[i].nodeType === 3) own += el.childNodes[i].nodeValue;
+        }
+        own = own.replace(/\s+/g, " ").trim();
+        if (!own) return;
+        var cs;
+        try { cs = window.getComputedStyle(el); } catch (e) { return; }
+        var fams = String(cs.fontFamily || "").split(",").map(function (f) {
+            return f.trim().replace(/^["']|["']$/g, "");
+        }).filter(Boolean);
+        var weight = cs.fontWeight || "400";
+        var style = cs.fontStyle === "italic" ? "italic" : "normal";
+        fams.forEach(function (fam) {
+            if (SYSTEM_FONTS.indexOf(fam.toLowerCase()) !== -1) return;
+            var u = used[fam] || (used[fam] = { faces: {}, chars: {} });
+            u.faces[style + "|" + weight] = true;
+            for (var c = 0; c < own.length && Object.keys(u.chars).length < 400; c++) u.chars[own[c]] = true;
+        });
+    });
+    return used;
+}
+
+function isFontFaceDefined(family) {
+    var found = false;
+    try {
+        document.fonts.forEach(function (ff) {
+            if (String(ff.family).replace(/^["']|["']$/g, "").toLowerCase() === family.toLowerCase()) found = true;
+        });
+    } catch (e) { /* ignore */ }
+    return found;
+}
+
+function addGoogleFamily(family) {
+    return new Promise(function (resolve) {
+        var enc = encodeURIComponent(family).replace(/%20/g, "+");
+        var tries = [
+            "family=" + enc + ":wght@300;400;500;600;700;800;900",
+            "family=" + enc + ":wght@400;700",
+            "family=" + enc
+        ];
+        (function attempt(i) {
+            if (i >= tries.length) { resolve(false); return; }
+            var link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.setAttribute("data-render-fonts-extra", family);
+            link.href = "https://fonts.googleapis.com/css2?" + tries[i] + "&display=swap";
+            var done = false;
+            var timer = setTimeout(function () { if (!done) { done = true; resolve(false); } }, 6000);
+            link.onload = function () { if (!done) { done = true; clearTimeout(timer); resolve(true); } };
+            link.onerror = function () {
+                if (done) return;
+                done = true; clearTimeout(timer);
+                try { link.remove(); } catch (e) { /* ignore */ }
+                attempt(i + 1);
+            };
+            document.head.appendChild(link);
+        })(0);
+    });
+}
+
+function loadUsedFaces(used) {
+    var jobs = [];
+    Object.keys(used).forEach(function (fam) {
+        var sample = Object.keys(used[fam].chars).join("") || "Aa";
+        Object.keys(used[fam].faces).forEach(function (face) {
+            var parts = face.split("|");
+            var desc = parts[0] + " " + parts[1] + ' 24px "' + fam + '"';
+            jobs.push(document.fonts.load(desc, sample).catch(function () { return null; }));
+        });
+    });
+    return Promise.all(jobs);
+}
+
+function findMissingFonts(used) {
+    var missing = [];
+    Object.keys(used).forEach(function (fam) {
+        if (!isFontFaceDefined(fam)) { missing.push(fam); return; }
+        var sample = Object.keys(used[fam].chars).join("") || "Aa";
+        Object.keys(used[fam].faces).forEach(function (face) {
+            var parts = face.split("|");
+            var ok = true;
+            try { ok = document.fonts.check(parts[0] + " " + parts[1] + ' 24px "' + fam + '"', sample); } catch (e) { ok = true; }
+            if (!ok && missing.indexOf(fam) === -1) missing.push(fam);
+        });
+    });
+    return missing;
+}
+
+function ensureFontsForElement(root) {
+    if (!document.fonts || !root) return fontDelay(600);
+    var work = Promise.resolve().then(function () {
+        var used = collectUsedFonts(root);
+        var families = Object.keys(used);
+        /* أضف خطوط Google غير المعرّفة في الصفحة تلقائيًا */
+        return Promise.all(families.map(function (fam) {
+            if (isFontFaceDefined(fam)) return null;
+            return addGoogleFamily(fam);
+        })).then(function () {
+            return loadUsedFaces(used);
+        }).then(function () {
+            return document.fonts.ready;
+        }).then(function () {
+            var missing = findMissingFonts(used);
+            if (!missing.length) return null;
+            console.warn("⚠️ خطوط لم تكتمل، إعادة محاولة:", missing);
+            return fontDelay(700).then(function () { return loadUsedFaces(used); })
+                .then(function () { return document.fonts.ready; })
+                .then(function () {
+                    var still = findMissingFonts(used);
+                    if (still.length) console.warn("❌ خطوط غير متاحة (سيُستخدم بديل):", still);
+                });
+        });
+    });
+    return withTimeout(work, RENDER_CONFIG.fontTimeout * 2, "font timeout")
+        .catch(function (e) { console.warn("Fonts:", e); })
+        .then(function () { return fontDelay(IS_IOS ? 400 : 200); });
+}
+
+/* تسخين SnapDOM: يخزّن الخطوط والصور مسبقًا حتى لا تفوت في أول لقطة */
+function warmUpSnapDOM(page) {
+    if (snapdomWarmed || !isSnapDOMAvailable()) return Promise.resolve();
+    snapdomWarmed = true;
+    var p;
+    try {
+        if (typeof window.snapdom.preCache === "function") {
+            p = window.snapdom.preCache(page, { embedFonts: true });
+        } else {
+            p = window.snapdom.toCanvas(page, { scale: 0.1, embedFonts: true, fast: false });
+        }
+    } catch (e) { return Promise.resolve(); }
+    return withTimeout(Promise.resolve(p), 20000, "warmup")
+        .catch(function (e) { console.warn("SnapDOM warm-up:", e); })
+        .then(function () { return fontDelay(150); });
+}
+
 function getSafeScale(width, height, requested) {
     var scale = Number(requested) || 1;
     var pixels = width * height * scale * scale;
     if (pixels > RENDER_CONFIG.maxCanvasPixels) {
         scale = Math.sqrt(RENDER_CONFIG.maxCanvasPixels / (width * height));
     }
-    return Math.max(1, Math.min(scale, 3));
+    return Math.max(1, Math.min(scale, RENDER_CONFIG.maxScale));
 }
 
 function createRenderContainer(code, width, height) {
+    snapdomWarmed = false;
     if (!document.querySelector('link[data-render-fonts]')) {
         var link = document.createElement("link");
         link.rel = "stylesheet";
@@ -2791,28 +2945,22 @@ function renderPageSnapDOM(page, width, height, quality) {
             page.style.minHeight = oldMinHeight;
         };
 
-        /* ✅ خيارات محسّنة لدعم الصور والجودة العالية */
-        var snapOptions = {
-            scale: scale,
-            dpr: scale,                /* توافق مع إصدارات SnapDOM المختلفة */
-            backgroundColor: "#ffffff",
-            embedFonts: true,
-            fast: false,
-            useProxy: false,
-            width: width,
-            height: height
-        };
+        /* ✅ بدون width/height: تمريرهما يجعل SnapDOM يتجاهل scale فتطلع اللقطة 1x ومبكسلة */
+        function makeOpts(sc, dp) {
+            return {
+                scale: sc,
+                dpr: dp,
+                backgroundColor: "#ffffff",
+                embedFonts: true,
+                fast: false,
+                compress: false,
+                useProxy: false
+            };
+        }
+        var targetW = Math.round(width * scale);
 
-        /* انتظر الخطوط والصور قبل التصيير */
-        var fontsReady = Promise.resolve();
-        try {
-            if (document.fonts && document.fonts.ready) {
-                fontsReady = Promise.race([
-                    document.fonts.ready,
-                    new Promise(function (r) { setTimeout(r, 3000); })
-                ]);
-            }
-        } catch (e) { /* ignore */ }
+        /* الخطوط جاهزة مسبقًا (ensureFontsForElement) — نسخّن SnapDOM مرة واحدة لكل تصدير */
+        var fontsReady = ensureFontsForElement(page).then(function () { return warmUpSnapDOM(page); });
 
         var imagesReady = (function () {
             var imgs = Array.prototype.slice.call(page.querySelectorAll("img"));
@@ -2825,8 +2973,18 @@ function renderPageSnapDOM(page, width, height, quality) {
         /* ✅ استخدام withTimeout لمنع التعليق */
         Promise.all([fontsReady, imagesReady])
             .then(function () {
-                var snapPromise = window.snapdom.toCanvas(page, snapOptions);
-                return withTimeout(snapPromise, RENDER_CONFIG.snapdomTimeout, "SnapDOM timeout");
+                /* محاولة 1: scale مباشر (dpr=1). إذا الناتج أصغر من المطلوب نجرّب dpr بدل scale، ونأخذ الأكبر */
+                var first = withTimeout(window.snapdom.toCanvas(page, makeOpts(scale, 1)), RENDER_CONFIG.snapdomTimeout, "SnapDOM timeout");
+                return first.then(function (c1) {
+                    if (c1 && c1.width >= targetW * 0.95) return c1;
+                    console.warn("⚠️ SnapDOM أعاد دقة أقل من المطلوب (" + (c1 && c1.width) + " من " + targetW + ") — محاولة بديلة");
+                    return withTimeout(window.snapdom.toCanvas(page, makeOpts(1, scale)), RENDER_CONFIG.snapdomTimeout, "SnapDOM timeout")
+                        .then(function (c2) {
+                            if (c2 && (!c1 || c2.width > c1.width)) { releaseCanvas(c1); return c2; }
+                            releaseCanvas(c2);
+                            return c1;
+                        });
+                });
             })
             .then(function (canvas) {
                 cleanup();
@@ -2920,7 +3078,7 @@ function generatePPTX() {
     return Promise.resolve()
         .then(function () {
             applyImageReplacements(container);
-            return waitForFonts();
+            return waitForFonts().then(function () { return ensureFontsForElement(container); });
         })
         .then(function () { return new Promise(function (r) { setTimeout(r, IS_IOS ? 700 : 400); }); })
         .then(function () { return inlineAllImages(container); })
@@ -2991,7 +3149,7 @@ function generatePDF() {
     return Promise.resolve()
         .then(function () {
             applyImageReplacements(container);
-            return waitForFonts();
+            return waitForFonts().then(function () { return ensureFontsForElement(container); });
         })
         .then(function () { return new Promise(function (r) { setTimeout(r, IS_IOS ? 700 : 400); }); })
         .then(function () { return inlineAllImages(container); })
@@ -3020,7 +3178,7 @@ function generatePDF() {
                 }).then(function (canvas) {
                     var image = canvasToJPEG(canvas);
                     if (i > 0) pdf.addPage([width, height], isA4 ? "p" : "l");
-                    pdf.addImage(image, "JPEG", 0, 0, width, height, undefined, "FAST");
+                    pdf.addImage(image, "JPEG", 0, 0, width, height, undefined, "NONE");
                     releaseCanvas(canvas);
                     return yieldToBrowser();
                 });
