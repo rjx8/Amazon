@@ -2978,20 +2978,13 @@ function renderPageSnapDOM(page, width, height, quality) {
                 embedFonts: true,
                 fast: false,
                 compress: false,
-                cache: "disabled",   /* كل صفحة لقطة مستقلة: لا نعتمد على كاش اللقطة السابقة */
                 useProxy: false
             };
         }
-        /* تفريغ أي كاش داخلي تركته اللقطة السابقة (إن وُجدت دالة لذلك) */
-        try {
-            ["clearCache", "clear", "resetCache"].forEach(function (fn) {
-                if (typeof window.snapdom[fn] === "function") { try { window.snapdom[fn](); } catch (e) { /* ignore */ } }
-            });
-        } catch (e) { /* ignore */ }
         var targetW = Math.round(width * scale);
 
         /* الخطوط جاهزة مسبقًا (ensureFontsForElement) — نسخّن SnapDOM مرة واحدة لكل تصدير */
-        var fontsReady = ensureFontsForElement(page).then(function () { return warmUpSnapDOM(page); });
+        var fontsReady = ensureFontsForElement(page).then(function () { snapdomWarmed = false; return warmUpSnapDOM(page); });
 
         var imagesReady = (function () {
             var imgs = Array.prototype.slice.call(page.querySelectorAll("img"));
