@@ -2977,9 +2977,16 @@ function renderPageSnapDOM(page, width, height, quality) {
                 embedFonts: true,
                 fast: false,
                 compress: false,
+                cache: "disabled",   /* كل صفحة لقطة مستقلة: لا نعتمد على كاش اللقطة السابقة */
                 useProxy: false
             };
         }
+        /* تفريغ أي كاش داخلي تركته اللقطة السابقة (إن وُجدت دالة لذلك) */
+        try {
+            ["clearCache", "clear", "resetCache"].forEach(function (fn) {
+                if (typeof window.snapdom[fn] === "function") { try { window.snapdom[fn](); } catch (e) { /* ignore */ } }
+            });
+        } catch (e) { /* ignore */ }
         var targetW = Math.round(width * scale);
 
         /* الخطوط جاهزة مسبقًا (ensureFontsForElement) — نسخّن SnapDOM مرة واحدة لكل تصدير */
@@ -3011,7 +3018,7 @@ function renderPageSnapDOM(page, width, height, quality) {
             })
             .then(function (canvas) {
                 cleanup();
-                if (canvas) console.log("📐 SnapDOM canvas:", canvas.width + "x" + canvas.height, "(المطلوب ≈ " + targetW + ")");
+                if (canvas) console.log("📐 SnapDOM canvas:", canvas.width + "x" + canvas.height, "| المطلوب ≈ " + targetW + " | scale=" + scale + " | صفحة #" + (Array.prototype.indexOf.call(document.querySelectorAll("[data-render-container] .page"), page) + 1));
                 if (!canvas || !canvas.width || !canvas.height) {
                     reject(new Error("SnapDOM أعاد canvas فارغًا"));
                     return;
