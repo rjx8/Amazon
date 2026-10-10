@@ -2743,6 +2743,7 @@ function getSafeScale(width, height, requested) {
 
 function createRenderContainer(code, width, height) {
     snapdomWarmed = false;
+    EXPORT_LOG = [];
     if (!document.querySelector('link[data-render-fonts]')) {
         var link = document.createElement("link");
         link.rel = "stylesheet";
@@ -3032,16 +3033,47 @@ function renderPageSnapDOM(page, width, height, quality) {
     });
 }
 
-/* ----- الموزّع الموحّد: SnapDOM مع fallback تلقائي ----- */
+/* ----- الموزّع الموحّد: SnapDOM مع إعادة محاولة، والـ fallback يُسجَّل ويُعرض (لا يحدث بصمت) ----- */
+var EXPORT_LOG = [];
 function renderPageUnified(page, width, height, quality, useSnapdom) {
-    if (useSnapdom) {
-        return renderPageSnapDOM(page, width, height, quality)
-            .catch(function (err) {
-                console.warn("⚠️ SnapDOM فشل أو تجاوز الوقت — التحويل إلى html2canvas:", err);
-                return renderPageHtml2Canvas(page, width, height, quality);
-            });
+    var t0 = Date.now();
+    var idx = EXPORT_LOG.length + 1;
+    function record(engine, canvas, note) {
+        EXPORT_LOG.push({
+            n: idx, engine: engine, note: note || "",
+            size: canvas ? (canvas.width + "×" + canvas.height) : "-",
+            sec: ((Date.now() - t0) / 1000).toFixed(1)
+        });
+        return canvas;
     }
-    return renderPageHtml2Canvas(page, width, height, quality);
+    if (!useSnapdom) {
+        return renderPageHtml2Canvas(page, width, height, quality).then(function (c) { return record("html2canvas", c, ""); });
+    }
+    return renderPageSnapDOM(page, width, height, quality)
+        .then(function (c) { return record("SnapDOM", c, ""); })
+        .catch(function (err1) {
+            console.warn("⚠️ SnapDOM فشل (محاولة 1) للصفحة " + idx + ":", err1);
+            return fontDelay(600).then(function () { return renderPageSnapDOM(page, width, height, quality); })
+                .then(function (c) { return record("SnapDOM", c, "نجح بعد إعادة محاولة"); })
+                .catch(function (err2) {
+                    console.warn("⚠️ SnapDOM فشل (محاولة 2) — html2canvas:", err2);
+                    var why = String((err2 && err2.message) || err2 || "").slice(0, 80);
+                    return renderPageHtml2Canvas(page, width, height, quality)
+                        .then(function (c) { return record("html2canvas ⚠️", c, "سبب الفشل: " + why); });
+                });
+        });
+}
+
+/* ملخص التصدير: يظهر لك وش المحرك وحجم الصورة والوقت لكل صفحة */
+var SHOW_EXPORT_SUMMARY = true;
+function showExportSummary() {
+    var log = EXPORT_LOG.slice();
+    EXPORT_LOG = [];
+    if (!log.length || !SHOW_EXPORT_SUMMARY) return;
+    var lines = log.map(function (r) {
+        return r.n + ") " + r.engine + " — " + r.size + " — " + r.sec + "s" + (r.note ? " — " + r.note : "");
+    });
+    try { alert("ملخص التصدير:\n" + lines.join("\n")); } catch (e) { console.log(lines.join("\n")); }
 }
 
 function canvasToJPEG(canvas) {
@@ -3150,6 +3182,7 @@ function generatePPTX() {
         })
         .finally(function () {
             try { container.remove(); } catch (e) { /* ignore */ }
+            showExportSummary();
         });
 }
 
@@ -3223,6 +3256,7 @@ function generatePDF() {
         })
         .finally(function () {
             try { container.remove(); } catch (e) { /* ignore */ }
+            showExportSummary();
         });
 }
 
