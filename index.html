@@ -2921,6 +2921,27 @@ function renderPageHtml2Canvas(page, width, height, quality) {
     });
 }
 
+/* ✅ يخفي بقية الصفحات أثناء تصوير صفحة واحدة، فتصير دايمًا في أعلى الحاوية (يمنع تدهور الجودة للصفحات البعيدة) */
+function isolatePage(page) {
+    var hidden = [];
+    try {
+        var root = page.closest("[data-render-container]");
+        if (root) {
+            var all = Array.prototype.slice.call(root.querySelectorAll(".page"));
+            all.forEach(function (el) {
+                if (el === page || el.contains(page) || page.contains(el)) return;
+                hidden.push({ el: el, display: el.style.display, priority: el.style.getPropertyPriority("display") });
+                el.style.setProperty("display", "none", "important");
+            });
+        }
+    } catch (e) { /* ignore */ }
+    return function restore() {
+        hidden.forEach(function (h) {
+            try { h.el.style.removeProperty("display"); if (h.display) h.el.style.setProperty("display", h.display, h.priority); } catch (e) { /* ignore */ }
+        });
+    };
+}
+
 /* ----- SnapDOM مع تحسينات v3.2 ----- */
 function renderPageSnapDOM(page, width, height, quality) {
     return new Promise(function (resolve, reject) {
@@ -2934,6 +2955,7 @@ function renderPageSnapDOM(page, width, height, quality) {
         var oldHeight = page.style.height;
         var oldMinHeight = page.style.minHeight;
 
+        var restoreOthers = isolatePage(page);
         page.style.width = width + "px";
         page.style.height = height + "px";
         page.style.minHeight = height + "px";
@@ -2943,6 +2965,7 @@ function renderPageSnapDOM(page, width, height, quality) {
             page.style.width = oldWidth;
             page.style.height = oldHeight;
             page.style.minHeight = oldMinHeight;
+            restoreOthers();
         };
 
         /* ✅ بدون width/height: تمريرهما يجعل SnapDOM يتجاهل scale فتطلع اللقطة 1x ومبكسلة */
@@ -2988,6 +3011,7 @@ function renderPageSnapDOM(page, width, height, quality) {
             })
             .then(function (canvas) {
                 cleanup();
+                if (canvas) console.log("📐 SnapDOM canvas:", canvas.width + "x" + canvas.height, "(المطلوب ≈ " + targetW + ")");
                 if (!canvas || !canvas.width || !canvas.height) {
                     reject(new Error("SnapDOM أعاد canvas فارغًا"));
                     return;
