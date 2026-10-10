@@ -2589,6 +2589,8 @@ function waitForFonts() {
    ========================================================= */
 var SYSTEM_FONTS = ["serif","sans-serif","monospace","cursive","fantasy","system-ui","ui-sans-serif","ui-serif","ui-monospace","ui-rounded","emoji","math","fangsong","inherit","initial","unset","-apple-system","blinkmacsystemfont","segoe ui","helvetica","helvetica neue","arial","tahoma","times new roman","times","georgia","verdana","courier new","courier","apple color emoji","segoe ui emoji","noto color emoji","geeza pro","sf pro text","sf pro display","roboto flex"];
 var snapdomWarmed = false;
+var SNAP_USE_ZOOM = true;   /* تكبير الصفحة بـ CSS zoom قبل اللقطة بدل تكبير الصورة بعد الرسم (يمنع التبكسل في Safari) */
+var lastSnapMode = "";
 
 function fontDelay(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 
@@ -2955,6 +2957,7 @@ function renderPageSnapDOM(page, width, height, quality) {
         var oldWidth = page.style.width;
         var oldHeight = page.style.height;
         var oldMinHeight = page.style.minHeight;
+        var oldZoom = page.style.zoom;
 
         var restoreOthers = isolatePage(page);
         page.style.width = width + "px";
@@ -2966,6 +2969,7 @@ function renderPageSnapDOM(page, width, height, quality) {
             page.style.width = oldWidth;
             page.style.height = oldHeight;
             page.style.minHeight = oldMinHeight;
+            page.style.zoom = oldZoom;
             restoreOthers();
         };
 
@@ -2998,6 +3002,26 @@ function renderPageSnapDOM(page, width, height, quality) {
         Promise.all([fontsReady, imagesReady])
             .then(function () {
                 /* محاولة 1: scale مباشر (dpr=1). إذا الناتج أصغر من المطلوب نجرّب dpr بدل scale، ونأخذ الأكبر */
+                var targetH = Math.round(height * scale);
+                var zoomTry = Promise.resolve(null);
+                if (SNAP_USE_ZOOM && scale > 1.05) {
+                    page.style.zoom = String(scale);
+                    void page.offsetHeight;
+                    zoomTry = withTimeout(window.snapdom.toCanvas(page, makeOpts(1, 1)), RENDER_CONFIG.snapdomTimeout, "SnapDOM timeout")
+                        .then(function (cz) {
+                            page.style.zoom = oldZoom;
+                            var okW = cz && Math.abs(cz.width - targetW) <= targetW * 0.05;
+                            var okH = cz && Math.abs(cz.height - targetH) <= targetH * 0.05;
+                            if (okW && okH) { lastSnapMode = "zoom"; return cz; }
+                            console.warn("⚠️ نتيجة zoom بحجم غير متوقع:", cz && (cz.width + "x" + cz.height), "المطلوب", targetW + "x" + targetH);
+                            releaseCanvas(cz);
+                            return null;
+                        })
+                        .catch(function (e) { page.style.zoom = oldZoom; console.warn("zoom attempt failed:", e); return null; });
+                }
+                return zoomTry.then(function (cz) {
+                if (cz) return cz;
+                lastSnapMode = "scale";
                 var first = withTimeout(window.snapdom.toCanvas(page, makeOpts(scale, 1)), RENDER_CONFIG.snapdomTimeout, "SnapDOM timeout");
                 return first.then(function (c1) {
                     if (c1 && c1.width >= targetW * 0.95) return c1;
@@ -3008,6 +3032,7 @@ function renderPageSnapDOM(page, width, height, quality) {
                             releaseCanvas(c2);
                             return c1;
                         });
+                });
                 });
             })
             .then(function (canvas) {
@@ -3043,7 +3068,7 @@ function renderPageUnified(page, width, height, quality, useSnapdom) {
         return renderPageHtml2Canvas(page, width, height, quality).then(function (c) { return record("html2canvas", c, ""); });
     }
     return renderPageSnapDOM(page, width, height, quality)
-        .then(function (c) { return record("SnapDOM", c, ""); })
+        .then(function (c) { return record("SnapDOM", c, "وضع: " + lastSnapMode); })
         .catch(function (err1) {
             console.warn("⚠️ SnapDOM فشل (محاولة 1) للصفحة " + idx + ":", err1);
             return fontDelay(600).then(function () { return renderPageSnapDOM(page, width, height, quality); })
