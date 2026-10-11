@@ -233,8 +233,8 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
                 <select id="quality-select">
                     <option value="1">عادية (سريعة)</option>
                     <option value="2">عالية (متوازنة)</option>
-                    <option value="3" selected>ممتازة (جودة عالية جدًا) ⭐</option>
-                    <option value="4">فائقة (أقصى جودة — أبطأ)</option>
+                    <option value="3">ممتازة (جودة عالية جدًا)</option>
+                    <option value="4" selected>فائقة (أقصى جودة) ⭐</option>
                 </select>
             </div>
         </div>
@@ -545,8 +545,8 @@ var IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
 
 /* ✅ جودة أعلى + حد بكسل أكبر لضمان دقة الصور */
 var RENDER_CONFIG = {
-    maxCanvasPixels: IS_IOS ? 8000000 : 26000000,
-    maxScale: IS_IOS ? 3 : 4,
+    maxCanvasPixels: IS_IOS ? 15000000 : 26000000,
+    maxScale: 4,
     fontTimeout: IS_IOS ? 14000 : 10000,
     imageTimeout: IS_IOS ? 12000 : 8000,
     jpegQuality: IS_IOS ? 0.95 : 0.98,
@@ -690,6 +690,7 @@ function withTimeout(promise, ms, errorMsg) {
    3) دوال محرّك التصدير
    ========================================================= */
 function getRendererChoice() {
+    if (IS_IOS) return "html2canvas";   /* SnapDOM على سفاري يرسم بدقة منخفضة ثم يمدّ الصورة */
     var el = document.getElementById("renderer-select");
     return el ? el.value : "snapdom";
 }
@@ -2997,11 +2998,25 @@ function inlineBackgroundImages(container) {
    ========================================================= */
 
 /* ----- html2canvas ----- */
+/* يحاول بالجودة المطلوبة، وإذا فشل (ذاكرة الآيفون) أو رجّع لوحة فارغة يعيد بجودة أقل بدل ما تطلع صفحة تالفة */
 function renderPageHtml2Canvas(page, width, height, quality) {
+    function ok(c) { return c && c.width > 10 && c.height > 10; }
+    return renderPageHtml2CanvasOnce(page, width, height, quality).then(function (c) {
+        if (ok(c)) return c;
+        throw new Error("canvas فارغ");
+    }).catch(function (err) {
+        var lower = Math.max(2, quality - 1);
+        if (lower >= quality) throw err;
+        console.warn("⚠️ html2canvas فشل بجودة " + quality + " — إعادة بجودة " + lower, err);
+        return fontDelay(500).then(function () { return renderPageHtml2CanvasOnce(page, width, height, lower); });
+    });
+}
+function renderPageHtml2CanvasOnce(page, width, height, quality) {
     var scale = getSafeScale(width, height, quality);
     var oldWidth = page.style.width;
     var oldHeight = page.style.height;
     var oldMinHeight = page.style.minHeight;
+    var restoreOthers = isolatePage(page);   /* html2canvas ينسخ المستند كله: نخفي بقية الصفحات حتى لا تتراكم الذاكرة */
     page.style.width = width + "px";
     page.style.height = height + "px";
     page.style.minHeight = height + "px";
@@ -3038,11 +3053,13 @@ function renderPageHtml2Canvas(page, width, height, quality) {
         page.style.width = oldWidth;
         page.style.height = oldHeight;
         page.style.minHeight = oldMinHeight;
+        restoreOthers();
         return canvas;
     }).catch(function (error) {
         page.style.width = oldWidth;
         page.style.height = oldHeight;
         page.style.minHeight = oldMinHeight;
+        restoreOthers();
         throw error;
     });
 }
