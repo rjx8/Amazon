@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>منصة تحويل الأكواد الذكية v3.2 (PDF / PPTX)</title>
+<title>منصة تحويل الأكواد الذكية v3.3 (PDF / PPTX)</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -178,6 +178,16 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
 .crop-control,.crop-action{padding:11px 5px;font-size:11px}
 .box-panel{padding:15px}
 }
+
+/* ===== نافذة المعاينة (داخل الصفحة) ===== */
+#preview-overlay{position:fixed;inset:0;z-index:99999;background:#0b1220;display:none;flex-direction:column}
+#preview-overlay.open{display:flex}
+.pv-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top,0px));background:#1e293b;border-bottom:1px solid #334155;flex-shrink:0}
+.pv-title{color:#f8fafc;font-size:12px;font-weight:bold;line-height:1.5}
+.pv-close{background:#7f1d1d;color:#fecaca;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:bold;cursor:pointer;flex-shrink:0}
+.pv-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:12px 0 calc(24px + env(safe-area-inset-bottom,0px));direction:ltr}
+.pv-stage{margin:0 auto;position:relative}
+.pv-stage iframe{border:0;background:#334155;position:absolute;top:0;left:0;transform-origin:0 0;display:block}
 </style>
 </head>
 <body>
@@ -195,7 +205,7 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
     </div>
 </div>
 
-<div class="header"><h2>🛠️ منصة تحويل الأكواد <span class="version-badge">v3.2</span></h2></div>
+<div class="header"><h2>🛠️ منصة تحويل الأكواد <span class="version-badge">v3.3</span></h2></div>
 
 <div class="top-nav">
     <button type="button" class="nav-btn active" id="btn-converter" onclick="switchTab('converter')">⚙️ منصة التحويل</button>
@@ -231,8 +241,8 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
         <div class="form-group">
             <label>محرّك التصدير:</label>
             <select id="renderer-select">
-                <option value="snapdom" selected>⚡ SnapDOM (يدعم الصور — سريع)</option>
-                <option value="html2canvas">🔧 html2canvas (احتياطي — موثوق)</option>
+                <option value="snapdom" selected>⚡ SnapDOM (سريع — على الآيفون قد يطلع النص أقل حدة)</option>
+                <option value="html2canvas">🎯 html2canvas (نص أحدّ — الأفضل للآيفون)</option>
             </select>
         </div>
         <div class="form-group">
@@ -507,6 +517,11 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
     </div>
 </div>
 
+<div id="preview-overlay" role="dialog" aria-modal="true">
+    <div class="pv-bar"><div class="pv-title" id="pv-title"></div><button type="button" class="pv-close" onclick="closePreview()">✕ إغلاق</button></div>
+    <div class="pv-scroll" id="pv-scroll"><div class="pv-stage" id="pv-stage"></div></div>
+</div>
+
 <script>
 /* =========================================================
    PLATFORM VERSION 3.2 — التحديثات الرئيسية:
@@ -515,7 +530,7 @@ input:not([type="checkbox"]):not([type="radio"]),select{font-size:16px}
    3) دعم مشاريع عربي / إنجليزي / ثنائي اللغة
    4) دعم أهم الخطوط الإنجليزية من Google Fonts
    ========================================================= */
-var PLATFORM_VERSION = "3.2";
+var PLATFORM_VERSION = "3.3";
 console.log("%c🚀 منصة التحويل — إصدار " + PLATFORM_VERSION, "background:#059669;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;");
 
 /* =========================================================
@@ -537,6 +552,19 @@ var RENDER_CONFIG = {
     jpegQuality: IS_IOS ? 0.95 : 0.98,
     snapdomTimeout: IS_IOS ? 60000 : 45000
 };
+
+
+/* على الآيفون (Safari) SnapDOM يرسم النص بدقة منخفضة ثم يمدّه، فنختار html2canvas افتراضيًا */
+(function () {
+    function applyIOSDefaultEngine() {
+        try {
+            var sel = document.getElementById("renderer-select");
+            if (sel && IS_IOS) sel.value = "html2canvas";
+        } catch (e) { /* ignore */ }
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", applyIOSDefaultEngine);
+    else applyIOSDefaultEngine();
+})();
 
 var ARABIC_FONTS = [
     "Cairo", "Tajawal", "Almarai", "Amiri", "El Messiri",
@@ -2469,51 +2497,146 @@ function copyGeneratedPrompt() {
 /* =========================================================
    14) معاينة الكود (معقّمة)
    ========================================================= */
+/* يبني مستند معاينة كامل يطابق بيئة التصدير: UTF-8 + RTL + نفس الخطوط + نفس box-sizing + نفس أبعاد الصفحة */
+function buildPreviewDocument(safeCode, width, height) {
+    var fixCss =
+        "*,*::before,*::after{box-sizing:border-box}" +
+        "html,body{margin:0!important;padding:0!important}" +
+        "body{padding:12px!important;background:#334155!important;width:" + (width + 24) + "px!important}" +
+        ".page{box-sizing:border-box!important;width:" + width + "px!important;height:" + height + "px!important;min-height:" + height + "px!important;margin:0 0 16px 0!important;box-shadow:0 6px 26px rgba(0,0,0,.45)}" +
+        "img{max-width:none}";
+    var inject = '<meta charset="UTF-8">' +
+        '<link rel="stylesheet" href="' + GOOGLE_FONTS_URL + '">';
+    var injectEnd = '<style id="__preview_fix">' + fixCss + '</style>';
+
+    var doc = String(safeCode);
+    var hasHtml = /<html[\s>]/i.test(doc);
+    var hasHead = /<head[\s>]/i.test(doc);
+
+    if (hasHead) {
+        doc = doc.replace(/<head([^>]*)>/i, "<head$1>" + inject);
+        if (/<\/head>/i.test(doc)) doc = doc.replace(/<\/head>/i, injectEnd + "</head>");
+        else doc = doc.replace(/<body[\s>]/i, function (m) { return injectEnd + m; });
+    } else if (hasHtml) {
+        doc = doc.replace(/<html([^>]*)>/i, "<html$1><head>" + inject + injectEnd + "</head>");
+    } else {
+        doc = '<!doctype html><html lang="ar" dir="rtl"><head>' + inject + injectEnd + '</head><body>' + doc + '</body></html>';
+    }
+    /* نفس اتجاه حاوية التصدير (rtl) إذا لم يحدده الكود */
+    if (/<html([^>]*)>/i.test(doc)) {
+        doc = doc.replace(/<html([^>]*)>/i, function (m, attrs) {
+            return /\sdir\s*=/i.test(attrs) ? m : "<html" + attrs + ' dir="rtl">';
+        });
+    }
+    if (!/^\s*<!doctype/i.test(doc)) doc = "<!doctype html>" + doc;
+    return doc;
+}
+
+var previewState = { width: 794, height: 1123, frame: null, timers: [], onResize: null };
+
+function fitPreview() {
+    var stage = document.getElementById("pv-stage");
+    var scroller = document.getElementById("pv-scroll");
+    var frame = previewState.frame;
+    if (!stage || !scroller || !frame) return;
+    var fullW = previewState.width + 24;
+    var avail = scroller.clientWidth - 8;
+    var scale = Math.min(1, avail / fullW);
+    var contentH = fullW ? previewState.contentHeight || 600 : 600;
+    frame.style.width = fullW + "px";
+    frame.style.height = contentH + "px";
+    frame.style.transform = "scale(" + scale + ")";
+    stage.style.width = Math.round(fullW * scale) + "px";
+    stage.style.height = Math.round(contentH * scale) + "px";
+}
+
+function measurePreview() {
+    var frame = previewState.frame;
+    if (!frame) return;
+    try {
+        var d = frame.contentDocument;
+        if (!d || !d.body) return;
+        previewState.contentHeight = Math.max(d.documentElement.scrollHeight, d.body.scrollHeight);
+        fitPreview();
+    } catch (e) { /* ignore */ }
+}
+
+function closePreview() {
+    var overlay = document.getElementById("preview-overlay");
+    var stage = document.getElementById("pv-stage");
+    if (overlay) overlay.classList.remove("open");
+    previewState.timers.forEach(function (t) { clearTimeout(t); });
+    previewState.timers = [];
+    if (previewState.onResize) { window.removeEventListener("resize", previewState.onResize); previewState.onResize = null; }
+    if (stage) stage.innerHTML = "";
+    previewState.frame = null;
+    document.body.style.overflow = "";
+}
+
 function previewCode() {
     var inputEl = document.getElementById("html-input");
     if (!inputEl) return;
     var code = inputEl.value;
-    if (!code.trim()) return;
+    if (!code.trim()) { alert("الرجاء لصق الكود أولاً!"); return; }
 
-    /* ✅ تعقيم قبل المعاينة لمنع فتح صفحات */
     var safeCode = sanitizeCodeForRender(code);
 
     var formatEl = document.getElementById("format-select");
     var format = formatEl ? formatEl.value : "pdf-a4";
     var isA4 = format === "pdf-a4";
+    var width = isA4 ? 794 : 1280;
+    var height = isA4 ? 1123 : 720;
     var dimText = isA4 ? "A4 — 794×1123px (عمودي)" : "16:9 — 1280×720px (أفقي)";
 
-    var win = window.open("", "_blank");
-    if (!win) { alert("المتصفح منع فتح نافذة المعاينة."); return; }
+    var overlay = document.getElementById("preview-overlay");
+    var stage = document.getElementById("pv-stage");
+    var title = document.getElementById("pv-title");
+    if (!overlay || !stage) return;
 
-    win.document.open();
-    win.document.write(safeCode);
-    win.document.close();
+    closePreview();
+    previewState.width = width;
+    previewState.height = height;
+    previewState.contentHeight = height + 40;
+    if (title) title.textContent = "👁️ معاينة — " + dimText + " — v" + PLATFORM_VERSION;
 
-    var apply = function () {
-        try { applyImageReplacementsToDocument(win.document); }
-        catch (error) { console.warn("Preview replacement failed:", error); }
+    var frame = document.createElement("iframe");
+    frame.setAttribute("sandbox", "allow-same-origin");   /* بدون سكربتات: آمن، ونقدر نطبّق استبدال الصور */
+    frame.setAttribute("title", "preview");
+    previewState.frame = frame;
+    stage.appendChild(frame);
 
+    var applied = false;
+    frame.addEventListener("load", function () {
+        if (!applied) {
+            applied = true;
+            try { applyImageReplacementsToDocument(frame.contentDocument); }
+            catch (error) { console.warn("Preview replacement failed:", error); }
+        }
+        measurePreview();
         try {
-            if (!win.document.getElementById("__preview_badge")) {
-                var badge = win.document.createElement("div");
-                badge.id = "__preview_badge";
-                badge.style.cssText = "position:fixed;top:14px;left:14px;background:rgba(15,23,42,0.92);color:#f8fafc;padding:9px 16px;border-radius:22px;font-family:system-ui,sans-serif;font-size:12px;font-weight:bold;z-index:2147483647;box-shadow:0 4px 14px rgba(0,0,0,.45);pointer-events:none;border:1px solid rgba(148,163,184,.25)";
-                badge.textContent = "📐 " + dimText + " — v" + PLATFORM_VERSION;
-                win.document.body.appendChild(badge);
-            }
-            if (!win.document.getElementById("__preview_pages_style")) {
-                var style = win.document.createElement("style");
-                style.id = "__preview_pages_style";
-                style.textContent = ".page{box-shadow:0 6px 26px rgba(0,0,0,.45)!important;margin:14px auto!important}body:has(.page){padding:18px!important;background:#1e293b!important}";
-                win.document.head.appendChild(style);
-            }
-        } catch (error) { console.warn("Preview styling failed:", error); }
-    };
+            var d = frame.contentDocument;
+            if (d && d.fonts && d.fonts.ready) d.fonts.ready.then(measurePreview);
+            Array.prototype.forEach.call(d.querySelectorAll("img"), function (im) {
+                if (!im.complete) im.addEventListener("load", measurePreview);
+            });
+        } catch (e) { /* ignore */ }
+        [300, 900, 2000].forEach(function (ms) { previewState.timers.push(setTimeout(measurePreview, ms)); });
+    });
 
-    win.addEventListener("load", apply);
-    setTimeout(apply, 500);
+    frame.srcdoc = buildPreviewDocument(safeCode, width, height);
+
+    overlay.classList.add("open");
+    document.body.style.overflow = "hidden";
+    var scroller = document.getElementById("pv-scroll");
+    if (scroller) scroller.scrollTop = 0;
+    fitPreview();
+    previewState.onResize = function () { fitPreview(); };
+    window.addEventListener("resize", previewState.onResize);
 }
+
+document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closePreview();
+});
 
 function clearCode() {
     if (confirm("مسح الكود الحالي؟")) {
@@ -2982,13 +3105,14 @@ function renderPageSnapDOM(page, width, height, quality) {
                 embedFonts: true,
                 fast: false,
                 compress: false,
-                useProxy: false
+                useProxy: false,
+                cache: "disabled"   /* ✅ كل صفحة تُلتقط بذاكرة نظيفة مثل الصفحة الأولى (سبب تدهور الصفحات 2+ هو إعادة استخدام الكاش) */
             };
         }
         var targetW = Math.round(width * scale);
 
         /* الخطوط جاهزة مسبقًا (ensureFontsForElement) — نسخّن SnapDOM مرة واحدة لكل تصدير */
-        var fontsReady = ensureFontsForElement(page).then(function () { snapdomWarmed = false; return warmUpSnapDOM(page); });
+        var fontsReady = ensureFontsForElement(page).then(function () { return warmUpSnapDOM(page); });
 
         var imagesReady = (function () {
             var imgs = Array.prototype.slice.call(page.querySelectorAll("img"));
@@ -3001,23 +3125,32 @@ function renderPageSnapDOM(page, width, height, quality) {
         /* ✅ استخدام withTimeout لمنع التعليق */
         Promise.all([fontsReady, imagesReady])
             .then(function () {
-                /* محاولة 1: scale مباشر (dpr=1). إذا الناتج أصغر من المطلوب نجرّب dpr بدل scale، ونأخذ الأكبر */
+                /* المسار الأساسي: zoom (يعطي نصًا حادًا). إذا فشل نعيد المحاولة مرة بعد انتظار قبل الانتقال لمسار scale */
                 var targetH = Math.round(height * scale);
-                var zoomTry = Promise.resolve(null);
-                if (SNAP_USE_ZOOM && scale > 1.05) {
+                function zoomCapture() {
                     page.style.zoom = String(scale);
                     void page.offsetHeight;
-                    zoomTry = withTimeout(window.snapdom.toCanvas(page, makeOpts(1, 1)), RENDER_CONFIG.snapdomTimeout, "SnapDOM timeout")
+                    return withTimeout(window.snapdom.toCanvas(page, makeOpts(1, 1)), RENDER_CONFIG.snapdomTimeout, "SnapDOM timeout")
                         .then(function (cz) {
                             page.style.zoom = oldZoom;
                             var okW = cz && Math.abs(cz.width - targetW) <= targetW * 0.05;
                             var okH = cz && Math.abs(cz.height - targetH) <= targetH * 0.05;
-                            if (okW && okH) { lastSnapMode = "zoom"; return cz; }
+                            if (okW && okH) return cz;
                             console.warn("⚠️ نتيجة zoom بحجم غير متوقع:", cz && (cz.width + "x" + cz.height), "المطلوب", targetW + "x" + targetH);
                             releaseCanvas(cz);
                             return null;
                         })
                         .catch(function (e) { page.style.zoom = oldZoom; console.warn("zoom attempt failed:", e); return null; });
+                }
+                var zoomTry = Promise.resolve(null);
+                if (SNAP_USE_ZOOM && scale > 1.05) {
+                    zoomTry = zoomCapture().then(function (cz) {
+                        if (cz) { lastSnapMode = "zoom"; return cz; }
+                        return fontDelay(IS_IOS ? 600 : 300).then(zoomCapture).then(function (cz2) {
+                            if (cz2) lastSnapMode = "zoom (إعادة)";
+                            return cz2;
+                        });
+                    });
                 }
                 return zoomTry.then(function (cz) {
                 if (cz) return cz;
@@ -3298,7 +3431,7 @@ function downloadBlob(blob, filename) {
 }
 
 function yieldToBrowser() {
-    return new Promise(function (resolve) { setTimeout(resolve, IS_IOS ? 180 : 20); });
+    return new Promise(function (resolve) { setTimeout(resolve, IS_IOS ? 450 : 80); });
 }
 
 /* =========================================================
