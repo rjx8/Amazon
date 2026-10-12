@@ -690,7 +690,6 @@ function withTimeout(promise, ms, errorMsg) {
    3) دوال محرّك التصدير
    ========================================================= */
 function getRendererChoice() {
-    if (IS_IOS) return "html2canvas";   /* SnapDOM على سفاري يرسم بدقة منخفضة ثم يمدّ الصورة */
     var el = document.getElementById("renderer-select");
     return el ? el.value : "snapdom";
 }
